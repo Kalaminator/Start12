@@ -254,3 +254,21 @@ Wire into: the windows10 taskbar preset (taskbarPresets/taskbarArgs: colour, alp
 from colorMode), the windows10 window decoration + colour scheme (T37 `windowDecoration()`: light/dark from colorMode,
 accent title bar = generated custom deco/scheme with the accent hex, old custom ones cleaned like xp custom).
 Spanish strings. Check: generate into the scratch dir + PySide6 render; qmllint; ./install.sh.
+
+### T39 "Colours" settings page like Windows 11 Personalisation > Colours (M) -- user 2026-10-14
+Reference photo: docs/research/win11-colours-reference.jpg. New settings page "Colours" (config/config.qml), for every
+menu style except XP (XP keeps its own scheme colours; show a note there). Move the T38 Windows 10 group here and make it
+apply to the active style (windows10, windows11 and the styles that use the windows11 look; windows7 too where it fits):
+- "Choose your mode": Light / Dark / Automatic (existing colorMode).
+- "Accent colour": Automatic (system/wallpaper = Kirigami highlight) / Manual (existing accentMode/accentColor).
+- "Recent colours": the last 5 picked accents (new StringList key `recentAccents`), clickable swatches, picked one marked.
+- "Windows colours": the 48 Windows 10/11 accent swatches grid (the standard palette: FFB900 FF8C00 F7630C CA5010
+  DA3B01 EF6950 D13438 FF4343 E74856 E81123 EA005E C30052 E3008C BF0077 C239B3 9A0089 0078D7 0063B1 8E8CD8 6B69D6
+  8764B8 744DA9 B146C2 881798 0099BC 2D7D9A 00B7C3 038387 00B294 018574 00CC6A 10893E 7A7574 5D5A58 68768A 515C6B
+  567C73 486860 498205 107C10 767676 4C4A48 69797E 4A5459 647C64 525E54 847545 7E735F), click = set accent.
+- "Custom colours": "View colours" button opening the colour dialog.
+- "Show accent colour on Start and taskbar" (generalise win10AccentStart) and "Show accent colour on title bars and
+  window borders" (generalise win10AccentTitles; window border = accent too): taskbar presets and window decorations of
+  windows10 AND windows11 (+ styles using its look) follow them; windows7 glass tinted by the accent.
+- "Transparency effects" (win10Transparency).
+Keep keys where possible (no migration needed); Spanish strings; same no-apply/scratch-render checks.
