@@ -73,6 +73,8 @@ All Programs extras (T22): keys `autoExpand`/`desktopInTree`/`allAppsAsMenu`, Ap
 
 Open animation (T23): key `animateMenu` (default true), `main.qml` openAnim (fade + 1 gridUnit slide of styleLoader) on `expanded`; ConfigLook checkbox. Needs a user check.
 
+Classic search (T24): key `classicSearch` (default off), SearchView `compact` (16 px icons, 24 px rows, no description, no Best match card); ConfigSearch checkbox. Needs a user check.
+
 ## Next (in order)
 Work through docs/TODO.md job by job (T01, T02, T03, T04 done). Use the prompt in docs/AGENT_PROMPT.md, one agent per job,
 then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03-T09 built (need a user check), T10-T11 built, T12-T18 built, T19-T20 built, T22 built, next: T23.

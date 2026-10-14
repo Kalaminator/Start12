@@ -19,6 +19,7 @@ Item {
 
     readonly property var cfg: Plasmoid.configuration
     property var rows: []
+    readonly property bool compact: cfg.classicSearch
     property var watched: []   // runner models we already listen to
 
     // Filter icons (Start11 search filters): "" = all; keys searchFilterIcons / searchFilter.
@@ -97,7 +98,7 @@ Item {
             out.push(...hits);
         }
         const first = out.findIndex(e => e.kind === "hit");
-        if (first >= 0) {
+        if (first >= 0 && !compact) {
             out[first].best = true;
             // Best match sits on top, above the first group header.
             if (first > 0) out.unshift(out.splice(first, 1)[0]);
@@ -215,8 +216,8 @@ Item {
             readonly property bool current: ListView.isCurrentItem
 
             width: view.width
-            height: e.kind === "header" ? search.metrics.px(30)
-                  : e.best ? search.metrics.px(72) : search.metrics.row
+            height: e.kind === "header" ? search.metrics.px(search.compact ? 22 : 30)
+                  : e.best ? search.metrics.px(72) : search.compact ? search.metrics.px(24) : search.metrics.row
             enabled: e.kind !== "header"
             hoverEnabled: true
             onHoveredChanged: if (hovered) view.currentIndex = index
@@ -236,7 +237,7 @@ Item {
                     visible: hit.e.kind !== "header"
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
-                    width: visible ? search.metrics.px(hit.e.best ? 40 : search.cfg.listIconSize) : 0
+                    width: visible ? search.metrics.px(hit.e.best ? 40 : search.compact ? 16 : search.cfg.listIconSize) : 0
                     height: width
                     source: hit.isHit ? search.roleData(hit.e.model, hit.e.row, "decoration") : "internet-web-browser"
                 }
@@ -267,7 +268,7 @@ Item {
                     PC3.Label {
                         readonly property string desc: hit.isHit ? (search.roleData(hit.e.model, hit.e.row, "description") ?? "") : ""
                         width: parent.width
-                        visible: desc !== ""
+                        visible: desc !== "" && !search.compact
                         text: desc
                         elide: Text.ElideRight
                         color: search.metrics.text

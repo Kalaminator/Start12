@@ -307,6 +307,10 @@
       <label>Fade the menu in when it opens (inverse of NoAnims)</label>
       <default>true</default>
     </entry>
+    <entry name="classicSearch" type="Bool">
+      <label>Classic (Start10) search: dense one-line results, no Best match card</label>
+      <default>false</default>
+    </entry>
     <entry name="texture" type="String">
       <label>BackgroundImage: file in images/MenuTextures, or an absolute path; empty = none</label>
       <default></default>

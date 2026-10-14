@@ -170,7 +170,7 @@ Build: `animateMenu` Bool (inverse `NoAnims`); `main.qml` fullRepresentation fad
 `expanded` (`Behavior on opacity`, `Kirigami.Units.shortDuration`); checkbox in `config/ConfigLook.qml`.
 Check: on/off visibly different; no flash with the solid menu.
 
-### T24 Classic (Start10) search (S)
+### T24 Classic (Start10) search (S) -- DONE
 Build: `classicSearch` Bool: `win10/SearchView.qml` compact mode (small icons, one line per result, no
 Best match card); checkbox in `config/ConfigSearch.qml`.
 Check: results show as a dense list in Win7 style.
