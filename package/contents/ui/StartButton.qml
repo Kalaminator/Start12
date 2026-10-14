@@ -99,6 +99,20 @@ MouseArea {
         }
     }
 
+    // Plasma draws an "expanded" mark (widgets/tabbar active-tab) under the button while the menu is open;
+    // XP's button has none (it peeked out at the pill's round corner as a yellow line).
+    readonly property Item expandedMark: {
+        for (let p = parent; p; p = p.parent)
+            if (p.expandedFeedback !== undefined) return p.expandedFeedback;
+        return null;
+    }
+    Binding {
+        when: button.xp && button.expandedMark !== null
+        target: button.expandedMark
+        property: "visible"
+        value: false
+    }
+
     Accessible.name: Plasmoid.title
     Accessible.role: Accessible.Button
 
@@ -151,13 +165,15 @@ MouseArea {
         opacity: button.onFace || root.expanded ? 0.1 : 0
     }
 
-    // Mode 2: any icon.
+    // Mode 2: any icon. Pressing squeezes it a little, like the Windows 11 Start button.
     Kirigami.Icon {
         visible: !button.xp && button.cfg.buttonMode === 2
         anchors.fill: face
         anchors.margins: Math.round(button.side * (1 - button.cfg.buttonIconScale / 100) / 2)
         source: button.iconSource
         active: button.onFace
+        scale: button.pressed && button.onFace ? 0.82 : 1
+        Behavior on scale { NumberAnimation { duration: 110; easing.type: Easing.OutQuad } }
     }
 
     // XP: green pill (classic: square left, round right; modern: fully round, glow on hover).
@@ -266,6 +282,8 @@ MouseArea {
         }
         Row {
             id: xpRow
+            // Pressed: the label sinks 1 px, like XP's pushed-in button.
+            transform: Translate { y: button.frame === 2 ? 1 : 0 }
             anchors.verticalCenter: shape.verticalCenter
             x: xpPill.reach + Math.round(xpPill.height * (xpPill.modern ? 0.3 : 0.2))
             spacing: Math.round(xpPill.height * 0.12)

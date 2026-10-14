@@ -429,7 +429,8 @@ FocusScope {
                 id: allButton
                 visible: !root.searching
                 anchors.bottom: parent.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.right: parent.right                 // XP: right-aligned against the middle divider
+                anchors.rightMargin: style.modern ? m.px(8) : 0
                 width: style.modern ? implicitWidth : parent.width
                 height: m.px(style.modern ? 34 : 30)
                 hoverEnabled: true
@@ -454,9 +455,9 @@ FocusScope {
                 contentItem: Row {
                     spacing: m.px(8)
                     layoutDirection: style.allPrograms ? Qt.RightToLeft : Qt.LeftToRight
-                    Item {   // XP centres the label, the arrow follows it
+                    Item {   // XP puts the label and arrow at the right end of the row
                         visible: !style.modern
-                        width: Math.max(0, (allButton.availableWidth - allLabel.implicitWidth - arrow.width) / 2 - m.px(8))
+                        width: Math.max(0, allButton.availableWidth - allLabel.implicitWidth - arrow.width - m.px(16))
                         height: 1
                     }
                     PC3.Label {

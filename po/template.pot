@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-14 19:59+0200\n"
+"POT-Creation-Date: 2026-10-14 20:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -277,7 +277,7 @@ msgstr ""
 #: package/contents/ui/styles/windows11.qml:163
 #: package/contents/ui/styles/windows11.qml:184
 #: package/contents/ui/styles/windows7.qml:483
-#: package/contents/ui/styles/xp.qml:465
+#: package/contents/ui/styles/xp.qml:466
 msgid "Back"
 msgstr ""
 
@@ -353,7 +353,7 @@ msgstr ""
 #: package/contents/ui/common/Places.qml:41
 #: package/contents/ui/config/ConfigButton.qml:25
 #: package/contents/ui/config/ConfigRail.qml:39
-#: package/contents/ui/main.qml:892
+#: package/contents/ui/main.qml:902
 msgid "File Explorer"
 msgstr ""
 
@@ -366,28 +366,28 @@ msgstr ""
 #: package/contents/ui/config/ConfigButton.qml:25
 #: package/contents/ui/config/ConfigRail.qml:41
 #: package/contents/ui/config/ConfigSearch.qml:24
-#: package/contents/ui/main.qml:886 package/contents/ui/win10/SearchView.qml:31
+#: package/contents/ui/main.qml:896 package/contents/ui/win10/SearchView.qml:31
 msgid "Settings"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:44
 #: package/contents/ui/config/ConfigButton.qml:26
 #: package/contents/ui/config/ConfigRail.qml:42
-#: package/contents/ui/main.qml:904
+#: package/contents/ui/main.qml:914
 msgid "Terminal"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:45
 #: package/contents/ui/config/ConfigButton.qml:25
 #: package/contents/ui/config/ConfigRail.qml:43
-#: package/contents/ui/main.qml:898
+#: package/contents/ui/main.qml:908
 msgid "System Monitor"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:46
 #: package/contents/ui/config/ConfigButton.qml:26
 #: package/contents/ui/config/ConfigRail.qml:44
-#: package/contents/ui/main.qml:910
+#: package/contents/ui/main.qml:920
 msgid "Run…"
 msgstr ""
 
@@ -405,13 +405,13 @@ msgstr ""
 
 #: package/contents/ui/common/Places.qml:63
 #: package/contents/ui/config/ConfigRail.qml:49
-#: package/contents/ui/main.qml:939
+#: package/contents/ui/main.qml:949
 msgid "Lock"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:64
 #: package/contents/ui/config/ConfigRail.qml:49
-#: package/contents/ui/main.qml:945
+#: package/contents/ui/main.qml:955
 msgid "Sign out"
 msgstr ""
 
@@ -422,7 +422,7 @@ msgstr ""
 
 #: package/contents/ui/common/Places.qml:66
 #: package/contents/ui/config/ConfigRail.qml:50
-#: package/contents/ui/main.qml:951
+#: package/contents/ui/main.qml:961
 msgid "Sleep"
 msgstr ""
 
@@ -433,13 +433,13 @@ msgstr ""
 
 #: package/contents/ui/common/Places.qml:68
 #: package/contents/ui/config/ConfigRail.qml:50
-#: package/contents/ui/main.qml:957
+#: package/contents/ui/main.qml:967
 msgid "Restart"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:69
 #: package/contents/ui/config/ConfigRail.qml:51
-#: package/contents/ui/main.qml:963 package/contents/ui/styles/windows7.qml:614
+#: package/contents/ui/main.qml:973 package/contents/ui/styles/windows7.qml:614
 msgid "Shut down"
 msgstr ""
 
@@ -458,17 +458,17 @@ msgid "Search apps and files"
 msgstr ""
 
 #: package/contents/ui/config/ConfigButton.qml:26
-#: package/contents/ui/main.qml:916
+#: package/contents/ui/main.qml:926
 msgid "Show desktop"
 msgstr ""
 
 #: package/contents/ui/config/ConfigButton.qml:26
-#: package/contents/ui/main.qml:922
+#: package/contents/ui/main.qml:932
 msgid "Edit panel"
 msgstr ""
 
 #: package/contents/ui/config/ConfigButton.qml:26
-#: package/contents/ui/main.qml:928
+#: package/contents/ui/main.qml:938
 msgid "Auto-hide panel"
 msgstr ""
 
@@ -973,7 +973,7 @@ msgstr ""
 
 #: package/contents/ui/config/ConfigMenu.qml:169
 #: package/contents/ui/config/ConfigStyle.qml:182
-#: package/contents/ui/main.qml:867
+#: package/contents/ui/main.qml:877
 msgid "Reset"
 msgstr ""
 
@@ -1601,19 +1601,19 @@ msgstr ""
 msgid "Pin folder…"
 msgstr ""
 
-#: package/contents/ui/main.qml:862
+#: package/contents/ui/main.qml:872
 msgid "Design mode — drag the dividers"
 msgstr ""
 
-#: package/contents/ui/main.qml:872
+#: package/contents/ui/main.qml:882
 msgid "Done"
 msgstr ""
 
-#: package/contents/ui/main.qml:972
+#: package/contents/ui/main.qml:982
 msgid "Edit menu layout"
 msgstr ""
 
-#: package/contents/ui/main.qml:977
+#: package/contents/ui/main.qml:987
 msgctxt "@action:inmenu"
 msgid "Edit Applications…"
 msgstr ""
@@ -1624,7 +1624,7 @@ msgstr ""
 msgid "Type here to search"
 msgstr ""
 
-#: package/contents/ui/StartButton.qml:280
+#: package/contents/ui/StartButton.qml:298
 msgid "start"
 msgstr ""
 
@@ -1648,7 +1648,7 @@ msgid "Pin to Start menu"
 msgstr ""
 
 #: package/contents/ui/styles/windows7.qml:483
-#: package/contents/ui/styles/xp.qml:465
+#: package/contents/ui/styles/xp.qml:466
 msgid "All Programs"
 msgstr ""
 
@@ -1664,11 +1664,11 @@ msgstr ""
 msgid "Move down"
 msgstr ""
 
-#: package/contents/ui/styles/xp.qml:663
+#: package/contents/ui/styles/xp.qml:664
 msgid "Log Off"
 msgstr ""
 
-#: package/contents/ui/styles/xp.qml:670
+#: package/contents/ui/styles/xp.qml:671
 msgid "Turn Off Computer"
 msgstr ""
 
