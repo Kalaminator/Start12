@@ -20,6 +20,55 @@ Item {
     property var rows: []
     property var watched: []   // runner models we already listen to
 
+    // Filter icons (Start11 search filters): "" = all; keys searchFilterIcons / searchFilter.
+    readonly property string filter: cfg.searchFilterIcons ? cfg.searchFilter : ""
+    onFilterChanged: rebuildTimer.restart()
+    readonly property var filters: [
+        ["apps", "applications-all", i18n("Apps")],
+        ["settings", "preferences-system", i18n("Settings")],
+        ["documents", "x-office-document", i18n("Documents")],
+        ["music", "audio-x-generic", i18n("Music")],
+        ["pictures", "image-x-generic", i18n("Pictures")],
+        ["videos", "video-x-generic", i18n("Videos")],
+        ["files", "folder", i18n("Files")],
+        ["web", "internet-web-browser", i18n("Web")]
+    ]
+    readonly property var extensions: ({
+        documents: "pdf doc docx odt ods odp odg xls xlsx ppt pptx txt md rtf csv epub tex html htm xml json",
+        music: "mp3 flac ogg oga opus wav m4a aac wma mid",
+        pictures: "png jpg jpeg gif bmp svg webp tif tiff heic avif ico kra xcf",
+        videos: "mp4 mkv webm avi mov wmv flv m4v mpg mpeg ogv 3gp"
+    })
+
+    // Does result row r of a runner model pass the current filter? Runner id comes from the
+    // model or the matchId prefix; file type from the url / name extension.
+    function passes(model, r) {
+        const f = filter;
+        if (f === "") return true;
+        if (f === "web") return false;
+        const rid = String(model.runnerId ?? "") + " " + String(roleData(model, r, "matchId") ?? "");
+        const fav = String(roleData(model, r, "favoriteId") ?? "");
+        const has = id => rid.split(" ").some(x => x.startsWith(id));
+        const settings = has("krunner_systemsettings") || has("krunner_kcms") || fav.includes("kcm_")
+            || fav.includes("systemsettings");
+        if (f === "settings") return settings;
+        if (f === "apps") return !settings && (has("krunner_services") || fav.startsWith("applications:"));
+        const urls = roleData(model, r, "urls");
+        const url = String((urls && urls.length ? urls[0] : roleData(model, r, "url")) ?? "");
+        const isFile = has("baloosearch") || has("krunner_recentdocuments") || has("krunner_placesrunner")
+            || has("locations") || url.startsWith("file:") || url.startsWith("/");
+        if (!isFile) return false;
+        if (f === "files") return true;
+        const name = url || String(roleData(model, r, "display") ?? "");
+        const dot = name.lastIndexOf(".");
+        const ext = dot > name.lastIndexOf("/") ? name.slice(dot + 1).toLowerCase() : "";
+        return ext !== "" && (extensions[f] ?? "").split(" ").includes(ext);
+    }
+
+    function setFilter(id) {
+        cfg.searchFilter = cfg.searchFilter === id ? "" : id;
+    }
+
     function focusField() {
         field.forceActiveFocus();
         field.cursorPosition = field.text.length;
@@ -40,12 +89,15 @@ Item {
                 model.countChanged.connect(rebuildTimer.restart);
             }
             if (!model || model.count === 0) continue;
+            const hits = [];
+            for (let r = 0; r < model.count; r++) {
+                if (passes(model, r)) hits.push({ kind: "hit", model: model, row: r });
+            }
+            if (hits.length === 0) continue;
             if (cfg.groupResults && !rm.mergeResults) {
                 out.push({ kind: "header", name: rm.data(rm.index(i, 0), Qt.DisplayRole) });
             }
-            for (let r = 0; r < model.count; r++) {
-                out.push({ kind: "hit", model: model, row: r });
-            }
+            out.push(...hits);
         }
         const first = out.findIndex(e => e.kind === "hit");
         if (first >= 0) {
@@ -53,7 +105,7 @@ Item {
             // Best match sits on top, above the first group header.
             if (first > 0) out.unshift(out.splice(first, 1)[0]);
         }
-        if (cfg.showWebSearch && root.searchText.length > 0) {
+        if ((cfg.showWebSearch || filter === "web") && root.searchText.length > 0) {
             out.push({ kind: "web" });
         }
         rows = out;
@@ -116,10 +168,37 @@ Item {
         Keys.onEscapePressed: root.searchText = ""
     }
 
-    ListView {
-        id: view
+    Row {
+        id: filterRow
+        visible: search.cfg.searchFilterIcons
         anchors.top: search.showField ? field.bottom : parent.top
         anchors.topMargin: search.showField ? search.metrics.px(8) : 0
+        anchors.left: parent.left
+        anchors.leftMargin: search.metrics.pad
+        height: visible ? search.metrics.px(32) : 0
+        spacing: search.metrics.px(2)
+        Repeater {
+            model: search.filters
+            delegate: PC3.ToolButton {
+                required property var modelData
+                width: search.metrics.px(32)
+                height: width
+                icon.name: modelData[1]
+                display: PC3.AbstractButton.IconOnly
+                text: modelData[2]
+                checked: search.filter === modelData[0]
+                onClicked: search.setFilter(modelData[0])
+                PC3.ToolTip.text: text
+                PC3.ToolTip.visible: hovered
+                PC3.ToolTip.delay: Kirigami.Units.toolTipDelay
+            }
+        }
+    }
+
+    ListView {
+        id: view
+        anchors.top: filterRow.visible ? filterRow.bottom : (search.showField ? field.bottom : parent.top)
+        anchors.topMargin: filterRow.visible || search.showField ? search.metrics.px(8) : 0
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -217,7 +296,7 @@ Item {
 
     PC3.Label {
         anchors.centerIn: view
-        visible: !root.runnerModel.querying && !search.rows.some(e => e.kind === "hit")
+        visible: search.filter !== "web" && !root.runnerModel.querying && !search.rows.some(e => e.kind === "hit")
         text: i18n("No items match your search")
         color: search.metrics.text
         opacity: 0.6

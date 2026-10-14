@@ -30,7 +30,7 @@ Enter launches, Menu key opens the context menu, Esc as now. Hook in each `style
 (type-to-search must keep working). Files: AppList.qml, TileArea.qml, PinnedGrid.qml (+ styles for Tab).
 Check: open with Super, press Down x3, Enter launches the 3rd app; Tab moves into tiles; Esc closes.
 
-### T03 Search filter icons (M)
+### T03 Search filter icons (M) -- DONE (in win10/SearchView, so every style has it)
 Build: `FilterIcons`: row of toggle icons above results in `win10/SearchView.qml` (Apps, Settings,
 Documents, Music, Pictures, Videos, Files, Web); a filter keeps rows whose runner id / mimetype matches
 (apps: `krunner_services`; files: `baloosearch` + mimetype role; settings: `krunner_kcms`). Keys:

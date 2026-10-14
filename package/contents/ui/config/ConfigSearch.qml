@@ -11,6 +11,7 @@ KCM.SimpleKCM {
     id: page
     property alias cfg_groupResults: group.checked
     property alias cfg_showWebSearch: web.checked
+    property alias cfg_searchFilterIcons: filterIcons.checked
     property alias cfg_webSearchUrl: webUrl.text
     property var cfg_searchRunners: []
 
@@ -36,6 +37,7 @@ KCM.SimpleKCM {
     Kirigami.FormLayout {
         QQC2.CheckBox { id: group; text: i18n("Group results by type (Apps, Files, Settings …)") }
         QQC2.CheckBox { id: web; text: i18n("Show search the internet button") }
+        QQC2.CheckBox { id: filterIcons; text: i18n("Show filter icons above the results (Apps, Documents, Web …)") }
         QQC2.TextField {
             id: webUrl
             enabled: web.checked

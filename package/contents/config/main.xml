@@ -278,6 +278,14 @@
       <label>%s is replaced by the search text</label>
       <default>https://duckduckgo.com/?q=%s</default>
     </entry>
+    <entry name="searchFilterIcons" type="Bool">
+      <label>Show filter icons above search results (Apps, Settings, Documents ...)</label>
+      <default>true</default>
+    </entry>
+    <entry name="searchFilter" type="String">
+      <label>Last used search filter: "" (all), apps, settings, documents, music, pictures, videos, files, web</label>
+      <default></default>
+    </entry>
   </group>
 
   <group name="StartButton">
