@@ -96,3 +96,4 @@ Open: T26 full custom XP theme (user will say when); taskbar part of Start11
 - Never edit files with Python slice/replace on ambiguous anchors (it once wiped main.qml); use Edit.
 - Plasma 6.7 kicker: RunnerModel `runners: []` = NO runners (main.qml spells out the default list); runner result rows have no runner id/matchId, so classify by `url`/`favoriteId` (SearchView `passes`).
 - i18n (T25): `package/Messages.sh` extracts to `po/template.pot` and merges `po/es.po` (all 352 strings translated); `install.sh` compiles the .mo into `package/contents/locale/es/`. Re-run Messages.sh after adding strings.
+- Plasma saves the popup size (applet [Configuration] popupWidth/Height) and ignores Layout.preferred*: full screen forces it via Layout.minimum*, leaving full screen caps it once via Layout.maximum* (`full.shrink`).

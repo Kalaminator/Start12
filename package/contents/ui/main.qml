@@ -547,8 +547,27 @@ PlasmoidItem {
                              : styleLoader.item ? styleLoader.item.implicitWidth : 600
         Layout.preferredHeight: root.cfg.fullScreen ? root.fullRect.height
                               : styleLoader.item ? styleLoader.item.implicitHeight : 600
-        Layout.minimumWidth: styleLoader.item && styleLoader.item.minimumWidth ? styleLoader.item.minimumWidth : 300
-        Layout.minimumHeight: Math.round(320 * root.cfg.uiScale)
+        // Plasma keeps the user's dragged popup size and ignores preferred sizes, so full screen
+        // forces the size through the minimum.
+        Layout.minimumWidth: root.cfg.fullScreen ? root.fullRect.width
+                           : styleLoader.item && styleLoader.item.minimumWidth ? styleLoader.item.minimumWidth : 300
+        Layout.minimumHeight: root.cfg.fullScreen ? root.fullRect.height : Math.round(320 * root.cfg.uiScale)
+        // Leaving full screen: Plasma saved the full-screen popup size, so cap the size once at the
+        // style's size until the popup has opened and stored the smaller size again.
+        property bool shrink: false
+        Layout.maximumWidth: shrink && styleLoader.item ? styleLoader.item.implicitWidth : Number.POSITIVE_INFINITY
+        Layout.maximumHeight: shrink && styleLoader.item ? styleLoader.item.implicitHeight : Number.POSITIVE_INFINITY
+        Connections {
+            target: root.cfg
+            function onFullScreenChanged() {
+                if (!root.cfg.fullScreen) full.shrink = true;
+            }
+        }
+        Timer {
+            id: shrinkDone
+            interval: 1000
+            onTriggered: full.shrink = false
+        }
 
         // Remember a dragged height as the "Custom height" setting.
         Timer {
@@ -572,6 +591,7 @@ PlasmoidItem {
         Connections {
             target: root
             function onExpandedChanged() {
+                if (root.expanded && full.shrink) shrinkDone.restart();
                 if (root.expanded && root.cfg.animateMenu) openAnim.restart();
                 else { openAnim.stop(); full.opacity = 1; styleLoader.anchors.topMargin = 0; }
             }
