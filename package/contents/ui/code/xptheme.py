@@ -489,7 +489,7 @@ if __name__ == "__main__":
             B = "#" + a.custom.lstrip("#")[-6:]
             rgb(B)
             k = a.kind + ("-dark" if a.win10 == "dark" and a.kind != "win7" else "")
-            write_scheme(a.out, label="%s %s Accent" % (a.kind.title(), a.win10.title()), **dict(WIN_SCHEMES[k], B=B))
+            write_scheme(a.out, label="%s %s Accent" % (a.kind.title(), a.win10.title()), **dict(WIN_SCHEMES[k], B=B, sel=B))   # selection = the accent that names it (no feedback loop)
         elif a.custom:  # --out is the .colors file; custom: beige windows, selection and title bar in the custom colour
             rgb(a.custom)
             B = "#" + a.custom.lstrip("#")[-6:]

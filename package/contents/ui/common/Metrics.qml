@@ -43,7 +43,7 @@ QtObject {
                               : mode === 1 ? "#1c1b22" : mode === 2 ? "#f3f3f3" : cfg.menuColor
     readonly property color text: accentStart ? "#ffffff" : mode === 0 ? Kirigami.Theme.textColor
                                 : mode === 1 ? "#ffffff" : mode === 2 ? "#1b1b1b" : cfg.textColor
-    readonly property color accent: cfg.accentMode === 1 ? cfg.accentColor : Kirigami.Theme.highlightColor
+    readonly property color accent: cfg.accentMode === 1 ? cfg.accentColor : (root.userAccent !== "" ? root.userAccent : Kirigami.Theme.highlightColor)
     readonly property color tile: cfg.tileColorMode === 1 ? accent
                                 : cfg.tileColorMode === 2 ? cfg.tileColor : text
     readonly property real tileAlpha: cfg.tileColorMode === 0 ? cfg.tileOpacity / 100

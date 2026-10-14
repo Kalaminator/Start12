@@ -213,7 +213,9 @@ PlasmoidItem {
     }
     // T38/T39 Colours page: light/dark from colorMode (0 Plasma = userDark, 1 dark, 2 light, 3 custom menu colour),
     // accent = the menu's accent (Plasma or custom).
-    readonly property string accentHex: (cfg.accentMode === 1 ? cfg.accentColor : Kirigami.Theme.highlightColor).toString().slice(-6)
+    property var userAccent: ""   // read with userDark (readBrightness)
+    readonly property string accentHex: (cfg.accentMode === 1 ? cfg.accentColor
+                                         : userAccent !== "" ? userAccent : Kirigami.Theme.highlightColor).toString().slice(-6)
     readonly property bool winDark: cfg.colorMode === 1 || (cfg.colorMode === 0 && userDark)
         || (cfg.colorMode === 3 && Kirigami.ColorUtils.brightnessForColor(cfg.menuColor) === Kirigami.ColorUtils.Dark)
     // xptheme.py args for a deco/scheme made at apply time (XP custom colour, Win10 accent title bar); "" = shipped one.
@@ -230,7 +232,9 @@ PlasmoidItem {
         brightReader.connectSource("S=" + Tiles.shQuote(cfg.savedColorScheme) + "; f=kdeglobals; "
             + "case \"$(kreadconfig6 --file kdeglobals --group General --key ColorScheme)\" in start12-*) "
             + "f=$(ls \"$HOME/.local/share/color-schemes/$S.colors\" \"/usr/share/color-schemes/$S.colors\" 2>/dev/null | head -1);; esac; "
-            + "kreadconfig6 --file \"${f:-kdeglobals}\" --group Colors:Window --key BackgroundNormal");
+            + "kreadconfig6 --file \"${f:-kdeglobals}\" --group Colors:Window --key BackgroundNormal; "
+            + "kreadconfig6 --file kdeglobals --group General --key AccentColor; "
+            + "kreadconfig6 --file \"${f:-kdeglobals}\" --group Colors:Selection --key BackgroundNormal");
     }
     P5Support.DataSource {
         id: brightReader
@@ -238,8 +242,13 @@ PlasmoidItem {
         connectedSources: []
         onNewData: (sourceName, data) => {
             disconnectSource(sourceName);
-            const v = (data.stdout || "").trim().split(",").map(Number);
+            const lines = (data.stdout || "").split("\n");
+            const v = (lines[0] || "").trim().split(",").map(Number);
             root.userDark = v.length === 3 && 0.299 * v[0] + 0.587 * v[1] + 0.114 * v[2] < 128;
+            // The user's own accent (Plasma accent colour, else their scheme's selection): Kirigami's highlight
+            // follows whatever scheme/style Start12 applied, so it can't be used for "Automatic".
+            const a = ((lines[1] || "").trim() || (lines[2] || "").trim()).split(",").map(Number);
+            root.userAccent = a.length >= 3 && a.every(n => n >= 0 && n <= 255) ? Qt.rgba(a[0] / 255, a[1] / 255, a[2] / 255, 1) : "";
             root.syncWindowDeco();
             root.syncWindowColors();
         }
