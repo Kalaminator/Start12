@@ -84,6 +84,8 @@ FocusScope {
         hoverEnabled: true
         onHoveredChanged: style.hoverIcon = hovered && info ? info.icon : ""
         onClicked: places.activate(pid, pb)
+        readonly property bool kbNav: true
+        KeyFrame {}
         leftPadding: m.px(8)
         background: HoverBox {
             hot: pb.hovered
@@ -235,6 +237,16 @@ FocusScope {
                             e.model.trigger(e.row, "", null);
                             root.close();
                         }
+                        function menu(x, y) {
+                            const id = style.appId(e.model, e.row);
+                            const own = !id ? [] : e.pinned
+                                ? [{ text: i18n("Unpin from Start menu"), icon: "window-unpin", run: () => root.unpin(id) }]
+                                : [{ text: i18n("Pin to Start menu"), icon: "window-pin", run: () => root.pin(id) }];
+                            contextMenu.show(app, e.model, e.row, own, x, y);
+                        }
+                        readonly property bool kbNav: !sep
+                        function kbMenu() { menu(width / 2, height / 2); }
+                        KeyFrame {}
                         background: Item {
                             Rectangle {
                                 visible: app.sep
@@ -273,13 +285,7 @@ FocusScope {
                         }
                         TapHandler {
                             acceptedButtons: Qt.RightButton
-                            onTapped: point => {
-                                const id = style.appId(app.e.model, app.e.row);
-                                const own = !id ? [] : app.e.pinned
-                                    ? [{ text: i18n("Unpin from Start menu"), icon: "window-unpin", run: () => root.unpin(id) }]
-                                    : [{ text: i18n("Pin to Start menu"), icon: "window-pin", run: () => root.pin(id) }];
-                                contextMenu.show(app, app.e.model, app.e.row, own, point.position.x, point.position.y);
-                            }
+                            onTapped: point => app.menu(point.position.x, point.position.y)
                         }
                     }
                 }
@@ -368,12 +374,17 @@ FocusScope {
         font.family: m.font
         font.pixelSize: m.fontSize
 
-        Keys.onDownPressed: search.step(1)
-        Keys.onUpPressed: search.step(-1)
-        Keys.onReturnPressed: search.activateCurrent()
-        Keys.onEnterPressed: search.activateCurrent()
-        Keys.onEscapePressed: {
-            if (root.searching) {
+        Keys.onPressed: event => {
+            event.accepted = true;
+            if (nav.handle(event)) {
+                // nothing typed: arrows/Tab/Enter move through the menu
+            } else if (event.key === Qt.Key_Down || event.key === Qt.Key_Up) {
+                search.step(event.key === Qt.Key_Down ? 1 : -1);
+            } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                search.activateCurrent();
+            } else if (event.key !== Qt.Key_Escape) {
+                event.accepted = false;
+            } else if (root.searching) {
                 root.searchText = "";
             } else if (style.allPrograms) {
                 style.allPrograms = false;
@@ -381,6 +392,12 @@ FocusScope {
                 root.close();
             }
         }
+    }
+
+    KeyNav {
+        id: nav
+        panes: [style.allPrograms ? appList : home, rightPane]
+        main: panes[0]
     }
 
     // ---- Right column: user picture, places, power ----

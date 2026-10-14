@@ -26,6 +26,7 @@ PlasmoidItem {
 
     property string searchText: ""
     readonly property bool searching: searchText.length > 0
+    property Item kbCurrent: null   // keyboard focus item (common/KeyNav), drawn by common/KeyFrame
 
     // ---- Pinned apps ----
     // Windows 10 style pins to tile groups; the grid styles (Windows 11, App, Pro) to a flat list.

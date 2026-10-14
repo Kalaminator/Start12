@@ -125,9 +125,17 @@ FocusScope {
         onActionDone: root.close()
     }
 
-    // Typing anywhere starts a search.
+    KeyNav {
+        id: nav
+        panes: [rail, appList, tiles]
+        main: appList
+    }
+
+    // Arrows/Tab/Enter move through the menu; typing anywhere starts a search.
     Keys.onPressed: event => {
-        if (event.key === Qt.Key_Escape) {
+        if (nav.handle(event)) {
+            event.accepted = true;
+        } else if (event.key === Qt.Key_Escape) {
             if (root.searching) {
                 root.searchText = "";
             } else {

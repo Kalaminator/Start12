@@ -185,3 +185,29 @@ function customFor(url, kind) {
     }
     return ["custom", name.replace(/\|/g, "/"), icon, url].join("|");
 }
+
+// Keyboard arrows: index of the rect nearest to rects[cur] in direction (dx, dy), -1 if none.
+// Rects are {x, y, width, height}; sideways distance counts double. cur < 0: the top-left rect.
+function nearest(rects, cur, dx, dy) {
+    var best = -1, bestScore = Infinity;
+    for (var i = 0; i < rects.length; i++) {
+        var r = rects[i];
+        var score;
+        if (cur < 0) {
+            score = r.y * 10000 + r.x;
+        } else {
+            if (i === cur) continue;
+            var a = rects[cur];
+            var ox = r.x + r.width / 2 - a.x - a.width / 2;
+            var oy = r.y + r.height / 2 - a.y - a.height / 2;
+            var along = ox * dx + oy * dy;
+            if (along < 1) continue;
+            score = along + 2 * (Math.abs(ox * dy) + Math.abs(oy * dx));
+        }
+        if (score < bestScore) {
+            bestScore = score;
+            best = i;
+        }
+    }
+    return best;
+}

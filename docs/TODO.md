@@ -23,7 +23,7 @@ Add "Pin website…", "Pin file…", "Pin folder…" to the menu-surface menu in
 file/folder = `QtQuick.Dialogs` FileDialog). Optional: favicon from `https://icons.duckduckgo.com/ip3/<host>.ico`.
 Check: pin a URL, a PDF and ~/Pictures; they appear as tiles/icons, click opens them, unpin works.
 
-### T02 Keyboard navigation inside the menu (M)
+### T02 Keyboard navigation inside the menu (M) -- DONE 2026-10-14 (not yet checked on screen; Win7 "All Programs" button, Win11 Recommended, canvas tabs not reachable by keys)
 Build: arrow keys move a focus highlight through `win10/AppList.qml`, `win10/TileArea.qml` (tiles),
 `common/PinnedGrid.qml`, `common/PinnedPane.qml`, `win10/LeftRail.qml`; Tab/Shift-Tab switch panes;
 Enter launches, Menu key opens the context menu, Esc as now. Hook in each `styles/*.qml` `Keys.onPressed`
@@ -154,7 +154,9 @@ Check: header font Serif 16, group names change, items do not.
 Build: `railAlignBottom` Bool (`RightIconMode` 3: rail icons at the bottom, `win10/LeftRail.qml`),
 `recentHideFolders` Bool (`Win11HideRecentFolders`, filter in `common/Recommended.qml`), `smallPlaces`
 Bool (`SmallRight`, row height in `common/Places.qml`), `powerButtonIcon` Bool (`IconOnShutdownButton`,
-`styles/windows7.qml` split button); checkboxes on the matching config pages.
+`styles/windows7.qml` split button), `webFavicons` Bool default false (Start11 "Web links pinned to the
+start menu should obtain the favicon image": today `code/tiles.js` always loads icons.duckduckgo.com; when
+off use the "internet-web-browser" icon); checkboxes on the matching config pages.
 Check: each toggle changes the look after reopening the menu.
 
 ### T22 Win7 All Programs extras (S)

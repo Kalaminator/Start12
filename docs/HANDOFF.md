@@ -19,6 +19,7 @@ sends screenshots; they said "keep adding everything, once we have all functions
 - `ui/win10/`: LeftRail, AppList (A-Z, folders, jump grid, drag to pin), TileArea/TileGroup/Tile,
   SearchView (grouped KRunner results, web search). Other styles reuse AppList and SearchView.
 - `ui/ContextMenu.qml`: right-click menus (own items with `run`, plus kicker actions).
+- Keyboard: `common/KeyNav` in each style (panes list, arrows via `Tiles.nearest`, Tab, Enter, Menu key); items opt in with `kbNav: true` + `KeyFrame {}`, AppList uses `kbStep`.
 - `ui/code/tiles.js`: pure logic (pack, place, moveGroup, placeInList, setProp...) + `tests/test_tiles.js`.
 - Pinned websites/files/folders = `custom|name|icon|target` ids (`Tiles.custom/customFor`, `root.openCustom`,
   `root.pinNewItems` in the TileArea/PinnedGrid empty-space menu; AppCanvas shows them as a "Shortcuts" group).

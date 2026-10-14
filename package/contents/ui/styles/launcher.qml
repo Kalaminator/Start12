@@ -90,6 +90,7 @@ FocusScope {
         height: m.px(34)
         metrics: m
         results: pane.search
+        nav: nav
         onCancel: pane.view !== "home" ? pane.view = "home" : root.close()
     }
 
@@ -116,6 +117,12 @@ FocusScope {
     ContextMenu {
         id: contextMenu
         onActionDone: root.close()
+    }
+
+    KeyNav {
+        id: nav
+        panes: [pane]
+        main: pane
     }
 
     Connections {

@@ -224,6 +224,8 @@ Item {
                                     group.src.trigger(index, "", null);
                                     root.close();
                                 }
+                                readonly property bool kbNav: true
+                                KeyFrame {}
                                 PC3.ToolTip.text: role("display") ?? ""
                                 PC3.ToolTip.visible: hovered
                                 PC3.ToolTip.delay: Kirigami.Units.toolTipDelay

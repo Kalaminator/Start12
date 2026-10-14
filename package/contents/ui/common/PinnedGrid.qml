@@ -85,6 +85,27 @@ Item {
                     readonly property var custom: Tiles.custom(modelData)
                     readonly property var appIcon: custom ? (custom.icon || "folder") : fav.count > 0 ? role("decoration") : "dialog-question"
 
+                    function launch() {
+                        if (custom) {
+                            root.openCustom(custom);
+                        } else {
+                            if (fav.count > 0) fav.trigger(0, "", null);
+                            root.close();
+                        }
+                    }
+                    function menu(x, y) {
+                        const id = modelData;
+                        grid.contextMenu.show(cell, fav.count > 0 ? fav : null, 0, [
+                            { text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) },
+                            { text: i18n("Move to front"), icon: "go-first", enabled: index > 0, run: () => root.movePinned(id, 0) }
+                        ], x, y);
+                    }
+                    readonly property bool kbNav: true
+                    function kbActivate() { launch(); }
+                    function kbMenu() { menu(width / 2, height / 2); }
+                    function kbShow() { grid.page = Math.floor(index / grid.perPage); }
+                    KeyFrame {}
+
                     background: Rectangle {
                         radius: grid.metrics.px(4)
                         color: grid.metrics.text
@@ -154,18 +175,9 @@ Item {
                                 grid.ghost.Drag.active = false;
                                 dragging = false;
                             } else if (m.button === Qt.LeftButton && containsMouse) {
-                                if (cell.custom) {
-                                    root.openCustom(cell.custom);
-                                } else {
-                                    if (fav.count > 0) fav.trigger(0, "", null);
-                                    root.close();
-                                }
+                                cell.launch();
                             } else if (m.button === Qt.RightButton) {
-                                const id = cell.modelData;
-                                grid.contextMenu.show(cell, fav.count > 0 ? fav : null, 0, [
-                                    { text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) },
-                                    { text: i18n("Move to front"), icon: "go-first", enabled: cell.index > 0, run: () => root.movePinned(id, 0) }
-                                ], m.x, m.y);
+                                cell.menu(m.x, m.y);
                             }
                         }
                         onCanceled: {

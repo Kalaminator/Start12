@@ -4,7 +4,7 @@ const path = require("path");
 const assert = require("assert");
 const src = fs.readFileSync(path.join(__dirname, "../package/contents/ui/code/tiles.js"), "utf8")
     .replace(/^\.pragma library/m, "");
-const T = new Function(src + "; return { parse, pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor };")();
+const T = new Function(src + "; return { parse, pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest };")();
 
 // 6 columns = 12 units wide: six medium tiles fit in one row.
 let p = T.pack(Array(6).fill({ size: "medium" }), 6);
@@ -59,5 +59,13 @@ assert.strictEqual(T.customFor("file:///home/u/Pictures/", "folder"), "custom|Pi
 assert.strictEqual(T.customFor("file:///home/u/notes", "file").split("|")[2], "text-x-generic");
 assert.deepStrictEqual(T.custom("custom|a|b|cmd:x|y"), { id: "custom|a|b|cmd:x|y", name: "a", icon: "b", target: "cmd:x|y" });
 assert.strictEqual(T.custom("firefox.desktop"), null);
+
+// Keyboard arrows in a 3x2 grid of 10x10 cells.
+const R = [0, 1, 2, 3, 4, 5].map(i => ({ x: (i % 3) * 10, y: Math.floor(i / 3) * 10, width: 10, height: 10 }));
+assert.strictEqual(T.nearest(R, -1, 0, 1), 0);
+assert.strictEqual(T.nearest(R, 0, 1, 0), 1);
+assert.strictEqual(T.nearest(R, 1, 0, 1), 4);
+assert.strictEqual(T.nearest(R, 2, 1, 0), -1);   // right edge
+assert.strictEqual(T.nearest(R, 4, 0, -1), 1);
 
 console.log("tiles.js: all checks passed");

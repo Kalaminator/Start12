@@ -19,6 +19,7 @@ Item {
     property string view: "home"    // home | all
     property int maxCols: 6
     readonly property alias search: search
+    readonly property Item kbPane: view === "all" ? appList : grid   // for KeyNav
 
     function reset() {
         view = cfg.openAllApps ? "all" : "home";
@@ -42,6 +43,7 @@ Item {
             SmallButton { metrics: pane.m; text: i18n("All apps"); iconName: "go-next"; onClicked: pane.view = "all" }
         }
         PinnedGrid {
+            id: grid
             anchors.top: homeHeader.bottom
             anchors.topMargin: pane.m.px(8)
             anchors.horizontalCenter: parent.horizontalCenter

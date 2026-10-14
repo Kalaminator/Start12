@@ -7,6 +7,7 @@ import org.kde.plasma.private.kicker as Kicker
 import org.kde.kirigami as Kirigami
 import org.kde.kitemmodels as KItemModels
 import "../code/tiles.js" as Tiles
+import "../common"
 
 // One tile. Its own one-row kicker model gives the name, icon, actions and launch.
 PC3.AbstractButton {
@@ -174,4 +175,9 @@ PC3.AbstractButton {
     }
 
     Keys.onReturnPressed: launch()
+
+    readonly property bool kbNav: true
+    function kbActivate() { launch(); }
+    function kbMenu() { contextMenu.show(tile, valid ? fav : null, 0, menuItems(), width / 2, height / 2); }
+    KeyFrame {}
 }

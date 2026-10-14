@@ -99,6 +99,8 @@ Item {
                 height: rail.metrics.px(46)
                 hoverEnabled: true
                 onClicked: places.activate(modelData, btn)
+                readonly property bool kbNav: true
+                KeyFrame {}
 
                 PC3.ToolTip.text: item.text
                 PC3.ToolTip.visible: hovered && !rail.expanded

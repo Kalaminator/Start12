@@ -6,6 +6,7 @@ import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PC3
 import org.kde.kirigami as Kirigami
 import org.kde.kitemmodels as KItemModels
+import "../common"
 
 // Windows 10 all-apps list: optional "Recently added" / "Most used", then
 // # A..Z with letter headers. Click a letter for the jump grid. Folders open in place.
@@ -108,6 +109,16 @@ Item {
         if (i >= 0) view.positionViewAtIndex(i, ListView.Beginning);
     }
 
+    // KeyNav: up/down through apps and folders, skipping titles and letters.
+    function kbStep(cur, dx, dy) {
+        if (dy === 0 || jumpMode) return null;
+        let i = cur && cur === view.currentItem ? view.currentIndex : -1;
+        do { i += dy; } while (i >= 0 && i < entries.length && entries[i].kind !== "app" && entries[i].kind !== "folder");
+        if (i < 0 || i >= entries.length) return null;
+        view.currentIndex = i;
+        return view.currentItem;
+    }
+
     function pinItems(e) {
         const id = roleData(e.model, e.row, "favoriteId");
         if (!id) return [];
@@ -149,6 +160,11 @@ Item {
             required property int index
             readonly property var e: modelData
             readonly property bool isApp: e.kind === "app"
+            readonly property bool kbNav: true
+            function kbShow() { view.positionViewAtIndex(index, ListView.Contain); }
+            function kbMenu() {
+                if (isApp) list.contextMenu.show(row, e.model, e.row, list.pinItems(e), width / 2, height / 2);
+            }
 
             width: view.width - Math.round(12 * list.metrics.s)
             height: list.metrics.row
@@ -159,6 +175,8 @@ Item {
                 color: list.metrics.text
                 opacity: row.pressed || mouse.pressed ? 0.15 : (row.hovered ? 0.08 : 0)
             }
+
+            KeyFrame {}
 
             contentItem: Item {
                 Kirigami.Icon {

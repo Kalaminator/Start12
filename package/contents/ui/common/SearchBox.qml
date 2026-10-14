@@ -7,6 +7,7 @@ PC3.TextField {
     id: box
     required property QtObject metrics
     required property Item results
+    property Item nav: null     // common/KeyNav of the style
     signal cancel()     // Esc with nothing typed ("escape" is not a legal signal name)
 
     text: root.searchText
@@ -27,9 +28,18 @@ PC3.TextField {
         isMask: true
     }
 
-    Keys.onDownPressed: results.step(1)
-    Keys.onUpPressed: results.step(-1)
-    Keys.onReturnPressed: results.activateCurrent()
-    Keys.onEnterPressed: results.activateCurrent()
-    Keys.onEscapePressed: root.searching ? root.searchText = "" : cancel()
+    Keys.onPressed: event => {
+        event.accepted = true;
+        if (nav && nav.handle(event)) {
+            // nothing typed: arrows/Tab/Enter move through the menu
+        } else if (event.key === Qt.Key_Down || event.key === Qt.Key_Up) {
+            results.step(event.key === Qt.Key_Down ? 1 : -1);
+        } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+            results.activateCurrent();
+        } else if (event.key === Qt.Key_Escape) {
+            root.searching ? root.searchText = "" : cancel();
+        } else {
+            event.accepted = false;
+        }
+    }
 }

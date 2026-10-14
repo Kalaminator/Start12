@@ -47,6 +47,7 @@ FocusScope {
         height: m.px(32)
         metrics: m
         results: pane.search
+        nav: nav
         onCancel: pane.view !== "home" ? pane.view = "home" : root.close()
     }
 
@@ -126,6 +127,8 @@ FocusScope {
                     hoverEnabled: true
                     leftPadding: m.px(10)
                     onClicked: places.activate(modelData, place)
+                    readonly property bool kbNav: true
+                    KeyFrame {}
                     background: Rectangle {
                         radius: m.px(4)
                         color: m.text
@@ -175,6 +178,12 @@ FocusScope {
     ContextMenu {
         id: contextMenu
         onActionDone: root.close()
+    }
+
+    KeyNav {
+        id: nav
+        panes: [pane, rightPanel]
+        main: pane
     }
 
     Connections {
