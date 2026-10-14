@@ -73,6 +73,10 @@
       <label>Highlight: mark newly installed apps</label>
       <default>true</default>
     </entry>
+    <entry name="hiddenApps" type="StringList">
+      <label>ShowHidden: apps hidden from the lists (desktop ids)</label>
+      <default></default>
+    </entry>
     <entry name="hideAppList" type="Bool">
       <label>HideAppsList: tiles only</label>
       <default>false</default>

@@ -22,6 +22,7 @@ KCM.SimpleKCM {
     property alias cfg_foldersAtBottom: foldersBottom.checked
     property alias cfg_highlightNew: highlightNew.checked
     property alias cfg_hideAppList: hideList.checked
+    property var cfg_hiddenApps: []
 
     Kirigami.FormLayout {
         Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Tiles") }
@@ -75,5 +76,25 @@ KCM.SimpleKCM {
         QQC2.CheckBox { id: highlightNew; enabled: !hideList.checked; text: i18n("Highlight new applications") }
         QQC2.CheckBox { id: folders; enabled: !hideList.checked; text: i18n("Show app categories as folders") }
         QQC2.CheckBox { id: foldersBottom; enabled: !hideList.checked && folders.checked; text: i18n("Place folders at the bottom of the list") }
+
+        Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Hidden apps") }
+
+        QQC2.Label { visible: page.cfg_hiddenApps.length === 0; text: i18n("None. Right-click an app in the list and choose \"Hide from apps\".") }
+        Repeater {
+            model: page.cfg_hiddenApps
+            delegate: RowLayout {
+                required property string modelData
+                QQC2.Label { text: parent.modelData.replace(/\.desktop$/, "") }
+                QQC2.Button {
+                    text: i18n("Show")
+                    onClicked: page.cfg_hiddenApps = page.cfg_hiddenApps.filter(x => x !== parent.modelData)
+                }
+            }
+        }
+        QQC2.Button {
+            visible: page.cfg_hiddenApps.length > 0
+            text: i18n("Clear hidden list")
+            onClicked: page.cfg_hiddenApps = []
+        }
     }
 }

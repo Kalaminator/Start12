@@ -63,7 +63,7 @@ page dots at the bottom, wheel/dots change page, surface menu "New page", "Delet
 "Move to next/previous page". Key: `tilePage` Int (last page).
 Check: New page, move a group to it, dots switch pages, restart plasmashell, layout kept.
 
-### T08 Hide apps from the list (S)
+### T08 Hide apps from the list (S) DONE
 Build: key `hiddenApps` StringList (`ShowHidden`); `win10/AppList.qml` filters them out; item
 right-click "Hide from apps"; `config/ConfigMenu.qml` "Hidden apps" list with "Show"/"Clear hidden list".
 (Check first whether `Kicker.RootModel` exposes `hiddenEntries`; if so bind it instead of filtering.)

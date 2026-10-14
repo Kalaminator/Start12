@@ -55,12 +55,13 @@ Search filters (T03): `win10/SearchView` filter icon row (all styles), `passes()
 Tile folders (T05): drop a tile on the right 3/4 of a tile -> `{kind:"folder", id:"folder|N", name, size, tiles}` (`Tiles.dropOnTile`, `findTile` searches folders, `tidy` dissolves 1-tile folders); Tile.qml mini-icon grid, TileGroup opens a row under the group (name field, tiles drag out). Left quarter = insert before.
 Pin folders (T06): `pinnedGrid` entry `folder|name|id1,id2` (`Tiles.folderOf/folderEntry/allPins/removePin/placeInFolder`); PinnedGrid drop on right 3/4 of an icon = folder, 2x2 mini icons, click opens a `PC3.Popup` (name field, drag apps out); "Unpin folder" puts its apps back. Win7/App flatten folders; XP does not yet.
 Tile pages (T07): `tileGroups` = `{pages:[{groups}]}` (`Tiles.parsePages` migrates the flat list; `setPage` keeps app ids unique across pages); `root.groups` = page `cfg.tilePage`, `saveGroups` writes that page, `savePages` all; TileArea dots + wheel (only when nothing scrolls), surface "New page"/"Delete this page" (groups merge into the neighbour), group menu "Move to next/previous page".
+Hidden apps (T08): key `hiddenApps` (desktop ids); `root.isHidden/hideApp`; filtered in AppList, AppCanvas (`group.rows`), XP/Win7 most-used, SearchView `passes`; right-click "Hide from apps"; ConfigMenu list with Show/Clear. Kicker has no hiddenEntries property.
 Missing: canvas: user-made tabs/groups/pages, folders,
 icon tint, drag between groups. Plasma keeps one popup size for all styles (user drags it).
 
 ## Next (in order)
 Work through docs/TODO.md job by job (T01, T02, T03, T04 done). Use the prompt in docs/AGENT_PROMPT.md, one agent per job,
-then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03-T07 built (need a user check), next: T08.
+then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03-T08 built (need a user check), next: T09.
 Then the taskbar part of Start11 (section 10 of the features doc), if the user wants it.
 
 ## Testing tips

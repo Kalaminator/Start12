@@ -44,6 +44,14 @@ PlasmoidItem {
     function isPinned(id) {
         return usesTiles ? pages.some(p => Tiles.findTile(p.groups, id) !== null) : Tiles.allPins(cfg.pinnedGrid).includes(id);
     }
+    // Hidden apps (key hiddenApps, desktop ids): left out of every app list and search.
+    // ponytail: Kicker.RootModel has no hiddenEntries property in 6.7, so the lists filter.
+    function isHidden(id) {
+        return !!id && cfg.hiddenApps.includes(String(id).replace(/^applications:/, ""));
+    }
+    function hideApp(id) {
+        if (id && !isHidden(id)) cfg.hiddenApps = cfg.hiddenApps.concat([String(id).replace(/^applications:/, "")]);
+    }
     function pin(id) {
         if (!id || isPinned(id)) return;
         if (!usesTiles) {

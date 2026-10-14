@@ -144,7 +144,16 @@ Item {
                     readonly property var src: modelData?.src ?? null
                     readonly property color tint: canvas.groupColor(index)
                     readonly property var customs: modelData?.custom ?? null
-                    readonly property int count: customs ? customs.length : src ? src.count : 0
+                    // Source rows that are not hidden (pins stay), cell i shows src row rows[i].
+                    readonly property var rows: {
+                        const out = [];
+                        const n = src ? src.count : 0;
+                        canvas.cfg.hiddenApps;
+                        for (let r = 0; r < n; r++)
+                            if (src === canvas.pinnedModel || !root.isHidden(canvas.appId(src, r))) out.push(r);
+                        return out;
+                    }
+                    readonly property int count: customs ? customs.length : rows.length
                     readonly property int cols: Math.max(1, Math.floor((width - m.px(8)) / canvas.cellW))
                     width: flow.groupWidth
                     height: header.height + Math.max(1, Math.ceil(count / cols)) * canvas.cellH + m.px(8)
@@ -205,13 +214,14 @@ Item {
                             delegate: PC3.AbstractButton {
                                 id: cell
                                 required property int index
+                                readonly property int row: group.rows[index] ?? -1
                                 function role(name) {
                                     if (group.customs) {
                                         const c = group.customs[index];
                                         return name === "display" ? c.name : name === "decoration" ? (c.icon || "folder") : undefined;
                                     }
                                     // src is null for a moment while the groups are rebuilt
-                                    return group.src ? canvas.roleData(group.src, index, name) : undefined;
+                                    return group.src ? canvas.roleData(group.src, row, name) : undefined;
                                 }
                                 width: canvas.cellW
                                 height: canvas.cellH
@@ -221,7 +231,7 @@ Item {
                                         root.openCustom(group.customs[index]);
                                         return;
                                     }
-                                    group.src.trigger(index, "", null);
+                                    group.src.trigger(row, "", null);
                                     root.close();
                                 }
                                 readonly property bool kbNav: true
@@ -263,11 +273,12 @@ Item {
                                                 run: () => root.unpin(c.id) }], point.position.x, point.position.y);
                                             return;
                                         }
-                                        const id = canvas.appId(group.src, cell.index);
+                                        const id = canvas.appId(group.src, cell.row);
                                         const own = !id || id.startsWith("file:") ? [] : root.isPinned(id)
                                             ? [{ text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) }]
                                             : [{ text: i18n("Pin to Start"), icon: "window-pin", run: () => root.pin(id) }];
-                                        canvas.contextMenu.show(cell, group.src, cell.index, own, point.position.x, point.position.y);
+                                        if (id && !id.startsWith("file:")) own.push({ text: i18n("Hide from apps"), icon: "hint", run: () => root.hideApp(id) });
+                                        canvas.contextMenu.show(cell, group.src, cell.row, own, point.position.x, point.position.y);
                                     }
                                 }
                             }

@@ -44,6 +44,7 @@ Item {
     // no runner id, so the kind comes from the url: apps are .desktop files, settings kcm_*.desktop.
     function passes(model, r) {
         const f = filter;
+        if (root.isHidden(roleData(model, r, "favoriteId"))) return false;
         if (f === "") return true;
         if (f === "web") return false;
         const fav = String(roleData(model, r, "favoriteId") ?? "");

@@ -35,7 +35,7 @@ Item {
         const out = [];
         if (!model) return out;
         for (let r = 0; r < model.count; r++) {
-            if (roleData(model, r, "isSeparator")) continue;
+            if (roleData(model, r, "isSeparator") || root.isHidden(roleData(model, r, "favoriteId"))) continue;
             out.push({ kind: "app", name: roleData(model, r, "display"), model: model, row: r, depth: depth });
         }
         return out;
@@ -122,9 +122,10 @@ Item {
     function pinItems(e) {
         const id = roleData(e.model, e.row, "favoriteId");
         if (!id) return [];
-        return root.isPinned(id)
-            ? [{ text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) }]
-            : [{ text: i18n("Pin to Start"), icon: "window-pin", run: () => root.pin(id) }];
+        return [root.isPinned(id)
+            ? { text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) }
+            : { text: i18n("Pin to Start"), icon: "window-pin", run: () => root.pin(id) },
+            { text: i18n("Hide from apps"), icon: "hint", run: () => root.hideApp(id) }];
     }
 
     Connections {
@@ -137,6 +138,7 @@ Item {
         function onFoldersAtBottomChanged() { list.rebuild(); }
         function onShowRecentlyAddedChanged() { list.rebuild(); }
         function onShowMostUsedChanged() { list.rebuild(); }
+        function onHiddenAppsChanged() { list.rebuild(); }
     }
     Component.onCompleted: rebuild()
 

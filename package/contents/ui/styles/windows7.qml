@@ -167,7 +167,7 @@ FocusScope {
         const freq = [];
         for (let r = 0; r < fm.count && freq.length < free * perRow; r++) {
             const id = appId(fm, r);
-            if (id && !cfg.pinnedGrid.includes(id)) freq.push({ kind: "app", model: fm, row: r, pinned: false });
+            if (id && !cfg.pinnedGrid.includes(id) && !root.isHidden(id)) freq.push({ kind: "app", model: fm, row: r, pinned: false });
         }
         if (out.length && freq.length) out.push({ kind: "sep" });
         return out.concat(freq);
