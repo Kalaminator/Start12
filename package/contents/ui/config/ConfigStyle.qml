@@ -16,6 +16,7 @@ KCM.SimpleKCM {
     property alias cfg_win7Substyle: subBox.currentIndex
     property alias cfg_modernSubstyle: modernSubBox.currentIndex
     property string cfg_xpSubstyle
+    property alias cfg_xpTaskbarTheme: xpTaskbarBox.checked
 
     readonly property var built: ["windows7", "modern", "windows10", "windows11", "app", "pro", "launcher", "xp"]
     readonly property var styles: [
@@ -104,6 +105,11 @@ KCM.SimpleKCM {
                 model: [i18n("Classic Windows XP style"), i18n("Modern Windows XP style")]
                 currentIndex: page.cfg_xpSubstyle === "modern" ? 1 : 0
                 onActivated: index => page.cfg_xpSubstyle = index === 1 ? "modern" : "classic"
+            }
+            QQC2.CheckBox {
+                id: xpTaskbarBox
+                visible: page.cfg_menuStyle === "xp"
+                text: i18n("Apply matching XP taskbar theme")
             }
             QQC2.ComboBox {
                 id: sizeBox

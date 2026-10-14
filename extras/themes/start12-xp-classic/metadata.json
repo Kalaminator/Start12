@@ -1,0 +1,11 @@
+{
+    "KPlugin": {
+        "Authors": [{ "Name": "Start12" }],
+        "Description": "Windows XP (classic) taskbar for the Start12 XP menu",
+        "Id": "start12-xp-classic",
+        "License": "LGPL",
+        "Name": "Start12 XP Classic",
+        "Version": "1.0"
+    },
+    "X-Plasma-API": "5.0"
+}

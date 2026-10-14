@@ -48,6 +48,7 @@ https://www.stardock.com/blog/523496/introducing-start11-v2 (user-approved sourc
   + green All Programs, light blue places, Log Off / Turn Off bar. Modern = same palette, rounded cards. Not yet seen on screen.
 - Shared: common/Avatar, SmallButton (Win11 uses it too), SearchBox (signal `cancel`), DragGhost, PinnedGrid
   `fixedCols`/`fixedRows`. Keys `canvasTab`, `canvasTextures`.
+XP taskbar: Plasma Styles `extras/themes/start12-xp-{classic,modern}` (gen.py, installed by install.sh); main.qml `syncDesktopTheme` applies them with XP style + key `xpTaskbarTheme`, restores `savedDesktopTheme` after. Not yet seen on screen.
 Win7/Modern (T04): pins in cfg.pinnedGrid order incl. custom pins, drag to reorder, jump-list arrow, empty-space "Pin website/file/folder".
 Missing: canvas: user-made tabs/groups/pages, folders,
 icon tint, drag between groups. Plasma keeps one popup size for all styles (user drags it).

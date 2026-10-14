@@ -132,6 +132,34 @@ PlasmoidItem {
     function run(cmd) {
         executable.connectSource(cmd);
     }
+    // XP taskbar: with the XP style, the Plasma Style follows the substyle (extras/themes, put there by
+    // install.sh); leaving XP restores the theme saved in savedDesktopTheme. Reads the current theme
+    // first so nothing is applied when it is already right.
+    // ponytail: two Start12 widgets with different styles would fight over the theme; one menu is the norm.
+    readonly property string xpTheme: cfg.menuStyle === "xp" && cfg.xpTaskbarTheme ? "start12-xp-" + cfg.xpSubstyle : ""
+    onXpThemeChanged: syncDesktopTheme()
+    function syncDesktopTheme() {
+        themeReader.connectSource("kreadconfig6 --file plasmarc --group Theme --key name");
+    }
+    P5Support.DataSource {
+        id: themeReader
+        engine: "executable"
+        connectedSources: []
+        onNewData: (sourceName, data) => {
+            disconnectSource(sourceName);
+            const cur = (data.stdout || "").trim() || "default";
+            const ours = cur.startsWith("start12-xp-");
+            if (root.xpTheme !== "") {
+                if (cur === root.xpTheme)
+                    return;
+                if (!ours)
+                    root.cfg.savedDesktopTheme = cur;
+                root.run("plasma-apply-desktoptheme " + root.xpTheme);
+            } else if (ours) {
+                root.run("plasma-apply-desktoptheme " + (root.cfg.savedDesktopTheme || "default"));
+            }
+        }
+    }
     function openUrl(url) {
         Qt.openUrlExternally(url);
         root.expanded = false;
@@ -394,5 +422,6 @@ PlasmoidItem {
         Plasmoid.activationTogglesExpanded = true;
         rootModel.refresh();
         systemModel = systemModelComponent.createObject(root, { favoritesModel: rootModel.systemFavoritesModel });
+        syncDesktopTheme();
     }
 }

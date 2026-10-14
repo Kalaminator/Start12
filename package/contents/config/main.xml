@@ -158,6 +158,14 @@
       <label>Windows XP style: classic (Luna, as it was) | modern (same colours, rounded)</label>
       <default>classic</default>
     </entry>
+    <entry name="xpTaskbarTheme" type="Bool">
+      <label>With the XP style, switch the Plasma Style (panel) to start12-xp-classic / start12-xp-modern</label>
+      <default>true</default>
+    </entry>
+    <entry name="savedDesktopTheme" type="String">
+      <label>Plasma Style that was active before the XP taskbar theme; restored when leaving XP</label>
+      <default></default>
+    </entry>
   </group>
 
   <group name="Canvas">
