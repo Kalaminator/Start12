@@ -265,6 +265,31 @@ PlasmoidItem {
             openUrl(c.target);
         }
     }
+    // T32: custom pins on the taskbar. Writes start12-pin-<md5>.desktop (Tiles.pinDesktop) and adds/removes its
+    // url in the launchers of the Task Manager(s) in this widget's panel (evaluateScript, like "autohide").
+    // ponytail: pinned state is our own list (cfg.taskbarPins); a launcher removed by hand on the panel or a
+    // renamed pin (new id) leaves a stale entry, harmless. Read the launchers back if that ever matters.
+    function taskbarItem(id) {
+        if (!Tiles.custom(id)) return [];
+        const on = cfg.taskbarPins.indexOf(id) >= 0;
+        return [{ text: on ? i18n("Unpin from taskbar") : i18n("Pin to taskbar"), icon: on ? "window-unpin" : "window-pin",
+                  run: () => setTaskbarPin(id, !on) }];
+    }
+    function setTaskbarPin(id, on) {
+        const dir = decodeURIComponent(StandardPaths.writableLocation(StandardPaths.GenericDataLocation).toString().replace(/^file:\/\//, "")) + "/applications";
+        const name = "start12-pin-" + Qt.md5(id).slice(0, 8) + ".desktop";
+        const path = dir + "/" + name;
+        const script = "for (const p of panels()) { if (p.widgetIds.indexOf(" + Plasmoid.id + ") < 0) continue; "
+            + "for (const w of p.widgets()) { if (!/icontasks|taskmanager/.test(w.type)) continue; w.currentConfigGroup = ['General']; "
+            + "const l = String(w.readConfig('launchers', '')).split(',').filter(s => s && s.indexOf(" + JSON.stringify(name) + ") < 0); "
+            + (on ? "l.push(" + JSON.stringify("file://" + path) + "); " : "")
+            + "w.writeConfig('launchers', l); w.reloadConfig(); } }";
+        const dbus = "qdbus6 org.kde.plasmashell /PlasmaShell evaluateScript " + Tiles.shQuote(script);
+        run("sh -c " + Tiles.shQuote(on
+            ? "mkdir -p " + Tiles.shQuote(dir) + " && printf %s " + Tiles.shQuote(Tiles.pinDesktop(Tiles.custom(id))) + " > " + Tiles.shQuote(path) + " && " + dbus
+            : dbus + "; rm -f " + Tiles.shQuote(path)));
+        cfg.taskbarPins = on ? cfg.taskbarPins.concat([id]) : cfg.taskbarPins.filter(p => p !== id);
+    }
 
     // Find a power/session action by its id ("shutdown", "reboot", ...).
     // Returns the row, or -1 when this session can't do it (e.g. no hibernate).

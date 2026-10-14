@@ -77,7 +77,7 @@ syncDesktopTheme` generates (same path as the XP `-custom-<hex>` case) and appli
 `savedDesktopTheme` when switched off; XP keeps precedence. Check: set colour red, alpha 50 %, radius 12: panel
 shows it, other widgets unchanged; switch off restores Breeze.
 
-### T32 Pin files, folders and websites to the taskbar (M)
+### T32 Pin files, folders and websites to the taskbar (M) -- DONE (custom pins only; apps use kicker "Pin to Task Manager")
 Build: "Pin to taskbar" in `ContextMenu.qml` for `custom|...` pins (T01) and for All-apps rows that kicker's
 "Add to panel" does not cover: write `~/.local/share/applications/start12-pin-<n>.desktop` (`Exec=xdg-open
 <target>`, icon/name from `Tiles.customFor`), then plasmashell `evaluateScript` appends its url to the `launchers`

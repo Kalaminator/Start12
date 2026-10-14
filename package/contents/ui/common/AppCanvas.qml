@@ -456,7 +456,7 @@ Item {
                                         const c = group.customs[index];
                                         canvas.contextMenu.show(cell, null, -1, [{ text: i18n("Unpin from Start"), icon: "window-unpin",
                                             run: () => root.unpin(c.id) }, { text: i18n("Rename"), icon: "edit-rename",
-                                            run: () => root.renamePin(c.id, c.name) }].filter(() => c.id), x, y);
+                                            run: () => root.renamePin(c.id, c.name) }].concat(root.taskbarItem(c.id)).filter(() => c.id), x, y);
                                         return;
                                     }
                                     const id = canvas.appId(group.src, row);

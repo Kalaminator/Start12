@@ -138,7 +138,7 @@ Item {
                 { text: i18n("Rename"), icon: "edit-rename", run: () => root.renamePin(id, custom ? custom.name : role("display")) },
                 { text: i18n("Hide from apps"), icon: "hint", visible: !custom, run: () => root.hideApp(id) },
                 { text: i18n("Move to front"), icon: "go-first", enabled: index > 0 || inFolder, run: () => root.movePinned(id, 0) }
-            ].filter(m => m.visible !== false), x, y);
+            ].concat(root.taskbarItem(id)).filter(m => m.visible !== false), x, y);
         }
         readonly property bool kbNav: !inFolder
         function kbActivate() { launch(); }

@@ -257,6 +257,10 @@
       <label>Light line on the taskbar edge (off = Start11 HideTaskbarLineEntirely)</label>
       <default>false</default>
     </entry>
+    <entry name="taskbarPins" type="StringList">
+      <label>Custom pins (custom|...) also pinned to the taskbar (Start11 taskbar pins of files, folders, websites)</label>
+      <default></default>
+    </entry>
     <entry name="taskbarSearch" type="Bool">
       <label>Search box next to the start button (Start11 "Show search on taskbar")</label>
       <default>false</default>

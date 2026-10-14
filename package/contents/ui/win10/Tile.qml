@@ -174,7 +174,7 @@ PC3.AbstractButton {
                 run: () => root.saveGroups(Tiles.resize(root.groups, id, s[0]))
             })) });
         }
-        return items;
+        return items.concat(root.taskbarItem(id));
     }
 
     // Drop another tile/app here: on the left quarter it goes before this tile, elsewhere both

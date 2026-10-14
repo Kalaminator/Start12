@@ -345,7 +345,7 @@ FocusScope {
                                         { text: i18n("Rename"), icon: "edit-rename", run: () => root.renamePin(id, app.custom ? app.custom.name : app.role("display")) },
                                         { text: i18n("Move up"), icon: "go-up", enabled: e.index > 0, run: () => root.movePinned(id, e.index - 1) },
                                         { text: i18n("Move down"), icon: "go-down", enabled: e.index < n - 1, run: () => root.movePinned(id, e.index + 1) }
-                                    ];
+                                    ].concat(root.taskbarItem(id));
                                 } else {
                                     const id = style.appId(src, row);
                                     own = id ? [{ text: i18n("Pin to Start menu"), icon: "window-pin", run: () => root.pin(id) },

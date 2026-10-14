@@ -451,6 +451,16 @@ function customFor(url, kind, favicons) {
     return ["custom", name.replace(/\|/g, "/"), icon, url].join("|");
 }
 
+// .desktop text for a custom pin on the taskbar (T32): Task Manager launchers only take .desktop files.
+// Exec args are double-quoted; per the spec the quote escape's backslash is itself escaped (\\"), % is %%.
+function pinDesktop(c) {
+    var arg = function (s) { return '"' + String(s).replace(/[\\"`$]/g, "\\\\$&").replace(/%/g, "%%").replace(/\n/g, " ") + '"'; };
+    var exec = c.target.indexOf("cmd:") === 0 ? "sh -c " + arg(c.target.slice(4)) : "xdg-open " + arg(c.target);
+    var icon = /^https?:/.test(c.icon) ? "internet-web-browser" : c.icon;
+    return "[Desktop Entry]\nType=Application\nName=" + c.name.replace(/\n/g, " ") + "\nIcon=" + icon
+        + "\nExec=" + exec + "\nNoDisplay=true\n";
+}
+
 // Keyboard arrows: index of the rect nearest to rects[cur] in direction (dx, dy), -1 if none.
 // Rects are {x, y, width, height}; sideways distance counts double. cur < 0: the top-left rect.
 function nearest(rects, cur, dx, dy) {

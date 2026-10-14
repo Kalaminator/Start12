@@ -284,7 +284,7 @@ FocusScope {
                                 : [{ text: i18n("Pin to Start menu"), icon: "window-pin", run: () => root.pin(id) }];
                             if (id && e.pinned) own.splice(1, 0, { text: i18n("Rename"), icon: "edit-rename", run: () => root.renamePin(id, app.custom ? app.custom.name : app.role("display")) });
                             else if (id) own.push({ text: i18n("Hide from apps"), icon: "hint", run: () => root.hideApp(id) });   // most used row
-                            contextMenu.show(target ?? app, custom ? null : e.model, custom ? -1 : e.row, own, x, y);
+                            contextMenu.show(target ?? app, custom ? null : e.model, custom ? -1 : e.row, own.concat(root.taskbarItem(id)), x, y);
                         }
                         readonly property bool kbNav: !sep
                         function kbActivate() { launch(); }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Start12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-14 17:19+0200\n"
+"POT-Creation-Date: 2026-10-14 17:22+0200\n"
 "PO-Revision-Date: 2026-10-14 12:00+0000\n"
 "Last-Translator: Start12\n"
 "Language-Team: Spanish\n"
@@ -123,7 +123,7 @@ msgstr "Archivos recientes"
 #: package/contents/ui/common/AppCanvas.qml:458
 #: package/contents/ui/common/AppCanvas.qml:466
 #: package/contents/ui/common/PinnedGrid.qml:138
-#: package/contents/ui/main.qml:493 package/contents/ui/styles/windows7.qml:285
+#: package/contents/ui/main.qml:518 package/contents/ui/styles/windows7.qml:285
 #: package/contents/ui/styles/xp.qml:345
 msgid "Rename"
 msgstr "Cambiar nombre"
@@ -348,7 +348,7 @@ msgstr "Actualizaciones"
 #: package/contents/ui/common/Places.qml:41
 #: package/contents/ui/config/ConfigButton.qml:25
 #: package/contents/ui/config/ConfigRail.qml:39
-#: package/contents/ui/main.qml:661
+#: package/contents/ui/main.qml:686
 msgid "File Explorer"
 msgstr "Explorador de archivos"
 
@@ -361,28 +361,28 @@ msgstr "Personalización"
 #: package/contents/ui/config/ConfigButton.qml:25
 #: package/contents/ui/config/ConfigRail.qml:41
 #: package/contents/ui/config/ConfigSearch.qml:24
-#: package/contents/ui/main.qml:655 package/contents/ui/win10/SearchView.qml:31
+#: package/contents/ui/main.qml:680 package/contents/ui/win10/SearchView.qml:31
 msgid "Settings"
 msgstr "Configuración"
 
 #: package/contents/ui/common/Places.qml:44
 #: package/contents/ui/config/ConfigButton.qml:26
 #: package/contents/ui/config/ConfigRail.qml:42
-#: package/contents/ui/main.qml:673
+#: package/contents/ui/main.qml:698
 msgid "Terminal"
 msgstr "Terminal"
 
 #: package/contents/ui/common/Places.qml:45
 #: package/contents/ui/config/ConfigButton.qml:25
 #: package/contents/ui/config/ConfigRail.qml:43
-#: package/contents/ui/main.qml:667
+#: package/contents/ui/main.qml:692
 msgid "System Monitor"
 msgstr "Monitor del sistema"
 
 #: package/contents/ui/common/Places.qml:46
 #: package/contents/ui/config/ConfigButton.qml:26
 #: package/contents/ui/config/ConfigRail.qml:44
-#: package/contents/ui/main.qml:679
+#: package/contents/ui/main.qml:704
 msgid "Run…"
 msgstr "Ejecutar…"
 
@@ -400,13 +400,13 @@ msgstr "Energía"
 
 #: package/contents/ui/common/Places.qml:63
 #: package/contents/ui/config/ConfigRail.qml:49
-#: package/contents/ui/main.qml:708
+#: package/contents/ui/main.qml:733
 msgid "Lock"
 msgstr "Bloquear"
 
 #: package/contents/ui/common/Places.qml:64
 #: package/contents/ui/config/ConfigRail.qml:49
-#: package/contents/ui/main.qml:714
+#: package/contents/ui/main.qml:739
 msgid "Sign out"
 msgstr "Cerrar sesión"
 
@@ -417,7 +417,7 @@ msgstr "Cambiar de usuario"
 
 #: package/contents/ui/common/Places.qml:66
 #: package/contents/ui/config/ConfigRail.qml:50
-#: package/contents/ui/main.qml:720
+#: package/contents/ui/main.qml:745
 msgid "Sleep"
 msgstr "Suspender"
 
@@ -428,13 +428,13 @@ msgstr "Hibernar"
 
 #: package/contents/ui/common/Places.qml:68
 #: package/contents/ui/config/ConfigRail.qml:50
-#: package/contents/ui/main.qml:726
+#: package/contents/ui/main.qml:751
 msgid "Restart"
 msgstr "Reiniciar"
 
 #: package/contents/ui/common/Places.qml:69
 #: package/contents/ui/config/ConfigRail.qml:51
-#: package/contents/ui/main.qml:732 package/contents/ui/styles/windows7.qml:599
+#: package/contents/ui/main.qml:757 package/contents/ui/styles/windows7.qml:599
 msgid "Shut down"
 msgstr "Apagar"
 
@@ -455,17 +455,17 @@ msgid "Search apps and files"
 msgstr "Buscar aplicaciones y archivos"
 
 #: package/contents/ui/config/ConfigButton.qml:26
-#: package/contents/ui/main.qml:685
+#: package/contents/ui/main.qml:710
 msgid "Show desktop"
 msgstr "Mostrar el escritorio"
 
 #: package/contents/ui/config/ConfigButton.qml:26
-#: package/contents/ui/main.qml:691
+#: package/contents/ui/main.qml:716
 msgid "Edit panel"
 msgstr "Editar panel"
 
 #: package/contents/ui/config/ConfigButton.qml:26
-#: package/contents/ui/main.qml:697
+#: package/contents/ui/main.qml:722
 msgid "Auto-hide panel"
 msgstr "Ocultar panel automáticamente"
 
@@ -869,7 +869,7 @@ msgstr "Quitar"
 
 #: package/contents/ui/config/ConfigMenu.qml:135
 #: package/contents/ui/config/ConfigRail.qml:175
-#: package/contents/ui/main.qml:507
+#: package/contents/ui/main.qml:532
 msgid "Name:"
 msgstr "Nombre:"
 
@@ -1408,55 +1408,63 @@ msgstr "Abrir ubicación del archivo"
 msgid "Folder"
 msgstr "Carpeta"
 
-#: package/contents/ui/main.qml:447
+#: package/contents/ui/main.qml:275
+msgid "Unpin from taskbar"
+msgstr "Desanclar de la barra de tareas"
+
+#: package/contents/ui/main.qml:275
+msgid "Pin to taskbar"
+msgstr "Anclar a la barra de tareas"
+
+#: package/contents/ui/main.qml:472
 msgid "Pin file to Start"
 msgstr "Anclar archivo a Inicio"
 
-#: package/contents/ui/main.qml:453
+#: package/contents/ui/main.qml:478
 msgid "Add a folder as group"
 msgstr "Añadir una carpeta como grupo"
 
-#: package/contents/ui/main.qml:453
+#: package/contents/ui/main.qml:478
 msgid "Pin folder to Start"
 msgstr "Anclar carpeta a Inicio"
 
-#: package/contents/ui/main.qml:459
+#: package/contents/ui/main.qml:484
 msgid "Pin website to Start"
 msgstr "Anclar sitio web a Inicio"
 
-#: package/contents/ui/main.qml:474
+#: package/contents/ui/main.qml:499
 msgid "Web address:"
 msgstr "Dirección web:"
 
-#: package/contents/ui/main.qml:484
+#: package/contents/ui/main.qml:509
 msgid "Pin"
 msgstr "Anclar"
 
-#: package/contents/ui/main.qml:485 package/contents/ui/main.qml:517
+#: package/contents/ui/main.qml:510 package/contents/ui/main.qml:542
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: package/contents/ui/main.qml:507
+#: package/contents/ui/main.qml:532
 msgid "Name (empty = original):"
 msgstr "Nombre (vacío = original):"
 
-#: package/contents/ui/main.qml:516
+#: package/contents/ui/main.qml:541
 msgid "OK"
 msgstr "Aceptar"
 
-#: package/contents/ui/main.qml:532
+#: package/contents/ui/main.qml:557
 msgid "Pin website…"
 msgstr "Anclar sitio web…"
 
-#: package/contents/ui/main.qml:533
+#: package/contents/ui/main.qml:558
 msgid "Pin file…"
 msgstr "Anclar archivo…"
 
-#: package/contents/ui/main.qml:534
+#: package/contents/ui/main.qml:559
 msgid "Pin folder…"
 msgstr "Anclar carpeta…"
 
-#: package/contents/ui/main.qml:741
+#: package/contents/ui/main.qml:766
 msgctxt "@action:inmenu"
 msgid "Edit Applications…"
 msgstr "Editar aplicaciones…"
