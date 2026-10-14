@@ -222,6 +222,22 @@
       <label>Apply the menu style's window decoration (Aurorae) and colour scheme (XP for now, see main.qml windowDecoration/windowColors). Changes all windows.</label>
       <default>true</default>
     </entry>
+    <entry name="windowOpacity" type="Int">
+      <label>T41: window frame opacity in percent (100 = solid); below 100 a deco is made at apply time</label>
+      <default>100</default>
+    </entry>
+    <entry name="windowBlur" type="Bool">
+      <label>T41: blur behind a translucent window frame (turns on KWin's blur effect, see savedBlur)</label>
+      <default>true</default>
+    </entry>
+    <entry name="windowRadius" type="Int">
+      <label>T41: top window corner radius in px (-1 = the style's own, 0 = square)</label>
+      <default>-1</default>
+    </entry>
+    <entry name="titleHeight" type="Int">
+      <label>T41: title bar height in px (0 = the style's own)</label>
+      <default>0</default>
+    </entry>
     <entry name="win10AccentStart" type="Bool">
       <label>Colours page (all styles but XP): show accent colour on Start and taskbar (menu = darkened accent, taskbar = accent)</label>
       <default>false</default>
@@ -324,6 +340,10 @@
     </entry>
     <entry name="savedDecoLibrary" type="String">
       <label>kwinrc [org.kde.kdecoration2] library before windowTheme; restored when it goes off</label>
+      <default></default>
+    </entry>
+    <entry name="savedBlur" type="String">
+      <label>kwinrc [Plugins] blurEnabled before the T41 glass blur ("unset" = no key, "" = nothing saved); restored when it goes off</label>
       <default></default>
     </entry>
     <entry name="savedDecoTheme" type="String">

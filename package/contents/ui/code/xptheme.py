@@ -6,7 +6,7 @@
 # Any-style taskbar (T31):  python3 xptheme.py --taskbar colour=#101010 alpha=0.8 radius=8 line=0 buttons=win11 accent=3d8ee6 solid=0
 #                             fallback=default --out <dir>   (main.qml; only panel/tasks/colors, rest = fallback)
 #                             [image=<png/jpg> mode=tile|stretch|top|middle|bottom imagealpha=0.3 tint=3daee9] (T33)
-import argparse, base64, json, os, struct
+import argparse, base64, json, os, re, struct
 
 def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4), gid="g", center="", under=None):
     """9 pieces of a rounded box. stops: [(offset, color, opacity)] vertical gradient.
@@ -76,6 +76,7 @@ def svg(path, frames, extra="", size=(400, 0)):
                 % (size[0], size[1] or len(frames) * 60 + 20, "".join(defs), "\n".join(body), extra))
 
 W, K = "#ffffff", "#000000"
+OPT = {"radius": -1, "title": 0}   # T41 window options (--radius/--title), read by deco_frame and the rc writers
 ORANGE = [(0, "#fcc77b", 1), (1, "#f39a32", 1)]
 
 def rgb(h):
@@ -286,25 +287,39 @@ GLYPHS = {  # unit box 0..1, stroked
 
 def deco_frame(prefix, y0, T, S, ry, stops, side, line, hi, gid):
     """Window frame: title piece T high, borders S wide (= the rc borders, Aurorae aligns them), top corners
-    rounded (rx S, ry), bottom corners square. Box 100 x T+40 at (10, y0)."""
+    rounded (rx S, ry), bottom corners square. Box 100 x T+40 at (10, y0). T41: OPT radius (>= 0) = rx = ry
+    (corner box widened to fit; the client covers the extra border)."""
+    rx = S
+    if OPT["radius"] >= 0:
+        rx = ry = OPT["radius"]
+        S = max(S, rx)
     x0, W, H = 10, 100, T + 40
     x2, yb, F, L, Sd = x0 + W - S, y0 + H - S, 'fill="url(#%s)"' % gid, 'fill="%s"' % line, 'fill="%s"' % side
     r = lambda x, y, w, h, f: '<rect x="%s" y="%s" width="%s" height="%s" %s/>' % (x, y, w, h, f)
-    def arc(cx, sx, inset, f):  # top corner shape: outer edge at cx, toward the inside by sx
-        ex, ey = cx + sx * inset, y0 + inset
-        return '<path d="M %s,%s V %s A %s %s 0 0 %d %s,%s H %s V %s Z" %s/>' % (
-            ex, y0 + T, y0 + ry, S - inset, ry - inset, 1 if sx > 0 else 0, cx + sx * S, ey, cx + sx * S, y0 + T, f)
+    def corner(cx, sx):
+        """Top corner at outer edge cx, toward the inside by sx: the 1px outline as a ring and the fill inside it,
+        never overlapping (translucent frames), all inside the S x T box."""
+        e, sw = lambda d: cx + sx * d, 1 if sx > 0 else 0
+        if rx > 1 and ry > 1:
+            ring = 'M %s,%s V %s A %s %s 0 0 %d %s,%s H %s V %s H %s A %s %s 0 0 %d %s,%s V %s Z' % (
+                cx, y0 + T, y0 + ry, rx, ry, sw, e(rx), y0, e(S), y0 + 1, e(rx), rx - 1, ry - 1, 1 - sw, e(1), y0 + ry, y0 + T)
+            fill = 'M %s,%s V %s A %s %s 0 0 %d %s,%s H %s V %s Z' % (
+                e(1), y0 + T, y0 + ry, rx - 1, ry - 1, sw, e(rx), y0 + 1, e(S), y0 + T)
+        else:
+            ring = 'M %s,%s V %s H %s V %s H %s V %s Z' % (cx, y0 + T, y0, e(S), y0 + 1, e(1), y0 + T)
+            fill = 'M %s,%s V %s H %s V %s Z' % (e(1), y0 + T, y0 + 1, e(S), y0 + T) if S > 1 else ""
+        return '<path d="%s" %s/>' % (ring, L) + ('<path d="%s" %s/>' % (fill, F) if fill else "")
     defs = '<linearGradient id="%s" gradientUnits="userSpaceOnUse" x1="0" y1="%d" x2="0" y2="%d">%s</linearGradient>' % (
         gid, y0, y0 + T, "".join('<stop offset="%s" stop-color="%s" stop-opacity="%s"/>' % (tuple(s) + (1,))[:3] for s in stops))
     p = prefix + "-"
     g = lambda n, b: '<g id="%s%s">%s</g>' % (p, n, b)
-    out = [g("topleft", r(x0, y0, S, T, 'fill="none"') + arc(x0, 1, 0, L) + arc(x0, 1, 1, F)),
-           g("topright", r(x2, y0, S, T, 'fill="none"') + arc(x0 + W, -1, 0, L) + arc(x0 + W, -1, 1, F)),
-           g("top", r(x0 + S, y0, W - 2 * S, 1, L) + r(x0 + S, y0 + 1, W - 2 * S, T - 1, F) + r(x0 + S, y0 + 1, W - 2 * S, 1, 'fill="%s"' % hi)),
+    out = [g("topleft", r(x0, y0, S, T, 'fill="none"') + corner(x0, 1)),
+           g("topright", r(x2, y0, S, T, 'fill="none"') + corner(x0 + W, -1)),
+           g("top", r(x0 + S, y0, W - 2 * S, 1, L) + r(x0 + S, y0 + 1, W - 2 * S, 1, 'fill="%s"' % hi) + r(x0 + S, y0 + 2, W - 2 * S, T - 2, F)),
            g("left", r(x0, y0 + T, 1, H - T - S, L) + r(x0 + 1, y0 + T, S - 1, H - T - S, Sd)),
            g("right", r(x2, y0 + T, S - 1, H - T - S, Sd) + r(x0 + W - 1, y0 + T, 1, H - T - S, L)),
-           g("bottomleft", r(x0, yb, S, S, L) + r(x0 + 1, yb, S - 1, S - 1, Sd)),
-           g("bottomright", r(x2, yb, S, S, L) + r(x2, yb, S - 1, S - 1, Sd)),
+           g("bottomleft", r(x0, yb, 1, S, L) + r(x0 + 1, y0 + H - 1, S - 1, 1, L) + r(x0 + 1, yb, S - 1, S - 1, Sd)),
+           g("bottomright", r(x0 + W - 1, yb, 1, S, L) + r(x2, y0 + H - 1, S - 1, 1, L) + r(x2, yb, S - 1, S - 1, Sd)),
            g("bottom", r(x0 + S, yb, W - 2 * S, S - 1, Sd) + r(x0 + S, y0 + H - 1, W - 2 * S, 1, L)),
            g("center", r(x0 + S, y0 + T, W - 2 * S, H - T - S, Sd))]
     return defs, "".join(out)
@@ -317,6 +332,8 @@ def write_deco(base, B, sub, label):
     Bi = mix(B, "#d4d8e4", .55)  # inactive: washed out
     classic = sub == "classic"
     S, ry, T, bs, c = (4, 7, 28, 21, 3) if classic else (5, 10, 30, 20, 5)
+    T = OPT["title"] or T   # T41
+    bs = min(bs, T - 2)
     def stops(b):
         return ([(0, mix(b, W, .4)), (.12, mix(b, W, .08)), (.5, b), (.85, mix(b, W, .1)), (1, mix(b, K, .15))] if classic
                 else [(0, mix(b, W, .14)), (1, b)])
@@ -353,7 +370,7 @@ def write_deco(base, B, sub, label):
                 "TitleBorderRight=4\nTitleHeight=%d\nButtonWidth=%d\nButtonHeight=%d\nButtonSpacing=2\nButtonMarginTop=0\n"
                 "ExplicitButtonSpacer=8\nPaddingTop=0\nPaddingBottom=0\nPaddingLeft=0\nPaddingRight=0\n"
                 % (rgbs(ink), rgbs(mix(ink, Bi, .35)), "false" if lt else "true", rgbs(mix(B, K, .6)), rgbs(mix(Bi, K, .3)),
-                   S, S, S, (T - 22) // 2, (T - 22) // 2, S + 2, S + 2, 22, bs, bs))
+                   S, S, S, max(0, T - 22) // 2, max(0, T - 22) // 2, S + 2, S + 2, min(22, T), bs, bs))
     with open(os.path.join(base, "metadata.desktop"), "w") as f:
         f.write("[Desktop Entry]\nName=Start12 XP %s\nComment=Windows XP window decoration for the Start12 XP menu\n"
                 "X-KDE-PluginInfo-Author=Start12\nX-KDE-PluginInfo-Name=%s\nX-KDE-PluginInfo-Version=1.0\n"
@@ -423,6 +440,9 @@ def write_win_deco(base, kind, dark, accent=None):
             act, side, line, hi = [(0, accent)], accent, accent, accent
             ink = glyph = K if light(accent) else W
     glyphi = glyph if not accent else (W if dark else K)
+    if OPT["title"]:  # T41: own title height; Win10 buttons fill it, the others stay centred / on top
+        T = OPT["title"]
+        bh = T if kind == "win10" else min(bh, T - 4)
     defs_a = deco_frame("decoration", 10, T, S, ry, act, side, line, hi, "da")
     defs_i = deco_frame("decoration-inactive", T + 70, T, S, ry, ina, sidei, linei, hi, "di")
     svg(os.path.join(base, "decoration.svg"), [defs_a, defs_i], size=(130, 2 * T + 140))
@@ -472,6 +492,33 @@ def write_win_deco(base, kind, dark, accent=None):
                 "X-KDE-PluginInfo-Author=Start12\nX-KDE-PluginInfo-Name=%s\nX-KDE-PluginInfo-Version=1.0\n"
                 "X-KDE-PluginInfo-License=LGPL\n" % (name[8:].replace("-", " ").title(), name))
 
+# T41 window glass: any shipped/accent/custom deco by name, with OPT radius/title, then translucency + blur mask.
+PIECES = "topleft|topright|top|left|right|bottomleft|bottomright|bottom|center"
+
+def deco_for_name(out, name):
+    m = re.fullmatch(r"start12-xp-(classic|modern)(?:-(olive|silver))?(?:-custom-([0-9a-fA-F]{6}))?", name)
+    if m:
+        sub, sch, hexc = m.groups()
+        return write_deco(out, "#" + hexc if hexc else DECO_BASES[sch or "blue"], sub, "%s %s" % (sub.title(), hexc or (sch or "blue").title()))
+    m = re.fullmatch(r"start12-(win10|win11|win7)(?:-(light|dark))?(?:-accent-([0-9a-fA-F]{6}))?", name)
+    if not m:
+        raise SystemExit("unknown deco name: " + name)
+    kind, mode, hexc = m.groups()
+    os.makedirs(out, exist_ok=True)
+    write_win_deco(out, kind, mode == "dark" and kind != "win7", "#" + hexc if hexc else None)
+
+def glassify(path, alpha, blur):
+    """Whole frame (decoration-* and decoration-inactive-*) at alpha; title text and buttons are other files and
+    stay opaque. blur: Aurorae only asks KWin to blur behind mask-* pieces, so add them (active frame shape, black)."""
+    s = open(path).read()
+    s = re.sub(r'stop-opacity="([0-9.]+)"', lambda m: 'stop-opacity="%.3g"' % (float(m.group(1)) * alpha), s)
+    s = re.sub(r'<g id="decoration[^"]*">.*?</g>', lambda m: re.sub(r'fill="(#[0-9a-fA-F]{6})"', r'fill="\1" fill-opacity="%.3g"' % alpha, m.group(0)), s)
+    if blur:
+        mask = "".join('<g id="mask-%s">%s</g>' % (k, re.sub(r'fill="(?!none)[^"]*"', 'fill="#000000"', b))
+                       for k, b in re.findall(r'<g id="decoration-(%s)">(.*?)</g>' % PIECES, s))
+        s = s.replace("\n</svg>", "\n" + mask + "\n</svg>")
+    open(path, "w").write(s)
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("outdir", nargs="?")
@@ -483,6 +530,11 @@ if __name__ == "__main__":
     ap.add_argument("--scheme", action="store_true", help="write Plasma colour schemes instead (T26b)")
     ap.add_argument("--win10", choices=("light", "dark"), help="with --deco/--scheme --custom: Win10/11/7 accent title bar (T38)")
     ap.add_argument("--kind", choices=("win10", "win11", "win7"), default="win10", help="with --win10: which look (T39)")
+    ap.add_argument("--name", help="with --deco: make this deco (any start12-* name) into --out, with the T41 options")
+    ap.add_argument("--opacity", type=int, default=100, help="T41: frame opacity in percent")
+    ap.add_argument("--blur", type=int, default=1, help="T41: blur behind a translucent frame (1/0)")
+    ap.add_argument("--radius", type=int, default=-1, help="T41: top corner radius in px (-1 = the style's)")
+    ap.add_argument("--title", type=int, default=0, help="T41: title bar height in px (0 = the style's)")
     a = ap.parse_args()
     if a.scheme:
         if a.custom and a.win10:  # T38: Win10 light/dark scheme with the accent title bar
@@ -503,7 +555,12 @@ if __name__ == "__main__":
             for name, (kind, dark) in WIN_DECOS.items():
                 write_scheme(os.path.join(a.outdir, name + ".colors"), label=name[8:].replace("-", " ").title(), **WIN_SCHEMES[kind + ("-dark" if dark else "")])
     elif a.deco:
-        if a.custom and a.win10:
+        OPT.update(radius=min(a.radius, 24), title=max(0, min(a.title, 64)) and max(16, a.title))
+        if a.name:
+            deco_for_name(a.out, a.name)
+            if a.opacity < 100:
+                glassify(os.path.join(a.out, "decoration.svg"), max(10, a.opacity) / 100, a.blur)
+        elif a.custom and a.win10:
             B = "#" + a.custom.lstrip("#")[-6:]
             rgb(B)
             os.makedirs(a.out, exist_ok=True)

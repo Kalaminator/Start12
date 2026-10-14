@@ -244,8 +244,16 @@ PlasmoidItem {
         return name.includes("-custom-") ? "--custom " + xpCustomHex + " --sub " + cfg.xpSubstyle
             : name.includes("-accent-") ? "--custom " + accentHex + " --win10 " + (winDark ? "dark" : "light") + " --kind " + name.split("-")[1] : "";
     }
-    readonly property string customNames: "\\( -name 'start12-xp-*-custom-*' -o -name 'start12-win*-accent-*' \\)"
+    readonly property string customNames: "\\( -name 'start12-xp-*-custom-*' -o -name 'start12-win*-accent-*' -o -name 'start12-*-g[0-9]*b[01]r*t[0-9]*' \\)"
     readonly property string windowDeco: cfg.windowTheme ? windowDecoration() : ""
+    // T41 window glass (Taskbar page): opacity/blur/radius/title height = a deco made at apply time,
+    // <windowDeco>-g<opacity>b<blur>r<radius|d>t<title>; the colour scheme keeps the windowDeco name.
+    readonly property string glassSuffix: cfg.windowOpacity < 100 || cfg.windowRadius >= 0 || cfg.titleHeight > 0
+        ? "-g" + cfg.windowOpacity + "b" + (cfg.windowBlur ? 1 : 0) + "r" + (cfg.windowRadius < 0 ? "d" : cfg.windowRadius) + "t" + cfg.titleHeight : ""
+    readonly property string decoName: windowDeco === "" ? "" : windowDeco + glassSuffix
+    readonly property bool wantBlur: windowDeco !== "" && cfg.windowOpacity < 100 && cfg.windowBlur
+    onGlassSuffixChanged: syncWindowDeco()
+    onWantBlurChanged: syncWindowDeco()
     onWindowDecoChanged: readBrightness()
     // Brightness of the user's own colour scheme (the saved one while ours is applied), then both syncs.
     property bool userDark: false
@@ -278,7 +286,8 @@ PlasmoidItem {
     // savedDecoLibrary/savedDecoTheme when ours goes on and written back when it goes off.
     function syncWindowDeco() {
         const rd = key => "\"$(kreadconfig6 --file kwinrc --group org.kde.kdecoration2 --key " + key + ")\"";
-        decoReader.connectSource("printf '%s|%s' " + rd("library") + " " + rd("theme"));
+        decoReader.connectSource("printf '%s|%s|%s' " + rd("library") + " " + rd("theme")
+            + " \"$(kreadconfig6 --file kwinrc --group Plugins --key blurEnabled)\"");
     }
     P5Support.DataSource {
         id: decoReader
@@ -287,14 +296,27 @@ PlasmoidItem {
         onNewData: (sourceName, data) => {
             disconnectSource(sourceName);
             const parts = (data.stdout || "").split("|");
-            const lib = parts[0].trim(), cur = (parts[1] || "").trim();
+            const lib = parts[0].trim(), cur = (parts[1] || "").trim(), blur = (parts[2] || "").trim();
+            // T41: KWin's blur effect on for the glass frame; the user's blurEnabled is saved in savedBlur ("unset" =
+            // no key) and written back when our blur goes off.
+            const plug = "kwriteconfig6 --file kwinrc --group Plugins --key blurEnabled ";
+            const fx = f => " && qdbus6 org.kde.KWin /Effects org.kde.kwin.Effects." + f + " blur";
+            if (root.wantBlur && root.cfg.savedBlur === "") {
+                root.cfg.savedBlur = blur || "unset";
+                root.run("sh -c " + Tiles.shQuote(plug + "true" + fx("loadEffect")));
+            } else if (!root.wantBlur && root.cfg.savedBlur !== "") {
+                const old = root.cfg.savedBlur;
+                root.cfg.savedBlur = "";
+                root.run("sh -c " + Tiles.shQuote(old === "unset" ? plug + "--delete" : plug + Tiles.shQuote(old)
+                         + (old === "false" ? fx("unloadEffect") : "")));
+            }
             const ours = cur.startsWith("__aurorae__svg__start12-");
             const kw = (key, v) => v === "" ? "kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key " + key + " --delete"
                 : "kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key " + key + " " + Tiles.shQuote(v);
             const reconf = " && qdbus6 org.kde.KWin /KWin reconfigure";
             const dir = "$HOME/.local/share/aurorae/themes/";
             if (root.windowDeco !== "") {
-                const want = "__aurorae__svg__" + root.windowDeco;
+                const want = "__aurorae__svg__" + root.decoName;
                 if (cur === want && lib === "org.kde.kwin.aurorae")
                     return;
                 if (!ours) {
@@ -302,10 +324,12 @@ PlasmoidItem {
                     root.cfg.savedDecoTheme = cur;
                 }
                 const gen = decodeURIComponent(Qt.resolvedUrl("code/xptheme.py").toString().replace("file://", ""));
-                const make = root.customArgs(root.windowDeco) === "" ? "true"
-                    : "python3 " + Tiles.shQuote(gen) + " --deco " + root.customArgs(root.windowDeco) + " --out " + dir + root.windowDeco;
+                const make = root.customArgs(root.windowDeco) === "" && root.glassSuffix === "" ? "true"
+                    : "python3 " + Tiles.shQuote(gen) + " --deco --name " + root.windowDeco + " --opacity " + root.cfg.windowOpacity
+                      + " --blur " + (root.cfg.windowBlur ? 1 : 0) + " --radius " + root.cfg.windowRadius + " --title " + root.cfg.titleHeight
+                      + " --out " + dir + root.decoName;
                 root.run("sh -c " + Tiles.shQuote(make + " && " + kw("library", "org.kde.kwin.aurorae") + " && " + kw("theme", want) + reconf
-                         + " && find " + dir + " -maxdepth 1 " + root.customNames + " ! -name " + root.windowDeco + " -exec rm -rf {} +"));
+                         + " && find " + dir + " -maxdepth 1 " + root.customNames + " ! -name " + root.decoName + " -exec rm -rf {} +"));
             } else if (ours) {
                 root.run("sh -c " + Tiles.shQuote(kw("library", root.cfg.savedDecoLibrary) + " && " + kw("theme", root.cfg.savedDecoTheme) + reconf));
             }
@@ -524,7 +548,7 @@ PlasmoidItem {
     }
     // Keys that reset/backup/restore touch: everything in main.xml but bookkeeping and kicker's favorites.
     function userKeys() {
-        const keep = ["savedDesktopTheme", "savedDecoLibrary", "savedDecoTheme", "savedColorScheme", "resetRequest", "openSettingsRequest", "designRequest", "favorites", "favoritesPortedToKAstats"];
+        const keep = ["savedDesktopTheme", "savedDecoLibrary", "savedDecoTheme", "savedColorScheme", "savedBlur", "resetRequest", "openSettingsRequest", "designRequest", "favorites", "favoritesPortedToKAstats"];
         return root.cfg.keys().filter(k => !k.endsWith("Default") && !keep.includes(k));
     }
     // Restore: read the backup JSON, write back every known key, then put the Plasma Style in line

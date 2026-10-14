@@ -13,6 +13,10 @@ KCM.SimpleKCM {
     property string cfg_menuStyle   // read only, to show the XP option
     property bool cfg_xpTaskbarTheme
     property alias cfg_windowTheme: windowBox.checked
+    property alias cfg_windowOpacity: winAlpha.value
+    property alias cfg_windowBlur: winBlur.checked
+    property int cfg_windowRadius
+    property int cfg_titleHeight
     property bool cfg_taskbarFollowsStyle
     property string cfg_taskbarTheme
     property alias cfg_taskbarColor: tbColor.color
@@ -60,6 +64,52 @@ KCM.SimpleKCM {
             text: i18n("Apply the theme to windows")
             QQC2.ToolTip.visible: hovered
             QQC2.ToolTip.text: i18n("Title bars and colours of every window. Your own ones come back when this is off.")
+        }
+        // T41: glass options for the windowTheme decoration (main.qml glassSuffix), every style.
+        ColumnLayout {
+            enabled: windowBox.checked
+            Kirigami.FormData.label: i18n("Window frames:")
+            RowLayout {
+                QQC2.Slider { id: winAlpha; from: 30; to: 100; stepSize: 5 }
+                QQC2.Label { text: i18n("%1% opaque", Math.round(winAlpha.value)) }
+            }
+            QQC2.CheckBox { id: winBlur; enabled: winAlpha.value < 100; text: i18n("Blur behind translucent frames") }
+            RowLayout {
+                QQC2.CheckBox {
+                    id: ownRadius
+                    text: i18n("Corner radius:")
+                    checked: page.cfg_windowRadius >= 0
+                    onToggled: page.cfg_windowRadius = checked ? radiusSpin.value : -1
+                }
+                QQC2.SpinBox {
+                    id: radiusSpin
+                    enabled: ownRadius.checked
+                    from: 0
+                    to: 12
+                    value: Math.max(0, page.cfg_windowRadius < 0 ? 8 : page.cfg_windowRadius)
+                    textFromValue: v => v === 0 ? i18n("Square") : v + " px"
+                    valueFromText: t => parseInt(t) || 0
+                    onValueModified: page.cfg_windowRadius = value
+                }
+            }
+            RowLayout {
+                QQC2.CheckBox {
+                    id: ownTitle
+                    text: i18n("Title bar height:")
+                    checked: page.cfg_titleHeight > 0
+                    onToggled: page.cfg_titleHeight = checked ? titleSpin.value : 0
+                }
+                QQC2.SpinBox {
+                    id: titleSpin
+                    enabled: ownTitle.checked
+                    from: 20
+                    to: 48
+                    value: page.cfg_titleHeight > 0 ? page.cfg_titleHeight : 30
+                    textFromValue: v => v + " px"
+                    valueFromText: t => parseInt(t) || 30
+                    onValueModified: page.cfg_titleHeight = value
+                }
+            }
         }
         Item { Kirigami.FormData.isSection: true }
         QQC2.CheckBox {
