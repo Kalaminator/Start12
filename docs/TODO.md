@@ -159,7 +159,7 @@ start menu should obtain the favicon image": today `code/tiles.js` always loads 
 off use the "internet-web-browser" icon); checkboxes on the matching config pages.
 Check: each toggle changes the look after reopening the menu.
 
-### T22 Win7 All Programs extras (S)
+### T22 Win7 All Programs extras (S) -- DONE (also XP)
 Build: `styles/windows7.qml` tree: `autoExpand` Bool (`AutoExpand`, open folders on hover after 400 ms),
 `desktopInTree` Bool (`DesktopInTree`, ~/Desktop as a folder), `allAppsAsMenu` Bool (categories as a
 cascading `PlasmaExtras.Menu` instead of the in-place tree). Checkboxes in `config/ConfigMenu.qml`.

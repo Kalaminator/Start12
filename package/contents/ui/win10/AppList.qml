@@ -5,6 +5,7 @@ import QtQuick.Effects
 import QtQuick.Controls as QQC2
 import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PC3
+import org.kde.plasma.extras as PlasmaExtras
 import org.kde.kirigami as Kirigami
 import org.kde.kitemmodels as KItemModels
 import Qt.labs.folderlistmodel
@@ -26,7 +27,13 @@ Item {
     property bool jumpMode: false
     // Windows 7 All Programs: filtered folders (T17) after the apps, opened in place like category folders.
     property bool showFilteredFolders: false
-    readonly property var filtered: showFilteredFolders ? root.filteredFolders : []
+    // Win7/XP All Programs extras (T22): auto expand on hover, Desktop folder, categories as a cascading menu.
+    property bool treeExtras: false
+    readonly property bool autoExpand: treeExtras && cfg.autoExpand
+    readonly property bool asMenu: treeExtras && cfg.allAppsAsMenu
+    readonly property var filtered: (showFilteredFolders ? root.filteredFolders : [])
+        .concat(treeExtras && cfg.desktopInTree ? [{ name: i18n("Desktop"), path: "~/Desktop", include: "", exclude: "" }] : [])
+    property var menuApps: []
 
     function roleData(model, row, name) {
         return model.data(model.index(row, 0), model.KItemModels.KRoleNames.role(name));
@@ -113,6 +120,23 @@ Item {
         }
     }
 
+    // Categories as a menu: one PlasmaExtras.Menu filled with the folder's apps.
+    PlasmaExtras.Menu {
+        id: catMenu
+        placement: PlasmaExtras.Menu.RightPosedTopAlignedPopup
+    }
+    Instantiator {
+        model: list.menuApps
+        delegate: PlasmaExtras.MenuItem {
+            required property var modelData
+            text: modelData.name
+            icon: list.roleData(modelData.model, modelData.row, "decoration")
+            onClicked: { modelData.model.trigger(modelData.row, "", null); root.close(); }
+        }
+        onObjectAdded: (index, object) => catMenu.addMenuItem(object)
+        onObjectRemoved: (index, object) => catMenu.removeMenuItem(object)
+    }
+
     function reset() {
         jumpMode = false;
         openFolders = {};
@@ -166,6 +190,7 @@ Item {
         function onShowMostUsedChanged() { list.rebuild(); }
         function onHiddenAppsChanged() { list.rebuild(); }
         function onFilteredFoldersChanged() { list.rebuild(); }
+        function onDesktopInTreeChanged() { list.rebuild(); }
     }
     Component.onCompleted: rebuild()
 
@@ -206,6 +231,13 @@ Item {
             }
 
             KeyFrame {}
+
+            // Auto expand: hovering a closed folder opens it after 400 ms.
+            Timer {
+                interval: 400
+                running: list.autoExpand && row.hovered && row.e.kind === "folder" && !list.openFolders[row.e.key || row.e.name]
+                onTriggered: row.clicked()
+            }
 
             contentItem: Item {
                 Kirigami.Icon {
@@ -269,6 +301,10 @@ Item {
             onClicked: {
                 if (e.kind === "header") {
                     list.jumpMode = true;
+                } else if (e.kind === "folder" && e.model && list.asMenu) {
+                    list.menuApps = list.appEntries(e.model, 0);
+                    catMenu.visualParent = row;
+                    catMenu.openRelative();
                 } else if (e.kind === "folder") {
                     list.toggleFolder(e.key || e.name);
                 } else if (e.kind === "file") {

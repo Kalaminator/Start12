@@ -77,6 +77,18 @@
       <label>Place folders at the bottom of the list</label>
       <default>false</default>
     </entry>
+    <entry name="autoExpand" type="Bool">
+      <label>AutoExpand: open folders in All Programs on hover</label>
+      <default>false</default>
+    </entry>
+    <entry name="desktopInTree" type="Bool">
+      <label>DesktopInTree: show ~/Desktop as a folder in All Programs</label>
+      <default>false</default>
+    </entry>
+    <entry name="allAppsAsMenu" type="Bool">
+      <label>AllAppsAsMenu: categories as a cascading menu</label>
+      <default>false</default>
+    </entry>
     <entry name="highlightNew" type="Bool">
       <label>Highlight: mark newly installed apps</label>
       <default>true</default>

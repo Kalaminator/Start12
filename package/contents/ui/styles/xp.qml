@@ -399,6 +399,7 @@ FocusScope {
 
             AppList {
                 id: appList
+                treeExtras: true
                 visible: style.allPrograms && !root.searching
                 anchors.fill: parent
                 anchors.bottomMargin: allButton.height + m.px(10)

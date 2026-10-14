@@ -411,6 +411,7 @@ FocusScope {
         AppList {
             id: appList
             showFilteredFolders: true
+            treeExtras: true
             visible: style.allPrograms && !root.searching
             anchors.fill: parent
             anchors.margins: m.px(4)

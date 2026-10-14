@@ -23,6 +23,9 @@ KCM.SimpleKCM {
     property alias cfg_webFavicons: webFavicons.checked
     property alias cfg_categoryFolders: folders.checked
     property alias cfg_foldersAtBottom: foldersBottom.checked
+    property alias cfg_autoExpand: autoExpand.checked
+    property alias cfg_desktopInTree: desktopInTree.checked
+    property alias cfg_allAppsAsMenu: allAppsAsMenu.checked
     property alias cfg_highlightNew: highlightNew.checked
     property alias cfg_hideAppList: hideList.checked
     property var cfg_hiddenApps: []
@@ -83,6 +86,9 @@ KCM.SimpleKCM {
         QQC2.CheckBox { id: highlightNew; enabled: !hideList.checked; text: i18n("Highlight new applications") }
         QQC2.CheckBox { id: folders; enabled: !hideList.checked; text: i18n("Show app categories as folders") }
         QQC2.CheckBox { id: foldersBottom; enabled: !hideList.checked && folders.checked; text: i18n("Place folders at the bottom of the list") }
+        QQC2.CheckBox { id: autoExpand; enabled: !hideList.checked; text: i18n("Auto expand folders on hover (Windows 7, XP)") }
+        QQC2.CheckBox { id: desktopInTree; enabled: !hideList.checked; text: i18n("Show the Desktop folder in All Programs (Windows 7, XP)") }
+        QQC2.CheckBox { id: allAppsAsMenu; enabled: !hideList.checked && folders.checked; text: i18n("Show categories as a cascading menu (Windows 7, XP)") }
 
         Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Hidden apps") }
 
