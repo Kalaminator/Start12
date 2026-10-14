@@ -61,7 +61,7 @@ KCM.SimpleKCM {
             visible: page.cfg_buttonMode === 2
             Kirigami.FormData.label: i18n("Icon:")
             QQC2.Button {
-                icon.source: page.cfg_buttonIcon === "" ? "start-here"
+                icon.source: page.cfg_buttonIcon === "" ? "start-here-kde"
                     : page.cfg_buttonIcon.startsWith("/") ? "file://" + page.cfg_buttonIcon : page.cfg_buttonIcon
                 text: page.cfg_buttonIcon === "" ? i18n("Arch Linux (default)") : page.cfg_buttonIcon.split("/").pop()
                 onClicked: iconDialog.open()

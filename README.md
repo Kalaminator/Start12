@@ -52,7 +52,7 @@ Remove: `kpackagetool6 -t Plasma/Applet -r org.start12.menu`.
 Start11's own Start button images and menu/tab textures are copyrighted by Stardock and are **not** part of this
 project. The *image* Start button mode and the textures work with any PNG: pick your own file in the settings,
 or put PNG files in `package/contents/images/StartButtons/`, `MenuTextures/` or `TabTextures/` before
-`./install.sh`. The default Start button uses your icon theme's `start-here` icon.
+`./install.sh`. The default Start button is the KDE logo (`start-here-kde`); change it under Settings → Start Button.
 
 ## Project layout
 
@@ -95,7 +95,7 @@ Todo lo que cambia (estilo de la barra, bordes de ventana, colores) se deshace a
 tu tema de Plasma, tus bordes y tus colores.
 
 Las imágenes de Start11 (botones de inicio y texturas) son de Stardock y **no** se incluyen. Puedes usar cualquier
-PNG tuyo desde la configuración.
+PNG tuyo desde la configuración. El botón de inicio usa el logo de KDE; lo puedes cambiar en Configuración → Botón de inicio.
 
 ## Licencia
 
