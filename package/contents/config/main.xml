@@ -42,8 +42,12 @@
       <default>true</default>
     </entry>
     <entry name="tileGroups" type="String">
-      <label>Tile groups as JSON</label>
+      <label>Tile pages as JSON: {pages: [{groups: [...]}]}</label>
       <default>[]</default>
+    </entry>
+    <entry name="tilePage" type="Int">
+      <label>Last shown tile page</label>
+      <default>0</default>
     </entry>
     <entry name="tilesLocked" type="Bool">
       <label>LockedIcons</label>

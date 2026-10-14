@@ -4,7 +4,7 @@ const path = require("path");
 const assert = require("assert");
 const src = fs.readFileSync(path.join(__dirname, "../package/contents/ui/code/tiles.js"), "utf8")
     .replace(/^\.pragma library/m, "");
-const T = new Function(src + "; return { parse, pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder };")();
+const T = new Function(src + "; return { pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder, parsePages, setPage, newPage, deletePage, moveGroupToPage };")();
 
 // 6 columns = 12 units wide: six medium tiles fit in one row.
 let p = T.pack(Array(6).fill({ size: "medium" }), 6);
@@ -35,7 +35,6 @@ assert.deepStrictEqual(h[0].tiles.map(t => t.id), ["b", "a"]);
 assert.strictEqual(T.remove(g, "b")[0].tiles.length, 1);
 assert.strictEqual(T.resize(g, "b", "large")[0].tiles[1].size, "large");
 assert.deepStrictEqual(T.sortGroup(g, 0, { a: "Zed", b: "Alpha" })[0].tiles.map(t => t.id), ["b", "a"]);
-assert.deepStrictEqual(T.parse("garbage"), []);
 
 let q = T.setProp(g, "a", "icon", "firefox");
 assert.strictEqual(q[0].tiles[0].icon, "firefox");
@@ -100,4 +99,18 @@ L = T.removePin(T.removePin(L, "c"), "b");                  // one left: folder 
 assert.deepStrictEqual(L, ["a"]);
 assert.strictEqual(T.folderEntry("A|b,c", ["x"]), "folder|A b c|x");
 assert.deepStrictEqual(T.folderOf("custom|x|y|z"), null);
+// Tile pages: old flat list migrates to page 1; moves keep tiles unique across pages.
+let P = T.parsePages('[{"name":"A","tiles":[{"id":"a"}]}]');
+assert.deepStrictEqual(P, [{ groups: [{ name: "A", tiles: [{ id: "a" }] }] }]);
+assert.deepStrictEqual(T.parsePages("bad"), [{ groups: [] }]);
+assert.deepStrictEqual(T.parsePages(JSON.stringify({ pages: P })), P);
+P = T.newPage(P);
+assert.strictEqual(P.length, 2);
+P = T.moveGroupToPage(P, 0, 0, 1);
+assert.deepStrictEqual(P.map(p => p.groups.length), [0, 1]);
+P = T.setPage(P, 0, [{ name: "", tiles: [{ id: "a" }] }]);       // "a" dragged onto page 1
+assert.deepStrictEqual(P[1].groups, [{ name: "A", tiles: [] }]); // named group stays, tile gone
+P = T.deletePage(P, 0);                                          // first page: groups go to the next
+assert.deepStrictEqual(P, [{ groups: [{ name: "", tiles: [{ id: "a" }] }, { name: "A", tiles: [] }] }]);
+assert.deepStrictEqual(T.deletePage(P, 0), P);                   // last page stays
 console.log("tiles.js: all checks passed");

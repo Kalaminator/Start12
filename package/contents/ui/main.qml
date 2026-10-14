@@ -31,12 +31,18 @@ PlasmoidItem {
     // ---- Pinned apps ----
     // Windows 10 style pins to tile groups; the grid styles (Windows 11, App, Pro) to a flat list.
     readonly property bool usesTiles: styleFile === "windows10"
-    readonly property var groups: Tiles.parse(cfg.tileGroups)
+    // Tile pages: `groups` is the shown page (cfg.tilePage); saveGroups writes that page back.
+    readonly property var pages: Tiles.parsePages(cfg.tileGroups)
+    readonly property int tilePage: Math.max(0, Math.min(cfg.tilePage, pages.length - 1))
+    readonly property var groups: pages[tilePage].groups
+    function savePages(p) {
+        cfg.tileGroups = JSON.stringify({ pages: p });
+    }
     function saveGroups(g) {
-        cfg.tileGroups = JSON.stringify(g);
+        savePages(Tiles.setPage(pages, tilePage, g));
     }
     function isPinned(id) {
-        return usesTiles ? Tiles.findTile(groups, id) !== null : Tiles.allPins(cfg.pinnedGrid).includes(id);
+        return usesTiles ? pages.some(p => Tiles.findTile(p.groups, id) !== null) : Tiles.allPins(cfg.pinnedGrid).includes(id);
     }
     function pin(id) {
         if (!id || isPinned(id)) return;
@@ -50,7 +56,9 @@ PlasmoidItem {
     }
     function unpin(id) {
         if (usesTiles) {
-            saveGroups(Tiles.remove(groups, id));
+            // Folder ids repeat across pages: a folder only goes on the shown page.
+            savePages(Tiles.isFolder(id) ? Tiles.setPage(pages, tilePage, Tiles.remove(groups, id))
+                                         : pages.map(p => ({ groups: Tiles.remove(p.groups, id) })));
         } else {
             cfg.pinnedGrid = Tiles.removePin(cfg.pinnedGrid, id);
         }

@@ -1,7 +1,7 @@
 .pragma library
 
-// Tile groups live in the config as JSON:
-// [{ "name": "Gaming", "tiles": [{ "id": "steam.desktop", "size": "medium" }] }]
+// Tile groups live in the config as JSON, per page (parsePages):
+// { "pages": [{ "groups": [{ "name": "Gaming", "tiles": [{ "id": "steam.desktop", "size": "medium" }] }] }] }
 // Grid unit = one small tile. A group is (columns * 2) units wide.
 
 var SIZES = {
@@ -11,13 +11,53 @@ var SIZES = {
     large:  { w: 4, h: 4 }
 };
 
-function parse(json) {
-    try {
-        var g = JSON.parse(json || "[]");
-        return Array.isArray(g) ? g.filter(function (x) { return x && Array.isArray(x.tiles); }) : [];
-    } catch (e) {
-        return [];
-    }
+// Tile pages (Start11): { "pages": [{ "groups": [...] }] }. The old flat group list becomes page 1.
+function parsePages(json) {
+    var d;
+    try { d = JSON.parse(json || "[]"); } catch (e) { d = []; }
+    var pages = Array.isArray(d) ? [{ groups: d }] : (d && Array.isArray(d.pages) ? d.pages : []);
+    pages = pages.filter(function (p) { return p && Array.isArray(p.groups); }).map(function (p) {
+        return { groups: p.groups.filter(function (x) { return x && Array.isArray(x.tiles); }) };
+    });
+    return pages.length ? pages : [{ groups: [] }];
+}
+
+// Page p gets these groups; a tile moved here from another page leaves that page (no duplicates).
+// Folder ids are per page ("folder|1" on two pages), so only app ids are checked.
+function setPage(pages, p, groups) {
+    var out = clone(pages);
+    out[p] = { groups: groups };
+    var ids = [];
+    groups.forEach(function (g) { g.tiles.forEach(function (t) {
+        (t.kind === "folder" ? t.tiles : [t]).forEach(function (x) { ids.push(x.id); });
+    }); });
+    out.forEach(function (pg, k) {
+        if (k === p) return;
+        ids.forEach(function (id) { if (!isFolder(id) && findTile(pg.groups, id)) pg.groups = remove(pg.groups, id); });
+    });
+    return out;
+}
+
+function newPage(pages) {
+    return clone(pages).concat([{ groups: [] }]);
+}
+
+// Deleting a page keeps its groups: they move to the end of the page before it (or the next one).
+function deletePage(pages, p) {
+    var out = clone(pages);
+    if (out.length < 2 || p < 0 || p >= out.length) return out;
+    var gone = out.splice(p, 1)[0];
+    var to = Math.max(0, p - 1);
+    out[to].groups = p > 0 ? out[to].groups.concat(gone.groups) : gone.groups.concat(out[to].groups);
+    return out;
+}
+
+// Move group g of page p to the end of page "to".
+function moveGroupToPage(pages, p, g, to) {
+    var out = clone(pages);
+    if (to < 0 || to >= out.length || to === p || !out[p] || !out[p].groups[g]) return out;
+    out[to].groups.push(out[p].groups.splice(g, 1)[0]);
+    return out;
 }
 
 function sizeOf(size) {

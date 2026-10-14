@@ -145,6 +145,10 @@ Column {
                   run: () => root.saveGroups(Tiles.moveGroup(root.groups, grp.groupIndex, grp.groupIndex - 1)) },
                 { text: i18n("Move group down"), icon: "go-down", enabled: grp.groupIndex < root.groups.length - 1,
                   run: () => root.saveGroups(Tiles.moveGroup(root.groups, grp.groupIndex, grp.groupIndex + 2)) },
+                { text: i18n("Move to previous page"), icon: "go-previous", enabled: root.tilePage > 0,
+                  run: () => root.savePages(Tiles.moveGroupToPage(root.pages, root.tilePage, grp.groupIndex, root.tilePage - 1)) },
+                { text: i18n("Move to next page"), icon: "go-next", enabled: root.tilePage < root.pages.length - 1,
+                  run: () => root.savePages(Tiles.moveGroupToPage(root.pages, root.tilePage, grp.groupIndex, root.tilePage + 1)) },
                 { type: "separator" },
                 { text: i18n("Unpin group from Start"), icon: "edit-delete",
                   run: () => { const g = Tiles.clone(root.groups); g.splice(grp.groupIndex, 1); root.saveGroups(g); } }

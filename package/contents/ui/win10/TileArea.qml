@@ -14,6 +14,19 @@ Item {
     required property var contextMenu
     required property Item ghost
 
+    // Tile pages (Start11): dots at the bottom, wheel flips pages when there is nothing to scroll.
+    function showPage(p) {
+        Plasmoid.configuration.tilePage = Math.max(0, Math.min(p, root.pages.length - 1));
+        flick.contentY = 0;
+    }
+    property real wheelAcc: 0
+    function wheelPage(event) {
+        wheelAcc += event.angleDelta.y;
+        if (Math.abs(wheelAcc) < 120) return;   // touchpads send many small steps
+        showPage(root.tilePage + (wheelAcc < 0 ? 1 : -1));
+        wheelAcc = 0;
+    }
+
     // Right-click on empty space: menu-surface options (Start11 "Configure", "Lock menu", ...).
     TapHandler {
         acceptedButtons: Qt.RightButton
@@ -21,6 +34,11 @@ Item {
             { text: i18n("New group"), icon: "list-add",
               run: () => root.saveGroups(root.groups.concat([{ name: i18n("New group"), tiles: [] }])) },
             ...root.pinNewItems,
+            { type: "separator" },
+            { text: i18n("New page"), icon: "document-new",
+              run: () => { root.savePages(Tiles.newPage(root.pages)); area.showPage(root.pages.length - 1); } },
+            { text: i18n("Delete this page"), icon: "edit-delete", enabled: root.pages.length > 1,
+              run: () => { const p = root.tilePage; root.savePages(Tiles.deletePage(root.pages, p)); area.showPage(p - 1); } },
             { type: "separator" },
             { text: Plasmoid.configuration.tilesLocked ? i18n("Unlock menu") : i18n("Lock menu"),
               icon: Plasmoid.configuration.tilesLocked ? "object-unlocked" : "object-locked",
@@ -53,11 +71,17 @@ Item {
         anchors.fill: parent
         anchors.leftMargin: area.metrics.pad
         anchors.topMargin: Math.round(10 * area.metrics.s)
+        anchors.bottomMargin: dots.visible ? dots.height + area.metrics.pad : 0
         clip: true
         contentWidth: width
         contentHeight: flow.height + newGroupDrop.height
         boundsBehavior: Flickable.StopAtBounds
         QQC2.ScrollBar.vertical: PC3.ScrollBar {}
+
+        WheelHandler {
+            enabled: root.pages.length > 1 && flick.contentHeight <= flick.height + 1
+            onWheel: event => area.wheelPage(event)
+        }
 
         Flow {
             id: flow
@@ -113,6 +137,31 @@ Item {
             color: area.metrics.text
             opacity: 0.6
             text: i18n("Drag apps here, or right-click an app and choose \"Pin to Start\".")
+        }
+    }
+
+    Row {
+        id: dots
+        visible: root.pages.length > 1
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: area.metrics.pad
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: area.metrics.pad
+        Repeater {
+            model: root.pages.length
+            delegate: Rectangle {
+                required property int index
+                width: area.metrics.px(10)
+                height: width
+                radius: width / 2
+                color: area.metrics.text
+                opacity: index === root.tilePage ? 0.9 : dotTap.hovered ? 0.5 : 0.25
+                HoverHandler { id: dotTap; cursorShape: Qt.PointingHandCursor }
+                TapHandler { onTapped: area.showPage(parent.index) }
+            }
+        }
+        WheelHandler {
+            onWheel: event => area.wheelPage(event)
         }
     }
 }

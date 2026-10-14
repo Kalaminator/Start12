@@ -56,7 +56,7 @@ click opens a popup grid (`PC3.Popup`) with its apps; drop an icon onto an icon 
 "Rename folder", "Unpin folder". Helpers in `code/tiles.js` (`folderOf`, `placeInFolder`) + tests.
 Check: drop two pins together, folder shows, opening it launches an app, unpin restores both.
 
-### T07 Win10 tile pages (M)
+### T07 Win10 tile pages (M) -- DONE 2026-10-14 (not yet checked on screen; tiles cannot be dragged across pages, move the group)
 Build: `tileGroups` JSON gets `{ pages: [ { groups: [...] } ] }` (migrate the old flat list in
 `Tiles.parse`); `code/tiles.js` `newPage`, `deletePage`, `moveGroupToPage` + tests; `win10/TileArea.qml`
 page dots at the bottom, wheel/dots change page, surface menu "New page", "Delete this page", group menu
