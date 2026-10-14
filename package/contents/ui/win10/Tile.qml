@@ -22,6 +22,9 @@ PC3.AbstractButton {
     signal nameKnown(string name)
 
     readonly property bool valid: fav.count > 0
+    // Pinned website/file/folder instead of an app.
+    readonly property var custom: Tiles.custom(tile.tile.id)
+    readonly property var appIcon: custom ? (custom.icon || "folder") : valid ? role("decoration") : "dialog-question"
     readonly property bool small: tile.tile.size === "small"
     readonly property bool showCaption: tile.tile.caption === "show" ? true
         : tile.tile.caption === "hide" ? false : !Plasmoid.configuration.hideTileText
@@ -33,7 +36,7 @@ PC3.AbstractButton {
     function role(name) {
         return fav.count > 0 ? fav.data(fav.index(0, 0), fav.KItemModels.KRoleNames.role(name)) : undefined;
     }
-    readonly property string appName: valid ? role("display") : tile.tile.id
+    readonly property string appName: custom ? custom.name : valid ? role("display") : tile.tile.id
     onAppNameChanged: nameKnown(appName)
     Component.onCompleted: nameKnown(appName)
 
@@ -69,7 +72,7 @@ PC3.AbstractButton {
             width: side
             height: side
             source: tile.tile.icon ? (tile.tile.icon.startsWith("/") ? "file://" + tile.tile.icon : tile.tile.icon)
-                  : tile.valid ? tile.role("decoration") : "dialog-question"
+                  : tile.appIcon
         }
         PC3.Label {
             id: label
@@ -87,7 +90,9 @@ PC3.AbstractButton {
     }
 
     function launch() {
-        if (valid) {
+        if (custom) {
+            root.openCustom(custom);
+        } else if (valid) {
             fav.trigger(0, "", null);
             root.close();
         }
@@ -142,7 +147,7 @@ PC3.AbstractButton {
                 && Math.hypot(m.x - pressPos.x, m.y - pressPos.y) > Qt.styleHints.startDragDistance) {
                 dragging = true;
                 tile.ghost.favoriteId = tile.tile.id;
-                tile.ghost.icon = tile.valid ? tile.role("decoration") : "dialog-question";
+                tile.ghost.icon = tile.appIcon;
                 tile.ghost.Drag.active = true;
             }
             if (dragging) {

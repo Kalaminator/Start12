@@ -7,6 +7,7 @@ import org.kde.plasma.components as PC3
 import org.kde.plasma.private.kicker as Kicker
 import org.kde.kirigami as Kirigami
 import org.kde.kitemmodels as KItemModels
+import "../code/tiles.js" as Tiles
 
 // Start11 v2 "application canvas": tabs, each with Fences-like groups of icons.
 // Tabs: Pinned (Pin to Start lands here), Apps (one group per KDE category), Recent.
@@ -47,7 +48,12 @@ Item {
     // Groups of the current tab: { name, src }. ("model" would clash with the Repeater's own.)
     readonly property var groups: {
         rev;
-        if (tab === 0) return [{ name: i18n("Pinned"), src: pinnedModel }];
+        if (tab === 0) {
+            // Pinned websites/files/folders: { name, custom: [Tiles.custom...] } instead of a model.
+            const custom = canvas.cfg.pinnedGrid.map(id => Tiles.custom(id)).filter(c => c);
+            return [{ name: i18n("Pinned"), src: pinnedModel }]
+                .concat(custom.length ? [{ name: i18n("Shortcuts"), custom: custom }] : []);
+        }
         if (tab === 2) return [{ name: i18n("Most used"), src: root.frequentAppsModel },
                                { name: i18n("Recent files"), src: recentDocs }];
         const rm = root.rootModel;
@@ -137,7 +143,8 @@ Item {
                     required property int index
                     readonly property var src: modelData?.src ?? null
                     readonly property color tint: canvas.groupColor(index)
-                    readonly property int count: src ? src.count : 0
+                    readonly property var customs: modelData?.custom ?? null
+                    readonly property int count: customs ? customs.length : src ? src.count : 0
                     readonly property int cols: Math.max(1, Math.floor((width - m.px(8)) / canvas.cellW))
                     width: flow.groupWidth
                     height: header.height + Math.max(1, Math.ceil(count / cols)) * canvas.cellH + m.px(8)
@@ -199,6 +206,10 @@ Item {
                                 id: cell
                                 required property int index
                                 function role(name) {
+                                    if (group.customs) {
+                                        const c = group.customs[index];
+                                        return name === "display" ? c.name : name === "decoration" ? (c.icon || "folder") : undefined;
+                                    }
                                     // src is null for a moment while the groups are rebuilt
                                     return group.src ? canvas.roleData(group.src, index, name) : undefined;
                                 }
@@ -206,6 +217,10 @@ Item {
                                 height: canvas.cellH
                                 hoverEnabled: true
                                 onClicked: {
+                                    if (group.customs) {
+                                        root.openCustom(group.customs[index]);
+                                        return;
+                                    }
                                     group.src.trigger(index, "", null);
                                     root.close();
                                 }
@@ -240,6 +255,12 @@ Item {
                                 TapHandler {
                                     acceptedButtons: Qt.RightButton
                                     onTapped: point => {
+                                        if (group.customs) {
+                                            const c = group.customs[cell.index];
+                                            canvas.contextMenu.show(cell, null, -1, [{ text: i18n("Unpin from Start"), icon: "window-unpin",
+                                                run: () => root.unpin(c.id) }], point.position.x, point.position.y);
+                                            return;
+                                        }
                                         const id = canvas.appId(group.src, cell.index);
                                         const own = !id || id.startsWith("file:") ? [] : root.isPinned(id)
                                             ? [{ text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) }]

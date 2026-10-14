@@ -20,6 +20,8 @@ Item {
         onTapped: point => area.contextMenu.show(area, null, -1, [
             { text: i18n("New group"), icon: "list-add",
               run: () => root.saveGroups(root.groups.concat([{ name: i18n("New group"), tiles: [] }])) },
+            ...root.pinNewItems,
+            { type: "separator" },
             { text: Plasmoid.configuration.tilesLocked ? i18n("Unlock menu") : i18n("Lock menu"),
               icon: Plasmoid.configuration.tilesLocked ? "object-unlocked" : "object-locked",
               run: () => Plasmoid.configuration.tilesLocked = !Plasmoid.configuration.tilesLocked },

@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Dialogs as Dialogs
+import QtQuick.Controls as QQC2
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.private.kicker as Kicker
@@ -117,6 +118,15 @@ PlasmoidItem {
         Qt.openUrlExternally(url);
         root.expanded = false;
     }
+    // Pinned website/file/folder (Tiles.custom): open its target, or run "cmd:..." targets.
+    function openCustom(c) {
+        if (c.target.startsWith("cmd:")) {
+            run(c.target.slice(4));
+            close();
+        } else {
+            openUrl(c.target);
+        }
+    }
 
     // Find a power/session action by its id ("shutdown", "reboot", ...).
     // Returns the row, or -1 when this session can't do it (e.g. no hibernate).
@@ -180,6 +190,63 @@ PlasmoidItem {
         close();
         colorDialog.open();
     }
+
+    // "Pin website / file / folder" from the menu-surface right-click menus.
+    Dialogs.FileDialog {
+        id: pinFileDialog
+        title: i18n("Pin file to Start")
+        onAccepted: root.pin(Tiles.customFor(selectedFile.toString(), "file"))
+    }
+    Dialogs.FolderDialog {
+        id: pinFolderDialog
+        title: i18n("Pin folder to Start")
+        onAccepted: root.pin(Tiles.customFor(selectedFolder.toString(), "folder"))
+    }
+    // A plain window: the popup is closed, so an in-popup Kirigami dialog can't show.
+    Window {
+        id: webDialog
+        title: i18n("Pin website to Start")
+        width: Kirigami.Units.gridUnit * 22
+        height: webLayout.implicitHeight + Kirigami.Units.largeSpacing * 2
+        color: Kirigami.Theme.backgroundColor
+        onVisibleChanged: if (visible) { requestActivate(); webField.forceActiveFocus(); }
+        function accept() {
+            const u = webField.text.trim();
+            if (u) root.pin(Tiles.customFor(/^\w+:\/\//.test(u) ? u : "https://" + u, "web"));
+            webField.text = "";
+            close();
+        }
+        ColumnLayout {
+            id: webLayout
+            anchors.fill: parent
+            anchors.margins: Kirigami.Units.largeSpacing
+            QQC2.Label { text: i18n("Web address:") }
+            QQC2.TextField {
+                id: webField
+                Layout.fillWidth: true
+                placeholderText: "https://…"
+                onAccepted: webDialog.accept()
+                Keys.onEscapePressed: webDialog.close()
+            }
+            RowLayout {
+                Layout.alignment: Qt.AlignRight
+                QQC2.Button { text: i18n("Pin"); icon.name: "window-pin"; onClicked: webDialog.accept() }
+                QQC2.Button { text: i18n("Cancel"); icon.name: "dialog-cancel"; onClicked: webDialog.close() }
+            }
+        }
+    }
+    function pinNew(kind) {
+        close();
+        if (kind === "web") webDialog.show();
+        else if (kind === "file") pinFileDialog.open();
+        else pinFolderDialog.open();
+    }
+    // Menu-surface entries for TileArea and PinnedGrid.
+    readonly property var pinNewItems: [
+        { text: i18n("Pin website…"), icon: "internet-web-browser", run: () => root.pinNew("web") },
+        { text: i18n("Pin file…"), icon: "document-new", run: () => root.pinNew("file") },
+        { text: i18n("Pin folder…"), icon: "folder-new", run: () => root.pinNew("folder") }
+    ]
 
     onExpandedChanged: {
         if (root.expanded) {

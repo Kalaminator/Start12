@@ -4,7 +4,7 @@ const path = require("path");
 const assert = require("assert");
 const src = fs.readFileSync(path.join(__dirname, "../package/contents/ui/code/tiles.js"), "utf8")
     .replace(/^\.pragma library/m, "");
-const T = new Function(src + "; return { parse, pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup };")();
+const T = new Function(src + "; return { parse, pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor };")();
 
 // 6 columns = 12 units wide: six medium tiles fit in one row.
 let p = T.pack(Array(6).fill({ size: "medium" }), 6);
@@ -50,5 +50,14 @@ const G = [{ name: "A", tiles: [] }, { name: "B", tiles: [] }, { name: "C", tile
 assert.deepStrictEqual(T.moveGroup(G, 2, 0).map(x => x.name), ["C", "A", "B"]);
 assert.deepStrictEqual(T.moveGroup(G, 0, 2).map(x => x.name), ["B", "A", "C"]);   // before "C"
 assert.deepStrictEqual(T.moveGroup(G, 0, 3).map(x => x.name), ["B", "C", "A"]);   // to the end
+
+// Pinned websites, files, folders.
+assert.strictEqual(T.customFor("https://www.kde.org/news?x=1", "web"),
+    "custom|kde.org|https://icons.duckduckgo.com/ip3/www.kde.org.ico|https://www.kde.org/news?x=1");
+assert.strictEqual(T.customFor("file:///home/u/My%20Doc.PDF", "file"), "custom|My Doc.PDF|application-pdf|file:///home/u/My%20Doc.PDF");
+assert.strictEqual(T.customFor("file:///home/u/Pictures/", "folder"), "custom|Pictures|folder|file:///home/u/Pictures/");
+assert.strictEqual(T.customFor("file:///home/u/notes", "file").split("|")[2], "text-x-generic");
+assert.deepStrictEqual(T.custom("custom|a|b|cmd:x|y"), { id: "custom|a|b|cmd:x|y", name: "a", icon: "b", target: "cmd:x|y" });
+assert.strictEqual(T.custom("firefox.desktop"), null);
 
 console.log("tiles.js: all checks passed");

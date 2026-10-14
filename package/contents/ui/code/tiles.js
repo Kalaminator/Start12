@@ -150,3 +150,38 @@ function moveGroup(groups, from, to) {
     out.splice(Math.max(0, Math.min(to, out.length)), 0, g);
     return out;
 }
+
+// Pinned websites, files and folders use the rail's custom id: "custom|name|icon|target".
+function custom(id) {
+    if (typeof id !== "string" || id.indexOf("custom|") !== 0) return null;
+    var p = id.split("|");
+    return { id: id, name: p[1], icon: p[2], target: p.slice(3).join("|") };
+}
+
+// ponytail: icon by file extension, not a real mime lookup (QML has no KIO mime API).
+var EXT_ICONS = {
+    pdf: "application-pdf", txt: "text-plain", md: "text-markdown", html: "text-html",
+    png: "image-x-generic", jpg: "image-x-generic", jpeg: "image-x-generic", gif: "image-x-generic",
+    svg: "image-svg+xml", webp: "image-x-generic", mp3: "audio-x-generic", ogg: "audio-x-generic",
+    flac: "audio-x-generic", wav: "audio-x-generic", mp4: "video-x-generic", mkv: "video-x-generic",
+    webm: "video-x-generic", zip: "application-zip", tar: "application-x-tar", gz: "application-x-compressed-tar",
+    odt: "x-office-document", docx: "x-office-document", doc: "x-office-document",
+    ods: "x-office-spreadsheet", xlsx: "x-office-spreadsheet", odp: "x-office-presentation", pptx: "x-office-presentation",
+    sh: "application-x-shellscript", py: "text-x-python", js: "text-x-javascript", iso: "application-x-cd-image"
+};
+
+// Build the custom id for a url. kind: "web", "file" or "folder".
+function customFor(url, kind) {
+    var name, icon;
+    if (kind === "web") {
+        var host = (url.match(/^\w+:\/\/([^\/:?#]+)/) || [null, url])[1];
+        name = host.replace(/^www\./, "");
+        icon = "https://icons.duckduckgo.com/ip3/" + host + ".ico";
+    } else {
+        var path = url.replace(/\/+$/, "");
+        name = decodeURIComponent(path.slice(path.lastIndexOf("/") + 1)) || "/";
+        var dot = name.lastIndexOf(".");
+        icon = kind === "folder" ? "folder" : (dot > 0 && EXT_ICONS[name.slice(dot + 1).toLowerCase()]) || "text-x-generic";
+    }
+    return ["custom", name.replace(/\|/g, "/"), icon, url].join("|");
+}

@@ -20,6 +20,8 @@ sends screenshots; they said "keep adding everything, once we have all functions
   SearchView (grouped KRunner results, web search). Other styles reuse AppList and SearchView.
 - `ui/ContextMenu.qml`: right-click menus (own items with `run`, plus kicker actions).
 - `ui/code/tiles.js`: pure logic (pack, place, moveGroup, placeInList, setProp...) + `tests/test_tiles.js`.
+- Pinned websites/files/folders = `custom|name|icon|target` ids (`Tiles.custom/customFor`, `root.openCustom`,
+  `root.pinNewItems` in the TileArea/PinnedGrid empty-space menu; AppCanvas shows them as a "Shortcuts" group).
 - `config/`: settings pages (Start Menu, Layout, Left side, Look, Search, Start Button). `main.xml` holds
   all keys, labels name the Start11 registry value.
 - `docs/research/start11-features.md` (330 Start11 features) and `start11-internals.md`.

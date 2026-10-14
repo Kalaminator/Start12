@@ -14,7 +14,7 @@ Super key (`launchermenu`), kicker right-click actions (jump list, add to panel/
 
 ## Jobs
 
-### T01 Pin websites, files and folders to Start (M)
+### T01 Pin websites, files and folders to Start (M) -- DONE 2026-10-14 (not yet checked on screen)
 Build: accept custom ids `custom|name|icon|target` (same format as `railItems`) in `main.qml pin()`,
 `tileGroups` and `pinnedGrid`; `Tile.qml` / `PinnedGrid.qml` / `AppCanvas.qml` launch them through
 `root.openUrl` or `root.run`; resolve name/icon from the url (`KIO` mime icon, host name for http).

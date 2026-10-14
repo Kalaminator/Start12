@@ -6,6 +6,7 @@ import org.kde.plasma.components as PC3
 import org.kde.plasma.private.kicker as Kicker
 import org.kde.kirigami as Kirigami
 import org.kde.kitemmodels as KItemModels
+import "../code/tiles.js" as Tiles
 
 // Windows 11 "Pinned": pages of icons with names. Drag to reorder; wheel or dots change page.
 Item {
@@ -36,6 +37,12 @@ Item {
             if (event.angleDelta.y < 0) grid.page = Math.min(grid.pages - 1, grid.page + 1);
             else if (event.angleDelta.y > 0) grid.page = Math.max(0, grid.page - 1);
         }
+    }
+
+    // Right-click on empty space: pin a website, file or folder.
+    TapHandler {
+        acceptedButtons: Qt.RightButton
+        onTapped: point => grid.contextMenu.show(grid, null, -1, root.pinNewItems, point.position.x, point.position.y)
     }
 
     // Empty grid space: drop to add at the end.
@@ -74,6 +81,9 @@ Item {
                     function role(name) {
                         return fav.count > 0 ? fav.data(fav.index(0, 0), fav.KItemModels.KRoleNames.role(name)) : undefined;
                     }
+                    // Pinned website/file/folder instead of an app.
+                    readonly property var custom: Tiles.custom(modelData)
+                    readonly property var appIcon: custom ? (custom.icon || "folder") : fav.count > 0 ? role("decoration") : "dialog-question"
 
                     background: Rectangle {
                         radius: grid.metrics.px(4)
@@ -95,13 +105,13 @@ Item {
                             anchors.horizontalCenter: parent.horizontalCenter
                             width: grid.metrics.px(32)
                             height: width
-                            source: fav.count > 0 ? cell.role("decoration") : "dialog-question"
+                            source: cell.appIcon
                         }
                         PC3.Label {
                             width: cell.width - grid.metrics.px(8)
                             anchors.horizontalCenter: parent.horizontalCenter
                             horizontalAlignment: Text.AlignHCenter
-                            text: fav.count > 0 ? cell.role("display") : cell.modelData
+                            text: cell.custom ? cell.custom.name : fav.count > 0 ? cell.role("display") : cell.modelData
                             elide: Text.ElideRight
                             maximumLineCount: 1
                             color: grid.metrics.text
@@ -129,7 +139,7 @@ Item {
                             if (!dragging && pressed && Math.hypot(m.x - pressPos.x, m.y - pressPos.y) > Qt.styleHints.startDragDistance) {
                                 dragging = true;
                                 grid.ghost.favoriteId = cell.modelData;
-                                grid.ghost.icon = cell.role("decoration") ?? "dialog-question";
+                                grid.ghost.icon = cell.appIcon;
                                 grid.ghost.Drag.active = true;
                             }
                             if (dragging) {
@@ -144,8 +154,12 @@ Item {
                                 grid.ghost.Drag.active = false;
                                 dragging = false;
                             } else if (m.button === Qt.LeftButton && containsMouse) {
-                                if (fav.count > 0) fav.trigger(0, "", null);
-                                root.close();
+                                if (cell.custom) {
+                                    root.openCustom(cell.custom);
+                                } else {
+                                    if (fav.count > 0) fav.trigger(0, "", null);
+                                    root.close();
+                                }
                             } else if (m.button === Qt.RightButton) {
                                 const id = cell.modelData;
                                 grid.contextMenu.show(cell, fav.count > 0 ? fav : null, 0, [
