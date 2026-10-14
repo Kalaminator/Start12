@@ -242,6 +242,10 @@ MouseArea {
                                     : button.frame === 1 ? Qt.lighter(base, 1.12) : base
         readonly property real r: modern ? height / 2 : height * 0.45
         implicitWidth: xpRow.implicitWidth + Math.round(height * (modern ? 0.7 : 0.75))
+        // Classic: square on the menu's side (T42 menuPosition): Left = square left, Center = round both
+        // sides, Right = square right. Modern stays round on both sides.
+        readonly property real leftR: modern || button.cfg.menuPosition !== 0 ? r : 0
+        readonly property real rightR: modern || button.cfg.menuPosition !== 2 ? r : 0
 
         // Soft shadow on the right edge.
         Rectangle {
@@ -249,8 +253,10 @@ MouseArea {
             anchors.leftMargin: 2
             anchors.rightMargin: -2
             radius: xpPill.r
-            topLeftRadius: xpPill.modern ? xpPill.r : 0
-            bottomLeftRadius: topLeftRadius
+            topLeftRadius: xpPill.leftR
+            bottomLeftRadius: xpPill.leftR
+            topRightRadius: xpPill.rightR
+            bottomRightRadius: xpPill.rightR
             color: "#000000"
             opacity: xpPill.modern ? 0.18 : 0.35
         }
@@ -273,8 +279,10 @@ MouseArea {
             anchors.topMargin: xpPill.modern ? 2 : 0
             anchors.bottomMargin: anchors.topMargin
             radius: xpPill.r
-            topLeftRadius: xpPill.modern ? xpPill.r : 0
-            bottomLeftRadius: topLeftRadius
+            topLeftRadius: xpPill.leftR
+            bottomLeftRadius: xpPill.leftR
+            topRightRadius: xpPill.rightR
+            bottomRightRadius: xpPill.rightR
             border.width: 1
             border.color: Qt.darker(xpPill.tone, xpPill.modern ? 1.25 : 1.5)
             gradient: Gradient {

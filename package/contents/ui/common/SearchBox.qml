@@ -16,7 +16,9 @@ PC3.TextField {
     placeholderText: i18n("Search apps and files")
     font.family: metrics.font
     font.pixelSize: metrics.fontSize
-    leftPadding: metrics.px(34)
+    // Room for the search icon; TextField padding does not follow LayoutMirroring (menu position Right).
+    leftPadding: LayoutMirroring.enabled ? undefined : metrics.px(34)
+    rightPadding: LayoutMirroring.enabled ? metrics.px(34) : undefined
 
     Kirigami.Icon {
         anchors.left: parent.left

@@ -120,7 +120,7 @@ FocusScope {
             }
             PC3.Label {
                 anchors.verticalCenter: parent.verticalCenter
-                width: pb.width - x - pb.leftPadding
+                width: pb.width - (style.placeIcons ? m.px(24) : 0) - pb.leftPadding // not x: polish loop when mirrored
                 text: pb.label
                 elide: Text.ElideRight
                 color: m.text

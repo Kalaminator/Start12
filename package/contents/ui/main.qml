@@ -477,30 +477,34 @@ PlasmoidItem {
     // two expanding panel spacers marked start12Centre, one right before the Start button and one after the
     // last Task Manager, and the Task Manager(s) stop filling the panel (key "fill", old value kept in
     // start12Fill). Turning it off removes the marked spacers and puts "fill" back, so the old layout returns.
-    // Writing the panel's AppletOrder through the script makes plasmashell reorder the widgets live.
-    // ponytail: runs on change only (idempotent: skips a panel that already has marked spacers).
+    // Order: a second script (1 s later, once the new spacers are in the panel layout) sets Widget.index,
+    // which makes plasmashell call the panel's reorderApplets() live (writing AppletOrder alone does not).
+    // ponytail: runs on change only (idempotent: no new spacers when marked ones exist; ordering re-runs).
     readonly property bool centerPanel: cfg.menuPosition === 1 && cfg.centerTaskbar
     onCenterPanelChanged: syncCenterPanel()
     function syncCenterPanel() {
-        const id = JSON.stringify(String(Plasmoid.id));
-        const script = "const ID = " + id + ", M = 'start12Centre';"
-            + "for (const p of panels()) { if (p.widgetIds.map(String).indexOf(ID) < 0 || p.location === 'left' || p.location === 'right') continue; "
+        const head = "const ID = " + Plasmoid.id + ", M = 'start12Centre';"
+            + "for (const p of panels()) { if (p.widgetIds.indexOf(ID) < 0 || p.location === 'left' || p.location === 'right') continue; "
             + "const mine = p.widgets('org.kde.plasma.panelspacer').filter(w => { w.currentConfigGroup = ['General']; return String(w.readConfig(M, '')) === 'true'; }); "
-            + "const tasks = p.widgets().filter(w => /icontasks|taskmanager/.test(w.type)); "
-            + (centerPanel
-                ? "if (mine.length) continue; p.currentConfigGroup = ['General']; "
-                  + "let ids = String(p.readConfig('AppletOrder', '')).split(';').filter(s => s); if (ids.indexOf(ID) < 0) ids = p.widgetIds.map(String); "
-                  + "for (const w of tasks) { w.currentConfigGroup = ['General']; w.writeConfig('start12Fill', String(w.readConfig('fill', true))); w.writeConfig('fill', false); w.reloadConfig(); } "
-                  + "const a = p.addWidget('org.kde.plasma.panelspacer'), b = p.addWidget('org.kde.plasma.panelspacer'); "
-                  + "for (const s of [a, b]) { s.currentConfigGroup = ['General']; s.writeConfig(M, true); s.reloadConfig(); } "
-                  + "ids = ids.filter(x => x !== String(a.id) && x !== String(b.id)); let end = ids.indexOf(ID); "
-                  + "for (const w of tasks) end = Math.max(end, ids.indexOf(String(w.id))); "
-                  + "ids.splice(end + 1, 0, String(b.id)); ids.splice(ids.indexOf(ID), 0, String(a.id)); "
-                  + "p.currentConfigGroup = ['General']; p.writeConfig('AppletOrder', ids.join(';')); p.reloadConfig(); }"
-                : "for (const w of mine) w.remove(); "
-                  + "for (const w of tasks) { w.currentConfigGroup = ['General']; const f = String(w.readConfig('start12Fill', '')); "
-                  + "if (f) { w.writeConfig('fill', f !== 'false'); w.writeConfig('start12Fill', ''); w.reloadConfig(); } } }");
-        run("qdbus6 org.kde.plasmashell /PlasmaShell evaluateScript " + Tiles.shQuote(script));
+            + "const tasks = p.widgets().filter(w => /icontasks|taskmanager/.test(w.type)); ";
+        const dbus = Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript ";
+        if (!centerPanel) {
+            run(dbus + Tiles.shQuote(head + "for (const w of mine) w.remove(); "
+                + "for (const w of tasks) { w.currentConfigGroup = ['General']; const f = String(w.readConfig('start12Fill', '')); "
+                + "if (f) { w.writeConfig('fill', f !== 'false'); w.writeConfig('start12Fill', ''); w.reloadConfig(); } } }"));
+            return;
+        }
+        const add = head + "if (mine.length) continue; "
+            + "for (const w of tasks) { w.currentConfigGroup = ['General']; w.writeConfig('start12Fill', String(w.readConfig('fill', true))); w.writeConfig('fill', false); w.reloadConfig(); } "
+            + "for (const s of [p.addWidget('org.kde.plasma.panelspacer'), p.addWidget('org.kde.plasma.panelspacer')]) { s.currentConfigGroup = ['General']; s.writeConfig(M, true); s.reloadConfig(); } }";
+        // index = position in the order without the moved widget: spacer 1 right before Start, spacer 2 after the last task manager.
+        const order = head + "if (mine.length < 2) continue; p.currentConfigGroup = ['General']; "
+            + "const ord = x => String(p.readConfig('AppletOrder', '')).split(';').map(Number).filter(i => i && i !== x.id); "
+            + "let o = ord(mine[0]); mine[0].index = o.indexOf(ID); "
+            + "o = ord(mine[1]); let end = o.indexOf(ID); for (const w of tasks) end = Math.max(end, o.indexOf(w.id)); mine[1].index = end + 1; "
+            // the spacers' optimalSize binding misses the move: flip "expanding" so it recomputes (centred).
+            + "for (const s of mine) { s.writeConfig('expanding', false); s.reloadConfig(); s.writeConfig('expanding', true); s.reloadConfig(); } }";
+        run(dbus + Tiles.shQuote(add) + "; sleep 1; " + dbus + Tiles.shQuote(order));
     }
 
     // Find a power/session action by its id ("shutdown", "reboot", ...).
@@ -891,9 +895,13 @@ PlasmoidItem {
                 if (w.visualParent !== btn) w.visualParent = btn;
                 return;
             }
-            const a = btn.popupAnchor, o = btn.mapToGlobal(0, 0);
+            // The anchor lives in the panel window's root item, not in the button: the button moves when
+            // centerTaskbar adds its spacers and a button-relative x went stale (popup opened off-centre).
+            const a = btn.popupAnchor, o = btn.mapToGlobal(0, 0), sc = btn.mapToItem(null, 0, 0);
+            if (btn.Window.contentItem && a.parent !== btn.Window.contentItem) a.parent = btn.Window.contentItem;
             a.width = w.width;
-            a.x = (pos === 1 ? g.x + (g.width - w.width) / 2 : g.x + g.width - w.width) - o.x;
+            a.y = sc.y;
+            a.x = (pos === 1 ? g.x + (g.width - w.width) / 2 : g.x + g.width - w.width) - (o.x - sc.x);
             w.visualParent = a;
         }
 

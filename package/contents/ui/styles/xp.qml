@@ -574,7 +574,7 @@ FocusScope {
                             }
                             PC3.Label {
                                 anchors.verticalCenter: parent.verticalCenter
-                                width: pb.availableWidth - x
+                                width: pb.availableWidth - m.px(pb.modelData.main ? 32 : 30) // icon + spacing; not x (mirrored polish loop)
                                 text: pb.info ? pb.info.text : ""
                                 elide: Text.ElideRight
                                 color: pb.hot ? c.hoverText : c.placeText
