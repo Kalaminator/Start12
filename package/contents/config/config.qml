@@ -13,8 +13,8 @@ ConfigModel {
         source: "config/ConfigMenu.qml"
     }
     ConfigCategory {
-        name: i18n("Left side")
-        icon: "sidebar-show"
+        name: i18n("Shortcuts")
+        icon: "bookmarks"
         source: "config/ConfigRail.qml"
     }
     ConfigCategory {
