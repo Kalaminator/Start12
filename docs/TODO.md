@@ -37,7 +37,7 @@ Documents, Music, Pictures, Videos, Files, Web); a filter keeps rows whose runne
 `searchFilterIcons` Bool, `searchFilter` String (last used). Checkbox in `config/ConfigSearch.qml`.
 Check: type "a", click Documents: only files remain; click again: all.
 
-### T04 Win7/Modern: drag to reorder pins + jump-list arrows (M)
+### T04 Win7/Modern: drag to reorder pins + jump-list arrows (M) -- DONE (+ web/file/folder pins, empty-space pin menu)
 Build: in `styles/windows7.qml` pinned list, drag rows (copy the drag code of `PinnedGrid.qml`, store
 through `root.movePinned`); an arrow at the right of pinned/most-used rows that opens a submenu with
 the kicker jump-list actions (`contextMenu.kickerActions`) + "Pin/Unpin". Key: none.

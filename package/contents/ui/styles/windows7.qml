@@ -9,6 +9,7 @@ import org.kde.kitemmodels as KItemModels
 import "../win10"
 import ".."
 import "../common"
+import "../code/tiles.js" as Tiles
 
 // Start11 "Windows 7 style": left pane (pinned, most used, "All Programs"), search box under it,
 // places column on the right (user picture on top, power button with arrow at the bottom).
@@ -146,8 +147,20 @@ FocusScope {
     readonly property int perRow: grid ? Math.max(1, Math.floor(home.width / cellW)) : 1
     readonly property var entries: {
         rev;
+        // Pins in cfg.pinnedGrid order. pinnedModel drops website/file/folder ids (Tiles.custom),
+        // so apps are matched to their model row by id; "index" is the place in cfg.pinnedGrid.
+        const rowOf = {};
+        for (let r = 0; r < pinnedModel.count; r++) rowOf[appId(pinnedModel, r)] = r;
         const out = [];
-        for (let r = 0; r < pinnedModel.count; r++) out.push({ kind: "app", model: pinnedModel, row: r, pinned: true });
+        cfg.pinnedGrid.forEach((id, i) => {
+            const c = Tiles.custom(id);
+            if (c) out.push({ kind: "app", custom: c, id: id, index: i, pinned: true });
+            else if (rowOf[id] !== undefined) out.push({ kind: "app", model: pinnedModel, row: rowOf[id], id: id, index: i, pinned: true });
+        });
+        // Rows whose id the model rewrote (e.g. preferred://browser) still show, at the end.
+        const shown = out.map(x => x.row);
+        for (let r = 0; r < pinnedModel.count; r++)
+            if (!shown.includes(r)) out.push({ kind: "app", model: pinnedModel, row: r, id: appId(pinnedModel, r), index: cfg.pinnedGrid.length, pinned: true });
         const pinnedRows = Math.ceil(out.length / perRow);
         const free = Math.floor((home.height - (out.length ? sepH : 0)) / (grid ? cellH : rowH)) - pinnedRows;
         const fm = root.frequentAppsModel;
@@ -215,6 +228,12 @@ FocusScope {
             anchors.bottomMargin: allButton.height + m.px(8)
             clip: true
 
+            // Right-click on empty space: pin a website, file or folder.
+            TapHandler {
+                acceptedButtons: Qt.RightButton
+                onTapped: point => contextMenu.show(home, null, -1, root.pinNewItems, point.position.x, point.position.y)
+            }
+
             Flow {
                 id: flow
                 width: parent.width
@@ -225,26 +244,37 @@ FocusScope {
                         required property var modelData
                         readonly property var e: modelData
                         readonly property bool sep: e.kind === "sep"
+                        readonly property var custom: e.custom ?? null   // pinned website/file/folder
                         function role(name) {
-                            return sep ? undefined : style.roleData(e.model, e.row, name);
+                            return sep || custom ? undefined : style.roleData(e.model, e.row, name);
                         }
+                        readonly property var appIcon: custom ? (custom.icon || "folder") : role("decoration") ?? ""
+                        // Jump-list arrow (list layout, apps with kicker actions), like Windows 7.
+                        readonly property bool hasJump: !sep && !custom && !style.grid
+                            && contextMenu.kickerActions(e.model, e.row).length > 0
                         width: sep || !style.grid ? flow.width : style.cellW
                         height: sep ? style.sepH : style.grid ? style.cellH : style.rowH
                         enabled: !sep
                         hoverEnabled: true
                         padding: m.px(4)
-                        onClicked: {
-                            e.model.trigger(e.row, "", null);
-                            root.close();
+                        opacity: mouse.dragging ? 0.3 : 1
+                        function launch() {
+                            if (custom) {
+                                root.openCustom(custom);
+                            } else {
+                                e.model.trigger(e.row, "", null);
+                                root.close();
+                            }
                         }
-                        function menu(x, y) {
-                            const id = style.appId(e.model, e.row);
+                        function menu(x, y, target) {
+                            const id = custom ? e.id : style.appId(e.model, e.row);
                             const own = !id ? [] : e.pinned
                                 ? [{ text: i18n("Unpin from Start menu"), icon: "window-unpin", run: () => root.unpin(id) }]
                                 : [{ text: i18n("Pin to Start menu"), icon: "window-pin", run: () => root.pin(id) }];
-                            contextMenu.show(app, e.model, e.row, own, x, y);
+                            contextMenu.show(target ?? app, custom ? null : e.model, custom ? -1 : e.row, own, x, y);
                         }
                         readonly property bool kbNav: !sep
+                        function kbActivate() { launch(); }
                         function kbMenu() { menu(width / 2, height / 2); }
                         KeyFrame {}
                         background: Item {
@@ -258,7 +288,14 @@ FocusScope {
                             HoverBox {
                                 anchors.fill: parent
                                 hot: app.hovered
-                                down: app.pressed
+                                down: mouse.pressed && !mouse.dragging
+                            }
+                            // Drop marker: the dragged pin lands above this row.
+                            Rectangle {
+                                visible: drop.containsDrag
+                                width: style.grid ? Math.max(2, m.px(3)) : parent.width
+                                height: style.grid ? parent.height : Math.max(2, m.px(3))
+                                color: m.accent
                             }
                         }
                         contentItem: Item {
@@ -269,23 +306,90 @@ FocusScope {
                                 height: width
                                 x: style.grid ? (parent.width - width) / 2 : 0
                                 y: style.grid ? m.px(4) : (parent.height - height) / 2
-                                source: app.role("decoration") ?? ""
+                                source: app.appIcon
                             }
                             PC3.Label {
                                 x: style.grid ? 0 : appIcon.width + m.px(8)
                                 y: style.grid ? appIcon.y + appIcon.height + m.px(4) : (parent.height - height) / 2
-                                width: parent.width - x
+                                width: parent.width - x - (app.hasJump ? jump.width : 0)
                                 horizontalAlignment: style.grid ? Text.AlignHCenter : Text.AlignLeft
-                                text: app.role("display") ?? ""
+                                text: app.custom ? app.custom.name : app.role("display") ?? ""
                                 elide: Text.ElideRight
                                 color: pm.text
                                 font.family: m.font
                                 font.pixelSize: Math.round(m.fontSize * (style.grid ? 0.85 : 1))
                             }
                         }
-                        TapHandler {
-                            acceptedButtons: Qt.RightButton
-                            onTapped: point => app.menu(point.position.x, point.position.y)
+                        DropArea {
+                            id: drop
+                            anchors.fill: parent
+                            enabled: app.e.pinned === true
+                            keys: ["start12-tile"]
+                            onDropped: d => root.movePinned(d.source.favoriteId, app.e.index)
+                        }
+
+                        // Click, right-click, and drag a pin to reorder (same as PinnedGrid).
+                        MouseArea {
+                            id: mouse
+                            anchors.fill: parent
+                            enabled: !app.sep
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+                            preventStealing: true
+                            property point pressPos
+                            property bool dragging: false
+                            onPressed: ev => pressPos = Qt.point(ev.x, ev.y)
+                            onPositionChanged: ev => {
+                                if (!dragging && pressed && app.e.pinned && Math.hypot(ev.x - pressPos.x, ev.y - pressPos.y) > Qt.styleHints.startDragDistance) {
+                                    dragging = true;
+                                    ghost.favoriteId = app.e.id;
+                                    ghost.icon = app.appIcon;
+                                    ghost.Drag.active = true;
+                                }
+                                if (dragging) {
+                                    const p = mapToItem(ghost.parent, ev.x, ev.y);
+                                    ghost.x = p.x - ghost.width / 2;
+                                    ghost.y = p.y - ghost.height / 2;
+                                }
+                            }
+                            onReleased: ev => {
+                                if (dragging) {
+                                    ghost.Drag.drop();
+                                    ghost.Drag.active = false;
+                                    dragging = false;
+                                } else if (ev.button === Qt.LeftButton && containsMouse) {
+                                    app.launch();
+                                } else if (ev.button === Qt.RightButton) {
+                                    app.menu(ev.x, ev.y);
+                                }
+                            }
+                            onCanceled: {
+                                ghost.Drag.active = false;
+                                dragging = false;
+                            }
+                        }
+
+                        // Jump-list arrow: recent files and app actions, plus Pin/Unpin.
+                        PC3.AbstractButton {
+                            id: jump
+                            visible: app.hasJump
+                            anchors.right: parent.right
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            width: m.px(22)
+                            hoverEnabled: true
+                            onClicked: app.menu(width, 0, jump)
+                            background: HoverBox {
+                                hot: jump.hovered
+                                down: jump.pressed
+                            }
+                            contentItem: Kirigami.Icon {
+                                implicitWidth: m.px(12)
+                                implicitHeight: m.px(12)
+                                source: "go-next"
+                                color: pm.text
+                                isMask: true
+                                opacity: app.hovered || jump.hovered ? 1 : 0.5
+                            }
                         }
                     }
                 }
@@ -497,19 +601,10 @@ FocusScope {
         }
     }
 
-    // AppList needs a drag ghost; Windows 7 style has no drop targets, so it only shows the icon.
-    Item {
+    // Drag ghost for reordering pins (AppList uses it too).
+    DragGhost {
         id: ghost
-        property string favoriteId: ""
-        property var icon: null
-        width: m.px(32)
-        height: width
-        z: 100
-        visible: Drag.active
-        Kirigami.Icon {
-            anchors.fill: parent
-            source: ghost.icon
-        }
+        metrics: m
     }
 
     ContextMenu {

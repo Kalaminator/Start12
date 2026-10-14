@@ -46,13 +46,13 @@ https://www.stardock.com/blog/523496/introducing-start11-v2 (user-approved sourc
 - `launcher.qml`: big picture + name, power top right, SearchBox, PinnedPane (up to 6 cols).
 - Shared: common/Avatar, SmallButton (Win11 uses it too), SearchBox (signal `cancel`), DragGhost, PinnedGrid
   `fixedCols`/`fixedRows`. Keys `canvasTab`, `canvasTextures`.
-Missing: Win7/Modern drag to reorder pins + jump-list arrows; canvas: user-made tabs/groups/pages, folders,
+Win7/Modern (T04): pins in cfg.pinnedGrid order incl. custom pins, drag to reorder, jump-list arrow, empty-space "Pin website/file/folder".
+Missing: canvas: user-made tabs/groups/pages, folders,
 icon tint, drag between groups. Plasma keeps one popup size for all styles (user drags it).
 
 ## Next (in order)
-Work through docs/TODO.md job by job (T01, T02 done). Use the prompt in docs/AGENT_PROMPT.md, one agent per job,
-then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). Next: T04 first (user wants
-Modern/Win7 to show web/file/folder pins too), then T03.
+Work through docs/TODO.md job by job (T01, T02, T04 done). Use the prompt in docs/AGENT_PROMPT.md, one agent per job,
+then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T04 built (needs a user check), next: T03.
 Then the taskbar part of Start11 (section 10 of the features doc), if the user wants it.
 
 ## Testing tips
