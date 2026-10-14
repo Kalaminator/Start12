@@ -295,7 +295,7 @@ def deco_frame(prefix, y0, T, S, ry, stops, side, line, hi, gid):
         return '<path d="M %s,%s V %s A %s %s 0 0 %d %s,%s H %s V %s Z" %s/>' % (
             ex, y0 + T, y0 + ry, S - inset, ry - inset, 1 if sx > 0 else 0, cx + sx * S, ey, cx + sx * S, y0 + T, f)
     defs = '<linearGradient id="%s" gradientUnits="userSpaceOnUse" x1="0" y1="%d" x2="0" y2="%d">%s</linearGradient>' % (
-        gid, y0, y0 + T, "".join('<stop offset="%s" stop-color="%s"/>' % s for s in stops))
+        gid, y0, y0 + T, "".join('<stop offset="%s" stop-color="%s" stop-opacity="%s"/>' % (tuple(s) + (1,))[:3] for s in stops))
     p = prefix + "-"
     g = lambda n, b: '<g id="%s%s">%s</g>' % (p, n, b)
     out = [g("topleft", r(x0, y0, S, T, 'fill="none"') + arc(x0, 1, 0, L) + arc(x0, 1, 1, F)),
@@ -363,25 +363,106 @@ def write_deco(base, B, sub, label):
 # XP: beige windows, white views, selection in the scheme colour (blue Luna #316ac5), title bar = scheme colour.
 SCHEME_COLOURS = {"blue": ("#ece9d8", "#316ac5"), "olive": ("#ece9d8", "#93a070"), "silver": ("#e0dfe3", "#b2b4bf")}
 
-def write_scheme(path, B, win, sel, label):
+def write_scheme(path, B, win, sel, label, view=W):
+    """T37: also the Windows 10/11/7 schemes; a dark `win` gives white text, light links, dark tooltips."""
     c = lambda h: "%d,%d,%d" % rgb(h)
-    fg, selfg = "#000000", ("#000000" if light(sel) else W)
+    lt = light(win)
+    fg, selfg = (K if lt else W), (K if light(sel) else W)
     def group(bg, alt, f=fg, focus=sel):
         return "\n".join(["BackgroundNormal=" + c(bg), "BackgroundAlternate=" + c(alt), "ForegroundNormal=" + c(f),
-                          "ForegroundInactive=" + c(mix(f, bg, .45)), "ForegroundActive=" + c(f), "ForegroundLink=" + c("#0000ff"),
-                          "ForegroundVisited=" + c("#800080"), "ForegroundNegative=" + c("#c00000"), "ForegroundNeutral=" + c("#b06000"),
+                          "ForegroundInactive=" + c(mix(f, bg, .45)), "ForegroundActive=" + c(f), "ForegroundLink=" + c("#0000ff" if lt else "#4cc2ff"),
+                          "ForegroundVisited=" + c("#800080" if lt else "#c79bff"), "ForegroundNegative=" + c("#c00000"), "ForegroundNeutral=" + c("#b06000"),
                           "ForegroundPositive=" + c("#007000"), "DecorationFocus=" + c(focus), "DecorationHover=" + c(mix(focus, W, .3))])
-    g = {"Window": group(win, mix(win, K, .04)), "View": group(W, mix(win, W, .5)), "Button": group(win, mix(win, K, .06)),
-         "Header": group(win, mix(win, K, .04)), "Tooltip": group("#ffffe1", "#f5f5d0"),
+    g = {"Window": group(win, mix(win, K, .04)), "View": group(view, mix(win, view, .5)), "Button": group(win, mix(win, K, .06)),
+         "Header": group(win, mix(win, K, .04)), "Tooltip": group("#ffffe1", "#f5f5d0") if lt else group("#2b2b2b", "#323232"),
          "Selection": group(sel, mix(sel, W, .2), selfg, sel),
          "Complementary": group(B, mix(B, K, .12), "#1f2440" if light(B) else W, mix(B, W, .4))}
     tfg, Bi = ("#000000" if light(B) else W), mix(B, "#d4d8e4", .55)
     name = os.path.splitext(os.path.basename(path))[0]
     with open(path, "w") as f:
         f.write("".join("[Colors:%s]\n%s\n\n" % kv for kv in g.items()))
-        f.write("[General]\nColorScheme=%s\nName=Start12 XP %s\n\n[KDE]\ncontrast=4\n\n" % (name, label))
+        f.write("[General]\nColorScheme=%s\nName=Start12 %s\n\n[KDE]\ncontrast=4\n\n" % (name, label))
         f.write("[WM]\nactiveBackground=%s\nactiveBlend=%s\nactiveForeground=%s\ninactiveBackground=%s\ninactiveBlend=%s\n"
                 "inactiveForeground=%s\n" % (c(B), c(B), c(tfg), c(Bi), c(Bi), c(mix(tfg, Bi, .3))))
+
+# T37 the other menu styles: Windows 10 (flat, square, wide buttons), Windows 11 (rounded top, small rounded buttons;
+# modern/app/pro/launcher use it too), Windows 7 (Aero glass blue, red close). 10/11 come light and dark (main.qml
+# picks by the user's own scheme brightness). Names = Aurorae theme dir = colour scheme file.
+WIN_DECOS = {"start12-win10-light": ("win10", False), "start12-win10-dark": ("win10", True),
+             "start12-win11-light": ("win11", False), "start12-win11-dark": ("win11", True), "start12-win7": ("win7", False)}
+WIN_SCHEMES = {"win10": dict(B=W, win="#f0f0f0", sel="#0078d7"), "win10-dark": dict(B="#202020", win="#202020", sel="#0078d7", view="#191919"),
+               "win11": dict(B="#f3f3f3", win="#f3f3f3", sel="#005fb8"), "win11-dark": dict(B="#202020", win="#202020", sel="#60cdff", view="#2b2b2b"),
+               "win7": dict(B="#6f97c8", win="#f0f0f0", sel="#3399ff")}
+
+FLAT_GLYPHS = {"close": "M .1,.1 L .9,.9 M .9,.1 L .1,.9", "minimize": "M .05,.5 H .95", "maximize": "M .05,.05 H .95 V .95 H .05 Z",
+               "restore": "M .25,.05 H .95 V .75 M .05,.25 H .75 V .95 H .05 Z"}  # thin Windows 10/11 caption glyphs
+
+def write_win_deco(base, kind, dark):
+    name = os.path.basename(os.path.normpath(base))
+    sch = WIN_SCHEMES[kind + ("-dark" if dark else "")]
+    if kind == "win7":  # glass: translucent blue gradient, thick border, glassy buttons, wide red close
+        T, S, ry, border, bw, bh, c, cw, gs = 28, 6, 6, 6, 26, 18, 3, 43, 8
+        g = lambda a, o=.92: [(0, mix(a, W, .45), o), (.5, a, o), (1, mix(a, K, .1), o)]
+        act, ina = g("#7ea6d6"), g("#c3d3e6")
+        side, sidei, line, linei, hi = "#7ea6d6", "#c3d3e6", "#1f3d66", "#7d8ea3", "#eaf3fc"
+        ink, inki, glyph = K, "#55606e", W
+    else:
+        T, S, ry, border, bw, bh, c, gs = (30, 1, 0, 1, 46, 30, 0, 10) if kind == "win10" else (32, 8, 8, 1, 36, 26, 4, 10)
+        cw = bw
+        bg = sch["B"]
+        act = ina = [(0, bg)]
+        side = sidei = bg
+        line = "#3a3a3a" if dark else ("#1883d7" if kind == "win10" else "#c4c4c4")
+        linei = "#3a3a3a" if dark else "#aaaaaa"
+        hi, ink = bg, (W if dark else K)
+        inki, glyph = mix(ink, bg, .55), ink
+    defs_a = deco_frame("decoration", 10, T, S, ry, act, side, line, hi, "da")
+    defs_i = deco_frame("decoration-inactive", T + 70, T, S, ry, ina, sidei, linei, hi, "di")
+    svg(os.path.join(base, "decoration.svg"), [defs_a, defs_i], size=(130, 2 * T + 140))
+    states = ("active", "hover", "pressed", "deactivated", "inactive", "hover-inactive", "pressed-inactive", "deactivated-inactive")
+    for btn in BUTTONS:
+        w, frames = cw if btn == "close" else bw, []
+        for i, st in enumerate(states):
+            mode, on = st.split("-")[0], not st.endswith("inactive")
+            hot = mode in ("hover", "pressed")
+            if kind == "win7":
+                base_c = ("#e0866f" if on else "#d9a79a") if btn == "close" else ("#9cbde3" if on else "#d0dbe8")
+                top = mix(base_c, W, .5 if mode == "hover" else .15 if mode == "pressed" else .35)
+                bot = mix(base_c, K, .25 if mode == "pressed" else .05)
+                if btn == "close" and mode == "hover":
+                    top, bot = "#f6b19c", "#e0401f"  # red glow
+                stops, bd, gop = [(0, top, 1), (.45, bot, 1), (1, mix(bot, W, .3), 1)], ("#1f3d66", .8 if on else .4), 1 if on else .7
+            else:
+                red = "#e81123" if kind == "win10" else "#c42b1c"
+                grey = mix(sch["B"], W if dark else K, .12 if mode == "hover" else .2)
+                col = red if btn == "close" and hot else grey
+                stops, bd = [(0, col, (1 if btn == "close" else .9) if hot else 0)], None
+                if btn == "close" and mode == "pressed":
+                    stops = [(0, mix(red, K, .15), 1)]
+                gop = 1 if on else .45
+            if st.startswith("deactivated"):
+                gop = .35
+            gl = W if (kind == "win7" or (btn == "close" and hot)) else glyph
+            sw = 2.0 if kind == "win7" else 1.0
+            frames.append(frame(st, 10, 10 + i * (bh + 20), w, bh, c, bd, stops, gid="b%d" % i, margins=(c, c, c, c),
+                                center='<path d="%s" transform="translate(%s,%s) scale(%s)" fill="none" stroke="%s" stroke-opacity="%s" '
+                                       'stroke-width="%s" stroke-linecap="round" stroke-linejoin="round"/>' % (
+                                           FLAT_GLYPHS.get(btn, GLYPHS[btn]) if kind != "win7" else GLYPHS[btn], 10 + (w - gs) / 2, 10 + i * (bh + 20) + (bh - gs) / 2, gs, gl, gop, round(sw / gs, 3))))
+        svg(os.path.join(base, btn + ".svg"), frames, size=(w + 20, 8 * (bh + 20) + 20))
+    rgbs = lambda h: "%d,%d,%d" % rgb(h)
+    with open(os.path.join(base, name + "rc"), "w") as f:
+        f.write("[General]\nActiveTextColor=%s\nInactiveTextColor=%s\nUseTextShadow=false\nTitleAlignment=Left\n"
+                "TitleVerticalAlignment=Center\nAnimation=0\nShadow=true\n\n[Layout]\nBorderLeft=%d\nBorderRight=%d\n"
+                "BorderBottom=%d\nTitleEdgeTop=0\nTitleEdgeBottom=0\nTitleEdgeLeft=%d\nTitleEdgeRight=%d\nTitleBorderLeft=6\n"
+                "TitleBorderRight=6\nTitleHeight=%d\nButtonWidth=%d\nButtonWidthClose=%d\nButtonHeight=%d\nButtonSpacing=%d\n"
+                "ButtonMarginTop=%d\nExplicitButtonSpacer=8\nPaddingTop=0\nPaddingBottom=0\nPaddingLeft=0\nPaddingRight=0\n"
+                % (rgbs(ink), rgbs(inki),
+                   border, border, border, border + 6, border, T, bw, cw, bh, 0 if kind != "win11" else 2,
+                   (T - bh) // 2 if kind == "win11" else 0))
+    with open(os.path.join(base, "metadata.desktop"), "w") as f:
+        f.write("[Desktop Entry]\nName=Start12 %s\nComment=Window decoration for the Start12 menu styles\n"
+                "X-KDE-PluginInfo-Author=Start12\nX-KDE-PluginInfo-Name=%s\nX-KDE-PluginInfo-Version=1.0\n"
+                "X-KDE-PluginInfo-License=LGPL\n" % (name[8:].replace("-", " ").title(), name))
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
@@ -397,13 +478,15 @@ if __name__ == "__main__":
         if a.custom:  # --out is the .colors file; custom: beige windows, selection and title bar in the custom colour
             rgb(a.custom)
             B = "#" + a.custom.lstrip("#")[-6:]
-            write_scheme(a.out, B, SCHEME_COLOURS["blue"][0], B, "%s %s" % (a.sub.title(), a.custom))
+            write_scheme(a.out, B, SCHEME_COLOURS["blue"][0], B, "XP %s %s" % (a.sub.title(), a.custom))
         else:
             os.makedirs(a.outdir, exist_ok=True)
             for sub in ("classic", "modern"):
                 for sch, (win, sel) in SCHEME_COLOURS.items():
                     write_scheme(os.path.join(a.outdir, "start12-xp-" + sub + ("" if sch == "blue" else "-" + sch) + ".colors"),
-                                 DECO_BASES[sch], win, sel, "%s %s" % (sub.title(), sch.title()))
+                                 DECO_BASES[sch], win, sel, "XP %s %s" % (sub.title(), sch.title()))
+            for name, (kind, dark) in WIN_DECOS.items():
+                write_scheme(os.path.join(a.outdir, name + ".colors"), label=name[8:].replace("-", " ").title(), **WIN_SCHEMES[kind + ("-dark" if dark else "")])
     elif a.deco:
         if a.custom:
             rgb(a.custom)
@@ -413,6 +496,8 @@ if __name__ == "__main__":
                 for sch, B in DECO_BASES.items():
                     write_deco(os.path.join(a.outdir, "start12-xp-" + sub + ("" if sch == "blue" else "-" + sch)), B, sub,
                                "%s %s" % (sub.title(), sch.title()))
+            for name, (kind, dark) in WIN_DECOS.items():
+                write_win_deco(os.path.join(a.outdir, name), kind, dark)
     elif a.taskbar is not None:
         taskbar(a.out, **dict(kv.split("=", 1) for kv in a.taskbar))
     elif a.custom:

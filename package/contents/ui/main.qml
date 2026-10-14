@@ -201,13 +201,36 @@ PlasmoidItem {
                                        : cfg.xpColor === "custom" ? "-custom-" + xpCustomHex : "")
     readonly property string xpTheme: cfg.menuStyle !== "xp" || !cfg.xpTaskbarTheme ? "" : xpScheme
     onXpThemeChanged: syncDesktopTheme()
-    // Window decorations (T26a, key windowTheme): Aurorae theme per menu style; "" = this style has none yet
-    // (add other styles here). XP ones come from xptheme.py --deco (install.sh; custom colour made here).
+    // Window decorations (T26a, key windowTheme): Aurorae theme per menu style, and (T26b) the colour scheme of the
+    // same name. From xptheme.py --deco / --scheme (install.sh; XP custom colour made here). T37: windows10/11
+    // light or dark like the user's own scheme (userDark), windows7 light, modern/app/pro/launcher = Win11 look.
     function windowDecoration() {
-        return cfg.menuStyle === "xp" ? xpScheme : "";
+        const s = cfg.menuStyle;
+        return s === "xp" ? xpScheme : s === "windows7" ? "start12-win7"
+            : "start12-" + (s === "windows10" ? "win10" : "win11") + (userDark ? "-dark" : "-light");
     }
     readonly property string windowDeco: cfg.windowTheme ? windowDecoration() : ""
-    onWindowDecoChanged: syncWindowDeco()
+    onWindowDecoChanged: readBrightness()
+    // Brightness of the user's own colour scheme (the saved one while ours is applied), then both syncs.
+    property bool userDark: false
+    function readBrightness() {
+        brightReader.connectSource("S=" + Tiles.shQuote(cfg.savedColorScheme) + "; f=kdeglobals; "
+            + "case \"$(kreadconfig6 --file kdeglobals --group General --key ColorScheme)\" in start12-*) "
+            + "f=$(ls \"$HOME/.local/share/color-schemes/$S.colors\" \"/usr/share/color-schemes/$S.colors\" 2>/dev/null | head -1);; esac; "
+            + "kreadconfig6 --file \"${f:-kdeglobals}\" --group Colors:Window --key BackgroundNormal");
+    }
+    P5Support.DataSource {
+        id: brightReader
+        engine: "executable"
+        connectedSources: []
+        onNewData: (sourceName, data) => {
+            disconnectSource(sourceName);
+            const v = (data.stdout || "").trim().split(",").map(Number);
+            root.userDark = v.length === 3 && 0.299 * v[0] + 0.587 * v[1] + 0.114 * v[2] < 128;
+            root.syncWindowDeco();
+            root.syncWindowColors();
+        }
+    }
     // Same save/restore idea as syncDesktopTheme: kwinrc [org.kde.kdecoration2] library + theme are saved in
     // savedDecoLibrary/savedDecoTheme when ours goes on and written back when it goes off.
     function syncWindowDeco() {
@@ -246,14 +269,7 @@ PlasmoidItem {
             }
         }
     }
-    // Window colours (T26b, same windowTheme key): Plasma colour scheme per menu style; "" = this style has none
-    // yet (add other styles here). XP ones come from xptheme.py --scheme (install.sh; custom colour made here).
-    function windowColors() {
-        return cfg.menuStyle === "xp" ? xpScheme : "";
-    }
-    readonly property string windowScheme: cfg.windowTheme ? windowColors() : ""
-    onWindowSchemeChanged: syncWindowColors()
-    // Same save/restore idea: kdeglobals [General] ColorScheme is saved in savedColorScheme when ours goes on.
+    // Window colours (T26b, same windowTheme key and name as windowDeco). Same save/restore idea: kdeglobals [General] ColorScheme is saved in savedColorScheme when ours goes on.
     function syncWindowColors() {
         colorReader.connectSource("kreadconfig6 --file kdeglobals --group General --key ColorScheme");
     }
@@ -265,7 +281,7 @@ PlasmoidItem {
             disconnectSource(sourceName);
             const cur = (data.stdout || "").trim();
             const ours = cur.startsWith("start12-");
-            const want = root.windowScheme;
+            const want = root.windowDeco;
             if (want !== "") {
                 if (cur === want)
                     return;
@@ -285,14 +301,14 @@ PlasmoidItem {
     }
     // Generated taskbar for any style (T31, xptheme.py --taskbar): start12-taskbar-<hash of args + fallback>,
     // FallbackTheme = the user's saved style, so only panel/tasks/colors change. XP taskbar wins.
-    // T35: taskbarFollowsStyle picks a preset per menu style instead of the custom keys (others / xp = none).
+    // T35: taskbarFollowsStyle picks a preset per menu style instead of the custom keys (T37: others = windows11, xp = none).
     // T34: button style (buttons=plasma|win10|win11|win7), accent for the Win10/11 active bar, solid = focused
     // item less transparent; added to presets and custom alike.
     readonly property var taskbarPresets: ({
         "windows10": "colour=101010 alpha=1 radius=2 line=0 buttons=win10",
         "windows11": "colour=f3f3f3 alpha=0.8 radius=8 line=0 buttons=win11",
         "windows7": "colour=2a5a96 alpha=0.6 radius=6 line=1 buttons=win7" })
-    readonly property string taskbarBase: cfg.taskbarFollowsStyle ? (taskbarPresets[cfg.menuStyle] || "")
+    readonly property string taskbarBase: cfg.taskbarFollowsStyle ? (taskbarPresets[cfg.menuStyle] || (cfg.menuStyle === "xp" ? "" : taskbarPresets.windows11))
         : cfg.taskbarTheme !== "custom" ? ""
         : "colour=" + cfg.taskbarColor.toString().slice(-6) + " alpha=" + (cfg.taskbarAlpha / 100)
           + " radius=" + cfg.taskbarRadius + " line=" + (cfg.taskbarLine ? 1 : 0) + " buttons=" + Tiles.shQuote(cfg.taskbarButtons)
@@ -484,8 +500,7 @@ PlasmoidItem {
                     root.cfg[k] = s[k];
             }
             root.syncDesktopTheme();
-            root.syncWindowDeco();
-            root.syncWindowColors();
+            root.readBrightness();
         }
     }
     property string doneReset: ""
@@ -873,7 +888,6 @@ PlasmoidItem {
         rootModel.refresh();
         systemModel = systemModelComponent.createObject(root, { favoritesModel: rootModel.systemFavoritesModel });
         syncDesktopTheme();
-        syncWindowDeco();
-        syncWindowColors();
+        readBrightness();   // then syncWindowDeco + syncWindowColors
     }
 }

@@ -11,9 +11,9 @@ import org.kde.plasma.plasma5support as P5Support
 KCM.SimpleKCM {
     id: page
     property string cfg_menuStyle   // read only, to show the XP option
-    property alias cfg_xpTaskbarTheme: xpTaskbarBox.checked
+    property bool cfg_xpTaskbarTheme
     property alias cfg_windowTheme: windowBox.checked
-    property alias cfg_taskbarFollowsStyle: followBox.checked
+    property bool cfg_taskbarFollowsStyle
     property string cfg_taskbarTheme
     property alias cfg_taskbarColor: tbColor.color
     property alias cfg_taskbarAlpha: tbAlpha.value
@@ -44,30 +44,33 @@ KCM.SimpleKCM {
     }
 
     Kirigami.FormLayout {
+        // T37: the two main switches, the same for every menu style.
         QQC2.CheckBox {
-            id: xpTaskbarBox
-            visible: page.cfg_menuStyle === "xp"
-            text: i18n("Apply matching XP taskbar theme")
+            text: i18n("Apply the theme to the taskbar")
+            checked: page.cfg_menuStyle === "xp" ? page.cfg_xpTaskbarTheme : page.cfg_taskbarFollowsStyle
+            onToggled: {   // one switch for both keys: XP Plasma Style (xpTaskbarTheme) and the T35 presets
+                page.cfg_xpTaskbarTheme = checked;
+                page.cfg_taskbarFollowsStyle = checked;
+            }
+            QQC2.ToolTip.visible: hovered
+            QQC2.ToolTip.text: i18n("Taskbar colours and buttons that match the menu style. Your own Plasma Style comes back when this is off.")
         }
         QQC2.CheckBox {
-            id: windowBox   // T26a/b: main.qml windowDecoration()/windowColors() decide per menu style (XP for now)
+            id: windowBox   // T26a/b, T37: main.qml windowDecoration() picks the theme per menu style
             text: i18n("Apply the theme to windows")
             QQC2.ToolTip.visible: hovered
             QQC2.ToolTip.text: i18n("Title bars and colours of every window. Your own ones come back when this is off.")
         }
-        QQC2.CheckBox {
-            id: followBox
-            text: i18n("Taskbar follows the menu style")
-        }
+        Item { Kirigami.FormData.isSection: true }
         QQC2.CheckBox {
             id: customBox
-            enabled: !followBox.checked
+            enabled: !page.cfg_taskbarFollowsStyle
             text: i18n("Override the taskbar colour")
             checked: page.cfg_taskbarTheme === "custom"
             onToggled: page.cfg_taskbarTheme = checked ? "custom" : "off"
         }
         ColumnLayout {
-            enabled: customBox.checked && !followBox.checked
+            enabled: customBox.checked && !page.cfg_taskbarFollowsStyle
             Kirigami.FormData.label: i18n("Custom taskbar:")
             KQuickControls.ColorButton { id: tbColor; showAlphaChannel: false }
             RowLayout {
@@ -85,7 +88,7 @@ KCM.SimpleKCM {
         }
         // T33: texture drawn inside the generated panel background (xptheme.py image=...)
         ColumnLayout {
-            enabled: customBox.checked && !followBox.checked
+            enabled: customBox.checked && !page.cfg_taskbarFollowsStyle
             Kirigami.FormData.label: i18n("Texture:")
             RowLayout {
                 QQC2.Label { text: page.cfg_taskbarImage ? page.cfg_taskbarImage.split("/").pop() : i18n("None") }
@@ -112,7 +115,7 @@ KCM.SimpleKCM {
         }
         // T34: task button look in the generated tasks.svg (presets pick their own; "Plasma" keeps the style's)
         QQC2.ComboBox {
-            enabled: customBox.checked && !followBox.checked
+            enabled: customBox.checked && !page.cfg_taskbarFollowsStyle
             Kirigami.FormData.label: i18n("Task buttons:")
             textRole: "text"
             valueRole: "value"
@@ -123,7 +126,7 @@ KCM.SimpleKCM {
         }
         QQC2.CheckBox {
             id: tbSolid
-            enabled: customBox.checked || followBox.checked
+            enabled: customBox.checked || page.cfg_taskbarFollowsStyle
             text: i18n("Paint the active button less transparent")
         }
 

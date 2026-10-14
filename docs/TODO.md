@@ -234,7 +234,7 @@ centred/anchored on the full-screen popup with a dim background instead of stret
 (4) translate the new/changed i18n strings in po/es.po (run package/Messages.sh), msgfmt --check.
 Check: qmllint, node tests/test_tiles.js, ./install.sh.
 
-### T37 Window look for every style + two clear switches (M) -- user 2026-10-14
+### T37 Window look for every style + two clear switches (M) -- user 2026-10-14 -- DONE 2026-10-14
 Build (after T26a): window decorations (Aurorae, via the T26a generator and `windowDecoration()`) for the other
 menu styles: windows10 (flat, square, dark/light title, wide close), windows11 (rounded corners, mica-like light/dark,
 small rounded buttons), windows7 (Aero glass blue, glowing red close), modern/app/pro/launcher reuse windows11.
