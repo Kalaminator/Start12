@@ -19,7 +19,7 @@ PlasmoidItem {
     readonly property var cfg: Plasmoid.configuration
 
     // Styles that have a QML file. The others fall back to Windows 10 for now.
-    readonly property var builtStyles: ["windows7", "modern", "windows10", "windows11", "app", "pro", "launcher"]
+    readonly property var builtStyles: ["windows7", "modern", "windows10", "windows11", "app", "pro", "launcher", "xp"]
     // Modern style = the Windows 7 file with a flat look.
     readonly property string styleFile: cfg.menuStyle === "modern" ? "windows7"
                                       : builtStyles.includes(cfg.menuStyle) ? cfg.menuStyle : "windows10"

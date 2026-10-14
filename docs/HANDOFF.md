@@ -44,6 +44,8 @@ https://www.stardock.com/blog/523496/introducing-start11-v2 (user-approved sourc
   Fences-like coloured groups with images/TabTextures) on the left, AppList on the right, type to search.
 - `pro.qml`: SearchBox + `common/PinnedPane.qml` (3 cols) left, darker right panel (picture, places with icons, power).
 - `launcher.qml`: big picture + name, power top right, SearchBox, PinnedPane (up to 6 cols).
+- `xp.qml` (menuStyle "xp", key `xpSubstyle` "classic" | "modern"): Luna header + picture, white pinned/most used
+  + green All Programs, light blue places, Log Off / Turn Off bar. Modern = same palette, rounded cards. Not yet seen on screen.
 - Shared: common/Avatar, SmallButton (Win11 uses it too), SearchBox (signal `cancel`), DragGhost, PinnedGrid
   `fixedCols`/`fixedRows`. Keys `canvasTab`, `canvasTextures`.
 Win7/Modern (T04): pins in cfg.pinnedGrid order incl. custom pins, drag to reorder, jump-list arrow, empty-space "Pin website/file/folder".

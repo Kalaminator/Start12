@@ -7,7 +7,7 @@
 
   <group name="Style">
     <entry name="menuStyle" type="String">
-      <label>windows7 | modern | windows10 | windows11 | app | pro | launcher</label>
+      <label>windows7 | modern | windows10 | windows11 | app | pro | launcher | xp</label>
       <default>windows10</default>
     </entry>
     <entry name="menuSize" type="Int">
@@ -150,6 +150,13 @@
     <entry name="modernSubstyle" type="Int">
       <label>ModernStyleSub: same numbers as win7Substyle</label>
       <default>1</default>
+    </entry>
+  </group>
+
+  <group name="XP">
+    <entry name="xpSubstyle" type="String">
+      <label>Windows XP style: classic (Luna, as it was) | modern (same colours, rounded)</label>
+      <default>classic</default>
     </entry>
   </group>
 

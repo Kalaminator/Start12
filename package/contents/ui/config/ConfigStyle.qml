@@ -15,8 +15,9 @@ KCM.SimpleKCM {
     property real cfg_uiScale
     property alias cfg_win7Substyle: subBox.currentIndex
     property alias cfg_modernSubstyle: modernSubBox.currentIndex
+    property string cfg_xpSubstyle
 
-    readonly property var built: ["windows7", "modern", "windows10", "windows11", "app", "pro", "launcher"]
+    readonly property var built: ["windows7", "modern", "windows10", "windows11", "app", "pro", "launcher", "xp"]
     readonly property var styles: [
         ["windows7", i18n("Windows 7 style"), i18n("The classic Windows 7 menu.")],
         ["modern", i18n("Modern style"), i18n("An updated Windows 7 style.")],
@@ -24,7 +25,8 @@ KCM.SimpleKCM {
         ["windows11", i18n("Windows 11 style"), i18n("Windows 11 style with improvements.")],
         ["app", i18n("Windows App style"), i18n("Shortcuts at the top, groups and tabs, all apps always open.")],
         ["pro", i18n("Windows Pro style"), i18n("Two-tone: pinned apps, and a places panel on the right.")],
-        ["launcher", i18n("Windows Launcher style"), i18n("Big account picture, search, and a large pinned grid.")]
+        ["launcher", i18n("Windows Launcher style"), i18n("Big account picture, search, and a large pinned grid.")],
+        ["xp", i18n("Windows XP style"), i18n("The blue Luna menu, classic or modernised.")]
     ]
 
     ColumnLayout {
@@ -95,6 +97,13 @@ KCM.SimpleKCM {
                 Kirigami.FormData.label: i18n("Substyle:")
                 model: [i18n("Modern style"), i18n("Modern style with icons"), i18n("Compact Modern style"),
                         i18n("Grid Modern style"), i18n("Grid Modern style with icons"), i18n("Compact Grid Modern style")]
+            }
+            QQC2.ComboBox {
+                visible: page.cfg_menuStyle === "xp"
+                Kirigami.FormData.label: i18n("Substyle:")
+                model: [i18n("Classic Windows XP style"), i18n("Modern Windows XP style")]
+                currentIndex: page.cfg_xpSubstyle === "modern" ? 1 : 0
+                onActivated: index => page.cfg_xpSubstyle = index === 1 ? "modern" : "classic"
             }
             QQC2.ComboBox {
                 id: sizeBox
