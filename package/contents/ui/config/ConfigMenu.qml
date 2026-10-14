@@ -159,7 +159,7 @@ KCM.SimpleKCM {
     Kirigami.PromptDialog {
         id: positionsDialog
         title: i18n("Reset icon positions?")
-        subtitle: i18n("Tiles, pinned icons and pin names go back to the fresh-install layout. Press OK/Apply in the settings window afterwards to finish.")
+        subtitle: i18n("Tiles, pinned icons and pin names go back to the fresh-install layout. Press OK in the settings window afterwards to finish; it then closes, so no old values are written back.")
         standardButtons: Kirigami.Dialog.Ok | Kirigami.Dialog.Cancel
         onAccepted: page.cfg_resetRequest = "positions|" + Date.now()
     }

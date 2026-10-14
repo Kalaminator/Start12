@@ -99,6 +99,7 @@ assert.deepStrictEqual(T.allPins(["x", ...L]), ["x", "a", "c", "b"]);
 L = T.removePin(T.removePin(L, "c"), "b");                  // one left: folder dissolves
 assert.deepStrictEqual(L, ["a"]);
 assert.strictEqual(T.folderEntry("A|b,c", ["x"]), "folder|A b c|x");
+assert.deepStrictEqual(T.folderOf(T.folderEntry("F", ["custom|M|i|https://x?a,b", "a.desktop"])).ids, ["custom|M|i|https://x?a,b", "a.desktop"]);
 assert.deepStrictEqual(T.folderOf("custom|x|y|z"), null);
 // Tile pages: old flat list migrates to page 1; moves keep tiles unique across pages.
 let P = T.parsePages('[{"name":"A","tiles":[{"id":"a"}]}]');

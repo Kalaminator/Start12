@@ -231,16 +231,16 @@ function placeInList(list, id, i) {
 }
 
 // Pinned grid folders (Windows 11): entry "folder|name|id1,id2,...".
-// ponytail: comma-separated ids; a pinned url containing "," would split, escape if that happens.
+// Ids are URI-encoded so a pinned url with "," survives (plain app ids look the same either way).
 function folderOf(entry) {
     if (!isFolder(entry)) return null;
     var p = entry.split("|");
     var ids = p.slice(2).join("|");
-    return { name: p[1], ids: ids ? ids.split(",") : [] };
+    return { name: p[1], ids: ids ? ids.split(",").map(decodeURIComponent) : [] };
 }
 
 function folderEntry(name, ids) {
-    return "folder|" + String(name).replace(/[|,]/g, " ") + "|" + ids.join(",");
+    return "folder|" + String(name).replace(/[|,]/g, " ") + "|" + ids.map(encodeURIComponent).join(",");
 }
 
 // Every pinned id, folders opened up.

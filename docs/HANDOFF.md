@@ -76,9 +76,10 @@ Open animation (T23): key `animateMenu` (default true), `main.qml` openAnim (fad
 Classic search (T24): key `classicSearch` (default off), SearchView `compact` (16 px icons, 24 px rows, no description, no Best match card); ConfigSearch checkbox. Needs a user check.
 
 ## Next (in order)
-Work through docs/TODO.md job by job (T01, T02, T03, T04 done). Use the prompt in docs/AGENT_PROMPT.md, one agent per job,
-then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03-T09 built (need a user check), T10-T11 built, T12-T18 built, T19-T20 built, T22 built, next: T23.
-Then the taskbar part of Start11 (section 10 of the features doc), if the user wants it.
+T01-T25 all built (2026-10-14). Load check of all 8 styles: no QML errors. Seen on screen by me: XP (all colours, start button),
+T03 filters, T05 folder. Everything else only lint + load check; the user has not tried T05-T25 yet -> ask for feedback first.
+Open: T26 full custom XP theme (user will say when); narrow styles stretch in full screen (T14); taskbar part of Start11
+(section 10 of the features doc) if the user wants it. Settings reset/restore: request runs once (`doneReset` guard).
 
 ## Testing tips
 - See the menu: in the INSTALLED copy only, add

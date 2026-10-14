@@ -227,7 +227,7 @@ PlasmoidItem {
                     root.run("plasma-apply-desktoptheme " + root.xpTheme);
                 }
             } else if (ours) {
-                root.run("plasma-apply-desktoptheme " + (root.cfg.savedDesktopTheme || "default"));
+                root.run("plasma-apply-desktoptheme " + Tiles.shQuote(root.cfg.savedDesktopTheme || "default"));
             }
         }
     }
@@ -344,10 +344,15 @@ PlasmoidItem {
             root.syncDesktopTheme();
         }
     }
+    property string doneReset: ""
     Connections {
         target: root.cfg
+        // The settings window re-writes its old resetRequest on every later Apply: run each request once.
         function onResetRequestChanged() {
-            const w = root.cfg.resetRequest.split("|")[0];
+            const v = root.cfg.resetRequest;
+            if (!v || v === root.doneReset) return;
+            root.doneReset = v;
+            const w = v.split("|")[0];
             if (["all", "positions", "backup", "restore"].includes(w)) {
                 resetTimer.what = w;
                 resetTimer.restart();
