@@ -220,7 +220,7 @@
     </entry>
     <entry name="windowTheme" type="Bool">
       <label>Apply the menu style's window decoration (Aurorae) and colour scheme (XP for now, see main.qml windowDecoration/windowColors). Changes all windows.</label>
-      <default>false</default>
+      <default>true</default>
     </entry>
     <entry name="win10AccentStart" type="Bool">
       <label>Colours page (all styles but XP): show accent colour on Start and taskbar (menu = darkened accent, taskbar = accent)</label>
