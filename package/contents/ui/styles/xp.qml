@@ -100,7 +100,7 @@ FocusScope {
     readonly property real barH: m.px(modern ? 52 : 42)
     readonly property real rowH: m.px(modern ? 44 : 40)
     readonly property real sepH: m.px(modern ? 13 : 9)
-    readonly property real placeH: m.px(modern ? 34 : 30)
+    readonly property real placeH: m.px(cfg.smallPlaces ? 24 : modern ? 34 : 30)
     readonly property real rightW: m.px(190 + (cfg.menuSize >= 2 ? 30 : 0))
 
     implicitWidth: m.px(400 + (cfg.menuSize >= 2 ? 80 : 0))

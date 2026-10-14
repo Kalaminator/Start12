@@ -150,7 +150,7 @@ Build: keys `headerFontFamily` String, `headerFontSize` Int, `itemFontSize` Int 
 "Pinned"/"Recommended" headers; two more rows in `config/ConfigLook.qml` Fonts group.
 Check: header font Serif 16, group names change, items do not.
 
-### T21 Small toggles (S)
+### T21 Small toggles (S) DONE
 Build: `railAlignBottom` Bool (`RightIconMode` 3: rail icons at the bottom, `win10/LeftRail.qml`),
 `recentHideFolders` Bool (`Win11HideRecentFolders`, filter in `common/Recommended.qml`), `smallPlaces`
 Bool (`SmallRight`, row height in `common/Places.qml`), `powerButtonIcon` Bool (`IconOnShutdownButton`,

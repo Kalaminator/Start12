@@ -437,7 +437,7 @@ PlasmoidItem {
         onVisibleChanged: if (visible) { requestActivate(); webField.forceActiveFocus(); }
         function accept() {
             const u = webField.text.trim();
-            if (u) root.pin(Tiles.customFor(/^\w+:\/\//.test(u) ? u : "https://" + u, "web"));
+            if (u) root.pin(Tiles.customFor(/^\w+:\/\//.test(u) ? u : "https://" + u, "web", cfg.webFavicons));
             webField.text = "";
             close();
         }

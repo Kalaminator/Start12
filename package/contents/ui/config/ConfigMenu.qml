@@ -19,6 +19,8 @@ KCM.SimpleKCM {
     property alias cfg_listRowHeight: rowHeight.value
     property alias cfg_showRecentlyAdded: recent.checked
     property alias cfg_showMostUsed: mostUsed.checked
+    property alias cfg_recentHideFolders: hideRecentFolders.checked
+    property alias cfg_webFavicons: webFavicons.checked
     property alias cfg_categoryFolders: folders.checked
     property alias cfg_foldersAtBottom: foldersBottom.checked
     property alias cfg_highlightNew: highlightNew.checked
@@ -75,6 +77,8 @@ KCM.SimpleKCM {
             valueFromText: t => parseInt(t) || 36
         }
         QQC2.CheckBox { id: recent; enabled: !hideList.checked; text: i18n("Show recently added apps") }
+        QQC2.CheckBox { id: hideRecentFolders; text: i18n("Hide folders in the recent list (Windows 11 style)") }
+        QQC2.CheckBox { id: webFavicons; text: i18n("Fetch the favicon for pinned web links") }
         QQC2.CheckBox { id: mostUsed; enabled: !hideList.checked; text: i18n("Show my most used applications") }
         QQC2.CheckBox { id: highlightNew; enabled: !hideList.checked; text: i18n("Highlight new applications") }
         QQC2.CheckBox { id: folders; enabled: !hideList.checked; text: i18n("Show app categories as folders") }

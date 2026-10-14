@@ -84,7 +84,9 @@ Item {
     }
 
     Column {
-        anchors.bottom: parent.bottom
+        anchors.top: rail.cfg.railAlignBottom ? undefined : parent.top
+        anchors.topMargin: rail.cfg.railMode === 1 ? rail.metrics.px(54) : 0
+        anchors.bottom: rail.cfg.railAlignBottom ? parent.bottom : undefined
         anchors.bottomMargin: rail.metrics.px(4)
         width: parent.width
 

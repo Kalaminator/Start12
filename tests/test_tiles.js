@@ -53,6 +53,7 @@ assert.deepStrictEqual(T.moveGroup(G, 0, 3).map(x => x.name), ["B", "C", "A"]); 
 // Pinned websites, files, folders.
 assert.strictEqual(T.customFor("https://www.kde.org/news?x=1", "web"),
     "custom|kde.org|https://icons.duckduckgo.com/ip3/www.kde.org.ico|https://www.kde.org/news?x=1");
+assert.strictEqual(T.customFor("https://a.org/x", "web", false), "custom|a.org|internet-web-browser|https://a.org/x");
 assert.strictEqual(T.customFor("file:///home/u/My%20Doc.PDF", "file"), "custom|My Doc.PDF|application-pdf|file:///home/u/My%20Doc.PDF");
 assert.strictEqual(T.customFor("file:///home/u/Pictures/", "folder"), "custom|Pictures|folder|file:///home/u/Pictures/");
 assert.strictEqual(T.customFor("file:///home/u/notes", "file").split("|")[2], "text-x-generic");

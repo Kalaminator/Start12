@@ -36,6 +36,16 @@ Item {
         return recent.data(recent.index(row, 0), recent.KItemModels.KRoleNames.role(name));
     }
 
+    // Source rows to show (folders dropped when recentHideFolders is on).
+    readonly property var rows: {
+        const out = [];
+        for (let i = 0; i < recent.count && out.length < rec.shown; ++i) {
+            const ic = String(rec.roleData(i, "decoration") ?? "");
+            if (!(Plasmoid.configuration.recentHideFolders && (ic === "folder" || ic.startsWith("inode-directory") || ic.startsWith("folder-")))) out.push(i);
+        }
+        return out;
+    }
+
     implicitHeight: flow.implicitHeight
 
     Flow {
@@ -43,15 +53,16 @@ Item {
         width: parent.width
         Repeater {
             id: repeater
-            model: Math.min(recent.count, rec.shown)
+            model: rec.rows.length
             delegate: PC3.AbstractButton {
                 id: item
                 required property int index
+                readonly property int row: rec.rows[index]
                 width: flow.width / 2
                 height: rec.rowHeight
                 hoverEnabled: true
                 onClicked: {
-                    recent.trigger(index, "", null);
+                    recent.trigger(item.row, "", null);
                     root.close();
                 }
                 background: Rectangle {
@@ -67,7 +78,7 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         width: rec.metrics.px(32)
                         height: width
-                        source: rec.roleData(item.index, "decoration")
+                        source: rec.roleData(item.row, "decoration")
                     }
                     Column {
                         anchors.left: icon.right
@@ -76,7 +87,7 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         PC3.Label {
                             width: parent.width
-                            text: rec.roleData(item.index, "display") ?? ""
+                            text: rec.roleData(item.row, "display") ?? ""
                             elide: Text.ElideRight
                             color: rec.metrics.text
                             font.family: rec.metrics.font
@@ -84,7 +95,7 @@ Item {
                         }
                         PC3.Label {
                             width: parent.width
-                            readonly property string desc: rec.roleData(item.index, "description") ?? ""
+                            readonly property string desc: rec.roleData(item.row, "description") ?? ""
                             visible: desc !== ""
                             text: desc
                             elide: Text.ElideMiddle
@@ -98,11 +109,11 @@ Item {
                 TapHandler {
                     acceptedButtons: Qt.RightButton
                     onTapped: point => {
-                        const id = rec.roleData(item.index, "favoriteId");
+                        const id = rec.roleData(item.row, "favoriteId");
                         const own = id && !id.startsWith("file:") ? [root.isPinned(id)
                             ? { text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) }
                             : { text: i18n("Pin to Start"), icon: "window-pin", run: () => root.pin(id) }] : [];
-                        rec.contextMenu.show(item, recent, item.index, own, point.position.x, point.position.y);
+                        rec.contextMenu.show(item, recent, item.row, own, point.position.x, point.position.y);
                     }
                 }
             }

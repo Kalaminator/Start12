@@ -117,6 +117,26 @@
       <label>Power menu entries (kicker SystemModel ids)</label>
       <default>lock-screen,suspend,reboot,shutdown</default>
     </entry>
+    <entry name="railAlignBottom" type="Bool">
+      <label>RightIconMode 3: rail icons at the bottom</label>
+      <default>true</default>
+    </entry>
+    <entry name="smallPlaces" type="Bool">
+      <label>SmallRight: small place rows</label>
+      <default>false</default>
+    </entry>
+    <entry name="powerButtonIcon" type="Bool">
+      <label>IconOnShutdownButton</label>
+      <default>false</default>
+    </entry>
+    <entry name="recentHideFolders" type="Bool">
+      <label>Win11HideRecentFolders</label>
+      <default>false</default>
+    </entry>
+    <entry name="webFavicons" type="Bool">
+      <label>Web links pinned to the start menu obtain the favicon image</label>
+      <default>false</default>
+    </entry>
     <entry name="powerButtonAction" type="String">
       <label>PowerButtonMode: "menu" or a power id run on click</label>
       <default>menu</default>

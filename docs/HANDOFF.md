@@ -68,10 +68,11 @@ Search history (T18): keys `searchHistory`/`searchHistoryEnabled`, written in Se
 Canvas group settings (T16): user-group header menu (colour, Icon tinting = `isMask`, Auto tint = `Kirigami.ImageColors`, rows/icon size/texture submenus, Launch entire group, Resort A-Z = `Tiles.canvasSort`), group fields via `Tiles.canvasSet`; sources "Add a folder as group" (`folder` url, FolderListModel, `Tiles.fileIcon`) and "Add Steam folder" (main.qml `listSteamGames` greps ~/.local/share/applications for steam://rungameid, read once). "Recent searches" group = `searches:true` + `Tiles.pushHistory` (T18). Needs a user check. Plasma keeps one popup size for all styles (user drags it).
 Tile look (T19): keys `tileImage`/`tileImageOpacity` (Image inside Tile background, ConfigLook picker) and `greyIcons` (layer MultiEffect saturation -1 on Tile + AppList icons); per-tile hide caption already existed (`caption` prop). Needs a user check.
 Fonts (T20): keys `headerFontFamily`/`headerFontSize`/`itemFontSize` (0 = menu size), `Metrics.headerFont/headerFontSize/itemFontSize`; headers = TileGroup names, AppList letters, Win11 section titles, XP user name; items = Tile captions, AppList rows, XP rows. Needs a user check.
+Small toggles (T21): keys `railAlignBottom` (default true = old look; LeftRail only), `smallPlaces` (placeH in Win7/Modern, XP, Pro), `powerButtonIcon` (Win7 split button), `recentHideFolders` (Recommended.qml `rows`, folders found by icon name), `webFavicons` (default off; `Tiles.customFor(url,kind,favicons)`, new pins only). ConfigRail/ConfigMenu checkboxes. Needs a user check.
 
 ## Next (in order)
 Work through docs/TODO.md job by job (T01, T02, T03, T04 done). Use the prompt in docs/AGENT_PROMPT.md, one agent per job,
-then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03-T09 built (need a user check), T10-T11 built, T12-T18 built, T19-T20 built, next: T21.
+then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03-T09 built (need a user check), T10-T11 built, T12-T18 built, T19-T20 built, next: T22.
 Then the taskbar part of Start11 (section 10 of the features doc), if the user wants it.
 
 ## Testing tips

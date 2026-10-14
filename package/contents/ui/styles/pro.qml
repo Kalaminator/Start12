@@ -124,7 +124,7 @@ FocusScope {
                     readonly property var info: places.info(modelData)
                     readonly property bool sep: info.separator === true
                     width: parent.width
-                    height: sep ? m.px(9) : m.px(36)
+                    height: sep ? m.px(9) : m.px(style.cfg.smallPlaces ? 26 : 36)
                     enabled: !sep
                     hoverEnabled: true
                     leftPadding: m.px(10)

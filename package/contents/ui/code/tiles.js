@@ -424,12 +424,12 @@ var EXT_ICONS = {
 };
 
 // Build the custom id for a url. kind: "web", "file" or "folder".
-function customFor(url, kind) {
+function customFor(url, kind, favicons) {
     var name, icon;
     if (kind === "web") {
         var host = (url.match(/^\w+:\/\/([^\/:?#]+)/) || [null, url])[1];
         name = host.replace(/^www\./, "");
-        icon = "https://icons.duckduckgo.com/ip3/" + host + ".ico";
+        icon = favicons === false ? "internet-web-browser" : "https://icons.duckduckgo.com/ip3/" + host + ".ico";
     } else {
         var path = url.replace(/\/+$/, "");
         name = decodeURIComponent(path.slice(path.lastIndexOf("/") + 1)) || "/";

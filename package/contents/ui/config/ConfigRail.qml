@@ -15,6 +15,9 @@ KCM.SimpleKCM {
     property var cfg_railItems: []
     property var cfg_powerItems: []
     property string cfg_powerButtonAction
+    property alias cfg_railAlignBottom: alignBottom.checked
+    property alias cfg_smallPlaces: smallPlaces.checked
+    property alias cfg_powerButtonIcon: powerIcon.checked
 
     readonly property var builtins: ({
         "user": [i18n("User picture"), "user-identity"],
@@ -87,6 +90,10 @@ KCM.SimpleKCM {
             textFromValue: v => v + " px"
             valueFromText: t => parseInt(t) || 18
         }
+
+        QQC2.CheckBox { id: alignBottom; text: i18n("Align the icons to the bottom (Windows 10 style)") }
+        QQC2.CheckBox { id: smallPlaces; text: i18n("Small place rows (Windows 7, XP, Pro styles)") }
+        QQC2.CheckBox { id: powerIcon; text: i18n("Show an icon on the Shut down button (Windows 7 style)") }
 
         Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Left hand side shortcuts") }
 

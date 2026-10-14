@@ -47,7 +47,7 @@ FocusScope {
     readonly property real cellW: m.px(compact ? 64 : 80)
     readonly property real cellH: m.px(compact ? 60 : 76)
     readonly property real sepH: m.px(9)
-    readonly property real placeH: m.px(compact ? 26 : 31)
+    readonly property real placeH: m.px(cfg.smallPlaces ? 22 : compact ? 26 : 31)
 
     // Left pane 380 px: the size the user picked by dragging (whole menu ~565 px at 100%).
     implicitWidth: pad * 3 + m.px((compact ? 340 : 380) + (cfg.menuSize >= 2 ? 80 : 0)) + rightW
@@ -590,12 +590,24 @@ FocusScope {
                 id: powerMain
                 text: places.powerCatalog[powerRow.act]?.text ?? i18n("Shut down")
                 onClicked: root.runSystemAction(powerRow.act)
-                contentItem: PC3.Label {
-                    text: powerMain.text
-                    color: m.text
-                    font.family: m.font
-                    font.pixelSize: m.fontSize
-                    verticalAlignment: Text.AlignVCenter
+                contentItem: Row {
+                    spacing: m.px(6)
+                    Kirigami.Icon {
+                        visible: style.cfg.powerButtonIcon
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: m.px(16)
+                        height: width
+                        source: "system-shutdown-symbolic"
+                        color: m.text
+                        isMask: true
+                    }
+                    PC3.Label {
+                        text: powerMain.text
+                        color: m.text
+                        font.family: m.font
+                        font.pixelSize: m.fontSize
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
             }
             PowerPart {
