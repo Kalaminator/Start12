@@ -10,7 +10,7 @@
         "Description": "Start11-style start menu for KDE Plasma",
         "Icon": "start-here-kde",
         "Id": "org.start12.menu",
-        "License": "GPL-2.0+",
+        "License": "MIT",
         "Name": "Start12",
         "Version": "0.1"
     },

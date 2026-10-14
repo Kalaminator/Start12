@@ -503,7 +503,7 @@
       <default>Default.png</default>
     </entry>
     <entry name="buttonIcon" type="String">
-      <label>Icon name or absolute path; empty = images/StartIcon.svg (the Arch icon)</label>
+      <label>Icon name or absolute path; empty = the theme's "start-here" icon (your distribution's logo)</label>
       <default></default>
     </entry>
     <entry name="buttonIconScale" type="Int">

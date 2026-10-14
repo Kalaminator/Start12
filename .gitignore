@@ -3,3 +3,9 @@ Stardock/
 Start11v2_Setup.exe
 Activation.png
 .claude/worktrees/
+# Stardock Start11 assets and private files: kept locally, never published
+package/contents/images/StartButtons/
+package/contents/images/MenuTextures/
+package/contents/images/TabTextures/
+package/contents/images/StartIcon.svg
+docs/research/win11-colours-reference.jpg

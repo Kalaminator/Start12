@@ -2,10 +2,14 @@
 # Install or update the Start12 widget for the current user, then reload Plasma.
 set -e
 cd "$(dirname "$0")"
-node tests/test_tiles.js
-# Spanish translation (Plasma looks in contents/locale/<lang>/LC_MESSAGES/plasma_applet_<id>.mo)
-mkdir -p package/contents/locale/es/LC_MESSAGES
-msgfmt --check -o package/contents/locale/es/LC_MESSAGES/plasma_applet_org.start12.menu.mo po/es.po
+# Developer checks run only when node is installed.
+if command -v node >/dev/null 2>&1; then node tests/test_tiles.js; fi
+# Spanish translation (Plasma looks in contents/locale/<lang>/LC_MESSAGES/plasma_applet_<id>.mo);
+# the compiled .mo is shipped, so gettext is only needed to rebuild it.
+if command -v msgfmt >/dev/null 2>&1; then
+    mkdir -p package/contents/locale/es/LC_MESSAGES
+    msgfmt --check -o package/contents/locale/es/LC_MESSAGES/plasma_applet_org.start12.menu.mo po/es.po
+fi
 if kpackagetool6 -t Plasma/Applet -l | grep -qx org.start12.menu; then
     kpackagetool6 -t Plasma/Applet -u package
 else
