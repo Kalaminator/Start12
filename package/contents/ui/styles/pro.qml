@@ -76,7 +76,7 @@ FocusScope {
         reversed: true
         minimum: m.px(140)
         maximum: style.width - style.side * 2 - m.px(2 * 96 + 16)
-        x: rightPanel.x - width / 2
+        x: (LayoutMirroring.enabled ? rightPanel.x + rightPanel.width : rightPanel.x) - width / 2
         anchors.top: rightPanel.top
         anchors.bottom: rightPanel.bottom
     }

@@ -70,7 +70,7 @@ FocusScope {
             value: style.listW
             minimum: m.px(180)
             maximum: m.px(600)
-            x: appList.width - width / 2
+            x: (LayoutMirroring.enabled ? appList.x : appList.x + appList.width) - width / 2
             anchors.top: parent.top
             anchors.bottom: parent.bottom
         }

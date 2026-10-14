@@ -141,7 +141,7 @@ FocusScope {
         value: canvas.width
         minimum: m.px(160)
         maximum: m.px(900)
-        x: canvas.x + canvas.width + style.pad / 2 - width / 2
+        x: (LayoutMirroring.enabled ? canvas.x - style.pad / 2 : canvas.x + canvas.width + style.pad / 2) - width / 2
         anchors.top: canvas.top
         anchors.bottom: canvas.bottom
     }

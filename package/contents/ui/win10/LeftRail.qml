@@ -73,7 +73,8 @@ Item {
             opacity: hamburger.hovered ? 0.08 : 0
         }
         Kirigami.Icon {
-            x: Math.round((rail.metrics.rail - width) / 2)
+            anchors.left: parent.left
+            anchors.leftMargin: Math.round((rail.metrics.rail - width) / 2)
             anchors.verticalCenter: parent.verticalCenter
             width: rail.metrics.railIcon
             height: width
@@ -127,7 +128,8 @@ Item {
 
                 Kirigami.Icon {
                     id: glyph
-                    x: Math.round((rail.metrics.rail - width) / 2)
+                    anchors.left: parent.left
+                    anchors.leftMargin: Math.round((rail.metrics.rail - width) / 2)
                     anchors.verticalCenter: parent.verticalCenter
                     width: rail.metrics.railIcon
                     height: width
@@ -139,7 +141,8 @@ Item {
 
                 Kirigami.ShadowedImage {
                     id: avatar
-                    x: Math.round((rail.metrics.rail - width) / 2)
+                    anchors.left: parent.left
+                    anchors.leftMargin: Math.round((rail.metrics.rail - width) / 2)
                     anchors.verticalCenter: parent.verticalCenter
                     width: Math.round(rail.metrics.railIcon * 1.35)
                     height: width
@@ -153,9 +156,11 @@ Item {
 
                 PC3.Label {
                     visible: rail.expanded && !btn.sep
-                    x: rail.metrics.rail
+                    anchors.left: parent.left
+                    anchors.leftMargin: rail.metrics.rail
+                    anchors.right: parent.right
+                    anchors.rightMargin: rail.metrics.px(8)
                     anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width - x - rail.metrics.px(8)
                     text: btn.item.text
                     elide: Text.ElideRight
                     color: rail.metrics.text
