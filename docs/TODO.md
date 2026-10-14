@@ -144,7 +144,7 @@ Build: keys `tileImage` String + `tileImageOpacity` Int (`TileImage`, image behi
 `AppList.qml`), per-tile "Hide caption" (tiles.js `setProp(id, "hideText")`, `Tile.qml` context menu).
 Check: pick an image, all tiles show it; grey icons toggle; one tile without caption after restart.
 
-### T20 Separate header and item fonts (S)
+### T20 Separate header and item fonts (S) - DONE
 Build: keys `headerFontFamily` String, `headerFontSize` Int, `itemFontSize` Int (`CaptionFontSize`);
 `common/Metrics.qml` exposes `headerFont`/`itemFont`; use them in TileGroup names, AppList letters, Win11
 "Pinned"/"Recommended" headers; two more rows in `config/ConfigLook.qml` Fonts group.

@@ -115,8 +115,8 @@ Column {
             text: grp.group.name !== "" ? grp.group.name : (titleHover.hovered ? i18n("Name group") : "")
             color: grp.metrics.text
             opacity: grp.group.name !== "" ? 1 : 0.6
-            font.family: grp.metrics.font
-            font.pixelSize: grp.metrics.fontSize
+            font.family: grp.metrics.headerFont
+            font.pixelSize: grp.metrics.headerFontSize
             elide: Text.ElideRight
             HoverHandler { id: titleHover }
         }
@@ -226,8 +226,8 @@ Column {
             placeholderText: i18n("Name folder")
             background: null
             color: grp.metrics.text
-            font.family: grp.metrics.font
-            font.pixelSize: grp.metrics.fontSize
+            font.family: grp.metrics.headerFont
+            font.pixelSize: grp.metrics.headerFontSize
             onEditingFinished: if (grp.folder && text !== grp.folder.name)
                 root.saveGroups(Tiles.setProp(root.groups, grp.openFolder, "name", text))
         }

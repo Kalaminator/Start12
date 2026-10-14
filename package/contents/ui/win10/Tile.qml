@@ -136,7 +136,7 @@ PC3.AbstractButton {
             elide: Text.ElideRight
             color: tile.metrics.text
             font.family: tile.metrics.font
-            font.pixelSize: Math.round(tile.metrics.fontSize * 0.85)
+            font.pixelSize: Math.round(tile.metrics.itemFontSize * 0.85)
         }
     }
 

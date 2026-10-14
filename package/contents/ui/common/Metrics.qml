@@ -48,4 +48,8 @@ QtObject {
 
     readonly property string font: cfg.fontFamily !== "" ? cfg.fontFamily : Kirigami.Theme.defaultFont.family
     readonly property real fontSize: px(cfg.fontSize)
+    // 0 / empty = same as the menu font
+    readonly property string headerFont: cfg.headerFontFamily !== "" ? cfg.headerFontFamily : font
+    readonly property real headerFontSize: cfg.headerFontSize > 0 ? px(cfg.headerFontSize) : fontSize
+    readonly property real itemFontSize: cfg.itemFontSize > 0 ? px(cfg.itemFontSize) : fontSize
 }

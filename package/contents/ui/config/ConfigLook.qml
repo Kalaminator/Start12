@@ -33,6 +33,9 @@ KCM.SimpleKCM {
     property alias cfg_colorizeTexture: colorize.checked
     property string cfg_fontFamily
     property alias cfg_fontSize: fontSize.value
+    property string cfg_headerFontFamily
+    property alias cfg_headerFontSize: headerFontSize.value
+    property alias cfg_itemFontSize: itemFontSize.value
 
     FolderListModel {
         id: textures
@@ -175,6 +178,29 @@ KCM.SimpleKCM {
             to: 24
             textFromValue: v => v + " px"
             valueFromText: t => parseInt(t) || 11
+        }
+        QQC2.ComboBox {
+            Kirigami.FormData.label: i18n("Header font:")
+            Layout.minimumWidth: Kirigami.Units.gridUnit * 14
+            model: [i18n("** Menu font **")].concat(Qt.fontFamilies())
+            currentIndex: page.cfg_headerFontFamily === "" ? 0 : Math.max(0, model.indexOf(page.cfg_headerFontFamily))
+            onActivated: i => page.cfg_headerFontFamily = i === 0 ? "" : model[i]
+        }
+        QQC2.SpinBox {
+            id: headerFontSize
+            Kirigami.FormData.label: i18n("Header font size:")
+            from: 0
+            to: 32
+            textFromValue: v => v === 0 ? i18n("Menu size") : v + " px"
+            valueFromText: t => parseInt(t) || 0
+        }
+        QQC2.SpinBox {
+            id: itemFontSize
+            Kirigami.FormData.label: i18n("Item font size:")
+            from: 0
+            to: 24
+            textFromValue: v => v === 0 ? i18n("Menu size") : v + " px"
+            valueFromText: t => parseInt(t) || 0
         }
     }
 }

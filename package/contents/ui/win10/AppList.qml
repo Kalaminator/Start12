@@ -231,7 +231,7 @@ Item {
                     elide: Text.ElideRight
                     color: list.metrics.text
                     font.family: list.metrics.font
-                    font.pixelSize: list.metrics.fontSize
+                    font.pixelSize: list.metrics.itemFontSize
                     font.weight: row.e.kind === "title" ? Font.DemiBold : Font.Normal
                 }
                 // "New" mark for newly installed apps (Start11 "Highlight").
@@ -248,7 +248,7 @@ Item {
                         anchors.centerIn: parent
                         text: i18nc("newly installed app", "New")
                         color: "white"
-                        font.pixelSize: Math.round(list.metrics.fontSize * 0.8)
+                        font.pixelSize: Math.round(list.metrics.itemFontSize * 0.8)
                     }
                 }
             }
@@ -361,8 +361,8 @@ Item {
                     verticalAlignment: Text.AlignVCenter
                     color: list.metrics.text
                     opacity: letterBtn.present ? 1 : 0.35
-                    font.family: list.metrics.font
-                    font.pixelSize: list.metrics.fontSize * 1.6
+                    font.family: list.metrics.headerFont
+                    font.pixelSize: list.metrics.headerFontSize * 1.6
                 }
             }
         }

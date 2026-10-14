@@ -40,9 +40,9 @@ FocusScope {
 
     component SectionTitle: PC3.Label {
         color: m.text
-        font.family: m.font
+        font.family: m.headerFont
         font.weight: Font.DemiBold
-        font.pixelSize: Math.round(m.fontSize * 1.05)
+        font.pixelSize: Math.round(m.headerFontSize * 1.05)
     }
 
     // ---- Search box (click or type to search) ----

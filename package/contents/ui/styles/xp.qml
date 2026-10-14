@@ -236,8 +236,8 @@ FocusScope {
                     PC3.Label {
                         text: places.user.fullName || places.user.loginName
                         color: c.headText
-                        font.family: m.font
-                        font.pixelSize: Math.round(m.fontSize * (style.modern ? 1.35 : 1.25))
+                        font.family: m.headerFont
+                        font.pixelSize: Math.round(m.headerFontSize * (style.modern ? 1.35 : 1.25))
                         font.bold: true
                         style: Text.Raised
                         styleColor: Qt.alpha("#000000", style.modern ? 0.15 : 0.35)
@@ -246,8 +246,8 @@ FocusScope {
                         visible: style.modern
                         text: places.user.loginName
                         color: Qt.alpha(c.headText, 0.8)
-                        font.family: m.font
-                        font.pixelSize: Math.round(m.fontSize * 0.85)
+                        font.family: m.headerFont
+                        font.pixelSize: Math.round(m.headerFontSize * 0.85)
                     }
                 }
             }
@@ -384,7 +384,7 @@ FocusScope {
                                     elide: Text.ElideRight
                                     color: app.hot ? c.hoverText : c.text
                                     font.family: m.font
-                                    font.pixelSize: m.fontSize
+                                    font.pixelSize: m.itemFontSize
                                     font.bold: app.e.kind === "pin"
                                 }
                             }
@@ -461,7 +461,7 @@ FocusScope {
                         text: style.allPrograms ? i18n("Back") : i18n("All Programs")
                         color: style.modern || allButton.hot ? "#ffffff" : c.text
                         font.family: m.font
-                        font.pixelSize: m.fontSize
+                        font.pixelSize: m.itemFontSize
                         font.bold: true
                     }
                     // Green round arrow.
@@ -562,7 +562,7 @@ FocusScope {
                                 elide: Text.ElideRight
                                 color: pb.hot ? c.hoverText : c.placeText
                                 font.family: m.font
-                                font.pixelSize: m.fontSize
+                                font.pixelSize: m.itemFontSize
                                 font.bold: pb.modelData.main
                             }
                         }
@@ -618,7 +618,7 @@ FocusScope {
                 text: bb.text
                 color: c.barText
                 font.family: m.font
-                font.pixelSize: m.fontSize
+                font.pixelSize: m.itemFontSize
             }
         }
     }

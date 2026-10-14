@@ -299,6 +299,18 @@
       <label>CaptionFontSize, px</label>
       <default>11</default>
     </entry>
+    <entry name="headerFontFamily" type="String">
+      <label>Header font (group names, letters, section titles)</label>
+      <default></default>
+    </entry>
+    <entry name="headerFontSize" type="Int">
+      <label>Header font size, px (0 = menu size)</label>
+      <default>0</default>
+    </entry>
+    <entry name="itemFontSize" type="Int">
+      <label>Item font size, px (0 = menu size)</label>
+      <default>0</default>
+    </entry>
   </group>
 
   <group name="Search">
