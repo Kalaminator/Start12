@@ -37,7 +37,7 @@ Item {
         onPositionChanged: mouse => {
             if (!pressed) return;
             const dx = mouse.x - pressX;
-            const w = Math.max(h.minimum, Math.min(h.maximum, h.value + (h.reversed ? -dx : dx)));
+            const w = Math.max(h.minimum, Math.min(h.maximum, h.value + (h.reversed !== h.LayoutMirroring.enabled ? -dx : dx)));
             if (Math.round(w) !== Math.round(h.value)) root.setSplit(h.name, w);
         }
     }

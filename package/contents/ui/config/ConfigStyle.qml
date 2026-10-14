@@ -14,6 +14,8 @@ KCM.SimpleKCM {
     id: page
     property string cfg_menuStyle
     property alias cfg_menuSize: sizeBox.currentIndex
+    property alias cfg_menuPosition: positionBox.currentIndex
+    property alias cfg_centerTaskbar: centerTaskbarBox.checked
     property alias cfg_menuHeight: heightSpin.value
     property alias cfg_fullScreen: fullScreenBox.checked
     property alias cfg_keepPanelVisible: keepPanelBox.checked
@@ -144,6 +146,16 @@ KCM.SimpleKCM {
                 id: sizeBox
                 Kirigami.FormData.label: i18n("What size should it be?")
                 model: [i18n("Small"), i18n("Tall"), i18n("Wide (two tile columns)"), i18n("Large (two tile columns)")]
+            }
+            QQC2.ComboBox {
+                id: positionBox
+                Kirigami.FormData.label: i18n("Menu position:")
+                model: [i18n("Left"), i18n("Center"), i18n("Right")]
+            }
+            QQC2.CheckBox {
+                id: centerTaskbarBox
+                visible: positionBox.currentIndex === 1
+                text: i18n("Also centre the Start button and the taskbar icons")
             }
             QQC2.SpinBox {
                 id: heightSpin

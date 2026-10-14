@@ -192,7 +192,7 @@ FocusScope {
     PC3.AbstractButton {
         id: header
         visible: style.modern
-        x: style.pad
+        x: LayoutMirroring.enabled ? parent.width - width - style.pad : style.pad
         y: style.pad
         height: style.modern ? m.px(36) : 0
         hoverEnabled: true
@@ -228,7 +228,7 @@ FocusScope {
         reversed: true
         minimum: m.px(100)
         maximum: style.width - style.pad * 3 - m.px(200)
-        x: leftPane.x + leftPane.width + style.pad / 2 - width / 2
+        x: (LayoutMirroring.enabled ? leftPane.x - style.pad / 2 : leftPane.x + leftPane.width + style.pad / 2) - width / 2
         anchors.top: leftPane.top
         anchors.bottom: leftPane.bottom
     }
@@ -236,7 +236,7 @@ FocusScope {
     // ---- Left pane ----
     Rectangle {
         id: leftPane
-        x: style.pad
+        x: LayoutMirroring.enabled ? parent.width - width - style.pad : style.pad
         anchors.top: style.modern ? header.bottom : parent.top   // not "y": with anchors.bottom, y alone leaves the height at 0
         anchors.topMargin: style.pad
         width: parent.width - style.rightW - style.pad * 3
@@ -332,14 +332,14 @@ FocusScope {
                                 id: appIcon
                                 width: style.iconSize
                                 height: width
-                                x: style.grid ? (parent.width - width) / 2 : 0
+                                x: style.grid ? (parent.width - width) / 2 : LayoutMirroring.enabled ? parent.width - width : 0
                                 y: style.grid ? m.px(4) : (parent.height - height) / 2
                                 source: app.appIcon
                             }
                             PC3.Label {
-                                x: style.grid ? 0 : appIcon.width + m.px(8)
+                                x: LayoutMirroring.enabled ? (app.hasJump ? jump.width : 0) : (style.grid ? 0 : appIcon.width + m.px(8))
                                 y: style.grid ? appIcon.y + appIcon.height + m.px(4) : (parent.height - height) / 2
-                                width: parent.width - x - (app.hasJump ? jump.width : 0)
+                                width: parent.width - (style.grid ? 0 : appIcon.width + m.px(8)) - (app.hasJump ? jump.width : 0)
                                 horizontalAlignment: style.grid ? Text.AlignHCenter : Text.AlignLeft
                                 text: (app.e.pinned ? root.capOf(app.custom ? app.e.id : style.appId(app.e.model, app.e.row)) : "") || (app.custom ? app.custom.name : app.role("display") ?? "")
                                 elide: Text.ElideRight

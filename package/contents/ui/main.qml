@@ -473,6 +473,36 @@ PlasmoidItem {
         cfg.taskbarPins = on ? cfg.taskbarPins.concat([id]) : cfg.taskbarPins.filter(p => p !== id);
     }
 
+    // T42: Menu position Center + key centerTaskbar = Windows 11 taskbar. In this widget's (horizontal) panel:
+    // two expanding panel spacers marked start12Centre, one right before the Start button and one after the
+    // last Task Manager, and the Task Manager(s) stop filling the panel (key "fill", old value kept in
+    // start12Fill). Turning it off removes the marked spacers and puts "fill" back, so the old layout returns.
+    // Writing the panel's AppletOrder through the script makes plasmashell reorder the widgets live.
+    // ponytail: runs on change only (idempotent: skips a panel that already has marked spacers).
+    readonly property bool centerPanel: cfg.menuPosition === 1 && cfg.centerTaskbar
+    onCenterPanelChanged: syncCenterPanel()
+    function syncCenterPanel() {
+        const id = JSON.stringify(String(Plasmoid.id));
+        const script = "const ID = " + id + ", M = 'start12Centre';"
+            + "for (const p of panels()) { if (p.widgetIds.map(String).indexOf(ID) < 0 || p.location === 'left' || p.location === 'right') continue; "
+            + "const mine = p.widgets('org.kde.plasma.panelspacer').filter(w => { w.currentConfigGroup = ['General']; return String(w.readConfig(M, '')) === 'true'; }); "
+            + "const tasks = p.widgets().filter(w => /icontasks|taskmanager/.test(w.type)); "
+            + (centerPanel
+                ? "if (mine.length) continue; p.currentConfigGroup = ['General']; "
+                  + "let ids = String(p.readConfig('AppletOrder', '')).split(';').filter(s => s); if (ids.indexOf(ID) < 0) ids = p.widgetIds.map(String); "
+                  + "for (const w of tasks) { w.currentConfigGroup = ['General']; w.writeConfig('start12Fill', String(w.readConfig('fill', true))); w.writeConfig('fill', false); w.reloadConfig(); } "
+                  + "const a = p.addWidget('org.kde.plasma.panelspacer'), b = p.addWidget('org.kde.plasma.panelspacer'); "
+                  + "for (const s of [a, b]) { s.currentConfigGroup = ['General']; s.writeConfig(M, true); s.reloadConfig(); } "
+                  + "ids = ids.filter(x => x !== String(a.id) && x !== String(b.id)); let end = ids.indexOf(ID); "
+                  + "for (const w of tasks) end = Math.max(end, ids.indexOf(String(w.id))); "
+                  + "ids.splice(end + 1, 0, String(b.id)); ids.splice(ids.indexOf(ID), 0, String(a.id)); "
+                  + "p.currentConfigGroup = ['General']; p.writeConfig('AppletOrder', ids.join(';')); p.reloadConfig(); }"
+                : "for (const w of mine) w.remove(); "
+                  + "for (const w of tasks) { w.currentConfigGroup = ['General']; const f = String(w.readConfig('start12Fill', '')); "
+                  + "if (f) { w.writeConfig('fill', f !== 'false'); w.writeConfig('start12Fill', ''); w.reloadConfig(); } } }");
+        run("qdbus6 org.kde.plasmashell /PlasmaShell evaluateScript " + Tiles.shQuote(script));
+    }
+
     // Find a power/session action by its id ("shutdown", "reboot", ...).
     // Returns the row, or -1 when this session can't do it (e.g. no hibernate).
     function systemAction(id) {
@@ -836,6 +866,37 @@ PlasmoidItem {
         }
         onHeightChanged: if (root.expanded) saveHeight.restart()
 
+        // T42 Menu position (key menuPosition 0 left, 1 center, 2 right), horizontal panels only. The popup
+        // (AppletPopup) lines its edge up with its visualParent, normally the Start button. For Center/Right it
+        // gets StartButton.popupAnchor instead: an empty item in the panel, as wide as the popup, put under the
+        // screen centre or at the right screen edge, so either alignment (LTR left edges, RTL right edges) lands
+        // the popup there. Done while closed (and once when the popup window first appears) so it opens in place.
+        readonly property var popupWindow: Window.window
+        onPopupWindowChanged: place()
+        onWidthChanged: if (!root.expanded) place()
+        Connections {
+            target: root
+            function onExpandedChanged() { if (!root.expanded) full.place(); }
+        }
+        Connections {
+            target: root.cfg
+            function onMenuPositionChanged() { full.place(); }
+        }
+        function place() {
+            const w = popupWindow, btn = root.compactRepresentationItem;
+            if (!w || !btn || !btn.popupAnchor || w.visualParent === undefined) return;
+            const g = Plasmoid.containment ? Plasmoid.containment.screenGeometry : null;
+            const pos = Plasmoid.formFactor === PlasmaCore.Types.Horizontal && !root.cfg.fullScreen && g && g.width > 0 ? root.cfg.menuPosition : 0;
+            if (pos !== 1 && pos !== 2) {
+                if (w.visualParent !== btn) w.visualParent = btn;
+                return;
+            }
+            const a = btn.popupAnchor, o = btn.mapToGlobal(0, 0);
+            a.width = w.width;
+            a.x = (pos === 1 ? g.x + (g.width - w.width) / 2 : g.x + g.width - w.width) - o.x;
+            w.visualParent = a;
+        }
+
         // Open animation (Start11 "NoAnims" inverse): short fade + slide in.
         ParallelAnimation {
             id: openAnim
@@ -864,6 +925,10 @@ PlasmoidItem {
             readonly property int gapX: root.narrowFull && styleLoader.item ? Math.max(0, (full.width - styleLoader.item.implicitWidth) / 2) : 0
             readonly property int gapY: root.narrowFull && styleLoader.item ? Math.max(0, full.height - styleLoader.item.implicitHeight) : 0
             readonly property bool atTop: Plasmoid.location === PlasmaCore.Types.TopEdge
+            // T42 Menu position Right: the whole menu mirrored (anchors, rows, lists, split handles; styles flip
+            // their explicit x with LayoutMirroring.enabled). Tile grids keep their own order inside.
+            LayoutMirroring.enabled: root.cfg.menuPosition === 2
+            LayoutMirroring.childrenInherit: true
             anchors.fill: parent
             anchors.leftMargin: gapX
             anchors.rightMargin: gapX

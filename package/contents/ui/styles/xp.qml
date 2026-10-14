@@ -186,10 +186,10 @@ FocusScope {
 
         PC3.AbstractButton {
             id: userButton
-            x: m.px(style.modern ? 14 : 8)
+            x: LayoutMirroring.enabled ? parent.width - width - m.px(style.modern ? 14 : 8) : m.px(style.modern ? 14 : 8)
             anchors.verticalCenter: parent.verticalCenter
             height: frame.height + m.px(4)
-            width: Math.min(parent.width - x * 2, implicitWidth)
+            width: Math.min(parent.width - m.px(style.modern ? 14 : 8) * 2, implicitWidth)
             hoverEnabled: true
             onClicked: places.showUserMenu(userButton)
             readonly property bool kbNav: true
@@ -373,15 +373,16 @@ FocusScope {
                                 visible: !app.sep
                                 Kirigami.Icon {
                                     id: appIcon
+                                    x: LayoutMirroring.enabled ? parent.width - width : 0
                                     width: m.px(32)
                                     height: width
                                     anchors.verticalCenter: parent.verticalCenter
                                     source: app.custom ? (app.custom.icon || "folder") : app.role("decoration") ?? "dialog-question"
                                 }
                                 PC3.Label {
-                                    x: appIcon.width + m.px(8)
+                                    x: LayoutMirroring.enabled ? 0 : appIcon.width + m.px(8)
                                     anchors.verticalCenter: parent.verticalCenter
-                                    width: parent.width - x
+                                    width: parent.width - appIcon.width - m.px(8)
                                     text: (app.e.kind === "pin" ? root.capOf(app.e.id) : "") || (app.custom ? app.custom.name : app.role("display") ?? app.e.id ?? "")
                                     elide: Text.ElideRight
                                     color: app.hot ? c.hoverText : c.text
@@ -497,7 +498,7 @@ FocusScope {
             reversed: true
             minimum: m.px(120)
             maximum: style.width - m.px(180)
-            x: rightCol.x - width / 2
+            x: (LayoutMirroring.enabled ? rightCol.x + rightCol.width : rightCol.x) - width / 2
             anchors.top: rightCol.top
             anchors.bottom: rightCol.bottom
         }

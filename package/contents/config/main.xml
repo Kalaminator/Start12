@@ -14,6 +14,14 @@
       <label>Size: 0 Small, 1 Tall, 2 Wide, 3 Large</label>
       <default>1</default>
     </entry>
+    <entry name="menuPosition" type="Int">
+      <label>Menu position (T42): 0 Left (at the Start button), 1 Center (Windows 11), 2 Right (layout mirrored)</label>
+      <default>0</default>
+    </entry>
+    <entry name="centerTaskbar" type="Bool">
+      <label>With Center: also centre the Start button and the Task Manager icons (panel spacers, Task Manager fill off)</label>
+      <default>false</default>
+    </entry>
     <entry name="menuHeight" type="Int">
       <label>Custom menu height in px; 0 = from Size</label>
       <default>0</default>
