@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-14 17:53+0200\n"
+"POT-Creation-Date: 2026-10-14 18:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -123,7 +123,7 @@ msgstr ""
 #: package/contents/ui/common/AppCanvas.qml:458
 #: package/contents/ui/common/AppCanvas.qml:466
 #: package/contents/ui/common/PinnedGrid.qml:138
-#: package/contents/ui/main.qml:532 package/contents/ui/styles/windows7.qml:285
+#: package/contents/ui/main.qml:578 package/contents/ui/styles/windows7.qml:285
 #: package/contents/ui/styles/xp.qml:345
 msgid "Rename"
 msgstr ""
@@ -152,7 +152,7 @@ msgstr ""
 #: package/contents/ui/common/AppCanvas.qml:278
 #: package/contents/ui/config/ConfigLook.qml:111
 #: package/contents/ui/config/ConfigLook.qml:132
-#: package/contents/ui/config/ConfigTaskbar.qml:84
+#: package/contents/ui/config/ConfigTaskbar.qml:89
 msgid "None"
 msgstr ""
 
@@ -349,7 +349,7 @@ msgstr ""
 #: package/contents/ui/common/Places.qml:41
 #: package/contents/ui/config/ConfigButton.qml:25
 #: package/contents/ui/config/ConfigRail.qml:39
-#: package/contents/ui/main.qml:700
+#: package/contents/ui/main.qml:746
 msgid "File Explorer"
 msgstr ""
 
@@ -362,28 +362,28 @@ msgstr ""
 #: package/contents/ui/config/ConfigButton.qml:25
 #: package/contents/ui/config/ConfigRail.qml:41
 #: package/contents/ui/config/ConfigSearch.qml:24
-#: package/contents/ui/main.qml:694 package/contents/ui/win10/SearchView.qml:31
+#: package/contents/ui/main.qml:740 package/contents/ui/win10/SearchView.qml:31
 msgid "Settings"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:44
 #: package/contents/ui/config/ConfigButton.qml:26
 #: package/contents/ui/config/ConfigRail.qml:42
-#: package/contents/ui/main.qml:712
+#: package/contents/ui/main.qml:758
 msgid "Terminal"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:45
 #: package/contents/ui/config/ConfigButton.qml:25
 #: package/contents/ui/config/ConfigRail.qml:43
-#: package/contents/ui/main.qml:706
+#: package/contents/ui/main.qml:752
 msgid "System Monitor"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:46
 #: package/contents/ui/config/ConfigButton.qml:26
 #: package/contents/ui/config/ConfigRail.qml:44
-#: package/contents/ui/main.qml:718
+#: package/contents/ui/main.qml:764
 msgid "Run…"
 msgstr ""
 
@@ -401,13 +401,13 @@ msgstr ""
 
 #: package/contents/ui/common/Places.qml:63
 #: package/contents/ui/config/ConfigRail.qml:49
-#: package/contents/ui/main.qml:747
+#: package/contents/ui/main.qml:793
 msgid "Lock"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:64
 #: package/contents/ui/config/ConfigRail.qml:49
-#: package/contents/ui/main.qml:753
+#: package/contents/ui/main.qml:799
 msgid "Sign out"
 msgstr ""
 
@@ -418,7 +418,7 @@ msgstr ""
 
 #: package/contents/ui/common/Places.qml:66
 #: package/contents/ui/config/ConfigRail.qml:50
-#: package/contents/ui/main.qml:759
+#: package/contents/ui/main.qml:805
 msgid "Sleep"
 msgstr ""
 
@@ -429,13 +429,13 @@ msgstr ""
 
 #: package/contents/ui/common/Places.qml:68
 #: package/contents/ui/config/ConfigRail.qml:50
-#: package/contents/ui/main.qml:765
+#: package/contents/ui/main.qml:811
 msgid "Restart"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:69
 #: package/contents/ui/config/ConfigRail.qml:51
-#: package/contents/ui/main.qml:771 package/contents/ui/styles/windows7.qml:599
+#: package/contents/ui/main.qml:817 package/contents/ui/styles/windows7.qml:599
 msgid "Shut down"
 msgstr ""
 
@@ -454,17 +454,17 @@ msgid "Search apps and files"
 msgstr ""
 
 #: package/contents/ui/config/ConfigButton.qml:26
-#: package/contents/ui/main.qml:724
+#: package/contents/ui/main.qml:770
 msgid "Show desktop"
 msgstr ""
 
 #: package/contents/ui/config/ConfigButton.qml:26
-#: package/contents/ui/main.qml:730
+#: package/contents/ui/main.qml:776
 msgid "Edit panel"
 msgstr ""
 
 #: package/contents/ui/config/ConfigButton.qml:26
-#: package/contents/ui/main.qml:736
+#: package/contents/ui/main.qml:782
 msgid "Auto-hide panel"
 msgstr ""
 
@@ -621,7 +621,7 @@ msgid "Round the corners of the menu:"
 msgstr ""
 
 #: package/contents/ui/config/ConfigLook.qml:93
-#: package/contents/ui/config/ConfigTaskbar.qml:74
+#: package/contents/ui/config/ConfigTaskbar.qml:79
 msgid "Square"
 msgstr ""
 
@@ -651,7 +651,7 @@ msgid "Tile image:"
 msgstr ""
 
 #: package/contents/ui/config/ConfigLook.qml:112
-#: package/contents/ui/config/ConfigTaskbar.qml:85
+#: package/contents/ui/config/ConfigTaskbar.qml:90
 msgid "Pick image…"
 msgstr ""
 
@@ -693,7 +693,7 @@ msgid "Texture alignment:"
 msgstr ""
 
 #: package/contents/ui/config/ConfigLook.qml:147
-#: package/contents/ui/config/ConfigTaskbar.qml:93
+#: package/contents/ui/config/ConfigTaskbar.qml:98
 msgid "Tile"
 msgstr ""
 
@@ -866,7 +866,7 @@ msgstr ""
 
 #: package/contents/ui/config/ConfigMenu.qml:135
 #: package/contents/ui/config/ConfigRail.qml:175
-#: package/contents/ui/main.qml:546
+#: package/contents/ui/main.qml:592
 msgid "Name:"
 msgstr ""
 
@@ -1335,111 +1335,115 @@ msgid ""
 "old values are written back."
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:40
+#: package/contents/ui/config/ConfigTaskbar.qml:41
 msgid "Pick taskbar texture…"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:41
+#: package/contents/ui/config/ConfigTaskbar.qml:42
 msgid "Images (*.png *.jpg *.jpeg)"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:49
+#: package/contents/ui/config/ConfigTaskbar.qml:50
 msgid "Apply matching XP taskbar theme"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:53
-msgid "Taskbar follows the menu style"
+#: package/contents/ui/config/ConfigTaskbar.qml:54
+msgid "Apply the theme to windows"
 msgstr ""
 
 #: package/contents/ui/config/ConfigTaskbar.qml:58
+msgid "Taskbar follows the menu style"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml:63
 msgid "Override the taskbar colour"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:64
+#: package/contents/ui/config/ConfigTaskbar.qml:69
 msgid "Custom taskbar:"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:68
-#: package/contents/ui/config/ConfigTaskbar.qml:101
+#: package/contents/ui/config/ConfigTaskbar.qml:73
+#: package/contents/ui/config/ConfigTaskbar.qml:106
 #, javascript-format
 msgid "%1% opaque"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:77
+#: package/contents/ui/config/ConfigTaskbar.qml:82
 msgid "Light line on the taskbar edge"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:82
+#: package/contents/ui/config/ConfigTaskbar.qml:87
 msgid "Texture:"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:93
+#: package/contents/ui/config/ConfigTaskbar.qml:98
 msgid "Stretch"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:94
+#: package/contents/ui/config/ConfigTaskbar.qml:99
 msgid "Align top"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:94
+#: package/contents/ui/config/ConfigTaskbar.qml:99
 msgid "Align middle"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:95
+#: package/contents/ui/config/ConfigTaskbar.qml:100
 msgid "Align bottom"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:103
+#: package/contents/ui/config/ConfigTaskbar.qml:108
 msgid "Tint with the accent colour"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:109
+#: package/contents/ui/config/ConfigTaskbar.qml:114
 msgid "Task buttons:"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:112
+#: package/contents/ui/config/ConfigTaskbar.qml:117
 msgid "Plasma Style"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:112
+#: package/contents/ui/config/ConfigTaskbar.qml:117
 msgid "Windows 10 (bar under active)"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:113
+#: package/contents/ui/config/ConfigTaskbar.qml:118
 msgid "Windows 11 (pill under active)"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:113
+#: package/contents/ui/config/ConfigTaskbar.qml:118
 msgid "Windows 7 (glass)"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:120
+#: package/contents/ui/config/ConfigTaskbar.qml:125
 msgid "Paint the active button less transparent"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:126
+#: package/contents/ui/config/ConfigTaskbar.qml:131
 msgid "Search:"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:127
+#: package/contents/ui/config/ConfigTaskbar.qml:132
 msgid "Show search on taskbar"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:132
+#: package/contents/ui/config/ConfigTaskbar.qml:137
 msgid "Search box width:"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:144
+#: package/contents/ui/config/ConfigTaskbar.qml:149
 msgid ""
 "Panel height, position, floating, auto-hide and task grouping are handled by "
 "Plasma itself."
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:147
+#: package/contents/ui/config/ConfigTaskbar.qml:152
 msgid "Plasma settings:"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:149
+#: package/contents/ui/config/ConfigTaskbar.qml:154
 msgid "Edit panel…"
 msgstr ""
 
@@ -1451,63 +1455,63 @@ msgstr ""
 msgid "Folder"
 msgstr ""
 
-#: package/contents/ui/main.qml:286
+#: package/contents/ui/main.qml:331
 msgid "Unpin from taskbar"
 msgstr ""
 
-#: package/contents/ui/main.qml:286
+#: package/contents/ui/main.qml:331
 msgid "Pin to taskbar"
 msgstr ""
 
-#: package/contents/ui/main.qml:486
+#: package/contents/ui/main.qml:532
 msgid "Pin file to Start"
 msgstr ""
 
-#: package/contents/ui/main.qml:492
+#: package/contents/ui/main.qml:538
 msgid "Add a folder as group"
 msgstr ""
 
-#: package/contents/ui/main.qml:492
+#: package/contents/ui/main.qml:538
 msgid "Pin folder to Start"
 msgstr ""
 
-#: package/contents/ui/main.qml:498
+#: package/contents/ui/main.qml:544
 msgid "Pin website to Start"
 msgstr ""
 
-#: package/contents/ui/main.qml:513
+#: package/contents/ui/main.qml:559
 msgid "Web address:"
 msgstr ""
 
-#: package/contents/ui/main.qml:523
+#: package/contents/ui/main.qml:569
 msgid "Pin"
 msgstr ""
 
-#: package/contents/ui/main.qml:524 package/contents/ui/main.qml:556
+#: package/contents/ui/main.qml:570 package/contents/ui/main.qml:602
 msgid "Cancel"
 msgstr ""
 
-#: package/contents/ui/main.qml:546
+#: package/contents/ui/main.qml:592
 msgid "Name (empty = original):"
 msgstr ""
 
-#: package/contents/ui/main.qml:555
+#: package/contents/ui/main.qml:601
 msgid "OK"
 msgstr ""
 
-#: package/contents/ui/main.qml:571
+#: package/contents/ui/main.qml:617
 msgid "Pin website…"
 msgstr ""
 
-#: package/contents/ui/main.qml:572
+#: package/contents/ui/main.qml:618
 msgid "Pin file…"
 msgstr ""
 
-#: package/contents/ui/main.qml:573
+#: package/contents/ui/main.qml:619
 msgid "Pin folder…"
 msgstr ""
 
-#: package/contents/ui/main.qml:780
+#: package/contents/ui/main.qml:826
 msgctxt "@action:inmenu"
 msgid "Edit Applications…"
 msgstr ""
@@ -1518,7 +1522,7 @@ msgstr ""
 msgid "Type here to search"
 msgstr ""
 
-#: package/contents/ui/StartButton.qml:266
+#: package/contents/ui/StartButton.qml:280
 msgid "start"
 msgstr ""
 

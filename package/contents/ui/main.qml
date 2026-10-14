@@ -197,10 +197,55 @@ PlasmoidItem {
     // saved in savedDesktopTheme. Reads the current theme first so nothing is applied when already right.
     // ponytail: two Start12 widgets with different styles would fight over the theme; one menu is the norm.
     readonly property string xpCustomHex: cfg.xpCustomColor.toString().slice(-6)
-    readonly property string xpTheme: cfg.menuStyle !== "xp" || !cfg.xpTaskbarTheme ? ""
-        : "start12-xp-" + cfg.xpSubstyle + (cfg.xpColor === "olive" || cfg.xpColor === "silver" ? "-" + cfg.xpColor
-                                         : cfg.xpColor === "custom" ? "-custom-" + xpCustomHex : "")
+    readonly property string xpScheme: "start12-xp-" + cfg.xpSubstyle + (cfg.xpColor === "olive" || cfg.xpColor === "silver" ? "-" + cfg.xpColor
+                                       : cfg.xpColor === "custom" ? "-custom-" + xpCustomHex : "")
+    readonly property string xpTheme: cfg.menuStyle !== "xp" || !cfg.xpTaskbarTheme ? "" : xpScheme
     onXpThemeChanged: syncDesktopTheme()
+    // Window decorations (T26a, key windowTheme): Aurorae theme per menu style; "" = this style has none yet
+    // (add other styles here). XP ones come from xptheme.py --deco (install.sh; custom colour made here).
+    function windowDecoration() {
+        return cfg.menuStyle === "xp" ? xpScheme : "";
+    }
+    readonly property string windowDeco: cfg.windowTheme ? windowDecoration() : ""
+    onWindowDecoChanged: syncWindowDeco()
+    // Same save/restore idea as syncDesktopTheme: kwinrc [org.kde.kdecoration2] library + theme are saved in
+    // savedDecoLibrary/savedDecoTheme when ours goes on and written back when it goes off.
+    function syncWindowDeco() {
+        const rd = key => "\"$(kreadconfig6 --file kwinrc --group org.kde.kdecoration2 --key " + key + ")\"";
+        decoReader.connectSource("printf '%s|%s' " + rd("library") + " " + rd("theme"));
+    }
+    P5Support.DataSource {
+        id: decoReader
+        engine: "executable"
+        connectedSources: []
+        onNewData: (sourceName, data) => {
+            disconnectSource(sourceName);
+            const parts = (data.stdout || "").split("|");
+            const lib = parts[0].trim(), cur = (parts[1] || "").trim();
+            const ours = cur.startsWith("__aurorae__svg__start12-");
+            const kw = (key, v) => v === "" ? "kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key " + key + " --delete"
+                : "kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key " + key + " " + Tiles.shQuote(v);
+            const reconf = " && qdbus6 org.kde.KWin /KWin reconfigure";
+            const dir = "$HOME/.local/share/aurorae/themes/";
+            if (root.windowDeco !== "") {
+                const want = "__aurorae__svg__" + root.windowDeco;
+                if (cur === want && lib === "org.kde.kwin.aurorae")
+                    return;
+                if (!ours) {
+                    root.cfg.savedDecoLibrary = lib;
+                    root.cfg.savedDecoTheme = cur;
+                }
+                const gen = decodeURIComponent(Qt.resolvedUrl("code/xptheme.py").toString().replace("file://", ""));
+                const make = !root.windowDeco.includes("-custom-") ? "true"
+                    : "python3 " + Tiles.shQuote(gen) + " --deco --custom " + root.xpCustomHex + " --sub " + root.cfg.xpSubstyle
+                      + " --out " + dir + root.windowDeco;
+                root.run("sh -c " + Tiles.shQuote(make + " && " + kw("library", "org.kde.kwin.aurorae") + " && " + kw("theme", want) + reconf
+                         + " && find " + dir + " -maxdepth 1 -name 'start12-xp-*-custom-*' ! -name " + root.windowDeco + " -exec rm -rf {} +"));
+            } else if (ours) {
+                root.run("sh -c " + Tiles.shQuote(kw("library", root.cfg.savedDecoLibrary) + " && " + kw("theme", root.cfg.savedDecoTheme) + reconf));
+            }
+        }
+    }
     // Generated taskbar for any style (T31, xptheme.py --taskbar): start12-taskbar-<hash of args + fallback>,
     // FallbackTheme = the user's saved style, so only panel/tasks/colors change. XP taskbar wins.
     // T35: taskbarFollowsStyle picks a preset per menu style instead of the custom keys (others / xp = none).
@@ -380,7 +425,7 @@ PlasmoidItem {
     }
     // Keys that reset/backup/restore touch: everything in main.xml but bookkeeping and kicker's favorites.
     function userKeys() {
-        const keep = ["savedDesktopTheme", "resetRequest", "openSettingsRequest", "favorites", "favoritesPortedToKAstats"];
+        const keep = ["savedDesktopTheme", "savedDecoLibrary", "savedDecoTheme", "resetRequest", "openSettingsRequest", "favorites", "favoritesPortedToKAstats"];
         return root.cfg.keys().filter(k => !k.endsWith("Default") && !keep.includes(k));
     }
     // Restore: read the backup JSON, write back every known key, then put the Plasma Style in line
@@ -402,6 +447,7 @@ PlasmoidItem {
                     root.cfg[k] = s[k];
             }
             root.syncDesktopTheme();
+            root.syncWindowDeco();
         }
     }
     property string doneReset: ""
@@ -789,5 +835,6 @@ PlasmoidItem {
         rootModel.refresh();
         systemModel = systemModelComponent.createObject(root, { favoritesModel: rootModel.systemFavoritesModel });
         syncDesktopTheme();
+        syncWindowDeco();
     }
 }

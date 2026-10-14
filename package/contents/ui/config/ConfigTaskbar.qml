@@ -12,6 +12,7 @@ KCM.SimpleKCM {
     id: page
     property string cfg_menuStyle   // read only, to show the XP option
     property alias cfg_xpTaskbarTheme: xpTaskbarBox.checked
+    property alias cfg_windowTheme: windowBox.checked
     property alias cfg_taskbarFollowsStyle: followBox.checked
     property string cfg_taskbarTheme
     property alias cfg_taskbarColor: tbColor.color
@@ -47,6 +48,10 @@ KCM.SimpleKCM {
             id: xpTaskbarBox
             visible: page.cfg_menuStyle === "xp"
             text: i18n("Apply matching XP taskbar theme")
+        }
+        QQC2.CheckBox {
+            id: windowBox   // T26a: main.qml windowDecoration() decides the theme per menu style (XP for now)
+            text: i18n("Apply the theme to windows")
         }
         QQC2.CheckBox {
             id: followBox

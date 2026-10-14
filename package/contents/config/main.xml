@@ -218,6 +218,10 @@
       <label>With the XP style, switch the Plasma Style (panel) to start12-xp-classic / start12-xp-modern</label>
       <default>true</default>
     </entry>
+    <entry name="windowTheme" type="Bool">
+      <label>Apply the menu style's window decoration (Aurorae; XP for now, see main.qml windowDecoration). Changes all windows.</label>
+      <default>false</default>
+    </entry>
     <entry name="xpColor" type="String">
       <label>Windows XP colour scheme (menu + taskbar): blue | olive | silver | custom (from xpCustomColor)</label>
       <default>blue</default>
@@ -304,6 +308,14 @@
     </entry>
     <entry name="savedDesktopTheme" type="String">
       <label>Plasma Style that was active before the XP / generated taskbar theme; restored when both are off</label>
+      <default></default>
+    </entry>
+    <entry name="savedDecoLibrary" type="String">
+      <label>kwinrc [org.kde.kdecoration2] library before windowTheme; restored when it goes off</label>
+      <default></default>
+    </entry>
+    <entry name="savedDecoTheme" type="String">
+      <label>kwinrc [org.kde.kdecoration2] theme before windowTheme; restored when it goes off</label>
       <default></default>
     </entry>
   </group>

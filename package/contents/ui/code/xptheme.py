@@ -1,6 +1,7 @@
 # Generates the Start12 XP Plasma Styles (taskbar: panel-background + tasks 9-slice SVGs, colors, metadata).
 # All schemes x substyles:  python3 xptheme.py <outdir>       (install.sh -> ~/.local/share/plasma/desktoptheme)
 # One custom colour:        python3 xptheme.py --custom '#3a6ea5' --sub classic --out <dir>   (main.qml)
+# Window decorations (T26a): python3 xptheme.py --deco <outdir>  |  --deco --custom <hex> --sub s --out <dir>
 # Any-style taskbar (T31):  python3 xptheme.py --taskbar colour=#101010 alpha=0.8 radius=8 line=0 buttons=win11 accent=3d8ee6 solid=0
 #                             fallback=default --out <dir>   (main.qml; only panel/tasks/colors, rest = fallback)
 #                             [image=<png/jpg> mode=tile|stretch|top|middle|bottom imagealpha=0.3 tint=3daee9] (T33)
@@ -273,6 +274,90 @@ def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", fallback=
                                "Id": name, "License": "LGPL", "Name": "Start12 Taskbar " + B, "Version": "1.0"},
                    "X-Plasma-API": "5.0", "X-Plasma-FallbackTheme": fallback}, f, indent=4)
 
+# T26a window decorations: Aurorae SVG themes (~/.local/share/aurorae/themes/<name>), same names as the Plasma Styles.
+DECO_BASES = {"blue": "#0054e3", "olive": BASES["olive"], "silver": BASES["silver"]}
+BUTTONS = ("close", "minimize", "maximize", "restore", "help", "alldesktops", "keepabove", "keepbelow", "shade")
+GLYPHS = {  # unit box 0..1, stroked
+    "close": "M .2,.2 L .8,.8 M .8,.2 L .2,.8", "minimize": "M .2,.78 L .62,.78",
+    "maximize": "M .18,.2 H .82 V .82 H .18 Z M .18,.3 H .82", "restore": "M .32,.18 H .84 V .62 M .16,.38 H .66 V .84 H .16 Z M .16,.46 H .66",
+    "help": "M .3,.32 C .3,.1 .72,.1 .72,.32 C .72,.5 .5,.5 .5,.66 M .5,.82 V .86", "alldesktops": "M .3,.5 H .7 M .5,.3 V .7",
+    "keepabove": "M .2,.66 L .5,.3 L .8,.66", "keepbelow": "M .2,.34 L .5,.7 L .8,.34", "shade": "M .2,.6 L .5,.3 L .8,.6 M .2,.82 H .8"}
+
+def deco_frame(prefix, y0, T, S, ry, stops, side, line, hi, gid):
+    """Window frame: title piece T high, borders S wide (= the rc borders, Aurorae aligns them), top corners
+    rounded (rx S, ry), bottom corners square. Box 100 x T+40 at (10, y0)."""
+    x0, W, H = 10, 100, T + 40
+    x2, yb, F, L, Sd = x0 + W - S, y0 + H - S, 'fill="url(#%s)"' % gid, 'fill="%s"' % line, 'fill="%s"' % side
+    r = lambda x, y, w, h, f: '<rect x="%s" y="%s" width="%s" height="%s" %s/>' % (x, y, w, h, f)
+    def arc(cx, sx, inset, f):  # top corner shape: outer edge at cx, toward the inside by sx
+        ex, ey = cx + sx * inset, y0 + inset
+        return '<path d="M %s,%s V %s A %s %s 0 0 %d %s,%s H %s V %s Z" %s/>' % (
+            ex, y0 + T, y0 + ry, S - inset, ry - inset, 1 if sx > 0 else 0, cx + sx * S, ey, cx + sx * S, y0 + T, f)
+    defs = '<linearGradient id="%s" gradientUnits="userSpaceOnUse" x1="0" y1="%d" x2="0" y2="%d">%s</linearGradient>' % (
+        gid, y0, y0 + T, "".join('<stop offset="%s" stop-color="%s"/>' % s for s in stops))
+    p = prefix + "-"
+    g = lambda n, b: '<g id="%s%s">%s</g>' % (p, n, b)
+    out = [g("topleft", r(x0, y0, S, T, 'fill="none"') + arc(x0, 1, 0, L) + arc(x0, 1, 1, F)),
+           g("topright", r(x2, y0, S, T, 'fill="none"') + arc(x0 + W, -1, 0, L) + arc(x0 + W, -1, 1, F)),
+           g("top", r(x0 + S, y0, W - 2 * S, 1, L) + r(x0 + S, y0 + 1, W - 2 * S, T - 1, F) + r(x0 + S, y0 + 1, W - 2 * S, 1, 'fill="%s"' % hi)),
+           g("left", r(x0, y0 + T, 1, H - T - S, L) + r(x0 + 1, y0 + T, S - 1, H - T - S, Sd)),
+           g("right", r(x2, y0 + T, S - 1, H - T - S, Sd) + r(x0 + W - 1, y0 + T, 1, H - T - S, L)),
+           g("bottomleft", r(x0, yb, S, S, L) + r(x0 + 1, yb, S - 1, S - 1, Sd)),
+           g("bottomright", r(x2, yb, S, S, L) + r(x2, yb, S - 1, S - 1, Sd)),
+           g("bottom", r(x0 + S, yb, W - 2 * S, S - 1, Sd) + r(x0 + S, y0 + H - 1, W - 2 * S, 1, L)),
+           g("center", r(x0 + S, y0 + T, W - 2 * S, H - T - S, Sd))]
+    return defs, "".join(out)
+
+def write_deco(base, B, sub, label):
+    """Aurorae theme for panel/title colour B: decoration.svg, one svg per button, <name>rc, metadata.desktop."""
+    name = os.path.basename(os.path.normpath(base))
+    lt = light(B)
+    ink = "#1f2440" if lt else W
+    Bi = mix(B, "#d4d8e4", .55)  # inactive: washed out
+    classic = sub == "classic"
+    S, ry, T, bs, c = (4, 7, 28, 21, 3) if classic else (5, 10, 30, 20, 5)
+    def stops(b):
+        return ([(0, mix(b, W, .4)), (.12, mix(b, W, .08)), (.5, b), (.85, mix(b, W, .1)), (1, mix(b, K, .15))] if classic
+                else [(0, mix(b, W, .14)), (1, b)])
+    svg(os.path.join(base, "decoration.svg"),
+        [deco_frame("decoration", 10, T, S, ry, stops(B), mix(B, K, .05), mix(B, K, .45), mix(B, W, .5), "da"),
+         deco_frame("decoration-inactive", T + 70, T, S, ry, stops(Bi), Bi, mix(Bi, K, .3), mix(Bi, W, .5), "di")], size=(130, 2 * T + 140))
+    red = [(0, "#e8906c", 1), (1, "#c13c13", 1)]
+    for btn in BUTTONS:
+        frames = []
+        for i, st in enumerate(("active", "hover", "pressed", "deactivated", "inactive", "hover-inactive", "pressed-inactive", "deactivated-inactive")):
+            act, b = not st.endswith("inactive"), B if not st.endswith("inactive") else Bi
+            k = {"hover": .25, "pressed": -.2}.get(st.split("-")[0], 0)
+            tone = lambda h: mix(h, W, k) if k > 0 else mix(h, K, -k)
+            gl = W if (btn == "close" or not lt) else ink
+            if classic:
+                fill = [(o, tone(col), 1) for o, col, _ in red] if btn == "close" else [(0, tone(mix(b, W, .4)), 1), (1, tone(mix(b, W, .02)), 1)]
+                bd = (W, 1 if act else .6)
+            else:  # modern: translucent, close turns red on hover/press
+                hot = btn == "close" and st.split("-")[0] in ("hover", "pressed")
+                fill = [(o, tone(col), 1) for o, col, _ in red] if hot else [(0, ink, {"hover": .32, "pressed": .12}.get(st.split("-")[0], .18)), (1, ink, {"hover": .24, "pressed": .08}.get(st.split("-")[0], .1))]
+                bd = None
+            op = .45 if st.startswith("deactivated") else 1 if act else .7
+            s = bs - 2 * c - 2 if classic else bs - 2 * c  # glyph stays inside the center piece
+            gly = '<path d="%s" transform="translate(%s,%s) scale(%s)" fill="none" stroke="%s" stroke-opacity="%s" stroke-width="%s" stroke-linecap="round" stroke-linejoin="round"/>' % (
+                GLYPHS[btn], 10 + c + (bs - 2 * c - s) / 2, 10 + i * 40 + c + (bs - 2 * c - s) / 2, s, gl, op, round(2.0 / s, 3))
+            frames.append(frame(st, 10, 10 + i * 40, bs, bs, c, bd, fill, gid="b%d" % i, margins=(c, c, c, c), center=gly))
+        svg(os.path.join(base, btn + ".svg"), frames, size=(60, 8 * 40 + 20))
+    rgbs = lambda h: "%d,%d,%d" % rgb(h)
+    with open(os.path.join(base, name + "rc"), "w") as f:
+        f.write("[General]\nActiveTextColor=%s\nInactiveTextColor=%s\nUseTextShadow=%s\nActiveTextShadowColor=%s\n"
+                "InactiveTextShadowColor=%s\nTextShadowOffsetX=1\nTextShadowOffsetY=1\nTitleAlignment=Left\n"
+                "TitleVerticalAlignment=Center\nAnimation=0\nShadow=true\n\n[Layout]\nBorderLeft=%d\nBorderRight=%d\n"
+                "BorderBottom=%d\nTitleEdgeTop=%d\nTitleEdgeBottom=%d\nTitleEdgeLeft=%d\nTitleEdgeRight=%d\nTitleBorderLeft=4\n"
+                "TitleBorderRight=4\nTitleHeight=%d\nButtonWidth=%d\nButtonHeight=%d\nButtonSpacing=2\nButtonMarginTop=0\n"
+                "ExplicitButtonSpacer=8\nPaddingTop=0\nPaddingBottom=0\nPaddingLeft=0\nPaddingRight=0\n"
+                % (rgbs(ink), rgbs(mix(ink, Bi, .35)), "false" if lt else "true", rgbs(mix(B, K, .6)), rgbs(mix(Bi, K, .3)),
+                   S, S, S, (T - 22) // 2, (T - 22) // 2, S + 2, S + 2, 22, bs, bs))
+    with open(os.path.join(base, "metadata.desktop"), "w") as f:
+        f.write("[Desktop Entry]\nName=Start12 XP %s\nComment=Windows XP window decoration for the Start12 XP menu\n"
+                "X-KDE-PluginInfo-Author=Start12\nX-KDE-PluginInfo-Name=%s\nX-KDE-PluginInfo-Version=1.0\n"
+                "X-KDE-PluginInfo-License=LGPL\n" % (label, name))
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("outdir", nargs="?")
@@ -280,8 +365,18 @@ if __name__ == "__main__":
     ap.add_argument("--sub", choices=("classic", "modern"), default="classic")
     ap.add_argument("--out")
     ap.add_argument("--taskbar", nargs="*", metavar="key=value")
+    ap.add_argument("--deco", action="store_true", help="write Aurorae window decorations instead (T26a)")
     a = ap.parse_args()
-    if a.taskbar is not None:
+    if a.deco:
+        if a.custom:
+            rgb(a.custom)
+            write_deco(a.out, "#" + a.custom.lstrip("#")[-6:], a.sub, "%s %s" % (a.sub.title(), a.custom))
+        else:
+            for sub in ("classic", "modern"):
+                for sch, B in DECO_BASES.items():
+                    write_deco(os.path.join(a.outdir, "start12-xp-" + sub + ("" if sch == "blue" else "-" + sch)), B, sub,
+                               "%s %s" % (sub.title(), sch.title()))
+    elif a.taskbar is not None:
         taskbar(a.out, **dict(kv.split("=", 1) for kv in a.taskbar))
     elif a.custom:
         rgb(a.custom)  # rejects anything that is not a hex colour

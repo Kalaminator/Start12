@@ -181,7 +181,13 @@ Build: `package/Messages.sh` (xgettext over `contents/ui`), `po/es.po`, install 
 config pages and menu strings to Spanish first.
 Check: `LANGUAGE=es plasmashell --replace`, settings window in Spanish.
 
-### T26 Full custom XP theme (M) -- user said "continúa" 2026-10-14; scope chosen by us:
+### T26 Full custom XP theme (M) -- T26a DONE (2026-10-14), T26b LEFT for the next agent.
+Built (T26a): xptheme.py `--deco` (Aurorae themes start12-xp-<sub>[-olive|-silver|-custom-<hex>] in ~/.local/share/aurorae/themes,
+install.sh), key `windowTheme` (renamed from xpWindowTheme: will cover every style; main.qml `windowDecoration()` returns the
+theme per menuStyle, "" = none yet), keys savedDecoLibrary/savedDecoTheme, main.qml `syncWindowDeco()`, Taskbar page checkbox
+"Apply the theme to windows". Not applied live / not seen on screen (user must tick the box).
+Next (T26b): colour scheme only, gated by the same `windowTheme` key (no new checkbox); save/restore like savedDesktopTheme.
+Original scope:
 T26a window decorations: generate an Aurorae theme per XP scheme x substyle (+ custom colour) next to the
 Plasma Styles (classic: Luna blue title bar gradient, rounded top corners, white bold title, red close button,
 blue min/max/help buttons; modern: same palette, flatter, rounder). Apply via kwinrc
