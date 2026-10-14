@@ -4,7 +4,7 @@ const path = require("path");
 const assert = require("assert");
 const src = fs.readFileSync(path.join(__dirname, "../package/contents/ui/code/tiles.js"), "utf8")
     .replace(/^\.pragma library/m, "");
-const T = new Function(src + "; return { pack, rowEnd, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder, parsePages, setPage, newPage, deletePage, moveGroupToPage, shQuote, writeFileCmd, parseCanvas, canvasAddTab, canvasDeleteTab, canvasMoveTab, canvasAddGroup, canvasDeleteGroup, canvasRename, canvasPlace, canvasRemove, canvasSet, canvasSort, fileIcon, pushHistory, parseFiltered, filterFile, dirUrl, pinDesktop };")();
+const T = new Function(src + "; return { pack, rowEnd, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder, parsePages, setPage, newPage, deletePage, moveGroupToPage, shQuote, writeFileCmd, parseCanvas, canvasAddTab, canvasDeleteTab, canvasMoveTab, canvasAddGroup, canvasDeleteGroup, canvasRename, canvasPlace, canvasRemove, canvasSet, canvasSort, fileIcon, pushHistory, parseFiltered, filterFile, dirUrl, pinDesktop, splitGet, splitSet, splitReset };")();
 
 // 6 columns = 12 units wide: six medium tiles fit in one row.
 let p = T.pack(Array(6).fill({ size: "medium" }), 6);
@@ -174,5 +174,16 @@ assert.strictEqual(T.pushHistory("0123456789".split(""), "x").length, 10);
     assert.ok(d.includes("Icon=internet-web-browser\n"));
     assert.ok(d.includes('Exec=xdg-open "https://kde.org/a?b=50%%"\n'));
     assert.ok(T.pinDesktop(T.custom('custom|x|folder|cmd:echo "$HOME"')).includes('Exec=sh -c "echo \\\\"\\\\$HOME\\\\""'));
+}
+// Design mode splits (T40).
+{
+    let j = T.splitSet("", "windows10", 300.4);
+    assert.strictEqual(T.splitGet(j, "windows10"), 300);
+    assert.strictEqual(T.splitGet(j, "xp"), null);
+    assert.strictEqual(T.splitGet("bad", "xp"), null);
+    j = T.splitSet(T.splitSet(j, "xp/right", 200), "xpx", 5);
+    j = T.splitReset(j, "xp");
+    assert.deepStrictEqual(JSON.parse(j), { windows10: 300, xpx: 5 });
+    assert.strictEqual(T.splitSet(j, "windows10", null), '{"xpx":5}');
 }
 console.log("tiles.js: all checks passed");

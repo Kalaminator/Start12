@@ -20,9 +20,12 @@ FocusScope {
     }
     readonly property alias metrics: m
     readonly property real side: m.px(20)
-    readonly property real rightW: m.px(cfg.menuSize >= 2 ? 240 : 200)
+    // Right panel; design mode drags its left edge (common/SplitHandle). implicitWidth keeps the
+    // default, so the popup keeps its width and the pinned grid gives way.
+    readonly property real rightDef: m.px(cfg.menuSize >= 2 ? 240 : 200)
+    readonly property real rightW: root.splitFor(cfg.menuStyle, rightDef)
 
-    implicitWidth: m.px(3 * 96 + 16) + side * 2 + rightW
+    implicitWidth: m.px(3 * 96 + 16) + side * 2 + rightDef
     implicitHeight: m.heightFor([560, 640, 560, 720])
     readonly property real minimumWidth: m.px(2 * 96 + 16) + side * 2 + rightW
 
@@ -65,6 +68,17 @@ FocusScope {
         metrics: m
         contextMenu: contextMenu
         ghost: ghost
+    }
+
+    SplitHandle {
+        name: style.cfg.menuStyle
+        value: style.rightW
+        reversed: true
+        minimum: m.px(140)
+        maximum: style.width - style.side * 2 - m.px(2 * 96 + 16)
+        x: rightPanel.x - width / 2
+        anchors.top: rightPanel.top
+        anchors.bottom: rightPanel.bottom
     }
 
     // ---- Right: the second tone ----

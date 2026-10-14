@@ -494,3 +494,25 @@ function shQuote(s) {
 function writeFileCmd(text, file) {
     return "sh -c " + shQuote("printf %s " + shQuote(text) + " > " + shQuote(file));
 }
+
+// Design mode dividers (T40): key `splits` = JSON { "<style>" or "<style>/<part>": width in unscaled px }.
+function splitGet(json, name) {
+    try { const v = JSON.parse(json || "{}")[name]; return typeof v === "number" ? v : null; } catch (e) { return null; }
+}
+// w null removes the entry.
+function splitSet(json, name, w) {
+    let m = {};
+    try { m = JSON.parse(json || "{}") || {}; } catch (e) {}
+    if (w === null) delete m[name];
+    else m[name] = Math.round(w);
+    return JSON.stringify(m);
+}
+// Reset one style: drops "<style>" and every "<style>/<part>".
+function splitReset(json, style) {
+    let m = {};
+    try { m = JSON.parse(json || "{}") || {}; } catch (e) {}
+    for (const k of Object.keys(m)) {
+        if (k === style || k.startsWith(style + "/")) delete m[k];
+    }
+    return JSON.stringify(m);
+}

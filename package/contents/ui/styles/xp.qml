@@ -101,7 +101,8 @@ FocusScope {
     readonly property real rowH: m.px(modern ? 44 : 40)
     readonly property real sepH: m.px(modern ? 13 : 9)
     readonly property real placeH: m.px(cfg.smallPlaces ? 24 : modern ? 34 : 30)
-    readonly property real rightW: m.px(190 + (cfg.menuSize >= 2 ? 30 : 0))
+    // Places column; design mode drags its left edge (common/SplitHandle), the left column gives way.
+    readonly property real rightW: root.splitFor(cfg.menuStyle, m.px(190 + (cfg.menuSize >= 2 ? 30 : 0)))
 
     implicitWidth: m.px(400 + (cfg.menuSize >= 2 ? 80 : 0))
     implicitHeight: m.heightFor([480, 560, 480, 640])
@@ -487,6 +488,17 @@ FocusScope {
                     }
                 }
             }
+        }
+
+        SplitHandle {
+            name: style.cfg.menuStyle
+            value: style.rightW
+            reversed: true
+            minimum: m.px(120)
+            maximum: style.width - m.px(180)
+            x: rightCol.x - width / 2
+            anchors.top: rightCol.top
+            anchors.bottom: rightCol.bottom
         }
 
         // Places: bold folders first, a thin line, then the rest.

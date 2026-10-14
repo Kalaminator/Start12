@@ -42,7 +42,10 @@ FocusScope {
     readonly property bool placeIcons: sub === 1 || sub === 4
 
     readonly property real pad: m.px(8)
-    readonly property real rightW: m.px(compact ? 136 : 156)
+    // Places column; design mode drags its left edge (common/SplitHandle). implicitWidth keeps the
+    // default, so the popup keeps its width and the left pane gives way.
+    readonly property real rightDef: m.px(compact ? 136 : 156)
+    readonly property real rightW: root.splitFor(cfg.menuStyle, rightDef)
     readonly property real rowH: m.px(compact ? 28 : 40)
     readonly property real iconSize: m.px(compact ? 16 : 32)
     readonly property real cellW: m.px(compact ? 64 : 80)
@@ -51,7 +54,7 @@ FocusScope {
     readonly property real placeH: m.px(cfg.smallPlaces ? 22 : compact ? 26 : 31)
 
     // Left pane 380 px: the size the user picked by dragging (whole menu ~565 px at 100%).
-    implicitWidth: pad * 3 + m.px((compact ? 340 : 380) + (cfg.menuSize >= 2 ? 80 : 0)) + rightW
+    implicitWidth: pad * 3 + m.px((compact ? 340 : 380) + (cfg.menuSize >= 2 ? 80 : 0)) + rightDef
     implicitHeight: m.heightFor([480, 560, 480, 640])
     readonly property real minimumWidth: pad * 3 + m.px(200) + rightW
 
@@ -217,6 +220,17 @@ FocusScope {
                 font.pixelSize: m.fontSize
             }
         }
+    }
+
+    SplitHandle {
+        name: style.cfg.menuStyle
+        value: style.rightW
+        reversed: true
+        minimum: m.px(100)
+        maximum: style.width - style.pad * 3 - m.px(200)
+        x: leftPane.x + leftPane.width + style.pad / 2 - width / 2
+        anchors.top: leftPane.top
+        anchors.bottom: leftPane.bottom
     }
 
     // ---- Left pane ----

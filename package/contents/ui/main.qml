@@ -26,6 +26,27 @@ PlasmoidItem {
                                       : builtStyles.includes(cfg.menuStyle) ? cfg.menuStyle : "windows10"
 
     property string searchText: ""
+
+    // Design mode (T40, not saved): dividers between menu sections can be dragged (common/SplitHandle).
+    // The menu stays open on outside clicks; closing it ends design mode.
+    property bool designMode: false
+    hideOnWindowDeactivate: !designMode
+    // Divider widths: `name` = "<style>" or "<style>/<part>"; stored unscaled, returned scaled.
+    function splitFor(name, def) {
+        const w = Tiles.splitGet(cfg.splits, name);
+        return w === null ? def : Math.round(w * cfg.uiScale);
+    }
+    function setSplit(name, w) {
+        cfg.splits = Tiles.splitSet(cfg.splits, name, w / cfg.uiScale);
+    }
+    function editLayout() {
+        designMode = true;
+        expanded = true;
+    }
+    Connections {
+        target: root.cfg
+        function onDesignRequestChanged() { if (root.cfg.designRequest) root.editLayout(); }
+    }
     readonly property bool searching: searchText.length > 0
     property Item kbCurrent: null   // keyboard focus item (common/KeyNav), drawn by common/KeyFrame
 
@@ -503,7 +524,7 @@ PlasmoidItem {
     }
     // Keys that reset/backup/restore touch: everything in main.xml but bookkeeping and kicker's favorites.
     function userKeys() {
-        const keep = ["savedDesktopTheme", "savedDecoLibrary", "savedDecoTheme", "savedColorScheme", "resetRequest", "openSettingsRequest", "favorites", "favoritesPortedToKAstats"];
+        const keep = ["savedDesktopTheme", "savedDecoLibrary", "savedDecoTheme", "savedColorScheme", "resetRequest", "openSettingsRequest", "designRequest", "favorites", "favoritesPortedToKAstats"];
         return root.cfg.keys().filter(k => !k.endsWith("Default") && !keep.includes(k));
     }
     // Restore: read the backup JSON, write back every known key, then put the Plasma Style in line
@@ -702,6 +723,7 @@ PlasmoidItem {
             rootModel.refresh();
         } else {
             searchText = "";
+            designMode = false;
         }
     }
 
@@ -734,12 +756,27 @@ PlasmoidItem {
         // Plasma keeps the user's dragged popup size and ignores preferred sizes, so full screen
         // forces the size through the minimum.
         Layout.minimumWidth: root.cfg.fullScreen ? root.fullRect.width
+                           : designW > 0 ? designW
                            : styleLoader.item && styleLoader.item.minimumWidth ? styleLoader.item.minimumWidth : 300
+        // Design mode: Plasma keeps the dragged popup width, so pin it (min = max) at the opening width
+        // plus whatever the style's implicitWidth gains from a divider (Win10 list, App canvas): the
+        // section right of the divider keeps its size. Styles whose divider side is fixed on the right
+        // keep implicitWidth, so the popup stays put and the left side gives way.
+        property real designBase: 0
+        readonly property real designW: root.designMode && !root.cfg.fullScreen && styleLoader.item
+                                        ? designBase + styleLoader.item.implicitWidth : 0
+        Connections {
+            target: root
+            function onDesignModeChanged() {
+                if (root.designMode && styleLoader.item) full.designBase = full.width - styleLoader.item.implicitWidth;
+            }
+        }
         Layout.minimumHeight: root.cfg.fullScreen ? root.fullRect.height : Math.round(320 * root.cfg.uiScale)
         // Leaving full screen: Plasma saved the full-screen popup size, so cap the size once at the
         // style's size until the popup has opened and stored the smaller size again.
         property bool shrink: false
-        Layout.maximumWidth: shrink && styleLoader.item ? styleLoader.item.implicitWidth : Number.POSITIVE_INFINITY
+        Layout.maximumWidth: designW > 0 ? designW
+                           : shrink && styleLoader.item ? styleLoader.item.implicitWidth : Number.POSITIVE_INFINITY
         Layout.maximumHeight: shrink && styleLoader.item ? styleLoader.item.implicitHeight : Number.POSITIVE_INFINITY
         Connections {
             target: root.cfg
@@ -805,6 +842,37 @@ PlasmoidItem {
                 anchors.fill: parent
                 focus: true
                 source: "styles/" + root.styleFile + ".qml"
+            }
+        }
+
+        // Design mode bar over the top of the menu.
+        Rectangle {
+            visible: root.designMode
+            anchors.left: frame.left
+            anchors.right: frame.right
+            anchors.top: frame.top
+            height: designRow.implicitHeight + Kirigami.Units.smallSpacing * 2
+            color: Kirigami.Theme.highlightColor
+            RowLayout {
+                id: designRow
+                anchors.fill: parent
+                anchors.margins: Kirigami.Units.smallSpacing
+                QQC2.Label {
+                    Layout.fillWidth: true
+                    text: i18n("Design mode — drag the dividers")
+                    color: Kirigami.Theme.highlightedTextColor
+                    elide: Text.ElideRight
+                }
+                QQC2.Button {
+                    text: i18n("Reset")
+                    icon.name: "edit-reset"
+                    onClicked: root.cfg.splits = Tiles.splitReset(root.cfg.splits, root.cfg.menuStyle)
+                }
+                QQC2.Button {
+                    text: i18n("Done")
+                    icon.name: "dialog-ok"
+                    onClicked: root.designMode = false
+                }
             }
         }
     }
@@ -899,6 +967,11 @@ PlasmoidItem {
         },
         PlasmaCore.Action {
             isSeparator: true
+        },
+        PlasmaCore.Action {
+            text: i18n("Edit menu layout")
+            icon.name: "transform-move-horizontal"
+            onTriggered: root.editLayout()
         },
         PlasmaCore.Action {
             text: i18nc("@action:inmenu", "Edit Applications…")

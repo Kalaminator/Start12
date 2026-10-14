@@ -273,7 +273,7 @@ apply to the active style (windows10, windows11 and the styles that use the wind
 - "Transparency effects" (win10Transparency).
 Keep keys where possible (no migration needed); Spanish strings; same no-apply/scratch-render checks.
 
-### T40 Design mode: drag the divider between menu sections (M) -- user 2026-10-14
+### T40 Design mode: drag the divider between menu sections (M) -- DONE 2026-10-14 (not yet checked on screen; Win11 and launcher have no side-by-side split) -- user 2026-10-14
 User: the split between sections (list | icons, icons | list, pane | places) is fixed in some styles; it should be
 locked normally, but a "design mode" (like Plasma's edit mode) lets you move it.
 Build: shared `common/SplitHandle.qml` (vertical divider; normal mode = today's look and not draggable; design mode =

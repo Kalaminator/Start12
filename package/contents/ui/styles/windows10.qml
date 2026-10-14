@@ -18,11 +18,13 @@ FocusScope {
         id: m
     }
     readonly property alias metrics: m
+    // App list width; design mode drags it (common/SplitHandle), the tiles keep their size.
+    readonly property real listW: style.cfg.hideAppList ? 0 : root.splitFor(style.cfg.menuStyle, m.list)
 
-    implicitWidth: m.rail + m.list + m.pad * 2 + m.groupCols * m.groupWidth + (m.groupCols - 1) * m.pad * 2
+    implicitWidth: m.rail + listW + m.pad * 2 + m.groupCols * m.groupWidth + (m.groupCols - 1) * m.pad * 2
     implicitHeight: m.heightFor([480, 600, 480, 640])
     // Narrowest: rail + list + one tile group.
-    readonly property real minimumWidth: m.rail + m.list + m.pad * 2 + m.groupWidth
+    readonly property real minimumWidth: m.rail + listW + m.pad * 2 + m.groupWidth
 
     MenuBackground {
         anchors.fill: parent
@@ -45,7 +47,7 @@ FocusScope {
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            width: m.list
+            width: style.listW
             contextMenu: contextMenu
             ghost: ghost
         }
@@ -60,6 +62,17 @@ FocusScope {
             anchors.bottom: parent.bottom
             contextMenu: contextMenu
             ghost: ghost
+        }
+
+        SplitHandle {
+            shown: appList.visible
+            name: style.cfg.menuStyle
+            value: style.listW
+            minimum: m.px(180)
+            maximum: m.px(600)
+            x: appList.width - width / 2
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
         }
 
         SearchView {

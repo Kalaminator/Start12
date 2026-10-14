@@ -532,6 +532,14 @@
       <label>Changed by the start12-settings command to open the settings window</label>
       <default></default>
     </entry>
+    <entry name="designRequest" type="String">
+      <label>Changed by the Layout page's "Edit menu layout" button: opens the menu in design mode</label>
+      <default></default>
+    </entry>
+    <entry name="splits" type="String">
+      <label>Design mode divider widths, JSON { "style" or "style/part": unscaled px }</label>
+      <default>{}</default>
+    </entry>
     <entry name="favoritesPortedToKAstats" type="Bool">
       <default>false</default>
     </entry>

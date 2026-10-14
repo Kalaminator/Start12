@@ -5,6 +5,7 @@ import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
+import org.kde.plasma.plasma5support as P5Support
 import "../code/tiles.js" as Tiles
 
 // Start11Config "Configure menu": tiles and the apps list (Windows 10 style).
@@ -32,7 +33,24 @@ KCM.SimpleKCM {
     property string cfg_filteredFolders
     property string cfg_resetRequest
 
+    P5Support.DataSource {
+        id: executable
+        engine: "executable"
+        connectedSources: []
+        onNewData: sourceName => disconnectSource(sourceName)
+    }
+
     Kirigami.FormLayout {
+        // T40: opens the menu in design mode (main.qml watches designRequest), written straight to the
+        // widget's config like extras/start12-settings so it needs no Apply.
+        QQC2.Button {
+            Kirigami.FormData.label: i18n("Section dividers:")
+            text: i18n("Edit menu layout…")
+            icon.name: "transform-move-horizontal"
+            onClicked: executable.connectSource("qdbus6 org.kde.plasmashell /PlasmaShell evaluateScript '"
+                + "panels().concat(desktops()).forEach(function (c) { c.widgets(\"org.start12.menu\").forEach(function (w) {"
+                + " w.currentConfigGroup = [\"General\"]; w.writeConfig(\"designRequest\", \"" + Date.now() + "\"); w.reloadConfig(); }); });'")
+        }
         Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Tiles") }
 
         QQC2.SpinBox {
