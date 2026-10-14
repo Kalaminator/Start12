@@ -25,7 +25,7 @@ Item {
     readonly property real cellW: metrics.px(96)
     readonly property real cellH: metrics.px(84)
     readonly property int perPage: cols * rows
-    readonly property int pages: Math.max(1, Math.ceil(cfg.pinnedGrid.length / perPage))
+    readonly property int pages: Math.max(1, Math.ceil(root.shownPins.length / perPage))
     property int page: 0
     onPagesChanged: page = Math.min(page, pages - 1)
 
@@ -65,7 +65,7 @@ Item {
             Behavior on y { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
 
             Repeater {
-                model: grid.cfg.pinnedGrid
+                model: root.shownPins
                 delegate: PC3.AbstractButton {
                     id: cell
                     required property string modelData

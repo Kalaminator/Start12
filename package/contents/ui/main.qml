@@ -55,6 +55,23 @@ PlasmoidItem {
             cfg.pinnedGrid = cfg.pinnedGrid.filter(x => x !== id);
         }
     }
+    // Pins whose app is not installed (e.g. the default Konsole pin) are hidden, not removed.
+    // ponytail: one model over all pins (as windows7.qml); if a pin id is also rewritten
+    // (preferred://browser) while another app is missing, the rewritten one may hide too.
+    Kicker.SimpleFavoritesModel {
+        id: pinCheck
+        favorites: cfg.pinnedGrid.filter(id => !Tiles.custom(id))
+    }
+    readonly property var missingPins: {
+        const apps = cfg.pinnedGrid.filter(id => !Tiles.custom(id)); // not pinCheck.favorites: the model drops missing ids there
+        if (pinCheck.count >= apps.length) return [];
+        const role = pinCheck.KItemModels.KRoleNames.role("favoriteId");
+        const have = [];
+        for (let r = 0; r < pinCheck.count; r++)
+            have.push((pinCheck.data(pinCheck.index(r, 0), role) || "").replace(/^applications:/, ""));
+        return apps.filter(id => !have.includes(id));
+    }
+    readonly property var shownPins: cfg.pinnedGrid.filter(id => !missingPins.includes(id))
     function movePinned(id, index) {
         cfg.pinnedGrid = Tiles.placeInList(cfg.pinnedGrid, id, index);
     }

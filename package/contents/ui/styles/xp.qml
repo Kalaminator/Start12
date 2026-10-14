@@ -110,7 +110,7 @@ FocusScope {
     }
     readonly property var entries: {
         rev;
-        const pins = cfg.pinnedGrid.map((id, i) => ({ kind: "pin", id: id, index: i }));
+        const pins = root.shownPins.map((id, i) => ({ kind: "pin", id: id, index: i }));
         const free = Math.floor((home.height - (pins.length ? sepH : 0)) / rowH) - pins.length;
         const fm = root.frequentAppsModel;
         const freq = [];
@@ -188,6 +188,9 @@ FocusScope {
                         width: parent.width * 0.7
                         height: width
                         source: "user-identity"
+                        // No picture set: a blue person on the white frame (the theme icon may be white).
+                        isMask: true
+                        color: "#3a6ea5"
                     }
                 }
                 Column {
@@ -507,8 +510,11 @@ FocusScope {
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: m.px(pb.modelData.main ? 24 : 22)
                                 height: width
-                                // Full-colour icons like XP, not the symbolic ones.
-                                source: pb.info ? String(pb.info.icon).replace(/-symbolic$/, "") : ""
+                                // The theme's place icons are white (dark theme): draw them black on the light
+                                // blue pane and white on the blue hover, so they always stand out.
+                                source: pb.info ? pb.info.icon : ""
+                                isMask: true
+                                color: pb.hot ? c.hoverText : "#000000"
                             }
                             PC3.Label {
                                 anchors.verticalCenter: parent.verticalCenter
