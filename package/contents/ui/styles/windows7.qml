@@ -32,6 +32,7 @@ FocusScope {
     Metrics {
         id: pm
         mode: style.modern ? m.mode : 2
+        accentStart: style.modern && m.accentStart
     }
 
     readonly property bool modern: cfg.menuStyle === "modern"

@@ -398,7 +398,7 @@ FLAT_GLYPHS = {"close": "M .1,.1 L .9,.9 M .9,.1 L .1,.9", "minimize": "M .05,.5
                "restore": "M .25,.05 H .95 V .75 M .05,.25 H .75 V .95 H .05 Z"}  # thin Windows 10/11 caption glyphs
 
 def write_win_deco(base, kind, dark, accent=None):
-    """T38 accent: Windows 10 "accent colour on title bars", the active title bar and frame in that colour."""
+    """T38/T39 accent: "accent colour on title bars and window borders", the active title bar and frame in that colour."""
     name = os.path.basename(os.path.normpath(base))
     sch = WIN_SCHEMES[kind + ("-dark" if dark else "")]
     if kind == "win7":  # glass: translucent blue gradient, thick border, glassy buttons, wide red close
@@ -407,6 +407,8 @@ def write_win_deco(base, kind, dark, accent=None):
         act, ina = g("#7ea6d6"), g("#c3d3e6")
         side, sidei, line, linei, hi = "#7ea6d6", "#c3d3e6", "#1f3d66", "#7d8ea3", "#eaf3fc"
         ink, inki, glyph = K, "#55606e", W
+        if accent:  # T39 glass tinted by the accent
+            act, side, hi = g(mix(accent, W, .25)), mix(accent, W, .25), mix(accent, W, .85)
     else:
         T, S, ry, border, bw, bh, c, gs = (30, 1, 0, 1, 46, 30, 0, 10) if kind == "win10" else (32, 8, 8, 1, 36, 26, 4, 10)
         cw = bw
@@ -479,13 +481,15 @@ if __name__ == "__main__":
     ap.add_argument("--taskbar", nargs="*", metavar="key=value")
     ap.add_argument("--deco", action="store_true", help="write Aurorae window decorations instead (T26a)")
     ap.add_argument("--scheme", action="store_true", help="write Plasma colour schemes instead (T26b)")
-    ap.add_argument("--win10", choices=("light", "dark"), help="with --deco/--scheme --custom: Win10 accent title bar (T38)")
+    ap.add_argument("--win10", choices=("light", "dark"), help="with --deco/--scheme --custom: Win10/11/7 accent title bar (T38)")
+    ap.add_argument("--kind", choices=("win10", "win11", "win7"), default="win10", help="with --win10: which look (T39)")
     a = ap.parse_args()
     if a.scheme:
         if a.custom and a.win10:  # T38: Win10 light/dark scheme with the accent title bar
             B = "#" + a.custom.lstrip("#")[-6:]
             rgb(B)
-            write_scheme(a.out, label="Win10 %s Accent" % a.win10.title(), **dict(WIN_SCHEMES["win10" + ("-dark" if a.win10 == "dark" else "")], B=B))
+            k = a.kind + ("-dark" if a.win10 == "dark" and a.kind != "win7" else "")
+            write_scheme(a.out, label="%s %s Accent" % (a.kind.title(), a.win10.title()), **dict(WIN_SCHEMES[k], B=B))
         elif a.custom:  # --out is the .colors file; custom: beige windows, selection and title bar in the custom colour
             rgb(a.custom)
             B = "#" + a.custom.lstrip("#")[-6:]
@@ -503,7 +507,7 @@ if __name__ == "__main__":
             B = "#" + a.custom.lstrip("#")[-6:]
             rgb(B)
             os.makedirs(a.out, exist_ok=True)
-            write_win_deco(a.out, "win10", a.win10 == "dark", B)
+            write_win_deco(a.out, a.kind, a.win10 == "dark" and a.kind != "win7", B)
         elif a.custom:
             rgb(a.custom)
             write_deco(a.out, "#" + a.custom.lstrip("#")[-6:], a.sub, "%s %s" % (a.sub.title(), a.custom))

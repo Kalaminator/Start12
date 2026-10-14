@@ -23,6 +23,11 @@ ConfigModel {
         source: "config/ConfigLook.qml"
     }
     ConfigCategory {
+        name: i18n("Colours")
+        icon: "color-management"
+        source: "config/ConfigColours.qml"
+    }
+    ConfigCategory {
         name: i18n("Search")
         icon: "search"
         source: "config/ConfigSearch.qml"

@@ -27,13 +27,6 @@ KCM.SimpleKCM {
     property string cfg_xpColor
     property alias cfg_xpCustomColor: xpCustom.color
     property string cfg_resetRequest
-    // T38 Windows 10 colours (colorMode/accent keys shared with the Look page)
-    property int cfg_colorMode
-    property int cfg_accentMode
-    property alias cfg_accentColor: win10Accent.color
-    property bool cfg_win10AccentStart
-    property bool cfg_win10AccentTitles
-    property bool cfg_win10Transparency
 
     readonly property var built: ["windows7", "modern", "windows10", "windows11", "app", "pro", "launcher", "xp"]
     readonly property var styles: [
@@ -146,42 +139,6 @@ KCM.SimpleKCM {
                     }
                 }
                 KQuickControls.ColorButton { id: xpStartColor; visible: page.cfg_xpStartCustom; showAlphaChannel: false }
-            }
-            // T38 like Windows 10 Settings > Personalisation > Colours
-            QQC2.ComboBox {
-                visible: page.cfg_menuStyle === "windows10"
-                Kirigami.FormData.label: i18n("Choose your colour:")
-                model: [i18n("Automatic (Plasma colours)"), i18n("Dark"), i18n("Light"), i18n("Custom colour")]
-                currentIndex: page.cfg_colorMode
-                onActivated: index => page.cfg_colorMode = index
-            }
-            RowLayout {
-                visible: page.cfg_menuStyle === "windows10"
-                Kirigami.FormData.label: i18n("Accent colour:")
-                QQC2.ComboBox {
-                    model: [i18n("Plasma accent colour"), i18n("Custom")]
-                    currentIndex: page.cfg_accentMode
-                    onActivated: index => page.cfg_accentMode = index
-                }
-                KQuickControls.ColorButton { id: win10Accent; visible: page.cfg_accentMode === 1; showAlphaChannel: false }
-            }
-            QQC2.CheckBox {
-                visible: page.cfg_menuStyle === "windows10"
-                text: i18n("Show accent colour on Start and taskbar")
-                checked: page.cfg_win10AccentStart
-                onToggled: page.cfg_win10AccentStart = checked
-            }
-            QQC2.CheckBox {
-                visible: page.cfg_menuStyle === "windows10"
-                text: i18n("Show accent colour on title bars")
-                checked: page.cfg_win10AccentTitles
-                onToggled: page.cfg_win10AccentTitles = checked
-            }
-            QQC2.CheckBox {
-                visible: page.cfg_menuStyle === "windows10"
-                text: i18n("Transparency effects")
-                checked: page.cfg_win10Transparency
-                onToggled: page.cfg_win10Transparency = checked
             }
             QQC2.ComboBox {
                 id: sizeBox

@@ -35,9 +35,10 @@ QtObject {
 
     // Colours: automatic (Plasma), force dark, force light, custom.
     property int mode: cfg.colorMode     // a style can force a mode for one part (Win7 white pane)
-    // T38 Windows 10 "Show accent colour on Start and taskbar" / "Transparency effects"
-    readonly property bool win10: cfg.menuStyle === "windows10"
-    readonly property bool accentStart: win10 && cfg.win10AccentStart
+    // T38/T39 Colours page "Show accent colour on Start and taskbar" / "Transparency effects", every style but XP
+    // (a part with a forced mode, like the Win7 white pane, sets accentStart: false).
+    readonly property bool win10: cfg.menuStyle !== "xp"
+    property bool accentStart: win10 && cfg.win10AccentStart
     readonly property color bg: accentStart ? Qt.darker(accent, 1.6) : mode === 0 ? Kirigami.Theme.backgroundColor
                               : mode === 1 ? "#1c1b22" : mode === 2 ? "#f3f3f3" : cfg.menuColor
     readonly property color text: accentStart ? "#ffffff" : mode === 0 ? Kirigami.Theme.textColor

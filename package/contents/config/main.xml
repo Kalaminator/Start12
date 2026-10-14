@@ -223,15 +223,15 @@
       <default>false</default>
     </entry>
     <entry name="win10AccentStart" type="Bool">
-      <label>Windows 10 style: show accent colour on Start and taskbar (menu = darkened accent, taskbar = accent)</label>
+      <label>Colours page (all styles but XP): show accent colour on Start and taskbar (menu = darkened accent, taskbar = accent)</label>
       <default>false</default>
     </entry>
     <entry name="win10AccentTitles" type="Bool">
-      <label>Windows 10 style: show accent colour on title bars (generated start12-win10-*-accent-hex decoration/scheme)</label>
+      <label>Colours page (all styles but XP): show accent colour on title bars and window borders (generated start12-win10|win11-*-accent-hex, start12-win7-accent-hex decoration/scheme)</label>
       <default>false</default>
     </entry>
     <entry name="win10Transparency" type="Bool">
-      <label>Windows 10 style: transparency effects (off = solid menu and taskbar)</label>
+      <label>Colours page (all styles but XP): transparency effects (off = solid menu and taskbar)</label>
       <default>true</default>
     </entry>
     <entry name="xpColor" type="String">
@@ -368,6 +368,10 @@
     </entry>
     <entry name="accentColor" type="Color">
       <default>#0078d4</default>
+    </entry>
+    <entry name="recentAccents" type="StringList">
+      <label>T39 Colours page: the last 5 picked accent colours (#rrggbb), newest first</label>
+      <default></default>
     </entry>
     <entry name="menuOpacity" type="Int">
       <label>MenuAlphaValue, percent</label>

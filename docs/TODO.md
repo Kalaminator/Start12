@@ -255,7 +255,7 @@ from colorMode), the windows10 window decoration + colour scheme (T37 `windowDec
 accent title bar = generated custom deco/scheme with the accent hex, old custom ones cleaned like xp custom).
 Spanish strings. Check: generate into the scratch dir + PySide6 render; qmllint; ./install.sh.
 
-### T39 "Colours" settings page like Windows 11 Personalisation > Colours (M) -- user 2026-10-14
+### T39 "Colours" settings page like Windows 11 Personalisation > Colours (M) -- DONE -- user 2026-10-14
 Reference photo: docs/research/win11-colours-reference.jpg. New settings page "Colours" (config/config.qml), for every
 menu style except XP (XP keeps its own scheme colours; show a note there). Move the T38 Windows 10 group here and make it
 apply to the active style (windows10, windows11 and the styles that use the windows11 look; windows7 too where it fits):

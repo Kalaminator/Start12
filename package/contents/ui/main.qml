@@ -206,21 +206,22 @@ PlasmoidItem {
     // light or dark like the user's own scheme (userDark), windows7 light, modern/app/pro/launcher = Win11 look.
     function windowDecoration() {
         const s = cfg.menuStyle;
-        return s === "xp" ? xpScheme : s === "windows7" ? "start12-win7"
-            : s === "windows10" ? "start12-win10-" + (win10Dark ? "dark" : "light") + (cfg.win10AccentTitles ? "-accent-" + accentHex : "")
-            : "start12-win11-" + (userDark ? "dark" : "light");
+        // T39 Colours page: every non-XP style follows light/dark (winDark) and "accent on title bars" (-accent-hex).
+        const acc = cfg.win10AccentTitles ? "-accent-" + accentHex : "";
+        return s === "xp" ? xpScheme : s === "windows7" ? "start12-win7" + acc
+            : "start12-" + (s === "windows10" ? "win10-" : "win11-") + (winDark ? "dark" : "light") + acc;
     }
-    // T38 Windows 10 colours: light/dark from colorMode (0 Plasma = userDark, 1 dark, 2 light, 3 custom menu colour),
+    // T38/T39 Colours page: light/dark from colorMode (0 Plasma = userDark, 1 dark, 2 light, 3 custom menu colour),
     // accent = the menu's accent (Plasma or custom).
     readonly property string accentHex: (cfg.accentMode === 1 ? cfg.accentColor : Kirigami.Theme.highlightColor).toString().slice(-6)
-    readonly property bool win10Dark: cfg.colorMode === 1 || (cfg.colorMode === 0 && userDark)
+    readonly property bool winDark: cfg.colorMode === 1 || (cfg.colorMode === 0 && userDark)
         || (cfg.colorMode === 3 && Kirigami.ColorUtils.brightnessForColor(cfg.menuColor) === Kirigami.ColorUtils.Dark)
     // xptheme.py args for a deco/scheme made at apply time (XP custom colour, Win10 accent title bar); "" = shipped one.
     function customArgs(name) {
         return name.includes("-custom-") ? "--custom " + xpCustomHex + " --sub " + cfg.xpSubstyle
-            : name.includes("-accent-") ? "--custom " + accentHex + " --win10 " + (win10Dark ? "dark" : "light") : "";
+            : name.includes("-accent-") ? "--custom " + accentHex + " --win10 " + (winDark ? "dark" : "light") + " --kind " + name.split("-")[1] : "";
     }
-    readonly property string customNames: "\\( -name 'start12-xp-*-custom-*' -o -name 'start12-win10-*-accent-*' \\)"
+    readonly property string customNames: "\\( -name 'start12-xp-*-custom-*' -o -name 'start12-win*-accent-*' \\)"
     readonly property string windowDeco: cfg.windowTheme ? windowDecoration() : ""
     onWindowDecoChanged: readBrightness()
     // Brightness of the user's own colour scheme (the saved one while ours is applied), then both syncs.
@@ -314,12 +315,14 @@ PlasmoidItem {
     // T35: taskbarFollowsStyle picks a preset per menu style instead of the custom keys (T37: others = windows11, xp = none).
     // T34: button style (buttons=plasma|win10|win11|win7), accent for the Win10/11 active bar, solid = focused
     // item less transparent; added to presets and custom alike.
-    // T38 windows10 follows Settings > Personalisation > Colours (light/dark, accent taskbar, transparency).
+    // T38/T39 the presets follow the Colours page (light/dark, accent taskbar, transparency); windows7 = accent-tinted glass.
     readonly property var taskbarPresets: ({
-        "windows10": "colour=" + (cfg.win10AccentStart ? accentHex : win10Dark ? "101010" : "eeeeee")
+        "windows10": "colour=" + (cfg.win10AccentStart ? accentHex : winDark ? "101010" : "eeeeee")
                      + " alpha=" + (cfg.win10Transparency ? 0.85 : 1) + " radius=2 line=0 buttons=win10",
-        "windows11": "colour=f3f3f3 alpha=0.8 radius=8 line=0 buttons=win11",
-        "windows7": "colour=2a5a96 alpha=0.6 radius=6 line=1 buttons=win7" })
+        "windows11": "colour=" + (cfg.win10AccentStart ? accentHex : winDark ? "202020" : "f3f3f3")
+                     + " alpha=" + (cfg.win10Transparency ? 0.8 : 1) + " radius=8 line=0 buttons=win11",
+        "windows7": "colour=" + (cfg.win10AccentStart ? accentHex : "2a5a96")
+                    + " alpha=" + (cfg.win10Transparency ? 0.6 : 1) + " radius=6 line=1 buttons=win7" })
     readonly property string taskbarBase: cfg.taskbarFollowsStyle ? (taskbarPresets[cfg.menuStyle] || (cfg.menuStyle === "xp" ? "" : taskbarPresets.windows11))
         : cfg.taskbarTheme !== "custom" ? ""
         : "colour=" + cfg.taskbarColor.toString().slice(-6) + " alpha=" + (cfg.taskbarAlpha / 100)
@@ -329,7 +332,7 @@ PlasmoidItem {
              + " imagealpha=" + (cfg.taskbarImageAlpha / 100)
              + (cfg.taskbarImageTint ? " tint=" + cfg.accentColor.toString().slice(-6) : ""))
     readonly property string taskbarArgs: taskbarBase === "" ? "" : taskbarBase
-        + " accent=" + (cfg.menuStyle === "windows10" && cfg.win10AccentStart && cfg.taskbarFollowsStyle
+        + " accent=" + (cfg.menuStyle !== "xp" && cfg.win10AccentStart && cfg.taskbarFollowsStyle
                         ? Qt.lighter("#" + accentHex, 1.6).toString().slice(-6) : cfg.accentColor.toString().slice(-6)) + " solid=" + (cfg.taskbarFocusedSolid ? 1 : 0)
     onTaskbarArgsChanged: syncDesktopTheme()
     function syncDesktopTheme() {
