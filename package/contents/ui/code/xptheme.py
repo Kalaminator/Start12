@@ -263,7 +263,8 @@ def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", fallback=
         svg(os.path.join(base, "widgets/tasks.svg"), frames,
             '<rect id="hint-stretch-borders" x="200" y="10" width="1" height="1" fill="none"/>')
     with open(os.path.join(base, "colors"), "w") as f:
-        f.write(colors(B))
+        # No XP-orange Selection group here: selection/highlight stay the system's (blue by default).
+        f.write(colors(B).split("[Colors:Selection]")[0])
     with open(os.path.join(base, "plasmarc"), "w") as f:
         f.write("[Settings]\nFallbackTheme=%s\n\n[AdaptiveTransparency]\nenabled=false\n" % fallback)
     name = os.path.basename(os.path.normpath(base))

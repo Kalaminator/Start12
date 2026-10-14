@@ -217,9 +217,9 @@ PlasmoidItem {
           // T33 texture (path shell-quoted: it ends up in sh -c; the hash makes a new theme per change)
           + (cfg.taskbarImage === "" ? "" : " image=" + Tiles.shQuote(cfg.taskbarImage) + " mode=" + cfg.taskbarImageMode
              + " imagealpha=" + (cfg.taskbarImageAlpha / 100)
-             + (cfg.taskbarImageTint ? " tint=" + Kirigami.Theme.highlightColor.toString().slice(-6) : ""))
+             + (cfg.taskbarImageTint ? " tint=" + cfg.accentColor.toString().slice(-6) : ""))
     readonly property string taskbarArgs: taskbarBase === "" ? "" : taskbarBase
-        + " accent=" + Kirigami.Theme.highlightColor.toString().slice(-6) + " solid=" + (cfg.taskbarFocusedSolid ? 1 : 0)
+        + " accent=" + cfg.accentColor.toString().slice(-6) + " solid=" + (cfg.taskbarFocusedSolid ? 1 : 0)
     onTaskbarArgsChanged: syncDesktopTheme()
     function syncDesktopTheme() {
         themeReader.connectSource("kreadconfig6 --file plasmarc --group Theme --key name");
@@ -243,15 +243,18 @@ PlasmoidItem {
                 if (want !== root.xpTheme) {
                     const tdir = "$HOME/.local/share/plasma/desktoptheme/";
                     const tgen = decodeURIComponent(Qt.resolvedUrl("code/xptheme.py").toString().replace("file://", ""));
-                    root.run("sh -c " + Tiles.shQuote("rm -rf " + tdir + "start12-taskbar-*; python3 " + Tiles.shQuote(tgen)
+                    // Old generated themes go only after the new one is applied (a failed generate keeps the current one).
+                    root.run("sh -c " + Tiles.shQuote("python3 " + Tiles.shQuote(tgen)
                              + " --taskbar " + root.taskbarArgs + " fallback=" + Tiles.shQuote(fallback) + " --out " + tdir + want
-                             + " && plasma-apply-desktoptheme " + want));
+                             + " && plasma-apply-desktoptheme " + want
+                             + " && find " + tdir + " -maxdepth 1 -name 'start12-taskbar-*' ! -name " + want + " -exec rm -rf {} +"));
                 } else if (root.xpTheme.includes("-custom-")) {
                     const dir = "$HOME/.local/share/plasma/desktoptheme/";
                     const gen = decodeURIComponent(Qt.resolvedUrl("code/xptheme.py").toString().replace("file://", ""));
-                    root.run("sh -c 'rm -rf " + dir + "start12-xp-*-custom-*; python3 \"" + gen + "\" --custom "
+                    root.run("sh -c " + Tiles.shQuote("python3 " + Tiles.shQuote(gen) + " --custom "
                              + root.xpCustomHex + " --sub " + root.cfg.xpSubstyle + " --out " + dir + root.xpTheme
-                             + " && plasma-apply-desktoptheme " + root.xpTheme + "'");
+                             + " && plasma-apply-desktoptheme " + root.xpTheme
+                             + " && find " + dir + " -maxdepth 1 -name 'start12-xp-*-custom-*' ! -name " + root.xpTheme + " -exec rm -rf {} +"));
                 } else {
                     root.run("plasma-apply-desktoptheme " + root.xpTheme);
                 }
@@ -289,7 +292,10 @@ PlasmoidItem {
         const path = dir + "/" + name;
         const script = "for (const p of panels()) { if (p.widgetIds.indexOf(" + Plasmoid.id + ") < 0) continue; "
             + "for (const w of p.widgets()) { if (!/icontasks|taskmanager/.test(w.type)) continue; w.currentConfigGroup = ['General']; "
-            + "const l = String(w.readConfig('launchers', '')).split(',').filter(s => s && s.indexOf(" + JSON.stringify(name) + ") < 0); "
+            // ponytail: launchers still at the task manager's built-in default read as '' here; writing would
+            // drop those defaults, so such a task manager is skipped (pinning works once it has its own list).
+            + "const raw = String(w.readConfig('launchers', '')); if (!raw) continue; "
+            + "const l = raw.split(',').filter(s => s && s.indexOf(" + JSON.stringify(name) + ") < 0); "
             + (on ? "l.push(" + JSON.stringify("file://" + path) + "); " : "")
             + "w.writeConfig('launchers', l); w.reloadConfig(); } }";
         const dbus = "qdbus6 org.kde.plasmashell /PlasmaShell evaluateScript " + Tiles.shQuote(script);
