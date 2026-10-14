@@ -101,7 +101,11 @@ PlasmoidItem {
         appletInterface: root
         query: root.searchText
         mergeResults: !root.cfg.groupResults
-        runners: root.cfg.searchRunners
+        // Plasma 6.7: an empty list means no runners at all, so "empty = default" is spelled out here.
+        runners: root.cfg.searchRunners.length ? root.cfg.searchRunners
+            : ["krunner_services", "krunner_systemsettings", "baloosearch", "krunner_recentdocuments",
+               "krunner_placesrunner", "locations", "calculator", "unitconverter", "krunner_sessions",
+               "krunner_powerdevil", "krunner_bookmarksrunner"]
         favoritesModel: root.rootModel.favoritesModel
     }
 

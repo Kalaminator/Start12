@@ -30,7 +30,7 @@ Item {
         ["music", "audio-x-generic", i18n("Music")],
         ["pictures", "image-x-generic", i18n("Pictures")],
         ["videos", "video-x-generic", i18n("Videos")],
-        ["files", "folder", i18n("Files")],
+        ["files", "system-file-manager", i18n("Files")],
         ["web", "internet-web-browser", i18n("Web")]
     ]
     readonly property var extensions: ({
@@ -40,28 +40,23 @@ Item {
         videos: "mp4 mkv webm avi mov wmv flv m4v mpg mpeg ogv 3gp"
     })
 
-    // Does result row r of a runner model pass the current filter? Runner id comes from the
-    // model or the matchId prefix; file type from the url / name extension.
+    // Does result row r of a runner model pass the current filter? Plasma 6.7 runner results carry
+    // no runner id, so the kind comes from the url: apps are .desktop files, settings kcm_*.desktop.
     function passes(model, r) {
         const f = filter;
         if (f === "") return true;
         if (f === "web") return false;
-        const rid = String(model.runnerId ?? "") + " " + String(roleData(model, r, "matchId") ?? "");
         const fav = String(roleData(model, r, "favoriteId") ?? "");
-        const has = id => rid.split(" ").some(x => x.startsWith(id));
-        const settings = has("krunner_systemsettings") || has("krunner_kcms") || fav.includes("kcm_")
-            || fav.includes("systemsettings");
-        if (f === "settings") return settings;
-        if (f === "apps") return !settings && (has("krunner_services") || fav.startsWith("applications:"));
         const urls = roleData(model, r, "urls");
         const url = String((urls && urls.length ? urls[0] : roleData(model, r, "url")) ?? "");
-        const isFile = has("baloosearch") || has("krunner_recentdocuments") || has("krunner_placesrunner")
-            || has("locations") || url.startsWith("file:") || url.startsWith("/");
-        if (!isFile) return false;
+        const desktop = fav.startsWith("applications:") || url.endsWith(".desktop");
+        const settings = desktop && (/kcm_|systemsettings/.test(fav + " " + url));
+        if (f === "settings") return settings;
+        if (f === "apps") return desktop && !settings;
+        if (desktop || !(url.startsWith("file:") || url.startsWith("/"))) return false;
         if (f === "files") return true;
-        const name = url || String(roleData(model, r, "display") ?? "");
-        const dot = name.lastIndexOf(".");
-        const ext = dot > name.lastIndexOf("/") ? name.slice(dot + 1).toLowerCase() : "";
+        const dot = url.lastIndexOf(".");
+        const ext = dot > url.lastIndexOf("/") ? url.slice(dot + 1).toLowerCase() : "";
         return ext !== "" && (extensions[f] ?? "").split(" ").includes(ext);
     }
 
