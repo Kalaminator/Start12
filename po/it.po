@@ -1,0 +1,1812 @@
+# Italian translations for Start package.
+# Copyright (C) 2026 THE Start'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Start package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Start 12\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-14 20:26+0200\n"
+"PO-Revision-Date: 2026-10-14 20:26+0200\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: package/contents/config/config.qml:6
+msgid "Start Menu"
+msgstr "Menu Start"
+
+#: package/contents/config/config.qml:11
+msgid "Layout"
+msgstr "Layout"
+
+#: package/contents/config/config.qml:16
+msgid "Left side"
+msgstr "Lato sinistro"
+
+#: package/contents/config/config.qml:21
+msgid "Look"
+msgstr "Aspetto"
+
+#: package/contents/config/config.qml:26
+msgid "Colours"
+msgstr "Colori"
+
+#: package/contents/config/config.qml:31
+msgid "Search"
+msgstr "Ricerca"
+
+#: package/contents/config/config.qml:36
+msgid "Taskbar"
+msgstr "Barra delle applicazioni"
+
+#: package/contents/config/config.qml:41
+msgid "Start Button"
+msgstr "Pulsante Start"
+
+#: package/contents/ui/common/AppCanvas.qml:56
+#: package/contents/ui/common/AppCanvas.qml:103
+#: package/contents/ui/common/PinnedPane.qml:42
+#: package/contents/ui/styles/windows11.qml:120
+msgid "Pinned"
+msgstr "Aggiunte"
+
+#: package/contents/ui/common/AppCanvas.qml:56
+#: package/contents/ui/config/ConfigSearch.qml:23
+#: package/contents/ui/win10/SearchView.qml:30
+msgid "Apps"
+msgstr "App"
+
+#: package/contents/ui/common/AppCanvas.qml:56
+msgid "Recent"
+msgstr "Recenti"
+
+#: package/contents/ui/common/AppCanvas.qml:62
+#: package/contents/ui/common/AppCanvas.qml:81
+#: package/contents/ui/win10/TileArea.qml:34
+#: package/contents/ui/win10/TileArea.qml:35
+msgid "New group"
+msgstr "Nuovo gruppo"
+
+#: package/contents/ui/common/AppCanvas.qml:65
+#: package/contents/ui/common/AppCanvas.qml:70
+msgid "New tab"
+msgstr "Nuova scheda"
+
+#: package/contents/ui/common/AppCanvas.qml:71
+msgid "Add group"
+msgstr "Aggiungi gruppo"
+
+#: package/contents/ui/common/AppCanvas.qml:72
+msgid "Add a folder as group…"
+msgstr "Aggiungi una cartella come gruppo…"
+
+#: package/contents/ui/common/AppCanvas.qml:73
+msgid "Add Steam folder"
+msgstr "Aggiungi cartella di Steam"
+
+#: package/contents/ui/common/AppCanvas.qml:74
+msgid "Add filtered folder: %1"
+msgstr "Aggiungi cartella filtrata: %1"
+
+#: package/contents/ui/common/AppCanvas.qml:77
+msgid "Add recent searches"
+msgstr "Aggiungi ricerche recenti"
+
+#: package/contents/ui/common/AppCanvas.qml:77
+msgid "Recent searches"
+msgstr "Ricerche recenti"
+
+#: package/contents/ui/common/AppCanvas.qml:78
+msgid "Always open on this tab"
+msgstr "Apri sempre su questa scheda"
+
+#: package/contents/ui/common/AppCanvas.qml:104
+msgid "Shortcuts"
+msgstr "Collegamenti"
+
+#: package/contents/ui/common/AppCanvas.qml:108
+#: package/contents/ui/win10/AppList.qml:67
+msgid "Most used"
+msgstr "Più usate"
+
+#: package/contents/ui/common/AppCanvas.qml:109
+#: package/contents/ui/common/Places.qml:35
+#: package/contents/ui/config/ConfigRail.qml:33
+msgid "Recent files"
+msgstr "File recenti"
+
+#: package/contents/ui/common/AppCanvas.qml:162
+#: package/contents/ui/common/AppCanvas.qml:281
+#: package/contents/ui/common/AppCanvas.qml:458
+#: package/contents/ui/common/AppCanvas.qml:466
+#: package/contents/ui/common/PinnedGrid.qml:138
+#: package/contents/ui/main.qml:677 package/contents/ui/styles/windows7.qml:300
+#: package/contents/ui/styles/xp.qml:346
+msgid "Rename"
+msgstr "Rinomina"
+
+#: package/contents/ui/common/AppCanvas.qml:164
+msgid "Move tab left"
+msgstr "Sposta scheda a sinistra"
+
+#: package/contents/ui/common/AppCanvas.qml:166
+msgid "Move tab right"
+msgstr "Sposta scheda a destra"
+
+#: package/contents/ui/common/AppCanvas.qml:168
+msgid "Delete tab"
+msgstr "Elimina scheda"
+
+#: package/contents/ui/common/AppCanvas.qml:274
+msgid "Launch entire group"
+msgstr "Avvia l'intero gruppo"
+
+#: package/contents/ui/common/AppCanvas.qml:278
+#: package/contents/ui/common/AppCanvas.qml:287
+msgid "Automatic"
+msgstr "Automatico"
+
+#: package/contents/ui/common/AppCanvas.qml:278
+#: package/contents/ui/config/ConfigLook.qml:111
+#: package/contents/ui/config/ConfigLook.qml:132
+#: package/contents/ui/config/ConfigTaskbar.qml:94
+msgid "None"
+msgstr "Nessuna"
+
+#: package/contents/ui/common/AppCanvas.qml:279
+msgid "Texture %1"
+msgstr "Texture %1"
+
+#: package/contents/ui/common/AppCanvas.qml:283
+msgid "Colour…"
+msgstr "Colore…"
+
+#: package/contents/ui/common/AppCanvas.qml:284
+msgid "Automatic colour"
+msgstr "Colore automatico"
+
+#: package/contents/ui/common/AppCanvas.qml:285
+msgid "Icon tinting"
+msgstr "Tinta delle icone"
+
+#: package/contents/ui/common/AppCanvas.qml:286
+msgid "Auto tint"
+msgstr "Tinta automatica"
+
+#: package/contents/ui/common/AppCanvas.qml:287
+msgid "Rows"
+msgstr "Righe"
+
+#: package/contents/ui/common/AppCanvas.qml:288
+msgid "Icon size"
+msgstr "Dimensioni icone"
+
+#: package/contents/ui/common/AppCanvas.qml:288
+#: package/contents/ui/config/ConfigStyle.qml:146
+#: package/contents/ui/win10/Tile.qml:171
+msgid "Small"
+msgstr "Piccole"
+
+#: package/contents/ui/common/AppCanvas.qml:288
+#: package/contents/ui/win10/Tile.qml:171
+msgid "Medium"
+msgstr "Medie"
+
+#: package/contents/ui/common/AppCanvas.qml:288
+#: package/contents/ui/win10/Tile.qml:171
+msgid "Large"
+msgstr "Grandi"
+
+#: package/contents/ui/common/AppCanvas.qml:289
+msgid "Background texture"
+msgstr "Texture di sfondo"
+
+#: package/contents/ui/common/AppCanvas.qml:292
+msgid "Resort A-Z"
+msgstr "Riordina A-Z"
+
+#: package/contents/ui/common/AppCanvas.qml:293
+msgid "Delete group"
+msgstr "Elimina gruppo"
+
+#: package/contents/ui/common/AppCanvas.qml:368
+msgid "(Empty)"
+msgstr "(Vuoto)"
+
+#: package/contents/ui/common/AppCanvas.qml:457
+#: package/contents/ui/common/AppCanvas.qml:464
+#: package/contents/ui/common/PinnedGrid.qml:135
+#: package/contents/ui/common/Recommended.qml:71
+#: package/contents/ui/win10/AppList.qml:176
+#: package/contents/ui/win10/SearchView.qml:291
+#: package/contents/ui/win10/Tile.qml:160
+msgid "Unpin from Start"
+msgstr "Rimuovi da Start"
+
+#: package/contents/ui/common/AppCanvas.qml:465
+#: package/contents/ui/common/Recommended.qml:72
+#: package/contents/ui/win10/AppList.qml:177
+#: package/contents/ui/win10/SearchView.qml:292
+msgid "Pin to Start"
+msgstr "Aggiungi a Start"
+
+#: package/contents/ui/common/AppCanvas.qml:467
+msgid "Remove from group"
+msgstr "Rimuovi dal gruppo"
+
+#: package/contents/ui/common/AppCanvas.qml:469
+#: package/contents/ui/common/PinnedGrid.qml:139
+#: package/contents/ui/styles/windows7.qml:301
+#: package/contents/ui/styles/xp.qml:353
+#: package/contents/ui/win10/AppList.qml:178
+msgid "Hide from apps"
+msgstr "Nascondi dalle app"
+
+#: package/contents/ui/common/PinnedGrid.qml:128
+msgid "Rename folder"
+msgstr "Rinomina cartella"
+
+#: package/contents/ui/common/PinnedGrid.qml:129
+msgid "Unpin folder"
+msgstr "Rimuovi cartella"
+
+#: package/contents/ui/common/PinnedGrid.qml:130
+#: package/contents/ui/common/PinnedGrid.qml:140
+msgid "Move to front"
+msgstr "Sposta all'inizio"
+
+#: package/contents/ui/common/PinnedGrid.qml:136
+msgid "Move out of folder"
+msgstr "Sposta fuori dalla cartella"
+
+#: package/contents/ui/common/PinnedPane.qml:43
+#: package/contents/ui/common/PinnedPane.qml:67
+#: package/contents/ui/styles/windows11.qml:121
+#: package/contents/ui/styles/windows11.qml:162
+msgid "All apps"
+msgstr "Tutte le app"
+
+#: package/contents/ui/common/PinnedPane.qml:68
+#: package/contents/ui/styles/windows11.qml:163
+#: package/contents/ui/styles/windows11.qml:184
+#: package/contents/ui/styles/windows7.qml:483
+#: package/contents/ui/styles/xp.qml:466
+msgid "Back"
+msgstr "Indietro"
+
+#: package/contents/ui/common/Places.qml:26
+#: package/contents/ui/config/ConfigRail.qml:24
+#: package/contents/ui/win10/SearchView.qml:32
+msgid "Documents"
+msgstr "Documenti"
+
+#: package/contents/ui/common/Places.qml:27
+#: package/contents/ui/config/ConfigRail.qml:25
+msgid "Downloads"
+msgstr "Download"
+
+#: package/contents/ui/common/Places.qml:28
+#: package/contents/ui/config/ConfigRail.qml:26
+#: package/contents/ui/win10/SearchView.qml:33
+msgid "Music"
+msgstr "Musica"
+
+#: package/contents/ui/common/Places.qml:29
+#: package/contents/ui/config/ConfigRail.qml:27
+#: package/contents/ui/win10/SearchView.qml:34
+msgid "Pictures"
+msgstr "Immagini"
+
+#: package/contents/ui/common/Places.qml:30
+#: package/contents/ui/config/ConfigRail.qml:28
+#: package/contents/ui/win10/SearchView.qml:35
+msgid "Videos"
+msgstr "Video"
+
+#: package/contents/ui/common/Places.qml:31
+#: package/contents/ui/config/ConfigRail.qml:29
+msgid "Personal folder"
+msgstr "Cartella personale"
+
+#: package/contents/ui/common/Places.qml:32
+#: package/contents/ui/config/ConfigRail.qml:30
+msgid "Network"
+msgstr "Rete"
+
+#: package/contents/ui/common/Places.qml:33
+#: package/contents/ui/config/ConfigRail.qml:31
+msgid "Computer"
+msgstr "Computer"
+
+#: package/contents/ui/common/Places.qml:34
+#: package/contents/ui/config/ConfigRail.qml:32
+msgid "Trash"
+msgstr "Cestino"
+
+#: package/contents/ui/common/Places.qml:36
+#: package/contents/ui/config/ConfigRail.qml:34
+msgid "Games"
+msgstr "Giochi"
+
+#: package/contents/ui/common/Places.qml:37
+#: package/contents/ui/config/ConfigRail.qml:35
+msgid "Printers"
+msgstr "Stampanti"
+
+#: package/contents/ui/common/Places.qml:38
+#: package/contents/ui/config/ConfigRail.qml:36
+msgid "Users"
+msgstr "Utenti"
+
+#: package/contents/ui/common/Places.qml:39
+#: package/contents/ui/config/ConfigRail.qml:37
+msgid "Updates"
+msgstr "Aggiornamenti"
+
+#: package/contents/ui/common/Places.qml:41
+#: package/contents/ui/config/ConfigButton.qml:25
+#: package/contents/ui/config/ConfigRail.qml:39
+#: package/contents/ui/main.qml:902
+msgid "File Explorer"
+msgstr "Esplora file"
+
+#: package/contents/ui/common/Places.qml:42
+#: package/contents/ui/config/ConfigRail.qml:40
+msgid "Personalization"
+msgstr "Personalizzazione"
+
+#: package/contents/ui/common/Places.qml:43
+#: package/contents/ui/config/ConfigButton.qml:25
+#: package/contents/ui/config/ConfigRail.qml:41
+#: package/contents/ui/config/ConfigSearch.qml:24
+#: package/contents/ui/main.qml:896 package/contents/ui/win10/SearchView.qml:31
+msgid "Settings"
+msgstr "Impostazioni"
+
+#: package/contents/ui/common/Places.qml:44
+#: package/contents/ui/config/ConfigButton.qml:26
+#: package/contents/ui/config/ConfigRail.qml:42
+#: package/contents/ui/main.qml:914
+msgid "Terminal"
+msgstr "Terminale"
+
+#: package/contents/ui/common/Places.qml:45
+#: package/contents/ui/config/ConfigButton.qml:25
+#: package/contents/ui/config/ConfigRail.qml:43
+#: package/contents/ui/main.qml:908
+msgid "System Monitor"
+msgstr "Monitor di sistema"
+
+#: package/contents/ui/common/Places.qml:46
+#: package/contents/ui/config/ConfigButton.qml:26
+#: package/contents/ui/config/ConfigRail.qml:44
+#: package/contents/ui/main.qml:920
+msgid "Run…"
+msgstr "Esegui…"
+
+#: package/contents/ui/common/Places.qml:47
+#: package/contents/ui/config/ConfigRail.qml:45
+msgid "Start12 Settings"
+msgstr "Impostazioni di Start12"
+
+#: package/contents/ui/common/Places.qml:48
+#: package/contents/ui/config/ConfigRail.qml:46
+#: package/contents/ui/styles/launcher.qml:77
+#: package/contents/ui/styles/pro.qml:193
+msgid "Power"
+msgstr "Alimentazione"
+
+#: package/contents/ui/common/Places.qml:63
+#: package/contents/ui/config/ConfigRail.qml:49
+#: package/contents/ui/main.qml:949
+msgid "Lock"
+msgstr "Blocca"
+
+#: package/contents/ui/common/Places.qml:64
+#: package/contents/ui/config/ConfigRail.qml:49
+#: package/contents/ui/main.qml:955
+msgid "Sign out"
+msgstr "Disconnetti"
+
+#: package/contents/ui/common/Places.qml:65
+#: package/contents/ui/config/ConfigRail.qml:49
+msgid "Switch user"
+msgstr "Cambia utente"
+
+#: package/contents/ui/common/Places.qml:66
+#: package/contents/ui/config/ConfigRail.qml:50
+#: package/contents/ui/main.qml:961
+msgid "Sleep"
+msgstr "Sospendi"
+
+#: package/contents/ui/common/Places.qml:67
+#: package/contents/ui/config/ConfigRail.qml:50
+msgid "Hibernate"
+msgstr "Iberna"
+
+#: package/contents/ui/common/Places.qml:68
+#: package/contents/ui/config/ConfigRail.qml:50
+#: package/contents/ui/main.qml:967
+msgid "Restart"
+msgstr "Riavvia"
+
+#: package/contents/ui/common/Places.qml:69
+#: package/contents/ui/config/ConfigRail.qml:51
+#: package/contents/ui/main.qml:973 package/contents/ui/styles/windows7.qml:614
+msgid "Shut down"
+msgstr "Arresta il sistema"
+
+#: package/contents/ui/common/Places.qml:82
+msgid "Change account settings"
+msgstr "Modifica impostazioni account"
+
+#: package/contents/ui/common/Recommended.qml:131
+msgid ""
+"The more you use your PC, the more we'll show your new apps and recent files "
+"here."
+msgstr "Più usi il PC, più app nuove e file recenti ti mostreremo qui."
+
+#: package/contents/ui/common/SearchBox.qml:16
+msgid "Search apps and files"
+msgstr "Cerca app e file"
+
+#: package/contents/ui/config/ConfigButton.qml:26
+#: package/contents/ui/main.qml:926
+msgid "Show desktop"
+msgstr "Mostra desktop"
+
+#: package/contents/ui/config/ConfigButton.qml:26
+#: package/contents/ui/main.qml:932
+msgid "Edit panel"
+msgstr "Modifica pannello"
+
+#: package/contents/ui/config/ConfigButton.qml:26
+#: package/contents/ui/main.qml:938
+msgid "Auto-hide panel"
+msgstr "Nascondi automaticamente il pannello"
+
+#: package/contents/ui/config/ConfigButton.qml:26
+msgid "Lock, sign out, sleep, restart, shut down"
+msgstr "Blocca, disconnetti, sospendi, riavvia, arresta"
+
+#: package/contents/ui/config/ConfigButton.qml:42
+#: package/contents/ui/config/ConfigButton.qml:69
+msgid "Pick custom image…"
+msgstr "Scegli immagine personalizzata…"
+
+#: package/contents/ui/config/ConfigButton.qml:43
+msgid "Images (*.png *.svg *.jpg *.webp)"
+msgstr "Immagini (*.png *.svg *.jpg *.webp)"
+
+#: package/contents/ui/config/ConfigButton.qml:53
+msgid "What should the Start button look like?"
+msgstr "Che aspetto deve avere il pulsante Start?"
+
+#: package/contents/ui/config/ConfigButton.qml:54
+msgid "Icon"
+msgstr "Icona"
+
+#: package/contents/ui/config/ConfigButton.qml:55
+msgid "Start11 button image"
+msgstr "Immagine del pulsante di Start11"
+
+#: package/contents/ui/config/ConfigButton.qml:56
+msgid "Four squares"
+msgstr "Quattro quadrati"
+
+#: package/contents/ui/config/ConfigButton.qml:62
+#: package/contents/ui/config/ConfigRail.qml:183
+msgid "Icon:"
+msgstr "Icona:"
+
+#: package/contents/ui/config/ConfigButton.qml:66
+msgid "Arch Linux (default)"
+msgstr "Arch Linux (predefinito)"
+
+#: package/contents/ui/config/ConfigButton.qml:72
+msgid "Reset icon"
+msgstr "Reimposta icona"
+
+#: package/contents/ui/config/ConfigButton.qml:79
+#: package/contents/ui/config/ConfigRail.qml:87
+msgid "Icon size:"
+msgstr "Dimensioni icona:"
+
+#: package/contents/ui/config/ConfigButton.qml:87
+msgid "Image:"
+msgstr "Immagine:"
+
+#: package/contents/ui/config/ConfigButton.qml:120
+msgid "Use a custom start button image…"
+msgstr "Usa un'immagine personalizzata per il pulsante Start…"
+
+#: package/contents/ui/config/ConfigButton.qml:126
+msgid ""
+"Custom images hold 3 pictures stacked top to bottom: normal, mouse over, "
+"pressed."
+msgstr "Le immagini personalizzate contengono 3 immagini impilate dall'alto verso il basso: normale, mouse sopra, premuto."
+
+#: package/contents/ui/config/ConfigButton.qml:136
+msgid "Colours:"
+msgstr "Colori:"
+
+#: package/contents/ui/config/ConfigButton.qml:141
+msgid "Right click menu"
+msgstr "Menu contestuale"
+
+#: package/contents/ui/config/ConfigColours.qml:65
+msgid ""
+"The Windows XP style uses its own colour scheme (Start Menu page). These "
+"settings are for the other styles."
+msgstr "Lo stile Windows XP usa una propria combinazione di colori (pagina Menu Start). Queste impostazioni valgono per gli altri stili."
+
+#: package/contents/ui/config/ConfigColours.qml:68
+msgid "Choose your mode:"
+msgstr "Scegli la modalità:"
+
+#: package/contents/ui/config/ConfigColours.qml:70
+msgid "Light"
+msgstr "Chiaro"
+
+#: package/contents/ui/config/ConfigColours.qml:70
+msgid "Dark"
+msgstr "Scuro"
+
+#: package/contents/ui/config/ConfigColours.qml:70
+#: package/contents/ui/config/ConfigLook.qml:69
+msgid "Automatic (Plasma colours)"
+msgstr "Automatico (colori di Plasma)"
+
+#: package/contents/ui/config/ConfigColours.qml:72
+msgid "Custom (Look page)"
+msgstr "Personalizzato (pagina Aspetto)"
+
+#: package/contents/ui/config/ConfigColours.qml:76
+msgid "Accent colour:"
+msgstr "Colore di risalto:"
+
+#: package/contents/ui/config/ConfigColours.qml:77
+msgid "Automatic (Plasma accent colour)"
+msgstr "Automatico (colore di risalto di Plasma)"
+
+#: package/contents/ui/config/ConfigColours.qml:77
+msgid "Manual"
+msgstr "Manuale"
+
+#: package/contents/ui/config/ConfigColours.qml:82
+msgid "Recent colours:"
+msgstr "Colori recenti:"
+
+#: package/contents/ui/config/ConfigColours.qml:91
+msgid "Windows colours:"
+msgstr "Colori di Windows:"
+
+#: package/contents/ui/config/ConfigColours.qml:101
+msgid "Custom colours:"
+msgstr "Colori personalizzati:"
+
+#: package/contents/ui/config/ConfigColours.qml:102
+msgid "View colours"
+msgstr "Visualizza colori"
+
+#: package/contents/ui/config/ConfigColours.qml:107
+msgid "Show accent colour on Start and taskbar"
+msgstr "Mostra il colore di risalto su Start e sulla barra delle applicazioni"
+
+#: package/contents/ui/config/ConfigColours.qml:112
+msgid "Show accent colour on title bars and window borders"
+msgstr "Mostra il colore di risalto sulle barre del titolo e sui bordi delle finestre"
+
+#: package/contents/ui/config/ConfigColours.qml:117
+msgid "Transparency effects"
+msgstr "Effetti di trasparenza"
+
+#: package/contents/ui/config/ConfigColours.qml:126
+msgid ""
+"The taskbar follows these when \"Apply the theme to the taskbar\" is on, "
+"title bars when \"Apply the theme to windows\" is on (Taskbar page)."
+msgstr "La barra delle applicazioni li segue se «Applica il tema alla barra delle applicazioni» è attivo, le barre del titolo se «Applica il tema alle finestre» è attivo (pagina Barra delle applicazioni)."
+
+#: package/contents/ui/config/ConfigLook.qml:51
+#: package/contents/ui/config/ConfigLook.qml:141
+msgid "Pick custom texture…"
+msgstr "Scegli texture personalizzata…"
+
+#: package/contents/ui/config/ConfigLook.qml:52
+#: package/contents/ui/config/ConfigLook.qml:59
+msgid "Images (*.png *.jpg *.jpeg *.webp *.svg)"
+msgstr "Immagini (*.png *.jpg *.jpeg *.webp *.svg)"
+
+#: package/contents/ui/config/ConfigLook.qml:58
+msgid "Pick tile image…"
+msgstr "Scegli immagine del riquadro…"
+
+#: package/contents/ui/config/ConfigLook.qml:64
+msgid "Colour"
+msgstr "Colore"
+
+#: package/contents/ui/config/ConfigLook.qml:68
+msgid "Start menu colours:"
+msgstr "Colori del menu Start:"
+
+#: package/contents/ui/config/ConfigLook.qml:69
+msgid "Force dark mode menu"
+msgstr "Forza menu in modalità scura"
+
+#: package/contents/ui/config/ConfigLook.qml:69
+msgid "Force light mode menu"
+msgstr "Forza menu in modalità chiara"
+
+#: package/contents/ui/config/ConfigLook.qml:69
+msgid "Custom colour"
+msgstr "Colore personalizzato"
+
+#: package/contents/ui/config/ConfigLook.qml:71
+msgid "Menu colour:"
+msgstr "Colore del menu:"
+
+#: package/contents/ui/config/ConfigLook.qml:72
+msgid "Text colour:"
+msgstr "Colore del testo:"
+
+#: package/contents/ui/config/ConfigLook.qml:74
+msgid "Selected item accent colour:"
+msgstr "Colore di risalto dell'elemento selezionato:"
+
+#: package/contents/ui/config/ConfigLook.qml:75
+msgid "Plasma accent colour"
+msgstr "Colore di risalto di Plasma"
+
+#: package/contents/ui/config/ConfigLook.qml:75
+#: package/contents/ui/config/ConfigLook.qml:101
+#: package/contents/ui/config/ConfigStyle.qml:124
+#: package/contents/ui/config/ConfigStyle.qml:134
+msgid "Custom"
+msgstr "Personalizzato"
+
+#: package/contents/ui/config/ConfigLook.qml:79
+msgid "Transparency"
+msgstr "Trasparenza"
+
+#: package/contents/ui/config/ConfigLook.qml:81
+msgid "Make the start menu solid"
+msgstr "Rendi opaco il menu Start"
+
+#: package/contents/ui/config/ConfigLook.qml:83
+msgid "Menu background transparency level:"
+msgstr "Livello di trasparenza dello sfondo del menu:"
+
+#: package/contents/ui/config/ConfigLook.qml:86
+#: package/contents/ui/config/ConfigLook.qml:107
+#, javascript-format
+msgid "%1% solid"
+msgstr "%1% opaco"
+
+#: package/contents/ui/config/ConfigLook.qml:90
+msgid "Round the corners of the menu:"
+msgstr "Arrotonda gli angoli del menu:"
+
+#: package/contents/ui/config/ConfigLook.qml:93
+#: package/contents/ui/config/ConfigTaskbar.qml:84
+msgid "Square"
+msgstr "Squadrati"
+
+#: package/contents/ui/config/ConfigLook.qml:97
+#: package/contents/ui/config/ConfigMenu.qml:54
+msgid "Tiles"
+msgstr "Riquadri"
+
+#: package/contents/ui/config/ConfigLook.qml:100
+msgid "Tile colour:"
+msgstr "Colore dei riquadri:"
+
+#: package/contents/ui/config/ConfigLook.qml:101
+msgid "Soft (follows text colour)"
+msgstr "Tenue (segue il colore del testo)"
+
+#: package/contents/ui/config/ConfigLook.qml:101
+msgid "Accent colour"
+msgstr "Colore di risalto"
+
+#: package/contents/ui/config/ConfigLook.qml:105
+msgid "Tile background:"
+msgstr "Sfondo dei riquadri:"
+
+#: package/contents/ui/config/ConfigLook.qml:110
+msgid "Tile image:"
+msgstr "Immagine del riquadro:"
+
+#: package/contents/ui/config/ConfigLook.qml:112
+#: package/contents/ui/config/ConfigTaskbar.qml:95
+msgid "Pick image…"
+msgstr "Scegli immagine…"
+
+#: package/contents/ui/config/ConfigLook.qml:116
+msgid "Tile image opacity:"
+msgstr "Opacità dell'immagine del riquadro:"
+
+#: package/contents/ui/config/ConfigLook.qml:119
+#, javascript-format
+msgid "%1%"
+msgstr "%1%"
+
+#: package/contents/ui/config/ConfigLook.qml:121
+msgid "Icons:"
+msgstr "Icone:"
+
+#: package/contents/ui/config/ConfigLook.qml:121
+msgid "Show app icons in grey"
+msgstr "Mostra le icone delle app in grigio"
+
+#: package/contents/ui/config/ConfigLook.qml:122
+msgid "Animation:"
+msgstr "Animazione:"
+
+#: package/contents/ui/config/ConfigLook.qml:122
+msgid "Fade the menu in when it opens"
+msgstr "Dissolvenza del menu all'apertura"
+
+#: package/contents/ui/config/ConfigLook.qml:124
+msgid "Texture"
+msgstr "Texture"
+
+#: package/contents/ui/config/ConfigLook.qml:127
+msgid "Apply an image to the background:"
+msgstr "Applica un'immagine allo sfondo:"
+
+#: package/contents/ui/config/ConfigLook.qml:145
+msgid "Texture alignment:"
+msgstr "Allineamento della texture:"
+
+#: package/contents/ui/config/ConfigLook.qml:147
+#: package/contents/ui/config/ConfigTaskbar.qml:103
+msgid "Tile"
+msgstr "Affianca"
+
+#: package/contents/ui/config/ConfigLook.qml:147
+msgid "Stretch to show entire texture"
+msgstr "Estendi per mostrare l'intera texture"
+
+#: package/contents/ui/config/ConfigLook.qml:147
+msgid "Fit"
+msgstr "Adatta"
+
+#: package/contents/ui/config/ConfigLook.qml:147
+msgid "Fill"
+msgstr "Riempi"
+
+#: package/contents/ui/config/ConfigLook.qml:150
+msgid "Fade texture:"
+msgstr "Sfuma texture:"
+
+#: package/contents/ui/config/ConfigLook.qml:155
+msgid "Darken texture"
+msgstr "Scurisci texture"
+
+#: package/contents/ui/config/ConfigLook.qml:156
+msgid "Recolour the texture with the menu colour"
+msgstr "Ricolora la texture con il colore del menu"
+
+#: package/contents/ui/config/ConfigLook.qml:167
+msgid "Fonts"
+msgstr "Tipi di carattere"
+
+#: package/contents/ui/config/ConfigLook.qml:170
+msgid "Menu font:"
+msgstr "Carattere del menu:"
+
+#: package/contents/ui/config/ConfigLook.qml:172
+msgid "** Default font **"
+msgstr "** Carattere predefinito **"
+
+#: package/contents/ui/config/ConfigLook.qml:178
+msgid "Font size:"
+msgstr "Dimensioni carattere:"
+
+#: package/contents/ui/config/ConfigLook.qml:185
+msgid "Header font:"
+msgstr "Carattere delle intestazioni:"
+
+#: package/contents/ui/config/ConfigLook.qml:187
+msgid "** Menu font **"
+msgstr "** Carattere del menu **"
+
+#: package/contents/ui/config/ConfigLook.qml:193
+msgid "Header font size:"
+msgstr "Dimensioni carattere delle intestazioni:"
+
+#: package/contents/ui/config/ConfigLook.qml:196
+#: package/contents/ui/config/ConfigLook.qml:204
+msgid "Menu size"
+msgstr "Dimensioni del menu"
+
+#: package/contents/ui/config/ConfigLook.qml:201
+msgid "Item font size:"
+msgstr "Dimensioni carattere degli elementi:"
+
+#: package/contents/ui/config/ConfigMenu.qml:47
+msgid "Section dividers:"
+msgstr "Divisori di sezione:"
+
+#: package/contents/ui/config/ConfigMenu.qml:48
+msgid "Edit menu layout…"
+msgstr "Modifica layout del menu…"
+
+#: package/contents/ui/config/ConfigMenu.qml:58
+msgid "Show icons as tiles split into:"
+msgstr "Mostra le icone come riquadri suddivisi in:"
+
+#: package/contents/ui/config/ConfigMenu.qml:61
+msgid "%1 column"
+msgid_plural "%1 columns"
+msgstr[0] "%1 colonna"
+msgstr[1] "%1 colonne"
+
+#: package/contents/ui/config/ConfigMenu.qml:65
+msgid "Space between tiles:"
+msgstr "Spazio tra i riquadri:"
+
+#: package/contents/ui/config/ConfigMenu.qml:72
+msgid "Tile icon size:"
+msgstr "Dimensioni icona dei riquadri:"
+
+#: package/contents/ui/config/ConfigMenu.qml:76
+msgid "Hide caption on tiles (show it as a tooltip)"
+msgstr "Nascondi didascalia dei riquadri (mostrala come descrizione comando)"
+
+#: package/contents/ui/config/ConfigMenu.qml:77
+msgid "Lock menu shortcut positions"
+msgstr "Blocca la posizione dei collegamenti del menu"
+
+#: package/contents/ui/config/ConfigMenu.qml:79
+msgid "Apps list"
+msgstr "Elenco delle app"
+
+#: package/contents/ui/config/ConfigMenu.qml:81
+msgid "Hide the apps list (tiles only)"
+msgstr "Nascondi l'elenco delle app (solo riquadri)"
+
+#: package/contents/ui/config/ConfigMenu.qml:84
+msgid "Shortcut icons should be sized:"
+msgstr "Dimensioni delle icone dei collegamenti:"
+
+#: package/contents/ui/config/ConfigMenu.qml:93
+msgid "Row height:"
+msgstr "Altezza riga:"
+
+#: package/contents/ui/config/ConfigMenu.qml:100
+msgid "Show recently added apps"
+msgstr "Mostra le app aggiunte di recente"
+
+#: package/contents/ui/config/ConfigMenu.qml:101
+msgid "Hide folders in the recent list (Windows 11 style)"
+msgstr "Nascondi le cartelle nell'elenco dei recenti (stile Windows 11)"
+
+#: package/contents/ui/config/ConfigMenu.qml:102
+msgid "Fetch the favicon for pinned web links"
+msgstr "Recupera la favicon dei link web aggiunti"
+
+#: package/contents/ui/config/ConfigMenu.qml:103
+msgid "Show my most used applications"
+msgstr "Mostra le app più usate"
+
+#: package/contents/ui/config/ConfigMenu.qml:104
+msgid "Highlight new applications"
+msgstr "Evidenzia le app nuove"
+
+#: package/contents/ui/config/ConfigMenu.qml:105
+msgid "Show app categories as folders"
+msgstr "Mostra le categorie di app come cartelle"
+
+#: package/contents/ui/config/ConfigMenu.qml:106
+msgid "Place folders at the bottom of the list"
+msgstr "Metti le cartelle in fondo all'elenco"
+
+#: package/contents/ui/config/ConfigMenu.qml:107
+msgid "Auto expand folders on hover (Windows 7, XP)"
+msgstr "Espandi automaticamente le cartelle al passaggio del mouse (Windows 7, XP)"
+
+#: package/contents/ui/config/ConfigMenu.qml:108
+msgid "Show the Desktop folder in All Programs (Windows 7, XP)"
+msgstr "Mostra la cartella Desktop in Tutti i programmi (Windows 7, XP)"
+
+#: package/contents/ui/config/ConfigMenu.qml:109
+msgid "Show categories as a cascading menu (Windows 7, XP)"
+msgstr "Mostra le categorie come menu a cascata (Windows 7, XP)"
+
+#: package/contents/ui/config/ConfigMenu.qml:111
+msgid "Hidden apps"
+msgstr "App nascoste"
+
+#: package/contents/ui/config/ConfigMenu.qml:113
+msgid "None. Right-click an app in the list and choose \"Hide from apps\"."
+msgstr "Nessuna. Fai clic con il pulsante destro su un'app nell'elenco e scegli «Nascondi dalle app»."
+
+#: package/contents/ui/config/ConfigMenu.qml:120
+msgid "Show"
+msgstr "Mostra"
+
+#: package/contents/ui/config/ConfigMenu.qml:127
+msgid "Clear hidden list"
+msgstr "Svuota l'elenco delle app nascoste"
+
+#: package/contents/ui/config/ConfigMenu.qml:132
+msgid "Filtered folders"
+msgstr "Cartelle filtrate"
+
+#: package/contents/ui/config/ConfigMenu.qml:144
+msgid "Remove"
+msgstr "Rimuovi"
+
+#: package/contents/ui/config/ConfigMenu.qml:153
+#: package/contents/ui/config/ConfigRail.qml:175
+#: package/contents/ui/main.qml:691
+msgid "Name:"
+msgstr "Nome:"
+
+#: package/contents/ui/config/ConfigMenu.qml:153
+msgid "PDFs"
+msgstr "PDF"
+
+#: package/contents/ui/config/ConfigMenu.qml:154
+msgid "Folder:"
+msgstr "Cartella:"
+
+#: package/contents/ui/config/ConfigMenu.qml:155
+msgid "Include (regex):"
+msgstr "Includi (regex):"
+
+#: package/contents/ui/config/ConfigMenu.qml:156
+msgid "Exclude (regex):"
+msgstr "Escludi (regex):"
+
+#: package/contents/ui/config/ConfigMenu.qml:158
+msgid "Add filtered folder"
+msgstr "Aggiungi cartella filtrata"
+
+#: package/contents/ui/config/ConfigMenu.qml:169
+#: package/contents/ui/config/ConfigStyle.qml:182
+#: package/contents/ui/main.qml:877
+msgid "Reset"
+msgstr "Reimposta"
+
+#: package/contents/ui/config/ConfigMenu.qml:171
+msgid "Reset icon positions…"
+msgstr "Reimposta posizioni delle icone…"
+
+#: package/contents/ui/config/ConfigMenu.qml:179
+msgid "Reset icon positions?"
+msgstr "Reimpostare le posizioni delle icone?"
+
+#: package/contents/ui/config/ConfigMenu.qml:180
+msgid ""
+"Tiles, pinned icons and pin names go back to the fresh-install layout. Press "
+"OK in the settings window afterwards to finish; it then closes, so no old "
+"values are written back."
+msgstr "Riquadri, icone aggiunte e relativi nomi tornano al layout di una nuova installazione. Poi premi OK nella finestra delle impostazioni per terminare; la finestra si chiude, così nessun vecchio valore viene riscritto."
+
+#: package/contents/ui/config/ConfigRail.qml:23
+msgid "User picture"
+msgstr "Immagine utente"
+
+#: package/contents/ui/config/ConfigRail.qml:38
+msgid "Separator"
+msgstr "Separatore"
+
+#: package/contents/ui/config/ConfigRail.qml:82
+msgid "Decide how shortcut icons look:"
+msgstr "Decidi l'aspetto delle icone dei collegamenti:"
+
+#: package/contents/ui/config/ConfigRail.qml:83
+msgid "Only show icons"
+msgstr "Mostra solo le icone"
+
+#: package/contents/ui/config/ConfigRail.qml:83
+msgid "Show names when the mouse is over it"
+msgstr "Mostra i nomi quando il mouse è sopra"
+
+#: package/contents/ui/config/ConfigRail.qml:83
+msgid "Always show icons and names"
+msgstr "Mostra sempre icone e nomi"
+
+#: package/contents/ui/config/ConfigRail.qml:94
+msgid "Align the icons to the bottom (Windows 10 style)"
+msgstr "Allinea le icone in basso (stile Windows 10)"
+
+#: package/contents/ui/config/ConfigRail.qml:95
+msgid "Small place rows (Windows 7, XP, Pro styles)"
+msgstr "Righe dei luoghi piccole (stili Windows 7, XP, Pro)"
+
+#: package/contents/ui/config/ConfigRail.qml:96
+msgid "Show an icon on the Shut down button (Windows 7 style)"
+msgstr "Mostra un'icona sul pulsante Arresta il sistema (stile Windows 7)"
+
+#: package/contents/ui/config/ConfigRail.qml:98
+msgid "Left hand side shortcuts"
+msgstr "Collegamenti del lato sinistro"
+
+#: package/contents/ui/config/ConfigRail.qml:101
+msgid "Top to bottom:"
+msgstr "Dall'alto verso il basso:"
+
+#: package/contents/ui/config/ConfigRail.qml:125
+msgid "Add"
+msgstr "Aggiungi"
+
+#: package/contents/ui/config/ConfigRail.qml:127
+msgid "Add custom location…"
+msgstr "Aggiungi posizione personalizzata…"
+
+#: package/contents/ui/config/ConfigRail.qml:130
+msgid "Power menu options"
+msgstr "Opzioni del menu di alimentazione"
+
+#: package/contents/ui/config/ConfigRail.qml:133
+msgid "Clicking the power button should:"
+msgstr "Facendo clic sul pulsante di alimentazione:"
+
+#: package/contents/ui/config/ConfigRail.qml:136
+msgid "Show the power menu"
+msgstr "Mostra il menu di alimentazione"
+
+#: package/contents/ui/config/ConfigRail.qml:141
+msgid "Show in the power menu:"
+msgstr "Mostra nel menu di alimentazione:"
+
+#: package/contents/ui/config/ConfigRail.qml:165
+msgid "Add custom location"
+msgstr "Aggiungi posizione personalizzata"
+
+#: package/contents/ui/config/ConfigRail.qml:176
+msgid "Opens:"
+msgstr "Apre:"
+
+#: package/contents/ui/config/ConfigRail.qml:176
+msgid "Folder or web address"
+msgstr "Cartella o indirizzo web"
+
+#: package/contents/ui/config/ConfigRail.qml:176
+msgid "Command"
+msgstr "Comando"
+
+#: package/contents/ui/config/ConfigRail.qml:179
+msgid "Command:"
+msgstr "Comando:"
+
+#: package/contents/ui/config/ConfigRail.qml:179
+msgid "Location:"
+msgstr "Posizione:"
+
+#: package/contents/ui/config/ConfigSearch.qml:25
+msgid "Files (file search index)"
+msgstr "File (indice di ricerca dei file)"
+
+#: package/contents/ui/config/ConfigSearch.qml:26
+msgid "Recent documents"
+msgstr "Documenti recenti"
+
+#: package/contents/ui/config/ConfigSearch.qml:27
+msgid "Places"
+msgstr "Luoghi"
+
+#: package/contents/ui/config/ConfigSearch.qml:28
+msgid "Calculator"
+msgstr "Calcolatrice"
+
+#: package/contents/ui/config/ConfigSearch.qml:29
+msgid "Unit converter"
+msgstr "Convertitore di unità"
+
+#: package/contents/ui/config/ConfigSearch.qml:30
+msgid "Commands"
+msgstr "Comandi"
+
+#: package/contents/ui/config/ConfigSearch.qml:31
+msgid "Web shortcuts (gg:, wp:, ...)"
+msgstr "Scorciatoie web (gg:, wp:, ...)"
+
+#: package/contents/ui/config/ConfigSearch.qml:32
+msgid "Browser bookmarks"
+msgstr "Segnalibri del browser"
+
+#: package/contents/ui/config/ConfigSearch.qml:33
+msgid "Open windows"
+msgstr "Finestre aperte"
+
+#: package/contents/ui/config/ConfigSearch.qml:34
+msgid "Sessions and power"
+msgstr "Sessioni e alimentazione"
+
+#: package/contents/ui/config/ConfigSearch.qml:35
+msgid "Special characters"
+msgstr "Caratteri speciali"
+
+#: package/contents/ui/config/ConfigSearch.qml:36
+msgid "Dictionary"
+msgstr "Dizionario"
+
+#: package/contents/ui/config/ConfigSearch.qml:41
+msgid "Group results by type (Apps, Files, Settings …)"
+msgstr "Raggruppa i risultati per tipo (App, File, Impostazioni …)"
+
+#: package/contents/ui/config/ConfigSearch.qml:42
+msgid "Show search the internet button"
+msgstr "Mostra il pulsante Cerca su Internet"
+
+#: package/contents/ui/config/ConfigSearch.qml:43
+msgid "Show filter icons above the results (Apps, Documents, Web …)"
+msgstr "Mostra le icone dei filtri sopra i risultati (App, Documenti, Web …)"
+
+#: package/contents/ui/config/ConfigSearch.qml:44
+msgid "Classic search: dense one-line results, no Best match card"
+msgstr "Ricerca classica: risultati compatti su una riga, senza scheda Corrispondenza migliore"
+
+#: package/contents/ui/config/ConfigSearch.qml:45
+msgid "Remember recent searches"
+msgstr "Ricorda le ricerche recenti"
+
+#: package/contents/ui/config/ConfigSearch.qml:47
+msgid "Clear search history"
+msgstr "Cancella la cronologia di ricerca"
+
+#: package/contents/ui/config/ConfigSearch.qml:54
+msgid "Search the internet with:"
+msgstr "Cerca su Internet con:"
+
+#: package/contents/ui/config/ConfigSearch.qml:59
+#, javascript-format
+msgid "%s is replaced by what you typed."
+msgstr "%s viene sostituito da ciò che hai digitato."
+
+#: package/contents/ui/config/ConfigSearch.qml:64
+msgid "What to search"
+msgstr "Cosa cercare"
+
+#: package/contents/ui/config/ConfigSearch.qml:67
+msgid "Use everything KRunner can search"
+msgstr "Usa tutto ciò che KRunner può cercare"
+
+#: package/contents/ui/config/ConfigStyle.qml:33
+#: package/contents/ui/config/ConfigStyle.qml:102
+msgid "Windows 7 style"
+msgstr "Stile Windows 7"
+
+#: package/contents/ui/config/ConfigStyle.qml:33
+msgid "The classic Windows 7 menu."
+msgstr "Il menu classico di Windows 7."
+
+#: package/contents/ui/config/ConfigStyle.qml:34
+#: package/contents/ui/config/ConfigStyle.qml:109
+msgid "Modern style"
+msgstr "Stile moderno"
+
+#: package/contents/ui/config/ConfigStyle.qml:34
+msgid "An updated Windows 7 style."
+msgstr "Uno stile Windows 7 aggiornato."
+
+#: package/contents/ui/config/ConfigStyle.qml:35
+msgid "Windows 10 style"
+msgstr "Stile Windows 10"
+
+#: package/contents/ui/config/ConfigStyle.qml:35
+msgid "Windows 10 style with improvements."
+msgstr "Stile Windows 10 con miglioramenti."
+
+#: package/contents/ui/config/ConfigStyle.qml:36
+msgid "Windows 11 style"
+msgstr "Stile Windows 11"
+
+#: package/contents/ui/config/ConfigStyle.qml:36
+msgid "Windows 11 style with improvements."
+msgstr "Stile Windows 11 con miglioramenti."
+
+#: package/contents/ui/config/ConfigStyle.qml:37
+msgid "Windows App style"
+msgstr "Stile Windows App"
+
+#: package/contents/ui/config/ConfigStyle.qml:37
+msgid "Shortcuts at the top, groups and tabs, all apps always open."
+msgstr "Collegamenti in alto, gruppi e schede, tutte le app sempre aperte."
+
+#: package/contents/ui/config/ConfigStyle.qml:38
+msgid "Windows Pro style"
+msgstr "Stile Windows Pro"
+
+#: package/contents/ui/config/ConfigStyle.qml:38
+msgid "Two-tone: pinned apps, and a places panel on the right."
+msgstr "Due toni: app aggiunte e un pannello dei luoghi a destra."
+
+#: package/contents/ui/config/ConfigStyle.qml:39
+msgid "Windows Launcher style"
+msgstr "Stile Windows Launcher"
+
+#: package/contents/ui/config/ConfigStyle.qml:39
+msgid "Big account picture, search, and a large pinned grid."
+msgstr "Grande immagine dell'account, ricerca e una grande griglia di elementi aggiunti."
+
+#: package/contents/ui/config/ConfigStyle.qml:40
+msgid "Windows XP style"
+msgstr "Stile Windows XP"
+
+#: package/contents/ui/config/ConfigStyle.qml:40
+msgid "The blue Luna menu, classic or modernised."
+msgstr "Il menu blu Luna, classico o modernizzato."
+
+#: package/contents/ui/config/ConfigStyle.qml:48
+msgid "Which style of Start Menu would you prefer?"
+msgstr "Quale stile di menu Start preferisci?"
+
+#: package/contents/ui/config/ConfigStyle.qml:83
+msgid "Coming soon"
+msgstr "Prossimamente"
+
+#: package/contents/ui/config/ConfigStyle.qml:101
+#: package/contents/ui/config/ConfigStyle.qml:108
+#: package/contents/ui/config/ConfigStyle.qml:114
+msgid "Substyle:"
+msgstr "Sottostile:"
+
+#: package/contents/ui/config/ConfigStyle.qml:102
+msgid "Windows 7 style with icons"
+msgstr "Stile Windows 7 con icone"
+
+#: package/contents/ui/config/ConfigStyle.qml:102
+msgid "Compact Windows 7 style"
+msgstr "Stile Windows 7 compatto"
+
+#: package/contents/ui/config/ConfigStyle.qml:103
+msgid "Grid Windows 7 style"
+msgstr "Stile Windows 7 a griglia"
+
+#: package/contents/ui/config/ConfigStyle.qml:103
+msgid "Grid Windows 7 style with icons"
+msgstr "Stile Windows 7 a griglia con icone"
+
+#: package/contents/ui/config/ConfigStyle.qml:103
+msgid "Compact Grid Windows 7 style"
+msgstr "Stile Windows 7 compatto a griglia"
+
+#: package/contents/ui/config/ConfigStyle.qml:109
+msgid "Modern style with icons"
+msgstr "Stile moderno con icone"
+
+#: package/contents/ui/config/ConfigStyle.qml:109
+msgid "Compact Modern style"
+msgstr "Stile moderno compatto"
+
+#: package/contents/ui/config/ConfigStyle.qml:110
+msgid "Grid Modern style"
+msgstr "Stile moderno a griglia"
+
+#: package/contents/ui/config/ConfigStyle.qml:110
+msgid "Grid Modern style with icons"
+msgstr "Stile moderno a griglia con icone"
+
+#: package/contents/ui/config/ConfigStyle.qml:110
+msgid "Compact Grid Modern style"
+msgstr "Stile moderno compatto a griglia"
+
+#: package/contents/ui/config/ConfigStyle.qml:115
+msgid "Classic Windows XP style"
+msgstr "Stile Windows XP classico"
+
+#: package/contents/ui/config/ConfigStyle.qml:115
+msgid "Modern Windows XP style"
+msgstr "Stile Windows XP moderno"
+
+#: package/contents/ui/config/ConfigStyle.qml:121
+msgid "Colour scheme:"
+msgstr "Combinazione di colori:"
+
+#: package/contents/ui/config/ConfigStyle.qml:124
+msgid "Blue"
+msgstr "Blu"
+
+#: package/contents/ui/config/ConfigStyle.qml:124
+msgid "Olive Green"
+msgstr "Verde oliva"
+
+#: package/contents/ui/config/ConfigStyle.qml:124
+msgid "Silver"
+msgstr "Argento"
+
+#: package/contents/ui/config/ConfigStyle.qml:132
+msgid "Start button colour:"
+msgstr "Colore del pulsante Start:"
+
+#: package/contents/ui/config/ConfigStyle.qml:134
+msgid "XP green"
+msgstr "Verde XP"
+
+#: package/contents/ui/config/ConfigStyle.qml:134
+msgid "Colour scheme"
+msgstr "Combinazione di colori"
+
+#: package/contents/ui/config/ConfigStyle.qml:145
+msgid "What size should it be?"
+msgstr "Che dimensioni deve avere?"
+
+#: package/contents/ui/config/ConfigStyle.qml:146
+msgid "Tall"
+msgstr "Alto"
+
+#: package/contents/ui/config/ConfigStyle.qml:146
+msgid "Wide (two tile columns)"
+msgstr "Largo (due colonne di riquadri)"
+
+#: package/contents/ui/config/ConfigStyle.qml:146
+msgid "Large (two tile columns)"
+msgstr "Grande (due colonne di riquadri)"
+
+#: package/contents/ui/config/ConfigStyle.qml:150
+msgid "Custom height:"
+msgstr "Altezza personalizzata:"
+
+#: package/contents/ui/config/ConfigStyle.qml:154
+msgid "From size"
+msgstr "In base alle dimensioni"
+
+#: package/contents/ui/config/ConfigStyle.qml:159
+msgid "Use full screen menu"
+msgstr "Usa il menu a schermo intero"
+
+#: package/contents/ui/config/ConfigStyle.qml:164
+msgid "Keep the panel visible"
+msgstr "Mantieni visibile il pannello"
+
+#: package/contents/ui/config/ConfigStyle.qml:167
+msgid "Adjust global menu scaling:"
+msgstr "Regola la scala globale del menu:"
+
+#: package/contents/ui/config/ConfigStyle.qml:177
+#, javascript-format
+msgid "%1% of original size"
+msgstr "%1% delle dimensioni originali"
+
+#: package/contents/ui/config/ConfigStyle.qml:184
+msgid "Reset all Start12 settings…"
+msgstr "Reimposta tutte le impostazioni di Start12…"
+
+#: package/contents/ui/config/ConfigStyle.qml:189
+msgid "Backup"
+msgstr "Backup"
+
+#: package/contents/ui/config/ConfigStyle.qml:192
+msgid "Backup settings…"
+msgstr "Backup delle impostazioni…"
+
+#: package/contents/ui/config/ConfigStyle.qml:197
+msgid "Restore settings…"
+msgstr "Ripristina impostazioni…"
+
+#: package/contents/ui/config/ConfigStyle.qml:205
+msgid ""
+"Settings, tiles and pinned icons go into one file. After picking the file, "
+"press OK/Apply to save or restore it."
+msgstr "Impostazioni, riquadri e icone aggiunte vengono salvati in un unico file. Dopo aver scelto il file, premi OK/Applica per salvare o ripristinare."
+
+#: package/contents/ui/config/ConfigStyle.qml:212
+msgid "Backup Start12 settings"
+msgstr "Backup delle impostazioni di Start12"
+
+#: package/contents/ui/config/ConfigStyle.qml:216
+#: package/contents/ui/config/ConfigStyle.qml:222
+msgid "Start12 backup (*.json)"
+msgstr "Backup di Start12 (*.json)"
+
+#: package/contents/ui/config/ConfigStyle.qml:221
+msgid "Restore Start12 settings"
+msgstr "Ripristina impostazioni di Start12"
+
+#: package/contents/ui/config/ConfigStyle.qml:228
+msgid "Reset all Start12 settings?"
+msgstr "Reimpostare tutte le impostazioni di Start12?"
+
+#: package/contents/ui/config/ConfigStyle.qml:229
+msgid ""
+"Every setting, tile and pinned icon goes back to the fresh-install default. "
+"If the XP taskbar theme is active, your previous Plasma Style is put back. "
+"Press OK in the settings window afterwards to finish; it then closes, so no "
+"old values are written back."
+msgstr "Ogni impostazione, riquadro e icona aggiunta torna ai valori predefiniti di una nuova installazione. Se il tema XP della barra delle applicazioni è attivo, viene ripristinato il tuo stile Plasma precedente. Poi premi OK nella finestra delle impostazioni per terminare; la finestra si chiude, così nessun vecchio valore viene riscritto."
+
+#: package/contents/ui/config/ConfigTaskbar.qml:41
+msgid "Pick taskbar texture…"
+msgstr "Scegli texture della barra delle applicazioni…"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:42
+msgid "Images (*.png *.jpg *.jpeg)"
+msgstr "Immagini (*.png *.jpg *.jpeg)"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:49
+msgid "Apply the theme to the taskbar"
+msgstr "Applica il tema alla barra delle applicazioni"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:56
+msgid ""
+"Taskbar colours and buttons that match the menu style. Your own Plasma Style "
+"comes back when this is off."
+msgstr "Colori e pulsanti della barra delle applicazioni in sintonia con lo stile del menu. Il tuo stile Plasma torna quando è disattivato."
+
+#: package/contents/ui/config/ConfigTaskbar.qml:60
+msgid "Apply the theme to windows"
+msgstr "Applica il tema alle finestre"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:62
+msgid ""
+"Title bars and colours of every window. Your own ones come back when this is "
+"off."
+msgstr "Barre del titolo e colori di ogni finestra. I tuoi tornano quando è disattivato."
+
+#: package/contents/ui/config/ConfigTaskbar.qml:68
+msgid "Override the taskbar colour"
+msgstr "Sostituisci il colore della barra delle applicazioni"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:74
+msgid "Custom taskbar:"
+msgstr "Barra delle applicazioni personalizzata:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:78
+#: package/contents/ui/config/ConfigTaskbar.qml:111
+#, javascript-format
+msgid "%1% opaque"
+msgstr "%1% opaco"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:87
+msgid "Light line on the taskbar edge"
+msgstr "Linea chiara sul bordo della barra delle applicazioni"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:92
+msgid "Texture:"
+msgstr "Texture:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:103
+msgid "Stretch"
+msgstr "Estendi"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:104
+msgid "Align top"
+msgstr "Allinea in alto"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:104
+msgid "Align middle"
+msgstr "Allinea al centro"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:105
+msgid "Align bottom"
+msgstr "Allinea in basso"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:113
+msgid "Tint with the accent colour"
+msgstr "Tingi con il colore di risalto"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:119
+msgid "Task buttons:"
+msgstr "Pulsanti delle attività:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:122
+msgid "Plasma Style"
+msgstr "Stile Plasma"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:122
+msgid "Windows 10 (bar under active)"
+msgstr "Windows 10 (barra sotto il pulsante attivo)"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:123
+msgid "Windows 11 (pill under active)"
+msgstr "Windows 11 (pillola sotto il pulsante attivo)"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:123
+msgid "Windows 7 (glass)"
+msgstr "Windows 7 (vetro)"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:130
+msgid "Paint the active button less transparent"
+msgstr "Dipingi il pulsante attivo meno trasparente"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:136
+msgid "Search:"
+msgstr "Ricerca:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:137
+msgid "Show search on taskbar"
+msgstr "Mostra la ricerca sulla barra delle applicazioni"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:142
+msgid "Search box width:"
+msgstr "Larghezza della casella di ricerca:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:154
+msgid ""
+"Panel height, position, floating, auto-hide and task grouping are handled by "
+"Plasma itself."
+msgstr "Altezza, posizione, modalità fluttuante, nascondimento automatico e raggruppamento delle attività del pannello sono gestiti da Plasma stesso."
+
+#: package/contents/ui/config/ConfigTaskbar.qml:157
+msgid "Plasma settings:"
+msgstr "Impostazioni di Plasma:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:159
+msgid "Edit panel…"
+msgstr "Modifica pannello…"
+
+#: package/contents/ui/ContextMenu.qml:36
+msgid "Open file location"
+msgstr "Apri percorso file"
+
+#: package/contents/ui/main.qml:144 package/contents/ui/win10/Tile.qml:48
+msgid "Folder"
+msgstr "Cartella"
+
+#: package/contents/ui/main.qml:430
+msgid "Unpin from taskbar"
+msgstr "Rimuovi dalla barra delle applicazioni"
+
+#: package/contents/ui/main.qml:430
+msgid "Pin to taskbar"
+msgstr "Aggiungi alla barra delle applicazioni"
+
+#: package/contents/ui/main.qml:631
+msgid "Pin file to Start"
+msgstr "Aggiungi file a Start"
+
+#: package/contents/ui/main.qml:637
+msgid "Add a folder as group"
+msgstr "Aggiungi una cartella come gruppo"
+
+#: package/contents/ui/main.qml:637
+msgid "Pin folder to Start"
+msgstr "Aggiungi cartella a Start"
+
+#: package/contents/ui/main.qml:643
+msgid "Pin website to Start"
+msgstr "Aggiungi sito web a Start"
+
+#: package/contents/ui/main.qml:658
+msgid "Web address:"
+msgstr "Indirizzo web:"
+
+#: package/contents/ui/main.qml:668
+msgid "Pin"
+msgstr "Aggiungi"
+
+#: package/contents/ui/main.qml:669 package/contents/ui/main.qml:701
+msgid "Cancel"
+msgstr "Annulla"
+
+#: package/contents/ui/main.qml:691
+msgid "Name (empty = original):"
+msgstr "Nome (vuoto = originale):"
+
+#: package/contents/ui/main.qml:700
+msgid "OK"
+msgstr "OK"
+
+#: package/contents/ui/main.qml:716
+msgid "Pin website…"
+msgstr "Aggiungi sito web…"
+
+#: package/contents/ui/main.qml:717
+msgid "Pin file…"
+msgstr "Aggiungi file…"
+
+#: package/contents/ui/main.qml:718
+msgid "Pin folder…"
+msgstr "Aggiungi cartella…"
+
+#: package/contents/ui/main.qml:872
+msgid "Design mode — drag the dividers"
+msgstr "Modalità progettazione — trascina i divisori"
+
+#: package/contents/ui/main.qml:882
+msgid "Done"
+msgstr "Fatto"
+
+#: package/contents/ui/main.qml:982
+msgid "Edit menu layout"
+msgstr "Modifica layout del menu"
+
+#: package/contents/ui/main.qml:987
+msgctxt "@action:inmenu"
+msgid "Edit Applications…"
+msgstr "Modifica applicazioni…"
+
+#: package/contents/ui/StartButton.qml:59
+#: package/contents/ui/styles/windows11.qml:87
+#: package/contents/ui/win10/SearchView.qml:160
+msgid "Type here to search"
+msgstr "Digita qui per eseguire la ricerca"
+
+#: package/contents/ui/StartButton.qml:298
+msgid "start"
+msgstr "start"
+
+#: package/contents/ui/styles/windows11.qml:138
+#: package/contents/ui/styles/windows11.qml:183
+msgid "Recommended"
+msgstr "Consigliati"
+
+#: package/contents/ui/styles/windows11.qml:139
+msgid "More"
+msgstr "Altro"
+
+#: package/contents/ui/styles/windows7.qml:298
+#: package/contents/ui/styles/xp.qml:345
+msgid "Unpin from Start menu"
+msgstr "Rimuovi dal menu Start"
+
+#: package/contents/ui/styles/windows7.qml:299
+#: package/contents/ui/styles/xp.qml:352
+msgid "Pin to Start menu"
+msgstr "Aggiungi al menu Start"
+
+#: package/contents/ui/styles/windows7.qml:483
+#: package/contents/ui/styles/xp.qml:466
+msgid "All Programs"
+msgstr "Tutti i programmi"
+
+#: package/contents/ui/styles/windows7.qml:510
+msgid "Search programs and files"
+msgstr "Cerca programmi e file"
+
+#: package/contents/ui/styles/xp.qml:347
+msgid "Move up"
+msgstr "Sposta su"
+
+#: package/contents/ui/styles/xp.qml:348
+msgid "Move down"
+msgstr "Sposta giù"
+
+#: package/contents/ui/styles/xp.qml:664
+msgid "Log Off"
+msgstr "Disconnetti"
+
+#: package/contents/ui/styles/xp.qml:671
+msgid "Turn Off Computer"
+msgstr "Spegni il computer"
+
+#: package/contents/ui/win10/AppList.qml:35
+msgid "Desktop"
+msgstr "Desktop"
+
+#: package/contents/ui/win10/AppList.qml:63
+msgid "Recently added"
+msgstr "Aggiunte di recente"
+
+#: package/contents/ui/win10/AppList.qml:90
+msgid "Folders"
+msgstr "Cartelle"
+
+#: package/contents/ui/win10/AppList.qml:281
+msgctxt "newly installed app"
+msgid "New"
+msgstr "Nuovo"
+
+#: package/contents/ui/win10/SearchView.qml:36
+msgid "Files"
+msgstr "File"
+
+#: package/contents/ui/win10/SearchView.qml:37
+msgid "Web"
+msgstr "Web"
+
+#: package/contents/ui/win10/SearchView.qml:254
+msgid "Best match"
+msgstr "Corrispondenza migliore"
+
+#: package/contents/ui/win10/SearchView.qml:263
+msgid "Search the web for \"%1\""
+msgstr "Cerca nel web «%1»"
+
+#: package/contents/ui/win10/SearchView.qml:302
+msgid "No items match your search"
+msgstr "Nessun elemento corrisponde alla ricerca"
+
+#: package/contents/ui/win10/TileArea.qml:38
+msgid "New page"
+msgstr "Nuova pagina"
+
+#: package/contents/ui/win10/TileArea.qml:40
+msgid "Delete this page"
+msgstr "Elimina questa pagina"
+
+#: package/contents/ui/win10/TileArea.qml:43
+msgid "Unlock menu"
+msgstr "Sblocca menu"
+
+#: package/contents/ui/win10/TileArea.qml:43
+msgid "Lock menu"
+msgstr "Blocca menu"
+
+#: package/contents/ui/win10/TileArea.qml:46
+msgid "Refresh icons"
+msgstr "Aggiorna icone"
+
+#: package/contents/ui/win10/TileArea.qml:48
+msgid "Configure Start12…"
+msgstr "Configura Start12…"
+
+#: package/contents/ui/win10/TileArea.qml:139
+msgid "Drag apps here, or right-click an app and choose \"Pin to Start\"."
+msgstr "Trascina qui le app, oppure fai clic con il pulsante destro su un'app e scegli «Aggiungi a Start»."
+
+#: package/contents/ui/win10/TileGroup.qml:87
+msgid "Group"
+msgstr "Gruppo"
+
+#: package/contents/ui/win10/TileGroup.qml:118
+#: package/contents/ui/win10/TileGroup.qml:131
+#: package/contents/ui/win10/TileGroup.qml:144
+msgid "Name group"
+msgstr "Nome del gruppo"
+
+#: package/contents/ui/win10/TileGroup.qml:145
+msgid "Resort group A-Z"
+msgstr "Riordina gruppo A-Z"
+
+#: package/contents/ui/win10/TileGroup.qml:147
+msgid "Move group up"
+msgstr "Sposta gruppo su"
+
+#: package/contents/ui/win10/TileGroup.qml:149
+msgid "Move group down"
+msgstr "Sposta gruppo giù"
+
+#: package/contents/ui/win10/TileGroup.qml:151
+msgid "Move to previous page"
+msgstr "Sposta nella pagina precedente"
+
+#: package/contents/ui/win10/TileGroup.qml:153
+msgid "Move to next page"
+msgstr "Sposta nella pagina successiva"
+
+#: package/contents/ui/win10/TileGroup.qml:156
+msgid "Unpin group from Start"
+msgstr "Rimuovi gruppo da Start"
+
+#: package/contents/ui/win10/TileGroup.qml:230
+#: package/contents/ui/win10/Tile.qml:158
+msgid "Name folder"
+msgstr "Nome della cartella"
+
+#: package/contents/ui/win10/Tile.qml:159
+msgid "Unpin folder from Start"
+msgstr "Rimuovi cartella da Start"
+
+#: package/contents/ui/win10/Tile.qml:162
+msgid "Set icon…"
+msgstr "Imposta icona…"
+
+#: package/contents/ui/win10/Tile.qml:163
+msgid "Reset custom icon"
+msgstr "Reimposta icona personalizzata"
+
+#: package/contents/ui/win10/Tile.qml:165
+msgid "Hide icon text"
+msgstr "Nascondi testo delle icone"
+
+#: package/contents/ui/win10/Tile.qml:165
+msgid "Show icon text"
+msgstr "Mostra testo delle icone"
+
+#: package/contents/ui/win10/Tile.qml:167
+msgid "Tile colour…"
+msgstr "Colore del riquadro…"
+
+#: package/contents/ui/win10/Tile.qml:168
+msgid "Reset tile colour"
+msgstr "Reimposta colore del riquadro"
+
+#: package/contents/ui/win10/Tile.qml:170
+msgid "Resize"
+msgstr "Ridimensiona"
+
+#: package/contents/ui/win10/Tile.qml:171
+msgid "Wide"
+msgstr "Largo"
