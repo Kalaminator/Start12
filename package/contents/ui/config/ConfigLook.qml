@@ -26,6 +26,7 @@ KCM.SimpleKCM {
     property string cfg_tileImage
     property alias cfg_tileImageOpacity: tileImageOpacity.value
     property alias cfg_greyIcons: greyIcons.checked
+    property alias cfg_animateMenu: animateMenu.checked
     property string cfg_texture
     property alias cfg_textureMode: textureMode.currentIndex
     property alias cfg_textureOpacity: textureOpacity.value
@@ -118,6 +119,7 @@ KCM.SimpleKCM {
             QQC2.Label { text: i18n("%1%", Math.round(tileImageOpacity.value)) }
         }
         QQC2.CheckBox { id: greyIcons; Kirigami.FormData.label: i18n("Icons:"); text: i18n("Show app icons in grey") }
+        QQC2.CheckBox { id: animateMenu; Kirigami.FormData.label: i18n("Animation:"); text: i18n("Fade the menu in when it opens") }
 
         Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Texture") }
 

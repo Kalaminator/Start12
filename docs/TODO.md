@@ -165,7 +165,7 @@ Build: `styles/windows7.qml` tree: `autoExpand` Bool (`AutoExpand`, open folders
 cascading `PlasmaExtras.Menu` instead of the in-place tree). Checkboxes in `config/ConfigMenu.qml`.
 Check: hover a category, it opens; Desktop folder lists desktop files.
 
-### T23 Open animation toggle (S)
+### T23 Open animation toggle (S) -- DONE
 Build: `animateMenu` Bool (inverse `NoAnims`); `main.qml` fullRepresentation fades/slides in 120 ms on
 `expanded` (`Behavior on opacity`, `Kirigami.Units.shortDuration`); checkbox in `config/ConfigLook.qml`.
 Check: on/off visibly different; no flash with the solid menu.

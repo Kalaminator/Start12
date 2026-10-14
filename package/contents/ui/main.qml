@@ -553,6 +553,20 @@ PlasmoidItem {
         }
         onHeightChanged: if (root.expanded) saveHeight.restart()
 
+        // Open animation (Start11 "NoAnims" inverse): short fade + slide in.
+        ParallelAnimation {
+            id: openAnim
+            NumberAnimation { target: full; property: "opacity"; from: 0; to: 1; duration: Kirigami.Units.shortDuration }
+            NumberAnimation { target: styleLoader; property: "anchors.topMargin"; from: Kirigami.Units.gridUnit; to: 0; duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
+        }
+        Connections {
+            target: root
+            function onExpandedChanged() {
+                if (root.expanded && root.cfg.animateMenu) openAnim.restart();
+                else { openAnim.stop(); full.opacity = 1; styleLoader.anchors.topMargin = 0; }
+            }
+        }
+
         Loader {
             id: styleLoader
             anchors.fill: parent

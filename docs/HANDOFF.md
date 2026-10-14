@@ -71,6 +71,8 @@ Fonts (T20): keys `headerFontFamily`/`headerFontSize`/`itemFontSize` (0 = menu s
 Small toggles (T21): keys `railAlignBottom` (default true = old look; LeftRail only), `smallPlaces` (placeH in Win7/Modern, XP, Pro), `powerButtonIcon` (Win7 split button), `recentHideFolders` (Recommended.qml `rows`, folders found by icon name), `webFavicons` (default off; `Tiles.customFor(url,kind,favicons)`, new pins only). ConfigRail/ConfigMenu checkboxes. Needs a user check.
 All Programs extras (T22): keys `autoExpand`/`desktopInTree`/`allAppsAsMenu`, AppList `treeExtras: true` (set in windows7.qml and xp.qml): hover timer opens folders, Desktop = synthetic filtered folder `~/Desktop`, categories open a `PlasmaExtras.Menu` (one level). Needs a user check.
 
+Open animation (T23): key `animateMenu` (default true), `main.qml` openAnim (fade + 1 gridUnit slide of styleLoader) on `expanded`; ConfigLook checkbox. Needs a user check.
+
 ## Next (in order)
 Work through docs/TODO.md job by job (T01, T02, T03, T04 done). Use the prompt in docs/AGENT_PROMPT.md, one agent per job,
 then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03-T09 built (need a user check), T10-T11 built, T12-T18 built, T19-T20 built, T22 built, next: T23.

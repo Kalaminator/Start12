@@ -303,6 +303,10 @@
       <label>Show app icons in grey</label>
       <default>false</default>
     </entry>
+    <entry name="animateMenu" type="Bool">
+      <label>Fade the menu in when it opens (inverse of NoAnims)</label>
+      <default>true</default>
+    </entry>
     <entry name="texture" type="String">
       <label>BackgroundImage: file in images/MenuTextures, or an absolute path; empty = none</label>
       <default></default>
