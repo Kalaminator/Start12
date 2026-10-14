@@ -147,7 +147,8 @@ FocusScope {
     }
     readonly property var entries: {
         rev;
-        const pins = root.shownPins.map((id, i) => ({ kind: "pin", id: id, index: i }));
+        // ponytail: folders (Win11 pinned folders) open up into plain pins here, like Win7/Modern.
+        const pins = Tiles.allPins(root.shownPins).filter(id => !root.missingPins.includes(id)).map((id, i) => ({ kind: "pin", id: id, index: i }));
         const free = Math.floor((home.height - (pins.length ? sepH : 0)) / rowH) - pins.length;
         const fm = root.frequentAppsModel;
         const freq = [];
