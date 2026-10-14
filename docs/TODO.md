@@ -175,7 +175,7 @@ Build: `classicSearch` Bool: `win10/SearchView.qml` compact mode (small icons, o
 Best match card); checkbox in `config/ConfigSearch.qml`.
 Check: results show as a dense list in Win7 style.
 
-### T25 Translations (S)
+### T25 Translations (S) -- DONE
 Build: `package/Messages.sh` (xgettext over `contents/ui`), `po/es.po`, install `.mo` to
 `contents/locale/es/LC_MESSAGES/plasma_applet_org.start12.menu.mo` in `install.sh`; translate the
 config pages and menu strings to Spanish first.

@@ -3,6 +3,9 @@
 set -e
 cd "$(dirname "$0")"
 node tests/test_tiles.js
+# Spanish translation (Plasma looks in contents/locale/<lang>/LC_MESSAGES/plasma_applet_<id>.mo)
+mkdir -p package/contents/locale/es/LC_MESSAGES
+msgfmt --check -o package/contents/locale/es/LC_MESSAGES/plasma_applet_org.start12.menu.mo po/es.po
 if kpackagetool6 -t Plasma/Applet -l | grep -qx org.start12.menu; then
     kpackagetool6 -t Plasma/Applet -u package
 else
