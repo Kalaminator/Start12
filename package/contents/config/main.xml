@@ -332,7 +332,7 @@
 
   <group name="General">
     <entry name="resetRequest" type="String">
-      <label>Set by the settings pages: "positions" or "all" plus a timestamp; main.qml does the reset and clears it</label>
+      <label>Set by the settings pages: "positions", "all", "backup" or "restore" plus a timestamp (and file); main.qml does the reset and clears it</label>
       <default></default>
     </entry>
     <entry name="openSettingsRequest" type="String">

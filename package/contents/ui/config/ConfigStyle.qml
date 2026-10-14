@@ -6,6 +6,8 @@ import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
 import org.kde.kquickcontrols as KQuickControls
+import QtQuick.Dialogs as Dialogs
+import QtCore
 
 // Start11Config "Start Menu" page: "Which style of Start Menu would you prefer?"
 KCM.SimpleKCM {
@@ -168,6 +170,42 @@ KCM.SimpleKCM {
             icon.name: "edit-reset"
             onClicked: allDialog.open()
         }
+
+        Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Backup") }
+        RowLayout {
+            QQC2.Button {
+                text: i18n("Backup settings…")
+                icon.name: "document-save"
+                onClicked: backupFile.open()
+            }
+            QQC2.Button {
+                text: i18n("Restore settings…")
+                icon.name: "document-open"
+                onClicked: restoreFile.open()
+            }
+        }
+        QQC2.Label {
+            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
+            text: i18n("Settings, tiles and pinned icons go into one file. After picking the file, press OK/Apply to save or restore it.")
+        }
+    }
+
+    // T13: main.qml writes/reads the file (resetRequest "backup|<time>|<file>" / "restore|<time>|<file>").
+    Dialogs.FileDialog {
+        id: backupFile
+        title: i18n("Backup Start12 settings")
+        fileMode: Dialogs.FileDialog.SaveFile
+        defaultSuffix: "json"
+        selectedFile: StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/start12-backup.json"
+        nameFilters: [i18n("Start12 backup (*.json)")]
+        onAccepted: page.cfg_resetRequest = "backup|" + Date.now() + "|" + decodeURIComponent(selectedFile.toString().replace("file://", ""))
+    }
+    Dialogs.FileDialog {
+        id: restoreFile
+        title: i18n("Restore Start12 settings")
+        nameFilters: [i18n("Start12 backup (*.json)")]
+        onAccepted: page.cfg_resetRequest = "restore|" + Date.now() + "|" + decodeURIComponent(selectedFile.toString().replace("file://", ""))
     }
 
     Kirigami.PromptDialog {

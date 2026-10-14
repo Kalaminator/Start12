@@ -98,7 +98,7 @@ Start12 settings" button on `config/ConfigStyle.qml` that sets every key back to
 `extras/start12-reset.sh`). Confirm dialog first.
 Check: change colour and tiles, Reset, menu is back to the fresh-install look.
 
-### T13 Backup / restore settings (M)
+### T13 Backup / restore settings (M) -- DONE (built in QML via resetRequest + JSON file, no script/plasmashell restart)
 Build: `extras/start12-backup.sh backup|restore <file>` that copies the
 `[Containments][*][Applets][*][Configuration]` block of the Start12 applet from
 `~/.config/plasma-org.kde.plasma.desktop-appletsrc` (find by `plugin=org.start12.menu`), restore writes

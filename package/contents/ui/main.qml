@@ -274,6 +274,7 @@ PlasmoidItem {
     }
 
     // Reset from the settings pages (they set cfg.resetRequest = "positions|<time>" or "all|<time>").
+    // Backup/restore (T13) use the same key: "backup|<time>|<file>" / "restore|<time>|<file>" (JSON file).
     // Delayed so the dialog's own Apply finishes writing first. "all" puts every key back to its main.xml
     // default; savedDesktopTheme is kept so leaving XP (menuStyle default) restores the user's Plasma Style.
     Timer {
@@ -281,9 +282,25 @@ PlasmoidItem {
         interval: 700
         property string what: ""
         onTriggered: {
-            const keep = ["savedDesktopTheme", "resetRequest", "openSettingsRequest", "favorites", "favoritesPortedToKAstats"];
-            const keys = what === "all" ? root.cfg.keys().filter(k => !k.endsWith("Default") && !keep.includes(k))
-                                        : ["tileGroups", "pinnedGrid", "pinnedCaptions", "tilePage"];
+            const parts = root.cfg.resetRequest.split("|");
+            const file = parts.slice(2).join("|");
+            if (what === "backup") {
+                const data = {};
+                for (const k of root.userKeys()) {
+                    const v = root.cfg[k];
+                    // Colours become "#rrggbb"; string lists become plain arrays.
+                    data[k] = v !== null && typeof v === "object" ? (v.length !== undefined ? Array.from(v) : v.toString()) : v;
+                }
+                root.run(Tiles.writeFileCmd(JSON.stringify({ start12Backup: 1, settings: data }), file));
+                root.cfg.resetRequest = "";
+                return;
+            }
+            if (what === "restore") {
+                backupReader.connectSource("cat " + Tiles.shQuote(file));
+                root.cfg.resetRequest = "";
+                return;
+            }
+            const keys = what === "all" ? root.userKeys() : ["tileGroups", "pinnedGrid", "pinnedCaptions", "tilePage"];
             for (const k of keys) {
                 const d = root.cfg[k + "Default"];
                 if (d !== undefined)
@@ -292,11 +309,37 @@ PlasmoidItem {
             root.cfg.resetRequest = "";
         }
     }
+    // Keys that reset/backup/restore touch: everything in main.xml but bookkeeping and kicker's favorites.
+    function userKeys() {
+        const keep = ["savedDesktopTheme", "resetRequest", "openSettingsRequest", "favorites", "favoritesPortedToKAstats"];
+        return root.cfg.keys().filter(k => !k.endsWith("Default") && !keep.includes(k));
+    }
+    // Restore: read the backup JSON, write back every known key, then put the Plasma Style in line
+    // (xpTheme changes call syncDesktopTheme too; the explicit call covers an unchanged xpTheme).
+    P5Support.DataSource {
+        id: backupReader
+        engine: "executable"
+        connectedSources: []
+        onNewData: (sourceName, data) => {
+            disconnectSource(sourceName);
+            let s = null;
+            try { s = JSON.parse(data.stdout).settings; } catch (e) {}
+            if (!s) {
+                console.warn("start12: not a Start12 backup:", sourceName, data.stderr);
+                return;
+            }
+            for (const k of root.userKeys()) {
+                if (s[k] !== undefined)
+                    root.cfg[k] = s[k];
+            }
+            root.syncDesktopTheme();
+        }
+    }
     Connections {
         target: root.cfg
         function onResetRequestChanged() {
             const w = root.cfg.resetRequest.split("|")[0];
-            if (w === "all" || w === "positions") {
+            if (["all", "positions", "backup", "restore"].includes(w)) {
                 resetTimer.what = w;
                 resetTimer.restart();
             }

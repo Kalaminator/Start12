@@ -4,7 +4,7 @@ const path = require("path");
 const assert = require("assert");
 const src = fs.readFileSync(path.join(__dirname, "../package/contents/ui/code/tiles.js"), "utf8")
     .replace(/^\.pragma library/m, "");
-const T = new Function(src + "; return { pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder, parsePages, setPage, newPage, deletePage, moveGroupToPage };")();
+const T = new Function(src + "; return { pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder, parsePages, setPage, newPage, deletePage, moveGroupToPage, shQuote, writeFileCmd };")();
 
 // 6 columns = 12 units wide: six medium tiles fit in one row.
 let p = T.pack(Array(6).fill({ size: "medium" }), 6);
@@ -113,4 +113,12 @@ assert.deepStrictEqual(P[1].groups, [{ name: "A", tiles: [] }]); // named group 
 P = T.deletePage(P, 0);                                          // first page: groups go to the next
 assert.deepStrictEqual(P, [{ groups: [{ name: "", tiles: [{ id: "a" }] }, { name: "A", tiles: [] }] }]);
 assert.deepStrictEqual(T.deletePage(P, 0), P);                   // last page stays
+// Backup file write survives quotes, $, newlines, unicode, spaces in the path.
+{
+    const os = require("os"), cp = require("child_process");
+    const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "s12-")), "my 'backup'.json");
+    const text = JSON.stringify({ a: "it's $HOME `x` \\ \n é", b: ["x|y"] });
+    cp.execSync(T.writeFileCmd(text, file), { shell: "/bin/sh" });
+    assert.strictEqual(fs.readFileSync(file, "utf8"), text);
+}
 console.log("tiles.js: all checks passed");

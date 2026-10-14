@@ -345,3 +345,11 @@ function nearest(rects, cur, dx, dy) {
     }
     return best;
 }
+
+// Backup/restore (T13): quote any text for /bin/sh, and the command that writes text to a file.
+function shQuote(s) {
+    return "'" + String(s).replace(/'/g, "'\\''") + "'";
+}
+function writeFileCmd(text, file) {
+    return "sh -c " + shQuote("printf %s " + shQuote(text) + " > " + shQuote(file));
+}
