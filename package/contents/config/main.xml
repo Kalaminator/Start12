@@ -233,6 +233,10 @@
       <label>Generated taskbar Plasma Style for any menu style: off | custom (Start11 "Override taskbar colour"); XP taskbar wins</label>
       <default>off</default>
     </entry>
+    <entry name="taskbarFollowsStyle" type="Bool">
+      <label>Taskbar preset follows the menu style (Win10 dark square, Win11 light translucent, Win7 blue glass); replaces the custom keys</label>
+      <default>false</default>
+    </entry>
     <entry name="taskbarColor" type="Color">
       <label>Taskbar colour (Start11 CustomColourTaskbar)</label>
       <default>#101010</default>

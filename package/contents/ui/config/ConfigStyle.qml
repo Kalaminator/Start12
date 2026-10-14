@@ -23,6 +23,7 @@ KCM.SimpleKCM {
     property string cfg_xpSubstyle
     property alias cfg_xpTaskbarTheme: xpTaskbarBox.checked
     property alias cfg_xpStartGreen: xpStartGreenBox.checked
+    property alias cfg_taskbarFollowsStyle: taskbarFollowBox.checked
     property string cfg_xpColor
     property alias cfg_xpCustomColor: xpCustom.color
     property string cfg_resetRequest
@@ -135,6 +136,10 @@ KCM.SimpleKCM {
                 id: xpStartGreenBox
                 visible: page.cfg_menuStyle === "xp"
                 text: i18n("Green XP Start button")
+            }
+            QQC2.CheckBox {
+                id: taskbarFollowBox
+                text: i18n("Taskbar follows the menu style")
             }
             QQC2.ComboBox {
                 id: sizeBox

@@ -96,7 +96,7 @@ Build: on top of T31: key `taskbarButtons` (plasma|win10|win11|win7): xptheme.py
 `taskbarFocusedSolid` (active task less transparent, Start11 "Paint focused item backgrounds less transparent").
 Check: each variant on an Icons-Only Task Manager with 3 open windows, active one distinct.
 
-### T35 Taskbar follows the menu style (S)
+### T35 Taskbar follows the menu style (S) -- DONE
 Build: key `taskbarFollowsStyle` (default off): when on, `syncDesktopTheme` picks a preset per menuStyle
 (windows10 = #101010 opaque square, windows11 = light translucent radius 8 win11 buttons, windows7 = blue
 translucent glass, xp = existing XP style, others = off) instead of the custom keys. ConfigStyle checkbox.

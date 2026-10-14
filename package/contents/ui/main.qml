@@ -203,7 +203,13 @@ PlasmoidItem {
     onXpThemeChanged: syncDesktopTheme()
     // Generated taskbar for any style (T31, xptheme.py --taskbar): start12-taskbar-<hash of args + fallback>,
     // FallbackTheme = the user's saved style, so only panel/tasks/colors change. XP taskbar wins.
-    readonly property string taskbarArgs: cfg.taskbarTheme !== "custom" ? ""
+    // T35: taskbarFollowsStyle picks a preset per menu style instead of the custom keys (others / xp = none).
+    readonly property var taskbarPresets: ({
+        "windows10": "colour=101010 alpha=1 radius=2 line=0 sub=flat",
+        "windows11": "colour=f3f3f3 alpha=0.8 radius=8 line=0 sub=flat",
+        "windows7": "colour=2a5a96 alpha=0.6 radius=6 line=1 sub=flat" })
+    readonly property string taskbarArgs: cfg.taskbarFollowsStyle ? (taskbarPresets[cfg.menuStyle] || "")
+        : cfg.taskbarTheme !== "custom" ? ""
         : "colour=" + cfg.taskbarColor.toString().slice(-6) + " alpha=" + (cfg.taskbarAlpha / 100)
           + " radius=" + cfg.taskbarRadius + " line=" + (cfg.taskbarLine ? 1 : 0) + " sub=flat"
     onTaskbarArgsChanged: syncDesktopTheme()
