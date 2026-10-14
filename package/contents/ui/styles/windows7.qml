@@ -283,6 +283,7 @@ FocusScope {
                                 ? [{ text: i18n("Unpin from Start menu"), icon: "window-unpin", run: () => root.unpin(id) }]
                                 : [{ text: i18n("Pin to Start menu"), icon: "window-pin", run: () => root.pin(id) }];
                             if (id && e.pinned) own.splice(1, 0, { text: i18n("Rename"), icon: "edit-rename", run: () => root.renamePin(id, app.custom ? app.custom.name : app.role("display")) });
+                            else if (id) own.push({ text: i18n("Hide from apps"), icon: "hint", run: () => root.hideApp(id) });   // most used row
                             contextMenu.show(target ?? app, custom ? null : e.model, custom ? -1 : e.row, own, x, y);
                         }
                         readonly property bool kbNav: !sep
@@ -442,6 +443,9 @@ FocusScope {
             height: m.px(compact ? 26 : 30)
             hoverEnabled: true
             onClicked: style.allPrograms = !style.allPrograms
+            readonly property bool kbNav: true
+            function kbStep(cur, dx, dy) { return cur ? null : allButton; }   // a KeyNav pane of its own in All Programs
+            KeyFrame {}
             background: Item {
                 Rectangle {
                     width: parent.width
@@ -451,7 +455,7 @@ FocusScope {
                 }
                 HoverBox {
                     anchors.fill: parent
-                    hot: allButton.hovered
+                    hot: allButton.hovered || root.kbCurrent === allButton
                     down: allButton.pressed
                 }
             }
@@ -514,8 +518,9 @@ FocusScope {
 
     KeyNav {
         id: nav
-        panes: [style.allPrograms ? appList : home, rightPane]
-        main: panes[0]
+        // home view: leftPane holds the pinned/most used rows and the All Programs button
+        panes: style.allPrograms ? [allButton, appList, rightPane] : [leftPane, rightPane]
+        main: style.allPrograms ? appList : leftPane
     }
 
     // ---- Right column: user picture, places, power ----

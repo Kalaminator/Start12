@@ -206,7 +206,7 @@ when we start). Builds on `code/xptheme.py` and the XP palettes in `styles/xp.qm
 - Reboot warnings, explorer restart, compat hacks, updates/licence, Group Policy lock-down, Stardock sync.
 - "Search file contents", "include desktop in search": Baloo already indexes content and ~/Desktop.
 
-### T27 Polish: keys and menus (M)
+### T27 Polish: keys and menus (M) -- DONE
 Build: (1) keyboard leftovers from T02: Win7/XP "All Programs" button, Win11 Recommended rows, App canvas tabs
 reachable with arrows/Tab via common/KeyNav (`kbNav: true` + `KeyFrame {}`); (2) "Hide from apps" (T08 `root.hideApp`)
 also in the right-click menu of XP/Win7 most-used rows and PinnedPane (Pro, Launcher); (3) "Rename" (T11 `root.renamePin`)

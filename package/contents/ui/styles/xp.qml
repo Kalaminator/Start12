@@ -348,7 +348,8 @@ FocusScope {
                                     ];
                                 } else {
                                     const id = style.appId(src, row);
-                                    own = id ? [{ text: i18n("Pin to Start menu"), icon: "window-pin", run: () => root.pin(id) }] : [];
+                                    own = id ? [{ text: i18n("Pin to Start menu"), icon: "window-pin", run: () => root.pin(id) },
+                                                { text: i18n("Hide from apps"), icon: "hint", run: () => root.hideApp(id) }] : [];
                                 }
                                 contextMenu.show(app, src, src ? row : -1, own, x, y);
                             }
@@ -433,6 +434,7 @@ FocusScope {
                 hoverEnabled: true
                 onClicked: style.allPrograms = !style.allPrograms
                 readonly property bool kbNav: true
+                function kbStep(cur, dx, dy) { return cur ? null : allButton; }   // a KeyNav pane of its own in All Programs
                 KeyFrame {}
                 readonly property bool hot: hovered || root.kbCurrent === allButton
                 leftPadding: m.px(style.modern ? 16 : 8)
@@ -673,8 +675,8 @@ FocusScope {
 
     KeyNav {
         id: nav
-        panes: [style.allPrograms ? appList : leftCol, rightCol, barRow]
-        main: panes[0]
+        panes: style.allPrograms ? [allButton, appList, rightCol, barRow] : [leftCol, rightCol, barRow]
+        main: style.allPrograms ? appList : leftCol
     }
 
     // Arrows/Tab/Enter move through the menu; typing anywhere starts a search.

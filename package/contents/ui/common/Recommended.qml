@@ -65,10 +65,20 @@ Item {
                     recent.trigger(item.row, "", null);
                     root.close();
                 }
+                function menu(x, y) {
+                    const id = rec.roleData(item.row, "favoriteId");
+                    const own = id && !id.startsWith("file:") ? [root.isPinned(id)
+                        ? { text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) }
+                        : { text: i18n("Pin to Start"), icon: "window-pin", run: () => root.pin(id) }] : [];
+                    rec.contextMenu.show(item, recent, item.row, own, x, y);
+                }
+                readonly property bool kbNav: true
+                function kbMenu() { menu(width / 2, height / 2); }
+                KeyFrame {}
                 background: Rectangle {
                     radius: rec.metrics.px(4)
                     color: rec.metrics.text
-                    opacity: item.pressed ? 0.12 : (item.hovered ? 0.07 : 0)
+                    opacity: item.pressed ? 0.12 : (item.hovered || root.kbCurrent === item ? 0.07 : 0)
                 }
                 leftPadding: rec.metrics.px(10)
                 contentItem: Item {
@@ -108,13 +118,7 @@ Item {
                 }
                 TapHandler {
                     acceptedButtons: Qt.RightButton
-                    onTapped: point => {
-                        const id = rec.roleData(item.row, "favoriteId");
-                        const own = id && !id.startsWith("file:") ? [root.isPinned(id)
-                            ? { text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) }
-                            : { text: i18n("Pin to Start"), icon: "window-pin", run: () => root.pin(id) }] : [];
-                        rec.contextMenu.show(item, recent, item.row, own, point.position.x, point.position.y);
-                    }
+                    onTapped: point => item.menu(point.position.x, point.position.y)
                 }
             }
         }

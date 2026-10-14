@@ -109,6 +109,7 @@ FocusScope {
 
         // Home
         ColumnLayout {
+            id: homeView   // KeyNav pane: pinned icons + Recommended rows
             anchors.fill: parent
             visible: style.view === "home"
             spacing: m.px(10)
@@ -347,7 +348,7 @@ FocusScope {
 
     KeyNav {
         id: nav
-        panes: [style.view === "all" ? appList : pinned]
+        panes: [style.view === "all" ? appList : style.view === "more" ? moreList : homeView]
         main: panes[0]
     }
 

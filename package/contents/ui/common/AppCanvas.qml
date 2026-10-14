@@ -148,21 +148,25 @@ Item {
                 leftPadding: m.px(10)
                 rightPadding: m.px(10)
                 onClicked: canvas.tabSel = index
+                readonly property bool kbNav: true
+                function kbMenu() { menu(width / 2, height / 2); }
+                KeyFrame {}
                 TapHandler {
                     acceptedButtons: Qt.RightButton
-                    onTapped: point => {
-                        canvas.tabSel = tabButton.index;
-                        const u = tabButton.index - 3;
-                        const own = u < 0 ? [] : [
-                            { text: i18n("Rename"), icon: "edit-rename",
-                              run: () => root.askName(canvas.layout.tabs[u].name, n => canvas.save(Tiles.canvasRename(canvas.layout, u, -1, n))) },
-                            { text: i18n("Move tab left"), icon: "go-previous", enabled: u > 0,
-                              run: () => { canvas.save(Tiles.canvasMoveTab(canvas.layout, u, -1)); canvas.tabSel--; } },
-                            { text: i18n("Move tab right"), icon: "go-next", enabled: u < canvas.layout.tabs.length - 1,
-                              run: () => { canvas.save(Tiles.canvasMoveTab(canvas.layout, u, 1)); canvas.tabSel++; } },
-                            { text: i18n("Delete tab"), icon: "edit-delete", run: () => canvas.save(Tiles.canvasDeleteTab(canvas.layout, u)) }];
-                        canvas.contextMenu.show(tabButton, null, -1, own.concat(canvas.surfaceItems), point.position.x, point.position.y);
-                    }
+                    onTapped: point => tabButton.menu(point.position.x, point.position.y)
+                }
+                function menu(x, y) {
+                    canvas.tabSel = tabButton.index;
+                    const u = tabButton.index - 3;
+                    const own = u < 0 ? [] : [
+                        { text: i18n("Rename"), icon: "edit-rename",
+                          run: () => root.askName(canvas.layout.tabs[u].name, n => canvas.save(Tiles.canvasRename(canvas.layout, u, -1, n))) },
+                        { text: i18n("Move tab left"), icon: "go-previous", enabled: u > 0,
+                          run: () => { canvas.save(Tiles.canvasMoveTab(canvas.layout, u, -1)); canvas.tabSel--; } },
+                        { text: i18n("Move tab right"), icon: "go-next", enabled: u < canvas.layout.tabs.length - 1,
+                          run: () => { canvas.save(Tiles.canvasMoveTab(canvas.layout, u, 1)); canvas.tabSel++; } },
+                        { text: i18n("Delete tab"), icon: "edit-delete", run: () => canvas.save(Tiles.canvasDeleteTab(canvas.layout, u)) }];
+                    canvas.contextMenu.show(tabButton, null, -1, own.concat(canvas.surfaceItems), x, y);
                 }
                 background: Rectangle {
                     radius: m.px(3)
@@ -410,7 +414,11 @@ Item {
                                     group.src.trigger(row, "", null);
                                     root.close();
                                 }
+                                // Pinned tab: pins can be renamed (root.capOf), like PinnedGrid
+                                readonly property string pinId: group.customs ? (group.customs[index]?.id ?? "")
+                                    : group.src && group.src === pinnedModel ? canvas.appId(group.src, row) : ""
                                 readonly property bool kbNav: true
+                                function kbMenu() { menu(width / 2, height / 2); }
                                 KeyFrame {}
                                 PC3.ToolTip.text: role("display") ?? ""
                                 PC3.ToolTip.visible: hovered
@@ -435,7 +443,7 @@ Item {
                                         width: cell.width - m.px(8)
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         horizontalAlignment: Text.AlignHCenter
-                                        text: cell.role("display") ?? ""
+                                        text: (cell.pinId ? root.capOf(cell.pinId) : "") || (cell.role("display") ?? "")
                                         elide: Text.ElideRight
                                         color: m.text
                                         font.family: m.font
@@ -447,13 +455,15 @@ Item {
                                     if (group.customs) {
                                         const c = group.customs[index];
                                         canvas.contextMenu.show(cell, null, -1, [{ text: i18n("Unpin from Start"), icon: "window-unpin",
-                                            run: () => root.unpin(c.id) }], x, y);
+                                            run: () => root.unpin(c.id) }, { text: i18n("Rename"), icon: "edit-rename",
+                                            run: () => root.renamePin(c.id, c.name) }].filter(() => c.id), x, y);
                                         return;
                                     }
                                     const id = canvas.appId(group.src, row);
                                     const own = !id || id.startsWith("file:") ? [] : root.isPinned(id)
                                         ? [{ text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) }]
                                         : [{ text: i18n("Pin to Start"), icon: "window-pin", run: () => root.pin(id) }];
+                                    if (cell.pinId) own.push({ text: i18n("Rename"), icon: "edit-rename", run: () => root.renamePin(id, cell.role("display")) });
                                     if (group.isUser) own.push({ text: i18n("Remove from group"), icon: "list-remove",
                                         run: () => canvas.save(Tiles.canvasRemove(canvas.layout, canvas.user, id)) });
                                     else if (id && !id.startsWith("file:")) own.push({ text: i18n("Hide from apps"), icon: "hint", run: () => root.hideApp(id) });
