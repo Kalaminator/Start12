@@ -1,0 +1,22 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "5984279+Kalaminator@users.noreply.github.com",
+                "Name": "Kalaminator"
+            }
+        ],
+        "Category": "Application Launchers",
+        "Description": "Start11-style start menu for KDE Plasma",
+        "Icon": "start-here-kde",
+        "Id": "org.start12.menu",
+        "License": "GPL-2.0+",
+        "Name": "Start12",
+        "Version": "0.1"
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-Provides": [
+        "org.kde.plasma.launchermenu"
+    ]
+}

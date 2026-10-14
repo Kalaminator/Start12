@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Start11 registry value names are noted in each label (Start8.ini\Start8). -->
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+
+  <group name="Style">
+    <entry name="menuStyle" type="String">
+      <label>windows7 | modern | windows10 | windows11 | app | pro | launcher</label>
+      <default>windows10</default>
+    </entry>
+    <entry name="menuSize" type="Int">
+      <label>Size: 0 Small, 1 Tall, 2 Wide, 3 Large</label>
+      <default>1</default>
+    </entry>
+    <entry name="menuHeight" type="Int">
+      <label>Custom menu height in px; 0 = from Size</label>
+      <default>0</default>
+    </entry>
+    <entry name="uiScale" type="Double">
+      <label>UISCALE: extra scale for the whole menu</label>
+      <default>1.0</default>
+    </entry>
+  </group>
+
+  <group name="Windows10">
+    <entry name="tileColumns" type="Int">
+      <label>TileColCount: medium tiles per group row (3-8)</label>
+      <default>6</default>
+    </entry>
+    <entry name="tileGap" type="Int">
+      <label>Space between tiles, px</label>
+      <default>4</default>
+    </entry>
+    <entry name="tileIconScale" type="Int">
+      <label>Tile icon size, percent of the tile</label>
+      <default>56</default>
+    </entry>
+    <entry name="hideTileText" type="Bool">
+      <label>HideGridText</label>
+      <default>true</default>
+    </entry>
+    <entry name="tileGroups" type="String">
+      <label>Tile groups as JSON</label>
+      <default>[]</default>
+    </entry>
+    <entry name="tilesLocked" type="Bool">
+      <label>LockedIcons</label>
+      <default>false</default>
+    </entry>
+    <entry name="showRecentlyAdded" type="Bool">
+      <label>RecentApps10</label>
+      <default>false</default>
+    </entry>
+    <entry name="showMostUsed" type="Bool">
+      <label>Show most used apps</label>
+      <default>false</default>
+    </entry>
+    <entry name="categoryFolders" type="Bool">
+      <label>Show app categories as folders in the list</label>
+      <default>false</default>
+    </entry>
+    <entry name="foldersAtBottom" type="Bool">
+      <label>Place folders at the bottom of the list</label>
+      <default>false</default>
+    </entry>
+    <entry name="highlightNew" type="Bool">
+      <label>Highlight: mark newly installed apps</label>
+      <default>true</default>
+    </entry>
+    <entry name="hideAppList" type="Bool">
+      <label>HideAppsList: tiles only</label>
+      <default>false</default>
+    </entry>
+    <entry name="listIconSize" type="Int">
+      <label>IconsScale10: app list icons, px</label>
+      <default>22</default>
+    </entry>
+    <entry name="listRowHeight" type="Int">
+      <label>App list row height, px</label>
+      <default>36</default>
+    </entry>
+    <entry name="railMode" type="Int">
+      <label>RightIconMode: 0 icons only, 1 expand on hover, 2 always show names</label>
+      <default>0</default>
+    </entry>
+    <entry name="railIconSize" type="Int">
+      <label>Left side icons, px</label>
+      <default>18</default>
+    </entry>
+    <entry name="railItems" type="StringList">
+      <label>Left side shortcuts, top to bottom. Built-in ids, or "custom|name|icon|target"</label>
+      <default>user,documents,downloads,music,pictures,personalization,settings,files,power</default>
+    </entry>
+    <entry name="powerItems" type="StringList">
+      <label>Power menu entries (kicker SystemModel ids)</label>
+      <default>lock-screen,suspend,reboot,shutdown</default>
+    </entry>
+    <entry name="powerButtonAction" type="String">
+      <label>PowerButtonMode: "menu" or a power id run on click</label>
+      <default>menu</default>
+    </entry>
+  </group>
+
+  <group name="Windows11">
+    <entry name="pinnedGrid" type="StringList">
+      <label>Pinned apps of the grid styles (Windows 11, App, Pro), in order</label>
+      <default>systemsettings.desktop,org.kde.dolphin.desktop,org.kde.konsole.desktop,firefox.desktop</default>
+    </entry>
+    <entry name="pinnedColumns" type="Int">
+      <label>Pinned grid columns</label>
+      <default>6</default>
+    </entry>
+    <entry name="pinnedRows" type="Int">
+      <label>Pinned grid rows per page</label>
+      <default>3</default>
+    </entry>
+    <entry name="showRecommended" type="Bool">
+      <label>Show the Recommended section</label>
+      <default>true</default>
+    </entry>
+    <entry name="recommendedRows" type="Int">
+      <label>Recommended rows (2 items per row)</label>
+      <default>3</default>
+    </entry>
+    <entry name="recommendedKinds" type="Int">
+      <label>0 apps and files, 1 only files, 2 only apps</label>
+      <default>0</default>
+    </entry>
+    <entry name="bottomItems" type="StringList">
+      <label>Shortcuts next to the power button (ids as in railItems)</label>
+      <default>settings,files</default>
+    </entry>
+    <entry name="openAllApps" type="Bool">
+      <label>OpenAllProgs11: open on the all apps list</label>
+      <default>false</default>
+    </entry>
+    <entry name="showSearchBox" type="Bool">
+      <label>Show the search box (when off it appears while typing)</label>
+      <default>true</default>
+    </entry>
+  </group>
+
+  <group name="Windows7">
+    <entry name="win7Substyle" type="Int">
+      <label>Win7StyleSub: 0 plain, 1 with icons, 2 compact, 3 grid, 4 grid with icons, 5 compact grid</label>
+      <default>0</default>
+    </entry>
+    <entry name="modernSubstyle" type="Int">
+      <label>ModernStyleSub: same numbers as win7Substyle</label>
+      <default>1</default>
+    </entry>
+  </group>
+
+  <group name="Canvas">
+    <entry name="canvasTab" type="Int">
+      <label>App canvas tab (0 Pinned, 1 Apps, 2 Recent); remembers the last one</label>
+      <default>0</default>
+    </entry>
+    <entry name="canvasTextures" type="Bool">
+      <label>Draw the Start11 tab textures behind each canvas group</label>
+      <default>true</default>
+    </entry>
+  </group>
+
+  <group name="Look">
+    <entry name="colorMode" type="Int">
+      <label>0 automatic (Plasma colours), 1 force dark, 2 force light, 3 custom</label>
+      <default>1</default>
+    </entry>
+    <entry name="menuColor" type="Color">
+      <default>#1c1b22</default>
+    </entry>
+    <entry name="textColor" type="Color">
+      <default>#ffffff</default>
+    </entry>
+    <entry name="accentMode" type="Int">
+      <label>Selected item accent colour: 0 Plasma accent, 1 custom</label>
+      <default>0</default>
+    </entry>
+    <entry name="accentColor" type="Color">
+      <default>#0078d4</default>
+    </entry>
+    <entry name="menuOpacity" type="Int">
+      <label>MenuAlphaValue, percent</label>
+      <default>88</default>
+    </entry>
+    <entry name="solidMenu" type="Bool">
+      <label>SolidAlpha</label>
+      <default>false</default>
+    </entry>
+    <entry name="cornerRadius" type="Int">
+      <label>BlockRounded off when 0</label>
+      <default>8</default>
+    </entry>
+    <entry name="tileColorMode" type="Int">
+      <label>0 soft (text colour), 1 accent colour, 2 custom</label>
+      <default>0</default>
+    </entry>
+    <entry name="tileColor" type="Color">
+      <default>#3a3a44</default>
+    </entry>
+    <entry name="tileOpacity" type="Int">
+      <label>TileAlphaValue, percent</label>
+      <default>14</default>
+    </entry>
+    <entry name="texture" type="String">
+      <label>BackgroundImage: file in images/MenuTextures, or an absolute path; empty = none</label>
+      <default></default>
+    </entry>
+    <entry name="textureMode" type="Int">
+      <label>0 tile, 1 stretch (TextureForceStretch), 2 fit, 3 fill</label>
+      <default>0</default>
+    </entry>
+    <entry name="textureOpacity" type="Int">
+      <label>TextureAlphaValue, percent</label>
+      <default>100</default>
+    </entry>
+    <entry name="darkenTexture" type="Bool">
+      <label>DarkenBackground</label>
+      <default>true</default>
+    </entry>
+    <entry name="colorizeTexture" type="Bool">
+      <label>CustomColourTexture: tint the texture with the menu colour</label>
+      <default>false</default>
+    </entry>
+    <entry name="fontFamily" type="String">
+      <label>Menu font; empty = Plasma default</label>
+      <default></default>
+    </entry>
+    <entry name="fontSize" type="Int">
+      <label>CaptionFontSize, px</label>
+      <default>11</default>
+    </entry>
+  </group>
+
+  <group name="Search">
+    <entry name="groupResults" type="Bool">
+      <label>Group results by type (Apps, Files, Settings ...)</label>
+      <default>true</default>
+    </entry>
+    <entry name="searchRunners" type="StringList">
+      <label>KRunner plugins to use; empty = all enabled ones</label>
+      <default></default>
+    </entry>
+    <entry name="showWebSearch" type="Bool">
+      <label>Show search the internet button</label>
+      <default>true</default>
+    </entry>
+    <entry name="webSearchUrl" type="String">
+      <label>%s is replaced by the search text</label>
+      <default>https://duckduckgo.com/?q=%s</default>
+    </entry>
+  </group>
+
+  <group name="StartButton">
+    <entry name="buttonMode" type="Int">
+      <label>StartButtonMode: 0 image sheet, 1 four squares, 2 icon</label>
+      <default>2</default>
+    </entry>
+    <entry name="buttonImage" type="String">
+      <label>File in images/StartButtons, or an absolute path</label>
+      <default>Default.png</default>
+    </entry>
+    <entry name="buttonIcon" type="String">
+      <label>Icon name or absolute path; empty = images/StartIcon.svg (the Arch icon)</label>
+      <default></default>
+    </entry>
+    <entry name="buttonIconScale" type="Int">
+      <label>Icon size, percent of the panel height</label>
+      <default>76</default>
+    </entry>
+    <entry name="squaresColor" type="Color">
+      <default>#ffffff</default>
+    </entry>
+    <entry name="squaresAccent" type="Color">
+      <label>Colour of the top left square</label>
+      <default>#e81123</default>
+    </entry>
+    <entry name="buttonMenuItems" type="StringList">
+      <label>Start button right-click menu entries</label>
+      <default>settings,files,monitor,terminal,run,power</default>
+    </entry>
+  </group>
+
+  <group name="General">
+    <entry name="openSettingsRequest" type="String">
+      <label>Changed by the start12-settings command to open the settings window</label>
+      <default></default>
+    </entry>
+    <entry name="favoritesPortedToKAstats" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="favorites" type="StringList">
+      <default></default>
+    </entry>
+  </group>
+</kcfg>

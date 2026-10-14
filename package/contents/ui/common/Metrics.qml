@@ -1,0 +1,50 @@
+import QtQuick
+import org.kde.plasma.plasmoid
+import org.kde.kirigami as Kirigami
+
+// Sizes and colours shared by every style. Sizes are logical px
+// (measured from Start11 at 150% and divided by 1.5), times the user scale.
+QtObject {
+    id: m
+    readonly property var cfg: Plasmoid.configuration
+
+    readonly property real s: cfg.uiScale
+    function px(v) { return Math.round(v * s); }
+
+    // Windows 10 parts
+    readonly property real rail: px(cfg.railMode === 2 ? 200 : 48)
+    readonly property real railExpanded: px(220)
+    readonly property real list: cfg.hideAppList ? 0 : px(276)
+    readonly property real gap: px(cfg.tileGap)
+    readonly property real unit: px(22)                  // small tile side
+    readonly property int columns: Math.max(3, Math.min(8, cfg.tileColumns))
+    readonly property real groupWidth: columns * 2 * unit + (columns * 2 - 1) * gap
+    readonly property int groupCols: cfg.menuSize >= 2 ? 2 : 1   // Wide, Large
+
+    // Lists and icons
+    readonly property real row: px(cfg.listRowHeight)
+    readonly property real listIcon: px(cfg.listIconSize)
+    readonly property real railIcon: px(cfg.railIconSize)
+    readonly property real pad: px(16)
+
+    // Menu height from "What size should it be?" (or a custom height).
+    function heightFor(sizes) {
+        return cfg.menuHeight > 0 ? px(cfg.menuHeight) : px(sizes[cfg.menuSize] ?? sizes[1]);
+    }
+
+    // Colours: automatic (Plasma), force dark, force light, custom.
+    property int mode: cfg.colorMode     // a style can force a mode for one part (Win7 white pane)
+    readonly property color bg: mode === 0 ? Kirigami.Theme.backgroundColor
+                              : mode === 1 ? "#1c1b22" : mode === 2 ? "#f3f3f3" : cfg.menuColor
+    readonly property color text: mode === 0 ? Kirigami.Theme.textColor
+                                : mode === 1 ? "#ffffff" : mode === 2 ? "#1b1b1b" : cfg.textColor
+    readonly property color accent: cfg.accentMode === 1 ? cfg.accentColor : Kirigami.Theme.highlightColor
+    readonly property color tile: cfg.tileColorMode === 1 ? accent
+                                : cfg.tileColorMode === 2 ? cfg.tileColor : text
+    readonly property real tileAlpha: cfg.tileColorMode === 0 ? cfg.tileOpacity / 100
+                                    : Math.max(0.05, cfg.tileOpacity / 100 * 4)
+    readonly property real bgAlpha: cfg.solidMenu ? 1 : cfg.menuOpacity / 100
+
+    readonly property string font: cfg.fontFamily !== "" ? cfg.fontFamily : Kirigami.Theme.defaultFont.family
+    readonly property real fontSize: px(cfg.fontSize)
+}

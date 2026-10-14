@@ -1,0 +1,61 @@
+# Start12 handoff (2026-10-14)
+
+Start12 = Stardock Start11 v2 rebuilt as a KDE Plasma 6.7 widget (`org.start12.menu`) for the user's
+Arch + Wayland PC. Goal: 1:1 Start11, every style switchable from a settings window. The user tests and
+sends screenshots; they said "keep adding everything, once we have all functions we change things".
+
+## Layout
+- `package/` = the plasmoid. `./install.sh` (runs `node tests/test_tiles.js`, kpackagetool update,
+  installs `extras/start12-settings` + `.desktop`). `./install.sh --restart` also restarts plasmashell.
+- `package/contents/ui/main.qml`: PlasmoidItem, kicker models (RootModel row 1 = all apps, RunnerModel,
+  SystemModel created after refresh because it crashes with a null favoritesModel), pin logic
+  (`usesTiles` = windows10 -> tile groups JSON `tileGroups`; grid styles -> `pinnedGrid` list),
+  `builtStyles` list, start-button right-click actions, tile icon/colour dialogs, `openSettings()`.
+- `ui/styles/<id>.qml`: one file per menu style. Built: all 7 (see Style status).
+  Register new ones in `main.qml builtStyles` AND `config/ConfigStyle.qml built`.
+- `ui/common/`: Metrics (sizes+colours, `px()`, `heightFor()`), MenuBackground (colour, transparency,
+  texture; hides Plasma's `DialogBackground` so transparency is real), Places (rail/bottom shortcuts,
+  user + power menus), PinnedGrid, Recommended.
+- `ui/win10/`: LeftRail, AppList (A-Z, folders, jump grid, drag to pin), TileArea/TileGroup/Tile,
+  SearchView (grouped KRunner results, web search). Other styles reuse AppList and SearchView.
+- `ui/ContextMenu.qml`: right-click menus (own items with `run`, plus kicker actions).
+- `ui/code/tiles.js`: pure logic (pack, place, moveGroup, placeInList, setProp...) + `tests/test_tiles.js`.
+- `config/`: settings pages (Start Menu, Layout, Left side, Look, Search, Start Button). `main.xml` holds
+  all keys, labels name the Start11 registry value.
+- `docs/research/start11-features.md` (330 Start11 features) and `start11-internals.md`.
+
+## Done and confirmed by the user or screenshots
+Win10 style like their Start11 screenshot, tiles (4 sizes, groups, drag tiles + groups, per-tile icon/
+colour/caption), settings window ("Start12 Settings" app works via config key `openSettingsRequest`),
+real transparency, resizable popup, Arch start icon, Win11 style (search, pinned pages, all apps,
+recommended fits above bottom bar).
+
+## Style status (2026-10-14)
+Reference pictures of every Start11 v2 style: https://www.xda-developers.com/start11-v2-review/ and
+https://www.stardock.com/blog/523496/introducing-start11-v2 (user-approved sources). All 7 styles built and seen on screen.
+- `windows7.qml` = Windows 7 AND Modern (`modern` flag from menuStyle; main.qml maps modern -> windows7).
+  Win7: white left pane (second Metrics `pm` with mode forced light), pinned + most used, All Programs,
+  search at the bottom, places (railItems minus user/power), split Shut down button. Modern: no pane, header
+  with picture + name at top left, places with icons. Substyles `win7Substyle` / `modernSubstyle`.
+- `app.qml`: top bar (picture, name, bottomItems + power), `common/AppCanvas.qml` (tabs Pinned/Apps/Recent,
+  Fences-like coloured groups with images/TabTextures) on the left, AppList on the right, type to search.
+- `pro.qml`: SearchBox + `common/PinnedPane.qml` (3 cols) left, darker right panel (picture, places with icons, power).
+- `launcher.qml`: big picture + name, power top right, SearchBox, PinnedPane (up to 6 cols).
+- Shared: common/Avatar, SmallButton (Win11 uses it too), SearchBox (signal `cancel`), DragGhost, PinnedGrid
+  `fixedCols`/`fixedRows`. Keys `canvasTab`, `canvasTextures`.
+Missing: Win7/Modern drag to reorder pins + jump-list arrows; canvas: user-made tabs/groups/pages, folders,
+icon tint, drag between groups. Plasma keeps one popup size for all styles (user drags it).
+
+## Next (in order)
+1. User checks all styles. 2. Canvas extras (own tabs/groups, tint). 3. Win7 jump lists, pin reorder.
+Then the taskbar part of Start11 (section 10 of the features doc), if the user wants it.
+
+## Testing tips
+- See the menu: in the INSTALLED copy only, add
+  `Timer { interval: 5000; running: true; onTriggered: root.expanded = true }` after `searchText`,
+  `systemctl --user restart plasma-plasmashell.service`, wait 9 s, `spectacle -b -n -f -o x.png`, crop
+  the bottom-left. Then `./install.sh` again to remove the timer. Errors: `journalctl --user --since "-15 s" | grep start12`.
+- More than ~5 plasmashell restarts in a short time trip systemd's limit:
+  `systemctl --user reset-failed plasma-plasmashell.service` then start it.
+- Don't test while the user is actively using the PC; each restart flashes their panel.
+- Never edit files with Python slice/replace on ambiguous anchors (it once wiped main.qml); use Edit.

@@ -1,0 +1,14 @@
+#!/bin/sh
+# Open the Start12 settings window: poke a config key the first Start12 widget listens to.
+exec qdbus6 org.kde.plasmashell /PlasmaShell evaluateScript '
+var found = false;
+panels().concat(desktops()).forEach(function (c) {
+    c.widgets("org.start12.menu").forEach(function (w) {
+        if (found) return;
+        w.currentConfigGroup = ["General"];
+        w.writeConfig("openSettingsRequest", String(Date.now()));
+        w.reloadConfig();
+        found = true;
+    });
+});
+print(found ? "opened" : "Start12 is not on a panel");'
