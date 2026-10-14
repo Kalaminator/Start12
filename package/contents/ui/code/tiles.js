@@ -489,7 +489,7 @@ function nearest(rects, cur, dx, dy) {
 
 // Backup/restore (T13): quote any text for /bin/sh, and the command that writes text to a file.
 // Shell snippet resolving the Qt6 qdbus binary (name differs per distro).
-var QDBUS = "$(command -v qdbus6 || command -v qdbus-qt6 || echo /usr/lib/qt6/bin/qdbus)";
+var QDBUS = "$(command -v qdbus6 || command -v qdbus-qt6 || { [ -x /usr/lib/qt6/bin/qdbus ] && echo /usr/lib/qt6/bin/qdbus; } || echo qdbus)";
 
 function shQuote(s) {
     return "'" + String(s).replace(/'/g, "'\\''") + "'";
