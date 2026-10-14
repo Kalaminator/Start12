@@ -84,7 +84,7 @@ KCM.SimpleKCM {
             spacing: Kirigami.Units.smallSpacing
             Repeater {
                 model: page.cfg_recentAccents
-                Swatch { hex: modelData }
+                Swatch { required property var modelData; hex: modelData }
             }
         }
         GridLayout {
@@ -94,7 +94,7 @@ KCM.SimpleKCM {
             columnSpacing: Kirigami.Units.smallSpacing
             Repeater {
                 model: page.windowsColours
-                Swatch { hex: modelData }
+                Swatch { required property var modelData; hex: modelData }
             }
         }
         QQC2.Button {
