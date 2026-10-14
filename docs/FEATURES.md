@@ -139,7 +139,7 @@ Elige el estilo en la página *Menú de inicio*.
 - **Pro**: dos tonos, apps ancladas y un panel de lugares a la derecha.
 - **Launcher**: foto de cuenta grande, búsqueda y una cuadrícula grande de apps ancladas.
 
-## Página Menú de inicio
+## Página Menú Inicio
 
 - Elige el estilo del menú y su variante.
 - Para Windows XP: clásico o moderno, esquema de color (Azul, Verde oliva, Plata, Personalizado) y color del botón de inicio (verde XP o el del esquema).
@@ -150,7 +150,7 @@ Elige el estilo en la página *Menú de inicio*.
 - Escala global del menú, más pequeña o más grande que el tamaño original.
 - Copia de seguridad de los ajustes a un archivo, restaurarlos desde un archivo, o restablecer todo. La copia incluye mosaicos e iconos anclados.
 
-## Página Diseño
+## Página Distribución
 
 - Divisores de sección: abre el modo diseño para arrastrar los divisores (ver Modo diseño).
 - Mosaicos: en cuántas columnas se dividen, espacio entre mosaicos, tamaño del icono, ocultar el título (se ve como ayuda emergente) y bloquear la posición de los accesos del menú.
@@ -210,7 +210,7 @@ Elige el estilo en la página *Menú de inicio*.
 - Búsqueda en la barra: mostrar un cuadro de búsqueda y ajustar su ancho.
 - Altura, posición, panel flotante, ocultar automáticamente y agrupar tareas son ajustes de Plasma; la página tiene un botón para editar el panel.
 
-## Página Botón de inicio
+## Página Botón Inicio
 
 - Aspecto del botón: un icono, una imagen de botón Start11 (tu propio PNG) o cuatro cuadrados.
 - Elegir un icono, restablecerlo y ajustar su tamaño.
