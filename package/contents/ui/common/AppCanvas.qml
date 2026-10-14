@@ -7,6 +7,7 @@ import org.kde.plasma.components as PC3
 import org.kde.plasma.private.kicker as Kicker
 import org.kde.kirigami as Kirigami
 import org.kde.kitemmodels as KItemModels
+import Qt.labs.folderlistmodel
 import "../code/tiles.js" as Tiles
 
 // Start11 v2 "application canvas": tabs, each with Fences-like groups of icons.
@@ -14,6 +15,8 @@ import "../code/tiles.js" as Tiles
 // User tabs after them (key canvasLayout, Tiles.parseCanvas): own groups of apps, filled by dragging
 // apps in from the list or between groups. Right-click a tab / group header / empty space for the menus.
 // Groups get a colour and a recoloured texture from images/TabTextures, like Start11.
+// Group header menu (T16): colour, icon tinting / auto tint, rows, icon size, texture, launch all, A-Z.
+// Group sources: a folder (FolderListModel lists its files) or the installed Steam games.
 Item {
     id: canvas
 
@@ -65,11 +68,28 @@ Item {
     // Empty space / tab menu.
     readonly property var surfaceItems: [
         { text: i18n("New tab"), icon: "tab-new", run: () => canvas.newTab() }
-    ].concat(user >= 0 ? [{ text: i18n("Add group"), icon: "list-add", run: () => canvas.addGroup() }] : []).concat([
+    ].concat(user >= 0 ? [{ text: i18n("Add group"), icon: "list-add", run: () => canvas.addGroup() },
+                          { text: i18n("Add a folder as group…"), icon: "folder-new", run: () => canvas.addFolder() },
+                          { text: i18n("Add Steam folder"), icon: "applications-games", run: () => canvas.addSteam() }] : []).concat([
         { text: i18n("Always open on this tab"), icon: "bookmark-new", checkable: true, checked: cfg.canvasTab === tab,
           run: () => { canvas.cfg.canvasTab = canvas.tab; } }
     ])
     function addGroup() { save(Tiles.canvasAddGroup(layout, user, i18n("New group"))); }
+    // New group g on tab u with one setting, read from the layout at call time (dialogs are async).
+    function addGroupWith(u, name, key, value) {
+        const c = Tiles.canvasAddGroup(layout, u, name);
+        save(Tiles.canvasSet(c, u, c.tabs[u].groups.length - 1, key, value));
+    }
+    function addFolder() {
+        const u = user;
+        root.askFolder(url => canvas.addGroupWith(u, decodeURIComponent(url.replace(/\/$/, "").split("/").pop()), "folder", url));
+    }
+    // ponytail: Steam games are read once into a normal group; "Add Steam folder" again picks up new ones.
+    function addSteam() {
+        const u = user;
+        root.listSteamGames(ids => canvas.addGroupWith(u, "Steam", "ids", ids));
+    }
+    function set(g, key, value) { save(Tiles.canvasSet(layout, user, g, key, value)); }
     // Groups of the current tab: { name, src }. ("model" would clash with the Repeater's own.)
     readonly property var groups: {
         rev;
@@ -79,7 +99,7 @@ Item {
             return [{ name: i18n("Pinned"), src: pinnedModel }]
                 .concat(custom.length ? [{ name: i18n("Shortcuts"), custom: custom }] : []);
         }
-        if (user >= 0) return (layout.tabs[user]?.groups ?? []).map((g, i) => ({ name: g.name, colour: g.colour, ids: g.ids, g: i }));
+        if (user >= 0) return (layout.tabs[user]?.groups ?? []).map((g, i) => Object.assign({}, g, { g: i }));
         if (tab === 2) return [{ name: i18n("Most used"), src: root.frequentAppsModel },
                                { name: i18n("Recent files"), src: recentDocs }];
         const rm = root.rootModel;
@@ -194,9 +214,71 @@ Item {
                     required property var modelData
                     required property int index
                     readonly property bool isUser: modelData?.ids !== undefined
-                    readonly property var src: modelData?.src ?? (isUser ? own : null)
-                    readonly property color tint: modelData?.colour || canvas.groupColor(index)
+                    readonly property string folder: modelData?.folder ?? ""
+                    readonly property bool takesDrops: isUser && !folder
+                    readonly property var src: modelData?.src ?? (folder ? folderModel : isUser ? own : null)
+                    readonly property color tint: modelData?.tint === "auto" && autoTint.dominant.valid ? autoTint.dominant
+                                                  : modelData?.colour || canvas.groupColor(index)
                     readonly property var customs: modelData?.custom ?? null
+                    readonly property real iconSize: m.px(modelData?.iconSize || 28)
+                    readonly property int texture: modelData?.texture ?? 0
+                    readonly property int needRows: Math.max(1, Math.ceil(count / cols))
+                    readonly property int shownRows: modelData?.rows > 0 ? Math.min(modelData.rows, needRows) : needRows
+                    function iconOf(row) {
+                        if (customs) return customs[row]?.icon || "folder";
+                        if (!src || row < 0) return "";
+                        if (folder) return Tiles.fileIcon(src.get(row, "fileName"), src.get(row, "fileIsDir"));
+                        return canvas.roleData(src, row, "decoration");
+                    }
+                    function launchAll() {
+                        const rs = rows.slice();   // triggering may reorder Most used
+                        for (let i = 0; i < count; i++) {
+                            if (customs) root.openCustom(customs[i]);
+                            else if (folder) Qt.openUrlExternally(src.get(rs[i], "fileUrl"));
+                            else src.trigger(rs[i], "", null);
+                        }
+                        root.close();
+                    }
+                    function sortAZ() {
+                        const names = {};
+                        for (let r = 0; r < own.count; r++) names[canvas.appId(own, r)] = canvas.roleData(own, r, "display");
+                        canvas.save(Tiles.canvasSort(canvas.layout, canvas.user, modelData.g, names));
+                    }
+                    // "Auto tint": the group takes the main colour of its first icon.
+                    Kirigami.ImageColors {
+                        id: autoTint
+                        source: group.modelData?.tint === "auto" && group.count ? group.iconOf(group.customs ? 0 : group.rows[0]) : ""
+                        onSourceChanged: update()
+                    }
+                    FolderListModel {
+                        id: folderModel
+                        folder: group.folder
+                        showDirsFirst: true
+                    }
+                    // Header right-click: settings of a user group; Launch entire group on every group.
+                    function menuItems() {
+                        const d = modelData, g = d.g;
+                        const launch = { text: i18n("Launch entire group"), icon: "system-run", enabled: count > 0, run: () => group.launchAll() };
+                        if (!isUser) return [launch];
+                        const pick = (key, list) => list.map(o => ({ text: o[0], checkable: true, checked: (d[key] ?? o[2]) === o[1],
+                                                                  run: () => canvas.set(g, key, o[1]) }));
+                        const textures = [[i18n("Automatic"), 0, 0], [i18n("None"), -1]];
+                        for (let i = 1; i <= 24; i++) textures.push([i18n("Texture %1", i), i]);
+                        return [
+                            { text: i18n("Rename"), icon: "edit-rename",
+                              run: () => root.askName(d.name, n => canvas.save(Tiles.canvasRename(canvas.layout, canvas.user, g, n))) },
+                            { text: i18n("Colour…"), icon: "color-management", run: () => root.askColour(d.colour || tint, c => canvas.set(g, "colour", c)) },
+                            { text: i18n("Automatic colour"), checkable: true, checked: !d.colour, run: () => canvas.set(g, "colour", "") },
+                            { text: i18n("Icon tinting"), checkable: true, checked: d.tint === "icons", run: () => canvas.set(g, "tint", d.tint === "icons" ? "" : "icons") },
+                            { text: i18n("Auto tint"), checkable: true, checked: d.tint === "auto", run: () => canvas.set(g, "tint", d.tint === "auto" ? "" : "auto") },
+                            { text: i18n("Rows"), icon: "view-grid", subActions: pick("rows", [[i18n("Automatic"), 0, 0], ["1", 1], ["2", 2], ["3", 3], ["4", 4], ["5", 5], ["6", 6]]) },
+                            { text: i18n("Icon size"), icon: "zoom-in", subActions: pick("iconSize", [[i18n("Small"), 22], [i18n("Medium"), 0, 0], [i18n("Large"), 40]]) },
+                            { text: i18n("Background texture"), icon: "games-config-background", subActions: pick("texture", textures) },
+                            { type: "separator" },
+                            launch,
+                            { text: i18n("Resort A-Z"), icon: "view-sort-ascending", enabled: !folder, run: () => group.sortAZ() },
+                            { text: i18n("Delete group"), icon: "edit-delete", run: () => canvas.save(Tiles.canvasDeleteGroup(canvas.layout, canvas.user, g)) }];
+                    }
                     // Source rows that are not hidden (pins stay), cell i shows src row rows[i].
                     readonly property var rows: {
                         const out = [];
@@ -209,7 +291,7 @@ Item {
                     readonly property int count: customs ? customs.length : rows.length
                     readonly property int cols: Math.max(1, Math.floor((width - m.px(8)) / canvas.cellW))
                     width: flow.groupWidth
-                    height: header.height + Math.max(1, Math.ceil(count / cols)) * canvas.cellH + m.px(8)
+                    height: header.height + shownRows * canvas.cellH + m.px(8)
                     radius: m.px(6)
                     color: Qt.alpha(tint, 0.22)
                     border.color: Qt.alpha(tint, 0.6)
@@ -223,7 +305,7 @@ Item {
                     // Dropped on the group, not on an app: add at the end.
                     DropArea {
                         anchors.fill: parent
-                        enabled: group.isUser
+                        enabled: group.takesDrops
                         keys: ["start12-tile"]
                         onDropped: d => canvas.place(d.source.favoriteId, group.modelData.g, "")
                     }
@@ -231,8 +313,8 @@ Item {
                     // Grey Start11 texture, coloured by the tint under it.
                     Image {
                         anchors.fill: parent
-                        visible: canvas.cfg.canvasTextures
-                        source: Qt.resolvedUrl("../../images/TabTextures/" + String(group.index % 24 + 1).padStart(2, "0") + ".png")
+                        visible: canvas.cfg.canvasTextures && group.texture >= 0
+                        source: Qt.resolvedUrl("../../images/TabTextures/" + String(group.texture > 0 ? group.texture : group.index % 24 + 1).padStart(2, "0") + ".png")
                         fillMode: Image.Tile
                         opacity: 0.18
                     }
@@ -245,16 +327,9 @@ Item {
                         color: Qt.alpha(group.tint, 0.75)
                         MouseArea {
                             anchors.fill: parent
-                            enabled: group.isUser
                             acceptedButtons: Qt.RightButton
-                            onClicked: m => {
-                                const u = canvas.user, g = group.modelData.g;
-                                canvas.contextMenu.show(header, null, -1, [
-                                    { text: i18n("Rename"), icon: "edit-rename",
-                                      run: () => root.askName(group.modelData.name, n => canvas.save(Tiles.canvasRename(canvas.layout, u, g, n))) },
-                                    { text: i18n("Delete group"), icon: "edit-delete", run: () => canvas.save(Tiles.canvasDeleteGroup(canvas.layout, u, g)) },
-                                    { type: "separator" }].concat(canvas.surfaceItems), m.x, m.y);
-                            }
+                            onClicked: m => canvas.contextMenu.show(header, null, -1,
+                                group.menuItems().concat([{ type: "separator" }], canvas.surfaceItems), m.x, m.y)
                         }
                         PC3.Label {
                             anchors.fill: parent
@@ -283,10 +358,19 @@ Item {
                         font.pixelSize: m.fontSize
                     }
 
-                    Grid {
+                    // Rows setting: the group shows that many rows and scrolls the rest.
+                    Flickable {
                         anchors.top: header.bottom
                         anchors.topMargin: m.px(4)
-                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: parent.width
+                        height: group.shownRows * canvas.cellH
+                        contentHeight: cellGrid.height
+                        interactive: contentHeight > height
+                        boundsBehavior: Flickable.StopAtBounds
+                        clip: true
+                    Grid {
+                        id: cellGrid
+                        x: (group.width - width) / 2
                         columns: group.cols
                         Repeater {
                             model: group.count
@@ -295,10 +379,9 @@ Item {
                                 required property int index
                                 readonly property int row: group.rows[index] ?? -1
                                 function role(name) {
-                                    if (group.customs) {
-                                        const c = group.customs[index];
-                                        return name === "display" ? c.name : name === "decoration" ? (c.icon || "folder") : undefined;
-                                    }
+                                    if (name === "decoration") return group.iconOf(group.customs ? index : row);
+                                    if (group.customs) return name === "display" ? group.customs[index].name : undefined;
+                                    if (group.folder) return name === "display" && row >= 0 ? group.src.get(row, "fileName") : undefined;
                                     // src is null for a moment while the groups are rebuilt
                                     return group.src ? canvas.roleData(group.src, row, name) : undefined;
                                 }
@@ -308,6 +391,10 @@ Item {
                                 onClicked: {
                                     if (group.customs) {
                                         root.openCustom(group.customs[index]);
+                                        return;
+                                    }
+                                    if (group.folder) {
+                                        root.openUrl(group.src.get(row, "fileUrl"));
                                         return;
                                     }
                                     group.src.trigger(row, "", null);
@@ -328,9 +415,11 @@ Item {
                                     spacing: m.px(4)
                                     Kirigami.Icon {
                                         anchors.horizontalCenter: parent.horizontalCenter
-                                        width: m.px(28)
+                                        width: group.iconSize
                                         height: width
                                         source: cell.role("decoration") ?? ""
+                                        isMask: group.modelData?.tint === "icons"
+                                        color: group.tint
                                     }
                                     PC3.Label {
                                         width: cell.width - m.px(8)
@@ -344,6 +433,7 @@ Item {
                                     }
                                 }
                                 function menu(x, y) {
+                                    if (group.folder) return;   // plain files: no app actions
                                     if (group.customs) {
                                         const c = group.customs[index];
                                         canvas.contextMenu.show(cell, null, -1, [{ text: i18n("Unpin from Start"), icon: "window-unpin",
@@ -362,7 +452,7 @@ Item {
                                 // Drop on an app of a user group: insert before it.
                                 DropArea {
                                     anchors.fill: parent
-                                    enabled: group.isUser
+                                    enabled: group.takesDrops
                                     keys: ["start12-tile"]
                                     onDropped: d => canvas.place(d.source.favoriteId, group.modelData.g, canvas.appId(group.src, cell.row))
                                 }
@@ -376,7 +466,7 @@ Item {
                                     property bool dragging: false
                                     onPressed: m => pressPos = Qt.point(m.x, m.y)
                                     onPositionChanged: m => {
-                                        if (!dragging && pressed && group.isUser && Math.hypot(m.x - pressPos.x, m.y - pressPos.y) > Qt.styleHints.startDragDistance) {
+                                        if (!dragging && pressed && group.takesDrops && Math.hypot(m.x - pressPos.x, m.y - pressPos.y) > Qt.styleHints.startDragDistance) {
                                             dragging = true;
                                             canvas.ghost.favoriteId = canvas.appId(group.src, cell.row);
                                             canvas.ghost.icon = cell.role("decoration");
@@ -406,6 +496,7 @@ Item {
                                 }
                             }
                         }
+                    }
                     }
                 }
             }

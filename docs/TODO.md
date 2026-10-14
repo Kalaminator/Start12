@@ -119,7 +119,7 @@ group", "Rename", "Delete group", "Move tab left/right"; drag pins between group
 "Always open on this tab" uses `canvasTab`. Helpers + tests in `code/tiles.js` (`placeInList` style).
 Check: make tab "Work" with two groups, drag apps in, restart plasmashell, layout kept.
 
-### T16 App canvas: group settings and sources (M)
+### T16 App canvas: group settings and sources (M) -- DONE (recent searches source left for T18)
 Build (after T15): per-group settings menu in `AppCanvas.qml`: colour, "Icon tinting"/"Auto tint"
 (`Kirigami.ImageColors`), row count (Automatic/1/2/...), icon size, "Launch entire group", "Resort A-Z",
 "Background texture" pick (TabTextures already shipped); group sources: "Add a folder as group"

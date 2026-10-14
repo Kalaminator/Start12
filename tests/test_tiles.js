@@ -4,7 +4,7 @@ const path = require("path");
 const assert = require("assert");
 const src = fs.readFileSync(path.join(__dirname, "../package/contents/ui/code/tiles.js"), "utf8")
     .replace(/^\.pragma library/m, "");
-const T = new Function(src + "; return { pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder, parsePages, setPage, newPage, deletePage, moveGroupToPage, shQuote, writeFileCmd, parseCanvas, canvasAddTab, canvasDeleteTab, canvasMoveTab, canvasAddGroup, canvasDeleteGroup, canvasRename, canvasPlace, canvasRemove };")();
+const T = new Function(src + "; return { pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder, parsePages, setPage, newPage, deletePage, moveGroupToPage, shQuote, writeFileCmd, parseCanvas, canvasAddTab, canvasDeleteTab, canvasMoveTab, canvasAddGroup, canvasDeleteGroup, canvasRename, canvasPlace, canvasRemove, canvasSet, canvasSort, fileIcon };")();
 
 // 6 columns = 12 units wide: six medium tiles fit in one row.
 let p = T.pack(Array(6).fill({ size: "medium" }), 6);
@@ -131,6 +131,12 @@ assert.deepStrictEqual([C.tabs[1].name, C.tabs[0].groups[1].name], ["Y", "Dev"])
 assert.strictEqual(T.canvasMoveTab(C, 0, -1), C);
 assert.deepStrictEqual(T.canvasMoveTab(C, 0, 1).tabs.map(t => t.name), ["Y", "Work"]);
 assert.deepStrictEqual(T.parseCanvas(JSON.stringify(T.canvasDeleteTab(C, 0))).tabs.map(t => t.name), ["Y"]);
+// Group settings, A-Z resort, folder file icons.
+C = T.canvasSet(C, 0, 0, "rows", 2);
+assert.strictEqual(C.tabs[0].groups[0].rows, 2);
+C = T.canvasSet(C, 0, 0, "ids", ["z", "x", "y", "gone"]);
+assert.deepStrictEqual(T.canvasSort(C, 0, 0, { z: "Zed", x: "alpha", y: "Beta" }).tabs[0].groups[0].ids, ["x", "y", "z", "gone"]);
+assert.deepStrictEqual([T.fileIcon("A.PDF"), T.fileIcon("x", true), T.fileIcon("noext")], ["application-pdf", "folder", "text-x-generic"]);
 // Backup file write survives quotes, $, newlines, unicode, spaces in the path.
 {
     const os = require("os"), cp = require("child_process");

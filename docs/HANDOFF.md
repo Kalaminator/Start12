@@ -63,11 +63,11 @@ Backup/restore (T13): ConfigStyle "Backup settings…"/"Restore settings…" Fil
 Start button menu (T10): `contextualActions` "Show desktop" (kglobalaccel) + "Edit panel" (ids `desktop`,`editpanel` in `buttonMenuItems`, ConfigButton); applies to every style incl. XP pill (Plasma owns the right-click, StartButton has no menu of its own); "Lock menu" already existed in TileArea.
 Full screen (T14): keys `fullScreen`/`keepPanelVisible` (ConfigStyle checkboxes); `main.qml fullRect` (containment screenGeometry or availableScreenRect) sets popup width, `Metrics.heightFor` returns its height for every style; height drag not saved then. Win10 tile groups wrap via TileArea Flow. Needs a user check (Plasma may clamp the popup to the panel side).
 Canvas tabs (T15): key `canvasLayout` JSON (`Tiles.parseCanvas/canvasPlace/...`), user tabs after Pinned/Apps/Recent (`AppCanvas.user` = tab - 3), apps only (no folders/websites); drag from AppList or between groups (DragGhost), right-click tab/header/empty space; `canvasTab` now set only by "Always open on this tab"; `root.askName(current, fn)` reuses renameDialog. Needs a user check.
-Missing: canvas: group pages/settings, folders, icon tint (T16). Plasma keeps one popup size for all styles (user drags it).
+Canvas group settings (T16): user-group header menu (colour, Icon tinting = `isMask`, Auto tint = `Kirigami.ImageColors`, rows/icon size/texture submenus, Launch entire group, Resort A-Z = `Tiles.canvasSort`), group fields via `Tiles.canvasSet`; sources "Add a folder as group" (`folder` url, FolderListModel, `Tiles.fileIcon`) and "Add Steam folder" (main.qml `listSteamGames` greps ~/.local/share/applications for steam://rungameid, read once). "Recent searches" waits for T18. Needs a user check. Plasma keeps one popup size for all styles (user drags it).
 
 ## Next (in order)
 Work through docs/TODO.md job by job (T01, T02, T03, T04 done). Use the prompt in docs/AGENT_PROMPT.md, one agent per job,
-then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03-T09 built (need a user check), T10-T11 built, T12-T15 built, next: T16.
+then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03-T09 built (need a user check), T10-T11 built, T12-T16 built, next: T17.
 Then the taskbar part of Start11 (section 10 of the features doc), if the user wants it.
 
 ## Testing tips

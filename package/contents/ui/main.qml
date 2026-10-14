@@ -366,7 +366,8 @@ PlasmoidItem {
     }
     Dialogs.ColorDialog {
         id: colorDialog
-        onAccepted: root.saveGroups(Tiles.setProp(root.groups, root.pickingTile, "color", selectedColor.toString()))
+        property var apply: null   // set by askColour; null = tile colour
+        onAccepted: apply ? apply(selectedColor.toString()) : root.saveGroups(Tiles.setProp(root.groups, root.pickingTile, "color", selectedColor.toString()))
     }
     function pickTileIcon(id) {
         pickingTile = id;
@@ -375,9 +376,39 @@ PlasmoidItem {
     }
     function pickTileColor(id, current) {
         pickingTile = id;
+        colorDialog.apply = null;
         colorDialog.selectedColor = current || "#3a3a44";
         close();
         colorDialog.open();
+    }
+    // Same dialogs for canvas groups: fn(colour) / fn(folderUrl) runs on OK.
+    function askColour(current, fn) {
+        colorDialog.apply = fn;
+        colorDialog.selectedColor = current || "#3a3a44";
+        close();
+        colorDialog.open();
+    }
+    function askFolder(fn) {
+        close();
+        pinFolderDialog.apply = fn;
+        pinFolderDialog.open();
+    }
+    // Desktop ids of installed Steam games (Steam writes <Game>.desktop with steam://rungameid), for fn(ids).
+    property var steamDone: null
+    function listSteamGames(fn) {
+        steamDone = fn;
+        steamLister.connectSource("grep -l steam://rungameid ~/.local/share/applications/*.desktop; true");
+    }
+    P5Support.DataSource {
+        id: steamLister
+        engine: "executable"
+        connectedSources: []
+        onNewData: (sourceName, data) => {
+            disconnectSource(sourceName);
+            const ids = (data.stdout || "").split("\n").filter(l => l).map(l => l.split("/").pop());
+            if (root.steamDone) root.steamDone(ids);
+            root.steamDone = null;
+        }
     }
 
     // "Pin website / file / folder" from the menu-surface right-click menus.
@@ -388,8 +419,9 @@ PlasmoidItem {
     }
     Dialogs.FolderDialog {
         id: pinFolderDialog
-        title: i18n("Pin folder to Start")
-        onAccepted: root.pin(Tiles.customFor(selectedFolder.toString(), "folder"))
+        property var apply: null   // set by askFolder; null = pin the folder
+        title: apply ? i18n("Add a folder as group") : i18n("Pin folder to Start")
+        onAccepted: apply ? apply(selectedFolder.toString()) : root.pin(Tiles.customFor(selectedFolder.toString(), "folder"))
     }
     // A plain window: the popup is closed, so an in-popup Kirigami dialog can't show.
     Window {
@@ -460,7 +492,10 @@ PlasmoidItem {
         close();
         if (kind === "web") webDialog.show();
         else if (kind === "file") pinFileDialog.open();
-        else pinFolderDialog.open();
+        else {
+            pinFolderDialog.apply = null;
+            pinFolderDialog.open();
+        }
     }
     // Menu-surface entries for TileArea and PinnedGrid.
     readonly property var pinNewItems: [

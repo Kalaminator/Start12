@@ -336,6 +336,36 @@ function canvasRemove(c, t, id) {
     c.tabs[t].groups.forEach(function (x) { x.ids = x.ids.filter(function (y) { return y !== id; }); });
     return c;
 }
+// Group settings (T16): colour, tint ("" | "icons" | "auto"), rows (0 = all), iconSize (0 = default),
+// texture (0 = by position, -1 = none, 1..24), folder (url: the group lists that folder's files).
+function canvasSet(c, t, g, key, value) {
+    c = clone(c);
+    c.tabs[t].groups[g][key] = value;
+    return c;
+}
+// Resort A-Z by names { id: name }; ids without a name keep their order at the end.
+function canvasSort(c, t, g, names) {
+    c = clone(c);
+    var x = c.tabs[t].groups[g];
+    var named = x.ids.filter(function (id) { return names[id] !== undefined; });
+    named.sort(function (a, b) { return String(names[a]).localeCompare(String(names[b])); });
+    x.ids = named.concat(x.ids.filter(function (id) { return names[id] === undefined; }));
+    return c;
+}
+// Theme icon name for a file of a folder group (FolderListModel has no mime type).
+function fileIcon(name, isDir) {
+    if (isDir) return "folder";
+    var ext = String(name).toLowerCase().split(".").pop();
+    var map = { pdf: "application-pdf", png: "image-x-generic", jpg: "image-x-generic", jpeg: "image-x-generic",
+                svg: "image-x-generic", gif: "image-x-generic", webp: "image-x-generic", mp3: "audio-x-generic",
+                ogg: "audio-x-generic", flac: "audio-x-generic", wav: "audio-x-generic", mp4: "video-x-generic",
+                mkv: "video-x-generic", webm: "video-x-generic", zip: "package-x-generic", gz: "package-x-generic",
+                xz: "package-x-generic", tar: "package-x-generic", txt: "text-plain", md: "text-plain",
+                sh: "text-x-script", py: "text-x-script", js: "text-x-script", html: "text-html",
+                odt: "x-office-document", docx: "x-office-document", ods: "x-office-spreadsheet",
+                xlsx: "x-office-spreadsheet", desktop: "application-x-desktop" };
+    return map[ext] || "text-x-generic";
+}
 
 // Move group "from" so it ends up before the group now at "to" (to === length: last).
 function moveGroup(groups, from, to) {
