@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Start12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-14 17:16+0200\n"
+"POT-Creation-Date: 2026-10-14 17:19+0200\n"
 "PO-Revision-Date: 2026-10-14 12:00+0000\n"
 "Last-Translator: Start12\n"
 "Language-Team: Spanish\n"
@@ -623,7 +623,7 @@ msgid "Round the corners of the menu:"
 msgstr "Redondear las esquinas del menú:"
 
 #: package/contents/ui/config/ConfigLook.qml:93
-#: package/contents/ui/config/ConfigTaskbar.qml:58
+#: package/contents/ui/config/ConfigTaskbar.qml:60
 msgid "Square"
 msgstr "Cuadradas"
 
@@ -1347,48 +1347,58 @@ msgstr ""
 "la ventana de configuración para terminar; se cierra, así no se vuelven a "
 "escribir los valores antiguos."
 
-#: package/contents/ui/config/ConfigTaskbar.qml:33
+#: package/contents/ui/config/ConfigTaskbar.qml:35
 msgid "Apply matching XP taskbar theme"
 msgstr "Aplicar el tema de barra de tareas XP correspondiente"
 
-#: package/contents/ui/config/ConfigTaskbar.qml:37
+#: package/contents/ui/config/ConfigTaskbar.qml:39
 msgid "Taskbar follows the menu style"
 msgstr "La barra de tareas sigue el estilo del menú"
 
-#: package/contents/ui/config/ConfigTaskbar.qml:42
+#: package/contents/ui/config/ConfigTaskbar.qml:44
 msgid "Override the taskbar colour"
 msgstr "Cambiar el color de la barra de tareas"
 
-#: package/contents/ui/config/ConfigTaskbar.qml:48
+#: package/contents/ui/config/ConfigTaskbar.qml:50
 msgid "Custom taskbar:"
 msgstr "Barra de tareas personalizada:"
 
-#: package/contents/ui/config/ConfigTaskbar.qml:52
+#: package/contents/ui/config/ConfigTaskbar.qml:54
 #, javascript-format
 msgid "%1% opaque"
 msgstr "%1% opaco"
 
-#: package/contents/ui/config/ConfigTaskbar.qml:61
+#: package/contents/ui/config/ConfigTaskbar.qml:63
 msgid "Light line on the taskbar edge"
 msgstr "Línea clara en el borde de la barra de tareas"
 
-#: package/contents/ui/config/ConfigTaskbar.qml:68
+#: package/contents/ui/config/ConfigTaskbar.qml:69
+msgid "Search:"
+msgstr "Búsqueda:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:70
+msgid "Show search on taskbar"
+msgstr "Mostrar la búsqueda en la barra de tareas"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:75
+msgid "Search box width:"
+msgstr "Ancho del cuadro de búsqueda:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:87
 msgid ""
 "Panel height, position, floating, auto-hide and task grouping are handled by "
 "Plasma itself."
-msgstr "La altura, la posición, el modo flotante, el ocultado automático y la agrupación de tareas los gestiona el propio Plasma."
+msgstr ""
+"La altura, la posición, el modo flotante, el ocultado automático y la "
+"agrupación de tareas los gestiona el propio Plasma."
 
-#: package/contents/ui/config/ConfigTaskbar.qml:71
+#: package/contents/ui/config/ConfigTaskbar.qml:90
 msgid "Plasma settings:"
 msgstr "Ajustes de Plasma:"
 
-#: package/contents/ui/config/ConfigTaskbar.qml:73
+#: package/contents/ui/config/ConfigTaskbar.qml:92
 msgid "Edit panel…"
 msgstr "Editar panel…"
-
-#: package/contents/ui/config/ConfigTaskbar.qml:78
-msgid "Task Manager settings…"
-msgstr "Ajustes del administrador de tareas…"
 
 #: package/contents/ui/ContextMenu.qml:36
 msgid "Open file location"
@@ -1451,14 +1461,15 @@ msgctxt "@action:inmenu"
 msgid "Edit Applications…"
 msgstr "Editar aplicaciones…"
 
-#: package/contents/ui/StartButton.qml:166
-msgid "start"
-msgstr "inicio"
-
+#: package/contents/ui/StartButton.qml:59
 #: package/contents/ui/styles/windows11.qml:87
 #: package/contents/ui/win10/SearchView.qml:160
 msgid "Type here to search"
 msgstr "Escribe aquí para buscar"
+
+#: package/contents/ui/StartButton.qml:233
+msgid "start"
+msgstr "inicio"
 
 #: package/contents/ui/styles/windows11.qml:138
 #: package/contents/ui/styles/windows11.qml:183
@@ -1645,3 +1656,6 @@ msgstr "Cambiar tamaño"
 #: package/contents/ui/win10/Tile.qml:171
 msgid "Wide"
 msgstr "Ancho"
+
+#~ msgid "Task Manager settings…"
+#~ msgstr "Ajustes del administrador de tareas…"

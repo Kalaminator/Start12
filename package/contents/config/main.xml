@@ -257,6 +257,14 @@
       <label>Light line on the taskbar edge (off = Start11 HideTaskbarLineEntirely)</label>
       <default>false</default>
     </entry>
+    <entry name="taskbarSearch" type="Bool">
+      <label>Search box next to the start button (Start11 "Show search on taskbar")</label>
+      <default>false</default>
+    </entry>
+    <entry name="taskbarSearchWidth" type="Int">
+      <label>Width of the taskbar search box, px</label>
+      <default>220</default>
+    </entry>
     <entry name="savedDesktopTheme" type="String">
       <label>Plasma Style that was active before the XP / generated taskbar theme; restored when both are off</label>
       <default></default>

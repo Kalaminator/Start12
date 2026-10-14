@@ -1,8 +1,10 @@
 import QtQuick
+import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
+import "common"
 
 // The start button in the panel. Start11 button images hold 3 frames stacked
 // top to bottom: normal, hover, pressed.
@@ -11,7 +13,7 @@ MouseArea {
 
     readonly property var cfg: Plasmoid.configuration
     readonly property bool vertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
-    readonly property int frame: pressed || root.expanded ? 2 : (containsMouse ? 1 : 0)
+    readonly property int frame: pressed || root.expanded ? 2 : (onFace ? 1 : 0)
     readonly property string imageSource: cfg.buttonImage.startsWith("/")
         ? "file://" + cfg.buttonImage
         : Qt.resolvedUrl("../images/StartButtons/" + cfg.buttonImage)
@@ -21,23 +23,88 @@ MouseArea {
     readonly property bool xp: cfg.menuStyle === "xp" && !vertical
     readonly property string iconSource: cfg.buttonIcon === "" ? Qt.resolvedUrl("../images/StartIcon.svg")
               : cfg.buttonIcon.startsWith("/") ? "file://" + cfg.buttonIcon : cfg.buttonIcon
-    Layout.preferredWidth: vertical ? -1 : xp ? xpPill.implicitWidth : (cfg.buttonMode === 0 && sheet.status === Image.Ready
+    readonly property real buttonWidth: xp ? xpPill.implicitWidth : (cfg.buttonMode === 0 && sheet.status === Image.Ready
         ? Math.round(side * sheet.sourceSize.width / (sheet.sourceSize.height / 3)) : side)
+    // Start11 "Show search on taskbar" (T30): a field right of the button, horizontal panels only.
+    readonly property bool showSearch: cfg.taskbarSearch && !vertical
+    Layout.preferredWidth: vertical ? -1 : buttonWidth + (showSearch ? cfg.taskbarSearchWidth + 4 : 0)
     Layout.preferredHeight: vertical ? width : -1
     Layout.minimumWidth: Layout.preferredWidth
     Layout.minimumHeight: Layout.preferredHeight
 
     hoverEnabled: true
+    readonly property bool onFace: containsMouse && (vertical || mouseX < buttonWidth)
     property bool wasExpanded
     onPressed: wasExpanded = root.expanded
-    onClicked: root.expanded = !wasExpanded
+    onClicked: mouse => { if (vertical || mouse.x < buttonWidth) root.expanded = !wasExpanded; }
+
+    // The button's own area; the search field sits to its right.
+    Item {
+        id: face
+        width: button.vertical ? parent.width : button.buttonWidth
+        height: parent.height
+    }
+
+    // Typing opens the menu on the search results (SearchView); the menu's own search box then
+    // carries on (both show root.searchText). Esc or closing the menu empties it.
+    Metrics { id: m }
+    QQC2.TextField {
+        id: field
+        visible: button.showSearch
+        x: button.buttonWidth + 4
+        width: button.cfg.taskbarSearchWidth
+        height: Math.min(parent.height - 4, m.px(32))
+        anchors.verticalCenter: parent.verticalCenter
+        text: root.searchText
+        placeholderText: i18n("Type here to search")
+        color: m.text
+        placeholderTextColor: Qt.rgba(m.text.r, m.text.g, m.text.b, 0.6)
+        font.family: m.font
+        font.pixelSize: m.fontSize
+        leftPadding: height
+        verticalAlignment: TextInput.AlignVCenter
+        background: Rectangle {
+            color: Qt.rgba(m.bg.r, m.bg.g, m.bg.b, m.bgAlpha)
+            border.width: 1
+            border.color: field.activeFocus ? m.accent : Qt.rgba(m.text.r, m.text.g, m.text.b, 0.25)
+            radius: 3
+        }
+        Kirigami.Icon {
+            anchors.left: parent.left
+            anchors.leftMargin: Math.round((parent.height - height) / 2)
+            anchors.verticalCenter: parent.verticalCenter
+            width: Math.round(parent.height * 0.5)
+            height: width
+            source: "search"
+            color: m.text
+            isMask: true
+        }
+        // A panel only takes keyboard focus while an applet asks for input.
+        property int oldStatus: PlasmaCore.Types.ActiveStatus
+        onPressed: {
+            if (Plasmoid.status !== PlasmaCore.Types.AcceptingInputStatus) oldStatus = Plasmoid.status;
+            Plasmoid.status = PlasmaCore.Types.AcceptingInputStatus;
+            forceActiveFocus();
+        }
+        onActiveFocusChanged: if (!activeFocus) Plasmoid.status = oldStatus
+        onTextEdited: {
+            root.searchText = text;
+            if (text !== "") root.expanded = true;
+        }
+        Keys.onReturnPressed: root.expanded = true
+        Keys.onEnterPressed: root.expanded = true
+        Keys.onEscapePressed: {
+            root.searchText = "";
+            root.expanded = false;
+        }
+    }
 
     Accessible.name: Plasmoid.title
     Accessible.role: Accessible.Button
 
     // Mode 0: Start11 image sheet.
     Item {
-        anchors.fill: parent
+        anchors.fill: face
         clip: true
         visible: !button.xp && button.cfg.buttonMode === 0
         Image {
@@ -56,7 +123,7 @@ MouseArea {
     Item {
         id: squares
         visible: !button.xp && button.cfg.buttonMode === 1
-        anchors.centerIn: parent
+        anchors.centerIn: face
         readonly property real size: Math.round(button.side * 0.42)
         width: size
         height: size
@@ -77,20 +144,20 @@ MouseArea {
         }
     }
     Rectangle {
-        anchors.fill: parent
+        anchors.fill: face
         visible: !button.xp && button.cfg.buttonMode !== 0
         radius: 4
         color: Kirigami.Theme.textColor
-        opacity: button.containsMouse || root.expanded ? 0.1 : 0
+        opacity: button.onFace || root.expanded ? 0.1 : 0
     }
 
     // Mode 2: any icon.
     Kirigami.Icon {
         visible: !button.xp && button.cfg.buttonMode === 2
-        anchors.fill: parent
+        anchors.fill: face
         anchors.margins: Math.round(button.side * (1 - button.cfg.buttonIconScale / 100) / 2)
         source: button.iconSource
-        active: button.containsMouse
+        active: button.onFace
     }
 
     // XP: green pill (classic: square left, round right; modern: fully round, glow on hover).
@@ -98,7 +165,7 @@ MouseArea {
     Item {
         id: xpPill
         visible: button.xp
-        anchors.fill: parent
+        anchors.fill: face
         readonly property bool modern: button.cfg.xpSubstyle === "modern"
         readonly property var schemeBase: ({ blue: "#2f6fd8", olive: "#7a924f", silver: "#9a9ab4" })
         readonly property color base: button.cfg.xpStartGreen ? "#3c9a3c"
@@ -129,7 +196,7 @@ MouseArea {
             color: "transparent"
             border.width: 2
             border.color: Qt.lighter(xpPill.base, 1.7)
-            opacity: button.containsMouse ? 0.6 : 0
+            opacity: button.onFace ? 0.6 : 0
             Behavior on opacity { NumberAnimation { duration: 120 } }
         }
         Rectangle {

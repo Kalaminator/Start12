@@ -17,6 +17,8 @@ KCM.SimpleKCM {
     property alias cfg_taskbarAlpha: tbAlpha.value
     property alias cfg_taskbarRadius: tbRadius.value
     property alias cfg_taskbarLine: tbLine.checked
+    property alias cfg_taskbarSearch: searchBox.checked
+    property alias cfg_taskbarSearchWidth: searchWidth.value
 
     P5Support.DataSource {
         id: executable
@@ -59,6 +61,23 @@ KCM.SimpleKCM {
                 valueFromText: t => parseInt(t) || 2
             }
             QQC2.CheckBox { id: tbLine; text: i18n("Light line on the taskbar edge") }
+        }
+
+        Item { Kirigami.FormData.isSection: true }
+        QQC2.CheckBox {
+            id: searchBox
+            Kirigami.FormData.label: i18n("Search:")
+            text: i18n("Show search on taskbar")
+        }
+        QQC2.SpinBox {
+            id: searchWidth
+            enabled: searchBox.checked
+            Kirigami.FormData.label: i18n("Search box width:")
+            from: 100
+            to: 600
+            stepSize: 10
+            textFromValue: v => v + " px"
+            valueFromText: t => parseInt(t) || 220
         }
 
         Item { Kirigami.FormData.isSection: true }

@@ -60,7 +60,7 @@ Build: id `autohide` in `buttonMenuItems` (ConfigButton list, main.qml `contextu
 Mirrors "Show autohide toggle on taskbar menu". Check: right-click the start button, "Auto-hide panel" hides the
 panel; again restores it.
 
-### T30 Search box on the taskbar (M)
+### T30 Search box on the taskbar (M) -- DONE (settings on the Taskbar page)
 Build: key `taskbarSearch` (Bool, default off, Start11 "Show search on taskbar") + `taskbarSearchWidth`; in
 `StartButton.qml` (horizontal panels only) add a TextField right of the button, `Layout.preferredWidth` grows the
 compact representation; typing or Enter sets `root.searchText` and `root.expanded = true` so SearchView opens with

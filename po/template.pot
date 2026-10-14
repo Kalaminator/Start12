@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-14 17:16+0200\n"
+"POT-Creation-Date: 2026-10-14 17:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -619,7 +619,7 @@ msgid "Round the corners of the menu:"
 msgstr ""
 
 #: package/contents/ui/config/ConfigLook.qml:93
-#: package/contents/ui/config/ConfigTaskbar.qml:58
+#: package/contents/ui/config/ConfigTaskbar.qml:60
 msgid "Square"
 msgstr ""
 
@@ -1323,47 +1323,55 @@ msgid ""
 "old values are written back."
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:33
+#: package/contents/ui/config/ConfigTaskbar.qml:35
 msgid "Apply matching XP taskbar theme"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:37
+#: package/contents/ui/config/ConfigTaskbar.qml:39
 msgid "Taskbar follows the menu style"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:42
+#: package/contents/ui/config/ConfigTaskbar.qml:44
 msgid "Override the taskbar colour"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:48
+#: package/contents/ui/config/ConfigTaskbar.qml:50
 msgid "Custom taskbar:"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:52
+#: package/contents/ui/config/ConfigTaskbar.qml:54
 #, javascript-format
 msgid "%1% opaque"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:61
+#: package/contents/ui/config/ConfigTaskbar.qml:63
 msgid "Light line on the taskbar edge"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:68
+#: package/contents/ui/config/ConfigTaskbar.qml:69
+msgid "Search:"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml:70
+msgid "Show search on taskbar"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml:75
+msgid "Search box width:"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml:87
 msgid ""
 "Panel height, position, floating, auto-hide and task grouping are handled by "
 "Plasma itself."
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:71
+#: package/contents/ui/config/ConfigTaskbar.qml:90
 msgid "Plasma settings:"
 msgstr ""
 
-#: package/contents/ui/config/ConfigTaskbar.qml:73
+#: package/contents/ui/config/ConfigTaskbar.qml:92
 msgid "Edit panel…"
-msgstr ""
-
-#: package/contents/ui/config/ConfigTaskbar.qml:78
-msgid "Task Manager settings…"
 msgstr ""
 
 #: package/contents/ui/ContextMenu.qml:36
@@ -1427,13 +1435,14 @@ msgctxt "@action:inmenu"
 msgid "Edit Applications…"
 msgstr ""
 
-#: package/contents/ui/StartButton.qml:166
-msgid "start"
-msgstr ""
-
+#: package/contents/ui/StartButton.qml:59
 #: package/contents/ui/styles/windows11.qml:87
 #: package/contents/ui/win10/SearchView.qml:160
 msgid "Type here to search"
+msgstr ""
+
+#: package/contents/ui/StartButton.qml:233
+msgid "start"
 msgstr ""
 
 #: package/contents/ui/styles/windows11.qml:138
