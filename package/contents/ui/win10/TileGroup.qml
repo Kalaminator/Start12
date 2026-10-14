@@ -23,6 +23,9 @@ Column {
     property string openFolder: ""
     readonly property var folder: group.tiles.find(t => t.id === openFolder && t.kind === "folder") || null
     readonly property var folderLayout: folder ? Tiles.pack(folder.tiles, metrics.columns) : null
+    // The folder row opens right under the folder's own tile row; tiles below it move down.
+    readonly property int folderRow: folder ? Tiles.rowEnd(layout.pos, group.tiles.indexOf(folder)) : 0
+    readonly property real folderShift: folder ? folderPanel.height + metrics.gap : 0
 
     width: metrics.groupWidth
     spacing: Math.round(6 * metrics.s)
@@ -160,7 +163,7 @@ Column {
     Item {
         id: body
         width: parent.width
-        height: Math.max(1, grp.layout.rows) * grp.cell - grp.metrics.gap
+        height: Math.max(1, grp.layout.rows) * grp.cell - grp.metrics.gap + grp.folderShift
 
         // Drop on empty space in the group: a tile goes at the end, a group goes after this one.
         DropArea {
@@ -197,7 +200,7 @@ Column {
                 ghost: grp.ghost
                 readonly property var p: grp.layout.pos[index]
                 x: p.x * grp.cell
-                y: p.y * grp.cell
+                y: p.y * grp.cell + (grp.folder && p.y >= grp.folderRow ? grp.folderShift : 0)
                 width: p.w * grp.cell - grp.metrics.gap
                 height: p.h * grp.cell - grp.metrics.gap
                 onNameKnown: name => grp.names[tile.id] = name
@@ -207,59 +210,61 @@ Column {
                 }
             }
         }
-    }
 
-    // ---- Opened folder ----
-    Rectangle {
-        visible: grp.folder !== null
-        width: parent.width
-        height: visible ? folderBody.y + folderBody.height + grp.metrics.gap * 2 : 0
-        radius: Math.round(2 * grp.metrics.s)
-        color: Qt.alpha(grp.metrics.tile, grp.metrics.tileAlpha * 0.6)
-
-        PC3.TextField {
-            id: folderName
-            x: grp.metrics.gap
-            y: grp.metrics.gap
-            width: parent.width - 2 * grp.metrics.gap - closeFolder.width
-            text: grp.folder ? grp.folder.name : ""
-            placeholderText: i18n("Name folder")
-            background: null
-            color: grp.metrics.text
-            font.family: grp.metrics.headerFont
-            font.pixelSize: grp.metrics.headerFontSize
-            onEditingFinished: if (grp.folder && text !== grp.folder.name)
-                root.saveGroups(Tiles.setProp(root.groups, grp.openFolder, "name", text))
-        }
-        PC3.ToolButton {
-            id: closeFolder
-            anchors.right: parent.right
-            anchors.verticalCenter: folderName.verticalCenter
-            icon.name: "go-up"
-            onClicked: grp.openFolder = ""
-        }
-        Item {
-            id: folderBody
-            y: folderName.y + folderName.height + grp.metrics.gap
+        // ---- Opened folder ----
+        Rectangle {
+            id: folderPanel
+            visible: grp.folder !== null
+            y: grp.folderRow * grp.cell
             width: parent.width
-            height: grp.folderLayout ? Math.max(1, grp.folderLayout.rows) * grp.cell - grp.metrics.gap : 0
-            Repeater {
-                model: grp.folder ? grp.folder.tiles : []
-                delegate: Tile {
-                    required property var modelData
-                    required property int index
-                    tile: modelData
-                    tileIndex: index
-                    groupIndex: grp.groupIndex
-                    folderId: grp.openFolder
-                    metrics: grp.metrics
-                    contextMenu: grp.contextMenu
-                    ghost: grp.ghost
-                    readonly property var p: grp.folderLayout.pos[index]
-                    x: p.x * grp.cell
-                    y: p.y * grp.cell
-                    width: p.w * grp.cell - grp.metrics.gap
-                    height: p.h * grp.cell - grp.metrics.gap
+            height: visible ? folderBody.y + folderBody.height + grp.metrics.gap * 2 : 0
+            radius: Math.round(2 * grp.metrics.s)
+            color: Qt.alpha(grp.metrics.tile, grp.metrics.tileAlpha * 0.6)
+
+            PC3.TextField {
+                id: folderName
+                x: grp.metrics.gap
+                y: grp.metrics.gap
+                width: parent.width - 2 * grp.metrics.gap - closeFolder.width
+                text: grp.folder ? grp.folder.name : ""
+                placeholderText: i18n("Name folder")
+                background: null
+                color: grp.metrics.text
+                font.family: grp.metrics.headerFont
+                font.pixelSize: grp.metrics.headerFontSize
+                onEditingFinished: if (grp.folder && text !== grp.folder.name)
+                    root.saveGroups(Tiles.setProp(root.groups, grp.openFolder, "name", text))
+            }
+            PC3.ToolButton {
+                id: closeFolder
+                anchors.right: parent.right
+                anchors.verticalCenter: folderName.verticalCenter
+                icon.name: "go-up"
+                onClicked: grp.openFolder = ""
+            }
+            Item {
+                id: folderBody
+                y: folderName.y + folderName.height + grp.metrics.gap
+                width: parent.width
+                height: grp.folderLayout ? Math.max(1, grp.folderLayout.rows) * grp.cell - grp.metrics.gap : 0
+                Repeater {
+                    model: grp.folder ? grp.folder.tiles : []
+                    delegate: Tile {
+                        required property var modelData
+                        required property int index
+                        tile: modelData
+                        tileIndex: index
+                        groupIndex: grp.groupIndex
+                        folderId: grp.openFolder
+                        metrics: grp.metrics
+                        contextMenu: grp.contextMenu
+                        ghost: grp.ghost
+                        readonly property var p: grp.folderLayout.pos[index]
+                        x: p.x * grp.cell
+                        y: p.y * grp.cell
+                        width: p.w * grp.cell - grp.metrics.gap
+                        height: p.h * grp.cell - grp.metrics.gap
+                    }
                 }
             }
         }

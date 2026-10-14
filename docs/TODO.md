@@ -213,7 +213,7 @@ also in the right-click menu of XP/Win7 most-used rows and PinnedPane (Pro, Laun
 also for App canvas pins.
 Check: qmllint; keys reach each of them; menus show the new entries.
 
-### T28 Polish: layout and leftovers (M)
+### T28 Polish: layout and leftovers (M) -- DONE
 Build: (1) full screen (T14): narrow styles (windows7/modern, xp, pro, launcher, app) keep their normal width and sit
 centred/anchored on the full-screen popup with a dim background instead of stretching; Win10/Win11 keep filling;
 (2) Win10 tile folder (T05) opens right under the folder's own tile row, not under the whole group;

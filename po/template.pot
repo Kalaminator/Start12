@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-14 15:54+0200\n"
+"POT-Creation-Date: 2026-10-14 16:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,13 +45,13 @@ msgstr ""
 #: package/contents/ui/common/AppCanvas.qml:56
 #: package/contents/ui/common/AppCanvas.qml:103
 #: package/contents/ui/common/PinnedPane.qml:42
-#: package/contents/ui/styles/windows11.qml:119
+#: package/contents/ui/styles/windows11.qml:120
 msgid "Pinned"
 msgstr ""
 
 #: package/contents/ui/common/AppCanvas.qml:56
 #: package/contents/ui/config/ConfigSearch.qml:23
-#: package/contents/ui/win10/SearchView.qml:29
+#: package/contents/ui/win10/SearchView.qml:30
 msgid "Apps"
 msgstr ""
 
@@ -114,123 +114,128 @@ msgstr ""
 msgid "Recent files"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:157
-#: package/contents/ui/common/AppCanvas.qml:277
+#: package/contents/ui/common/AppCanvas.qml:162
+#: package/contents/ui/common/AppCanvas.qml:281
+#: package/contents/ui/common/AppCanvas.qml:458
+#: package/contents/ui/common/AppCanvas.qml:466
 #: package/contents/ui/common/PinnedGrid.qml:138
-#: package/contents/ui/main.qml:467 package/contents/ui/styles/windows7.qml:285
+#: package/contents/ui/main.qml:472 package/contents/ui/styles/windows7.qml:285
 #: package/contents/ui/styles/xp.qml:345
 msgid "Rename"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:159
+#: package/contents/ui/common/AppCanvas.qml:164
 msgid "Move tab left"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:161
+#: package/contents/ui/common/AppCanvas.qml:166
 msgid "Move tab right"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:163
+#: package/contents/ui/common/AppCanvas.qml:168
 msgid "Delete tab"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:270
+#: package/contents/ui/common/AppCanvas.qml:274
 msgid "Launch entire group"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:274
-#: package/contents/ui/common/AppCanvas.qml:283
+#: package/contents/ui/common/AppCanvas.qml:278
+#: package/contents/ui/common/AppCanvas.qml:287
 msgid "Automatic"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:274
+#: package/contents/ui/common/AppCanvas.qml:278
 #: package/contents/ui/config/ConfigLook.qml:111
 #: package/contents/ui/config/ConfigLook.qml:132
 msgid "None"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:275
+#: package/contents/ui/common/AppCanvas.qml:279
 msgid "Texture %1"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:279
+#: package/contents/ui/common/AppCanvas.qml:283
 msgid "Colour…"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:280
+#: package/contents/ui/common/AppCanvas.qml:284
 msgid "Automatic colour"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:281
+#: package/contents/ui/common/AppCanvas.qml:285
 msgid "Icon tinting"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:282
+#: package/contents/ui/common/AppCanvas.qml:286
 msgid "Auto tint"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:283
+#: package/contents/ui/common/AppCanvas.qml:287
 msgid "Rows"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:284
+#: package/contents/ui/common/AppCanvas.qml:288
 msgid "Icon size"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:284
+#: package/contents/ui/common/AppCanvas.qml:288
 #: package/contents/ui/config/ConfigStyle.qml:142
 #: package/contents/ui/win10/Tile.qml:171
 msgid "Small"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:284
+#: package/contents/ui/common/AppCanvas.qml:288
 #: package/contents/ui/win10/Tile.qml:171
 msgid "Medium"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:284
+#: package/contents/ui/common/AppCanvas.qml:288
 #: package/contents/ui/win10/Tile.qml:171
 msgid "Large"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:285
+#: package/contents/ui/common/AppCanvas.qml:289
 msgid "Background texture"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:288
+#: package/contents/ui/common/AppCanvas.qml:292
 msgid "Resort A-Z"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:289
+#: package/contents/ui/common/AppCanvas.qml:293
 msgid "Delete group"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:364
+#: package/contents/ui/common/AppCanvas.qml:368
 msgid "(Empty)"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:449
-#: package/contents/ui/common/AppCanvas.qml:455
+#: package/contents/ui/common/AppCanvas.qml:457
+#: package/contents/ui/common/AppCanvas.qml:464
 #: package/contents/ui/common/PinnedGrid.qml:135
-#: package/contents/ui/common/Recommended.qml:114
+#: package/contents/ui/common/Recommended.qml:71
 #: package/contents/ui/win10/AppList.qml:176
-#: package/contents/ui/win10/SearchView.qml:288
+#: package/contents/ui/win10/SearchView.qml:291
 #: package/contents/ui/win10/Tile.qml:160
 msgid "Unpin from Start"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:456
-#: package/contents/ui/common/Recommended.qml:115
+#: package/contents/ui/common/AppCanvas.qml:465
+#: package/contents/ui/common/Recommended.qml:72
 #: package/contents/ui/win10/AppList.qml:177
-#: package/contents/ui/win10/SearchView.qml:289
+#: package/contents/ui/win10/SearchView.qml:292
 msgid "Pin to Start"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:457
+#: package/contents/ui/common/AppCanvas.qml:467
 msgid "Remove from group"
 msgstr ""
 
-#: package/contents/ui/common/AppCanvas.qml:459
+#: package/contents/ui/common/AppCanvas.qml:469
+#: package/contents/ui/common/PinnedGrid.qml:139
+#: package/contents/ui/styles/windows7.qml:286
+#: package/contents/ui/styles/xp.qml:352
 #: package/contents/ui/win10/AppList.qml:178
 msgid "Hide from apps"
 msgstr ""
@@ -244,7 +249,7 @@ msgid "Unpin folder"
 msgstr ""
 
 #: package/contents/ui/common/PinnedGrid.qml:130
-#: package/contents/ui/common/PinnedGrid.qml:139
+#: package/contents/ui/common/PinnedGrid.qml:140
 msgid "Move to front"
 msgstr ""
 
@@ -254,22 +259,22 @@ msgstr ""
 
 #: package/contents/ui/common/PinnedPane.qml:43
 #: package/contents/ui/common/PinnedPane.qml:67
-#: package/contents/ui/styles/windows11.qml:120
-#: package/contents/ui/styles/windows11.qml:161
+#: package/contents/ui/styles/windows11.qml:121
+#: package/contents/ui/styles/windows11.qml:162
 msgid "All apps"
 msgstr ""
 
 #: package/contents/ui/common/PinnedPane.qml:68
-#: package/contents/ui/styles/windows11.qml:162
-#: package/contents/ui/styles/windows11.qml:183
-#: package/contents/ui/styles/windows7.qml:464
-#: package/contents/ui/styles/xp.qml:462
+#: package/contents/ui/styles/windows11.qml:163
+#: package/contents/ui/styles/windows11.qml:184
+#: package/contents/ui/styles/windows7.qml:468
+#: package/contents/ui/styles/xp.qml:464
 msgid "Back"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:26
 #: package/contents/ui/config/ConfigRail.qml:24
-#: package/contents/ui/win10/SearchView.qml:31
+#: package/contents/ui/win10/SearchView.qml:32
 msgid "Documents"
 msgstr ""
 
@@ -280,19 +285,19 @@ msgstr ""
 
 #: package/contents/ui/common/Places.qml:28
 #: package/contents/ui/config/ConfigRail.qml:26
-#: package/contents/ui/win10/SearchView.qml:32
+#: package/contents/ui/win10/SearchView.qml:33
 msgid "Music"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:29
 #: package/contents/ui/config/ConfigRail.qml:27
-#: package/contents/ui/win10/SearchView.qml:33
+#: package/contents/ui/win10/SearchView.qml:34
 msgid "Pictures"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:30
 #: package/contents/ui/config/ConfigRail.qml:28
-#: package/contents/ui/win10/SearchView.qml:34
+#: package/contents/ui/win10/SearchView.qml:35
 msgid "Videos"
 msgstr ""
 
@@ -339,7 +344,7 @@ msgstr ""
 #: package/contents/ui/common/Places.qml:41
 #: package/contents/ui/config/ConfigButton.qml:25
 #: package/contents/ui/config/ConfigRail.qml:39
-#: package/contents/ui/main.qml:590
+#: package/contents/ui/main.qml:620
 msgid "File Explorer"
 msgstr ""
 
@@ -352,28 +357,28 @@ msgstr ""
 #: package/contents/ui/config/ConfigButton.qml:25
 #: package/contents/ui/config/ConfigRail.qml:41
 #: package/contents/ui/config/ConfigSearch.qml:24
-#: package/contents/ui/main.qml:584 package/contents/ui/win10/SearchView.qml:30
+#: package/contents/ui/main.qml:614 package/contents/ui/win10/SearchView.qml:31
 msgid "Settings"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:44
 #: package/contents/ui/config/ConfigButton.qml:26
 #: package/contents/ui/config/ConfigRail.qml:42
-#: package/contents/ui/main.qml:602
+#: package/contents/ui/main.qml:632
 msgid "Terminal"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:45
 #: package/contents/ui/config/ConfigButton.qml:25
 #: package/contents/ui/config/ConfigRail.qml:43
-#: package/contents/ui/main.qml:596
+#: package/contents/ui/main.qml:626
 msgid "System Monitor"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:46
 #: package/contents/ui/config/ConfigButton.qml:26
 #: package/contents/ui/config/ConfigRail.qml:44
-#: package/contents/ui/main.qml:608
+#: package/contents/ui/main.qml:638
 msgid "Run…"
 msgstr ""
 
@@ -391,13 +396,13 @@ msgstr ""
 
 #: package/contents/ui/common/Places.qml:63
 #: package/contents/ui/config/ConfigRail.qml:49
-#: package/contents/ui/main.qml:630
+#: package/contents/ui/main.qml:660
 msgid "Lock"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:64
 #: package/contents/ui/config/ConfigRail.qml:49
-#: package/contents/ui/main.qml:636
+#: package/contents/ui/main.qml:666
 msgid "Sign out"
 msgstr ""
 
@@ -408,7 +413,7 @@ msgstr ""
 
 #: package/contents/ui/common/Places.qml:66
 #: package/contents/ui/config/ConfigRail.qml:50
-#: package/contents/ui/main.qml:642
+#: package/contents/ui/main.qml:672
 msgid "Sleep"
 msgstr ""
 
@@ -419,13 +424,13 @@ msgstr ""
 
 #: package/contents/ui/common/Places.qml:68
 #: package/contents/ui/config/ConfigRail.qml:50
-#: package/contents/ui/main.qml:648
+#: package/contents/ui/main.qml:678
 msgid "Restart"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:69
 #: package/contents/ui/config/ConfigRail.qml:51
-#: package/contents/ui/main.qml:654 package/contents/ui/styles/windows7.qml:592
+#: package/contents/ui/main.qml:684 package/contents/ui/styles/windows7.qml:599
 msgid "Shut down"
 msgstr ""
 
@@ -433,23 +438,23 @@ msgstr ""
 msgid "Change account settings"
 msgstr ""
 
-#: package/contents/ui/common/Recommended.qml:127
+#: package/contents/ui/common/Recommended.qml:131
 msgid ""
 "The more you use your PC, the more we'll show your new apps and recent files "
 "here."
 msgstr ""
 
-#: package/contents/ui/common/SearchBox.qml:17
+#: package/contents/ui/common/SearchBox.qml:16
 msgid "Search apps and files"
 msgstr ""
 
 #: package/contents/ui/config/ConfigButton.qml:26
-#: package/contents/ui/main.qml:614
+#: package/contents/ui/main.qml:644
 msgid "Show desktop"
 msgstr ""
 
 #: package/contents/ui/config/ConfigButton.qml:26
-#: package/contents/ui/main.qml:620
+#: package/contents/ui/main.qml:650
 msgid "Edit panel"
 msgstr ""
 
@@ -847,7 +852,7 @@ msgstr ""
 
 #: package/contents/ui/config/ConfigMenu.qml:135
 #: package/contents/ui/config/ConfigRail.qml:175
-#: package/contents/ui/main.qml:481
+#: package/contents/ui/main.qml:486
 msgid "Name:"
 msgstr ""
 
@@ -887,7 +892,8 @@ msgstr ""
 #: package/contents/ui/config/ConfigMenu.qml:162
 msgid ""
 "Tiles, pinned icons and pin names go back to the fresh-install layout. Press "
-"OK/Apply in the settings window afterwards to finish."
+"OK in the settings window afterwards to finish; it then closes, so no old "
+"values are written back."
 msgstr ""
 
 #: package/contents/ui/config/ConfigRail.qml:23
@@ -1307,7 +1313,8 @@ msgstr ""
 msgid ""
 "Every setting, tile and pinned icon goes back to the fresh-install default. "
 "If the XP taskbar theme is active, your previous Plasma Style is put back. "
-"Press OK/Apply in the settings window afterwards to finish."
+"Press OK in the settings window afterwards to finish; it then closes, so no "
+"old values are written back."
 msgstr ""
 
 #: package/contents/ui/ContextMenu.qml:36
@@ -1318,55 +1325,55 @@ msgstr ""
 msgid "Folder"
 msgstr ""
 
-#: package/contents/ui/main.qml:421
+#: package/contents/ui/main.qml:426
 msgid "Pin file to Start"
 msgstr ""
 
-#: package/contents/ui/main.qml:427
+#: package/contents/ui/main.qml:432
 msgid "Add a folder as group"
 msgstr ""
 
-#: package/contents/ui/main.qml:427
+#: package/contents/ui/main.qml:432
 msgid "Pin folder to Start"
 msgstr ""
 
-#: package/contents/ui/main.qml:433
+#: package/contents/ui/main.qml:438
 msgid "Pin website to Start"
 msgstr ""
 
-#: package/contents/ui/main.qml:448
+#: package/contents/ui/main.qml:453
 msgid "Web address:"
 msgstr ""
 
-#: package/contents/ui/main.qml:458
+#: package/contents/ui/main.qml:463
 msgid "Pin"
 msgstr ""
 
-#: package/contents/ui/main.qml:459 package/contents/ui/main.qml:491
+#: package/contents/ui/main.qml:464 package/contents/ui/main.qml:496
 msgid "Cancel"
 msgstr ""
 
-#: package/contents/ui/main.qml:481
+#: package/contents/ui/main.qml:486
 msgid "Name (empty = original):"
 msgstr ""
 
-#: package/contents/ui/main.qml:490
+#: package/contents/ui/main.qml:495
 msgid "OK"
 msgstr ""
 
-#: package/contents/ui/main.qml:506
+#: package/contents/ui/main.qml:511
 msgid "Pin website…"
 msgstr ""
 
-#: package/contents/ui/main.qml:507
+#: package/contents/ui/main.qml:512
 msgid "Pin file…"
 msgstr ""
 
-#: package/contents/ui/main.qml:508
+#: package/contents/ui/main.qml:513
 msgid "Pin folder…"
 msgstr ""
 
-#: package/contents/ui/main.qml:663
+#: package/contents/ui/main.qml:693
 msgctxt "@action:inmenu"
 msgid "Edit Applications…"
 msgstr ""
@@ -1376,16 +1383,16 @@ msgid "start"
 msgstr ""
 
 #: package/contents/ui/styles/windows11.qml:87
-#: package/contents/ui/win10/SearchView.qml:159
+#: package/contents/ui/win10/SearchView.qml:160
 msgid "Type here to search"
 msgstr ""
 
-#: package/contents/ui/styles/windows11.qml:137
-#: package/contents/ui/styles/windows11.qml:182
+#: package/contents/ui/styles/windows11.qml:138
+#: package/contents/ui/styles/windows11.qml:183
 msgid "Recommended"
 msgstr ""
 
-#: package/contents/ui/styles/windows11.qml:138
+#: package/contents/ui/styles/windows11.qml:139
 msgid "More"
 msgstr ""
 
@@ -1399,12 +1406,12 @@ msgstr ""
 msgid "Pin to Start menu"
 msgstr ""
 
-#: package/contents/ui/styles/windows7.qml:464
-#: package/contents/ui/styles/xp.qml:462
+#: package/contents/ui/styles/windows7.qml:468
+#: package/contents/ui/styles/xp.qml:464
 msgid "All Programs"
 msgstr ""
 
-#: package/contents/ui/styles/windows7.qml:491
+#: package/contents/ui/styles/windows7.qml:495
 msgid "Search programs and files"
 msgstr ""
 
@@ -1416,11 +1423,11 @@ msgstr ""
 msgid "Move down"
 msgstr ""
 
-#: package/contents/ui/styles/xp.qml:649
+#: package/contents/ui/styles/xp.qml:651
 msgid "Log Off"
 msgstr ""
 
-#: package/contents/ui/styles/xp.qml:656
+#: package/contents/ui/styles/xp.qml:658
 msgid "Turn Off Computer"
 msgstr ""
 
@@ -1441,23 +1448,23 @@ msgctxt "newly installed app"
 msgid "New"
 msgstr ""
 
-#: package/contents/ui/win10/SearchView.qml:35
+#: package/contents/ui/win10/SearchView.qml:36
 msgid "Files"
 msgstr ""
 
-#: package/contents/ui/win10/SearchView.qml:36
+#: package/contents/ui/win10/SearchView.qml:37
 msgid "Web"
 msgstr ""
 
-#: package/contents/ui/win10/SearchView.qml:251
+#: package/contents/ui/win10/SearchView.qml:254
 msgid "Best match"
 msgstr ""
 
-#: package/contents/ui/win10/SearchView.qml:260
+#: package/contents/ui/win10/SearchView.qml:263
 msgid "Search the web for \"%1\""
 msgstr ""
 
-#: package/contents/ui/win10/SearchView.qml:299
+#: package/contents/ui/win10/SearchView.qml:302
 msgid "No items match your search"
 msgstr ""
 
@@ -1489,41 +1496,41 @@ msgstr ""
 msgid "Drag apps here, or right-click an app and choose \"Pin to Start\"."
 msgstr ""
 
-#: package/contents/ui/win10/TileGroup.qml:84
+#: package/contents/ui/win10/TileGroup.qml:87
 msgid "Group"
 msgstr ""
 
-#: package/contents/ui/win10/TileGroup.qml:115
-#: package/contents/ui/win10/TileGroup.qml:128
-#: package/contents/ui/win10/TileGroup.qml:141
+#: package/contents/ui/win10/TileGroup.qml:118
+#: package/contents/ui/win10/TileGroup.qml:131
+#: package/contents/ui/win10/TileGroup.qml:144
 msgid "Name group"
 msgstr ""
 
-#: package/contents/ui/win10/TileGroup.qml:142
+#: package/contents/ui/win10/TileGroup.qml:145
 msgid "Resort group A-Z"
 msgstr ""
 
-#: package/contents/ui/win10/TileGroup.qml:144
+#: package/contents/ui/win10/TileGroup.qml:147
 msgid "Move group up"
 msgstr ""
 
-#: package/contents/ui/win10/TileGroup.qml:146
+#: package/contents/ui/win10/TileGroup.qml:149
 msgid "Move group down"
 msgstr ""
 
-#: package/contents/ui/win10/TileGroup.qml:148
+#: package/contents/ui/win10/TileGroup.qml:151
 msgid "Move to previous page"
 msgstr ""
 
-#: package/contents/ui/win10/TileGroup.qml:150
+#: package/contents/ui/win10/TileGroup.qml:153
 msgid "Move to next page"
 msgstr ""
 
-#: package/contents/ui/win10/TileGroup.qml:153
+#: package/contents/ui/win10/TileGroup.qml:156
 msgid "Unpin group from Start"
 msgstr ""
 
-#: package/contents/ui/win10/TileGroup.qml:226
+#: package/contents/ui/win10/TileGroup.qml:230
 #: package/contents/ui/win10/Tile.qml:158
 msgid "Name folder"
 msgstr ""

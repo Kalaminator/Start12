@@ -496,6 +496,8 @@ FocusScope {
         font.family: m.font
         font.pixelSize: m.fontSize
 
+        SearchHistory { field: searchField; above: true }
+
         Keys.onPressed: event => {
             event.accepted = true;
             if (nav.handle(event)) {

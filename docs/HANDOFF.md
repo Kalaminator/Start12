@@ -77,10 +77,12 @@ Classic search (T24): key `classicSearch` (default off), SearchView `compact` (1
 
 Keys+menus polish (T27): Win7/XP All Programs button is a KeyNav pane (`kbStep` returns itself) in All Programs view, part of the left pane otherwise; Win11 KeyNav pane = home ColumnLayout (pinned + Recommended rows) / moreList; AppCanvas tabs + cells have kbMenu; "Hide from apps" on Win7/XP most-used rows and PinnedGrid app pins (Win11/Pro/Launcher); AppCanvas Pinned tab pins/shortcuts get "Rename" (`cell.pinId`, capOf). Needs a user check.
 
+Layout polish (T28): full screen: `root.fillScreen` (Win10/Win11 stretch) / `root.narrowFull` (others keep size, centred on the panel side over a dim backdrop that closes on click; main.qml `frame`); Win10 tile folder row opens under the folder's own row (`Tiles.rowEnd`, TileGroup `folderShift`); `common/SearchHistory.qml` popup in SearchBox, Win7 field (above) and SearchView field (`suggest`: past searches starting with the typed text). Needs a user check.
+
 ## Next (in order)
 T01-T25 all built (2026-10-14). Load check of all 8 styles: no QML errors. Seen on screen by me: XP (all colours, start button),
 T03 filters, T05 folder. Everything else only lint + load check; the user has not tried T05-T25 yet -> ask for feedback first.
-Open: T26 full custom XP theme (user will say when); narrow styles stretch in full screen (T14); taskbar part of Start11
+Open: T26 full custom XP theme (user will say when); taskbar part of Start11
 (section 10 of the features doc) if the user wants it. Settings reset/restore: request runs once (`doneReset` guard).
 
 ## Testing tips

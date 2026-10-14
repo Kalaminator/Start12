@@ -4,7 +4,7 @@ const path = require("path");
 const assert = require("assert");
 const src = fs.readFileSync(path.join(__dirname, "../package/contents/ui/code/tiles.js"), "utf8")
     .replace(/^\.pragma library/m, "");
-const T = new Function(src + "; return { pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder, parsePages, setPage, newPage, deletePage, moveGroupToPage, shQuote, writeFileCmd, parseCanvas, canvasAddTab, canvasDeleteTab, canvasMoveTab, canvasAddGroup, canvasDeleteGroup, canvasRename, canvasPlace, canvasRemove, canvasSet, canvasSort, fileIcon, pushHistory, parseFiltered, filterFile, dirUrl };")();
+const T = new Function(src + "; return { pack, rowEnd, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder, parsePages, setPage, newPage, deletePage, moveGroupToPage, shQuote, writeFileCmd, parseCanvas, canvasAddTab, canvasDeleteTab, canvasMoveTab, canvasAddGroup, canvasDeleteGroup, canvasRename, canvasPlace, canvasRemove, canvasSet, canvasSort, fileIcon, pushHistory, parseFiltered, filterFile, dirUrl };")();
 
 // 6 columns = 12 units wide: six medium tiles fit in one row.
 let p = T.pack(Array(6).fill({ size: "medium" }), 6);
@@ -160,5 +160,12 @@ assert.strictEqual(T.pushHistory("0123456789".split(""), "x").length, 10);
     assert.deepStrictEqual(T.parseFiltered("bad"), []);
     assert.strictEqual(T.dirUrl("~/Downloads", "file:///home/u/"), "file:///home/u/Downloads");
     assert.strictEqual(T.dirUrl("/tmp", "file:///home/u"), "file:///tmp");
+}
+// Opened folder row: under the folder's own row, below any tile crossing it.
+{
+    const P = [{ x: 0, y: 0, w: 2, h: 2 }, { x: 2, y: 0, w: 4, h: 4 }, { x: 0, y: 4, w: 2, h: 2 }];
+    assert.strictEqual(T.rowEnd(P, 0), 4);
+    assert.strictEqual(T.rowEnd(P, 2), 6);
+    assert.strictEqual(T.rowEnd([{ x: 0, y: 0, w: 1, h: 1 }, { x: 0, y: 2, w: 2, h: 2 }], 0), 1);
 }
 console.log("tiles.js: all checks passed");

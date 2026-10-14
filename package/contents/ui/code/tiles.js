@@ -106,6 +106,18 @@ function pack(tiles, columns) {
     return { pos: pos, rows: rows };
 }
 
+// First row (in pack units) under tile i that no tile crosses: an opened folder's row goes there.
+function rowEnd(pos, i) {
+    var end = pos[i] ? pos[i].y + pos[i].h : 0, moved = true;
+    while (moved) {
+        moved = false;
+        for (var j = 0; j < pos.length; j++) {
+            if (pos[j].y < end && pos[j].y + pos[j].h > end) { end = pos[j].y + pos[j].h; moved = true; }
+        }
+    }
+    return end;
+}
+
 function clone(groups) {
     return JSON.parse(JSON.stringify(groups));
 }

@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls as QQC2
 import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PC3
 import org.kde.kirigami as Kirigami
@@ -30,27 +29,7 @@ PC3.TextField {
         isMask: true
     }
 
-    // Recent searches under the empty, focused box; a click puts the query back.
-    QQC2.Popup {
-        y: box.height
-        width: box.width
-        padding: 0
-        focus: false
-        closePolicy: QQC2.Popup.NoAutoClose
-        visible: box.activeFocus && box.text === "" && Plasmoid.configuration.searchHistoryEnabled && Plasmoid.configuration.searchHistory.length > 0
-        contentItem: Column {
-            Repeater {
-                model: Plasmoid.configuration.searchHistory
-                delegate: PC3.ItemDelegate {
-                    required property string modelData
-                    width: box.width
-                    text: modelData
-                    icon.name: "search"
-                    onClicked: { root.searchText = modelData; box.forceActiveFocus(); }
-                }
-            }
-        }
-    }
+    SearchHistory { field: box }
 
     Keys.onPressed: event => {
         event.accepted = true;

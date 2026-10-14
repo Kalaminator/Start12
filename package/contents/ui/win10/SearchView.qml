@@ -7,6 +7,7 @@ import org.kde.plasma.components as PC3
 import org.kde.kirigami as Kirigami
 import org.kde.kitemmodels as KItemModels
 import "../code/tiles.js" as Tiles
+import "../common"
 
 // Search results (KRunner): "Best match" first, then results, optionally grouped
 // by type (Apps, Files, Settings ...). Last row: search the internet.
@@ -165,6 +166,8 @@ Item {
         Keys.onReturnPressed: search.activate(view.currentIndex)
         Keys.onEnterPressed: search.activate(view.currentIndex)
         Keys.onEscapePressed: root.searchText = ""
+
+        SearchHistory { field: parent; suggest: true }   // parent = the field
     }
 
     Row {

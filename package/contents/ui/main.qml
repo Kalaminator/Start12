@@ -528,6 +528,10 @@ PlasmoidItem {
         const r = c ? (cfg.keepPanelVisible ? c.availableScreenRect : c.screenGeometry) : null;
         return r && r.width > 0 ? Qt.rect(0, 0, r.width, r.height) : Qt.rect(0, 0, 1280, 800);
     }
+    // Win10/Win11 stretch over the full-screen popup; the narrow styles keep their size and sit
+    // centred on a dim backdrop (Metrics.heightFor gives them their normal height).
+    readonly property bool fillScreen: cfg.fullScreen && (styleFile === "windows10" || styleFile === "windows11")
+    readonly property bool narrowFull: cfg.fullScreen && !fillScreen
 
     Plasmoid.icon: "start-here-kde"
     // On the desktop (or in a test window) show the menu itself.
@@ -541,7 +545,8 @@ PlasmoidItem {
         // The style gives the start size; the user can drag the popup edges to resize it.
         Layout.preferredWidth: root.cfg.fullScreen ? root.fullRect.width
                              : styleLoader.item ? styleLoader.item.implicitWidth : 600
-        Layout.preferredHeight: styleLoader.item ? styleLoader.item.implicitHeight : 600
+        Layout.preferredHeight: root.cfg.fullScreen ? root.fullRect.height
+                              : styleLoader.item ? styleLoader.item.implicitHeight : 600
         Layout.minimumWidth: styleLoader.item && styleLoader.item.minimumWidth ? styleLoader.item.minimumWidth : 300
         Layout.minimumHeight: Math.round(320 * root.cfg.uiScale)
 
@@ -572,11 +577,31 @@ PlasmoidItem {
             }
         }
 
-        Loader {
-            id: styleLoader
+        // Narrow style in full screen: dim the rest of the screen, click it to close.
+        Rectangle {
             anchors.fill: parent
-            focus: true
-            source: "styles/" + root.styleFile + ".qml"
+            visible: root.narrowFull
+            color: Qt.rgba(0, 0, 0, 0.5)
+            MouseArea { anchors.fill: parent; onClicked: root.expanded = false }
+        }
+
+        Item {
+            id: frame
+            readonly property int gapX: root.narrowFull && styleLoader.item ? Math.max(0, (full.width - styleLoader.item.implicitWidth) / 2) : 0
+            readonly property int gapY: root.narrowFull && styleLoader.item ? Math.max(0, full.height - styleLoader.item.implicitHeight) : 0
+            readonly property bool atTop: Plasmoid.location === PlasmaCore.Types.TopEdge
+            anchors.fill: parent
+            anchors.leftMargin: gapX
+            anchors.rightMargin: gapX
+            anchors.topMargin: atTop ? 0 : gapY       // sits on the panel side
+            anchors.bottomMargin: atTop ? gapY : 0
+
+            Loader {
+                id: styleLoader
+                anchors.fill: parent
+                focus: true
+                source: "styles/" + root.styleFile + ".qml"
+            }
         }
     }
 
