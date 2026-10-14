@@ -18,7 +18,9 @@ window with everything in one place.
 - **Windows**: matching title bars (Aurorae) and colour schemes, accent colour on Start, taskbar and title bars
   (Windows-like *Colours* page with the 48 Windows accent colours).
 - Design mode: drag the dividers between menu sections.
-- Full-screen menu, backup / restore / reset of all settings, English and Spanish.
+- Full-screen menu, backup / restore / reset of all settings.
+- 11 languages: English, Spanish, French, German, Italian, Brazilian Portuguese, Russian, Arabic,
+  Simplified Chinese, Japanese, Hindi (it follows your Plasma language).
 
 Everything you change (taskbar style, title bars, colours) is undone when you switch it off: Start12 saves
 your own Plasma Style, window decoration and colour scheme first.
