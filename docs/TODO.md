@@ -205,3 +205,18 @@ when we start). Builds on `code/xptheme.py` and the XP palettes in `styles/xp.qm
   else is using this PC", sign-in options link, go to desktop at login, Windows 8 hot corners/charms.
 - Reboot warnings, explorer restart, compat hacks, updates/licence, Group Policy lock-down, Stardock sync.
 - "Search file contents", "include desktop in search": Baloo already indexes content and ~/Desktop.
+
+### T27 Polish: keys and menus (M)
+Build: (1) keyboard leftovers from T02: Win7/XP "All Programs" button, Win11 Recommended rows, App canvas tabs
+reachable with arrows/Tab via common/KeyNav (`kbNav: true` + `KeyFrame {}`); (2) "Hide from apps" (T08 `root.hideApp`)
+also in the right-click menu of XP/Win7 most-used rows and PinnedPane (Pro, Launcher); (3) "Rename" (T11 `root.renamePin`)
+also for App canvas pins.
+Check: qmllint; keys reach each of them; menus show the new entries.
+
+### T28 Polish: layout and leftovers (M)
+Build: (1) full screen (T14): narrow styles (windows7/modern, xp, pro, launcher, app) keep their normal width and sit
+centred/anchored on the full-screen popup with a dim background instead of stretching; Win10/Win11 keep filling;
+(2) Win10 tile folder (T05) opens right under the folder's own tile row, not under the whole group;
+(3) search history popup (T18) also under the SearchView field used by Win10/Win7/XP;
+(4) translate the new/changed i18n strings in po/es.po (run package/Messages.sh), msgfmt --check.
+Check: qmllint, node tests/test_tiles.js, ./install.sh.
