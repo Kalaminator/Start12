@@ -132,11 +132,15 @@ PlasmoidItem {
     function run(cmd) {
         executable.connectSource(cmd);
     }
-    // XP taskbar: with the XP style, the Plasma Style follows the substyle (extras/themes, put there by
-    // install.sh); leaving XP restores the theme saved in savedDesktopTheme. Reads the current theme
-    // first so nothing is applied when it is already right.
+    // XP taskbar: with the XP style, the Plasma Style follows substyle + colour scheme (made by
+    // code/xptheme.py: install.sh writes blue/olive/silver; a custom colour is generated here under a
+    // new name per colour, so Plasma's svg cache never shows a stale one). Leaving XP restores the theme
+    // saved in savedDesktopTheme. Reads the current theme first so nothing is applied when already right.
     // ponytail: two Start12 widgets with different styles would fight over the theme; one menu is the norm.
-    readonly property string xpTheme: cfg.menuStyle === "xp" && cfg.xpTaskbarTheme ? "start12-xp-" + cfg.xpSubstyle : ""
+    readonly property string xpCustomHex: cfg.xpCustomColor.toString().slice(-6)
+    readonly property string xpTheme: cfg.menuStyle !== "xp" || !cfg.xpTaskbarTheme ? ""
+        : "start12-xp-" + cfg.xpSubstyle + (cfg.xpColor === "olive" || cfg.xpColor === "silver" ? "-" + cfg.xpColor
+                                         : cfg.xpColor === "custom" ? "-custom-" + xpCustomHex : "")
     onXpThemeChanged: syncDesktopTheme()
     function syncDesktopTheme() {
         themeReader.connectSource("kreadconfig6 --file plasmarc --group Theme --key name");
@@ -154,7 +158,15 @@ PlasmoidItem {
                     return;
                 if (!ours)
                     root.cfg.savedDesktopTheme = cur;
-                root.run("plasma-apply-desktoptheme " + root.xpTheme);
+                if (root.xpTheme.includes("-custom-")) {
+                    const dir = "$HOME/.local/share/plasma/desktoptheme/";
+                    const gen = decodeURIComponent(Qt.resolvedUrl("code/xptheme.py").toString().replace("file://", ""));
+                    root.run("sh -c 'rm -rf " + dir + "start12-xp-*-custom-*; python3 \"" + gen + "\" --custom "
+                             + root.xpCustomHex + " --sub " + root.cfg.xpSubstyle + " --out " + dir + root.xpTheme
+                             + " && plasma-apply-desktoptheme " + root.xpTheme + "'");
+                } else {
+                    root.run("plasma-apply-desktoptheme " + root.xpTheme);
+                }
             } else if (ours) {
                 root.run("plasma-apply-desktoptheme " + (root.cfg.savedDesktopTheme || "default"));
             }

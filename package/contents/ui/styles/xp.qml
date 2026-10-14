@@ -34,27 +34,64 @@ FocusScope {
         mode: 2
     }
 
-    // Luna palette (fixed, like XP; modern softens it).
+    // XP colour schemes (key xpColor): Luna blue, Olive Green, Silver, or custom (derived from
+    // xpCustomColor). [classic, modern] per entry; modern softens it. Green All Programs and the
+    // orange/red power buttons stay in every scheme, like XP.
+    readonly property var schemes: ({
+        blue: {
+            headTop: ["#1c5ad8", "#3a7bea"], headBottom: ["#3e88ee", "#6aa6f6"], headText: ["#ffffff", "#ffffff"],
+            barTop: ["#3b81ea", "#e9f1fd"], barBottom: ["#1a52c8", "#dbe8fb"], barText: ["#ffffff", "#14306e"],
+            right: ["#d3e5fa", "#e3eefc"], rightBorder: ["#95bdee", "#95bdee"], placeText: ["#00136b", "#14306e"],
+            hover: ["#316ac5", "#dce9fc"], hoverText: ["#ffffff", "#0d3fa6"], line: ["#d6d3ce", "#dfe6f1"]
+        },
+        olive: {
+            headTop: ["#8ba169", "#8ba169"], headBottom: ["#b4c68e", "#c2d19f"], headText: ["#ffffff", "#ffffff"],
+            barTop: ["#a7b97f", "#f6f4ea"], barBottom: ["#7a924f", "#ece9d8"], barText: ["#ffffff", "#3a4a1a"],
+            right: ["#f1efe2", "#f6f4ea"], rightBorder: ["#c5cfa5", "#c5cfa5"], placeText: ["#3a4a1a", "#3a4a1a"],
+            hover: ["#93a070", "#e4ead2"], hoverText: ["#ffffff", "#4e6328"], line: ["#d6d3ce", "#e3e0d0"]
+        },
+        silver: {
+            headTop: ["#a5a5bd", "#b9b9cc"], headBottom: ["#d4d4e2", "#e2e2ec"], headText: ["#1f2440", "#1f2440"],
+            barTop: ["#eeeef4", "#f4f4f8"], barBottom: ["#c9c9d9", "#e8e8f0"], barText: ["#1f2440", "#2b2b4a"],
+            right: ["#eeeef4", "#f2f2f7"], rightBorder: ["#b6b6c8", "#c9c9d9"], placeText: ["#2b2b4a", "#2b2b4a"],
+            hover: ["#8e94b2", "#e4e4ee"], hoverText: ["#ffffff", "#2b2b4a"], line: ["#d6d3ce", "#e2e2ea"]
+        }
+    })
+    function customScheme(k) {
+        const tint = a => Qt.tint("#ffffff", Qt.alpha(k, a));
+        const ink = Qt.darker(k, 2.2);
+        return {
+            headTop: [Qt.darker(k, 1.15), k], headBottom: [Qt.lighter(k, 1.35), Qt.lighter(k, 1.4)],
+            headText: ["#ffffff", "#ffffff"], barTop: [Qt.lighter(k, 1.2), tint(0.1)],
+            barBottom: [Qt.darker(k, 1.2), tint(0.16)], barText: ["#ffffff", ink],
+            right: [tint(0.18), tint(0.12)], rightBorder: [tint(0.45), tint(0.4)], placeText: [ink, ink],
+            hover: [k, tint(0.16)], hoverText: ["#ffffff", Qt.darker(k, 1.5)], line: ["#d6d3ce", tint(0.1)]
+        };
+    }
+    readonly property var scheme: cfg.xpColor === "custom" ? customScheme(cfg.xpCustomColor)
+                                                           : (schemes[cfg.xpColor] || schemes.blue)
+    readonly property int si: modern ? 1 : 0
     QtObject {
         id: c
-        readonly property color headTop: style.modern ? "#3a7bea" : "#1c5ad8"
-        readonly property color headBottom: style.modern ? "#6aa6f6" : "#3e88ee"
-        readonly property color barTop: style.modern ? "#e9f1fd" : "#3b81ea"
-        readonly property color barBottom: style.modern ? "#dbe8fb" : "#1a52c8"
-        readonly property color barText: style.modern ? "#14306e" : "#ffffff"
+        readonly property color headTop: style.scheme.headTop[style.si]
+        readonly property color headBottom: style.scheme.headBottom[style.si]
+        readonly property color headText: style.scheme.headText[style.si]
+        readonly property color barTop: style.scheme.barTop[style.si]
+        readonly property color barBottom: style.scheme.barBottom[style.si]
+        readonly property color barText: style.scheme.barText[style.si]
         readonly property color orange: "#f39a32"
         readonly property color orangeLight: "#fcc77b"
         readonly property color green: "#3aa238"
         readonly property color greenDark: "#25801f"
         readonly property color red: "#d8412c"
         readonly property color left: "#ffffff"
-        readonly property color right: style.modern ? "#e3eefc" : "#d3e5fa"
-        readonly property color rightBorder: "#95bdee"
+        readonly property color right: style.scheme.right[style.si]
+        readonly property color rightBorder: style.scheme.rightBorder[style.si]
         readonly property color text: "#000000"
-        readonly property color placeText: style.modern ? "#14306e" : "#00136b"
-        readonly property color hover: style.modern ? "#dce9fc" : "#316ac5"
-        readonly property color hoverText: style.modern ? "#0d3fa6" : "#ffffff"
-        readonly property color line: style.modern ? "#dfe6f1" : "#d6d3ce"
+        readonly property color placeText: style.scheme.placeText[style.si]
+        readonly property color hover: style.scheme.hover[style.si]
+        readonly property color hoverText: style.scheme.hoverText[style.si]
+        readonly property color line: style.scheme.line[style.si]
     }
 
     readonly property real pad: m.px(modern ? 12 : 0)
@@ -170,7 +207,7 @@ FocusScope {
                     height: width
                     radius: style.modern ? width / 2 : m.px(3)
                     color: "#ffffff"
-                    border.color: style.modern ? Qt.alpha("#ffffff", 0.6) : "#d9e6fb"
+                    border.color: style.modern ? Qt.alpha("#ffffff", 0.6) : Qt.lighter(c.headBottom, 1.3)
                     border.width: m.px(style.modern ? 3 : 2)
                     Kirigami.ShadowedImage {
                         id: face
@@ -190,14 +227,14 @@ FocusScope {
                         source: "user-identity"
                         // No picture set: a blue person on the white frame (the theme icon may be white).
                         isMask: true
-                        color: "#3a6ea5"
+                        color: c.placeText
                     }
                 }
                 Column {
                     anchors.verticalCenter: parent.verticalCenter
                     PC3.Label {
                         text: places.user.fullName || places.user.loginName
-                        color: "#ffffff"
+                        color: c.headText
                         font.family: m.font
                         font.pixelSize: Math.round(m.fontSize * (style.modern ? 1.35 : 1.25))
                         font.bold: true
@@ -207,7 +244,7 @@ FocusScope {
                     PC3.Label {
                         visible: style.modern
                         text: places.user.loginName
-                        color: Qt.alpha("#ffffff", 0.8)
+                        color: Qt.alpha(c.headText, 0.8)
                         font.family: m.font
                         font.pixelSize: Math.round(m.fontSize * 0.85)
                     }

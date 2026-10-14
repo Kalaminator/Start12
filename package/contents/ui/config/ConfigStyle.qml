@@ -5,6 +5,7 @@ import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
+import org.kde.kquickcontrols as KQuickControls
 
 // Start11Config "Start Menu" page: "Which style of Start Menu would you prefer?"
 KCM.SimpleKCM {
@@ -17,6 +18,8 @@ KCM.SimpleKCM {
     property alias cfg_modernSubstyle: modernSubBox.currentIndex
     property string cfg_xpSubstyle
     property alias cfg_xpTaskbarTheme: xpTaskbarBox.checked
+    property string cfg_xpColor
+    property alias cfg_xpCustomColor: xpCustom.color
 
     readonly property var built: ["windows7", "modern", "windows10", "windows11", "app", "pro", "launcher", "xp"]
     readonly property var styles: [
@@ -105,6 +108,17 @@ KCM.SimpleKCM {
                 model: [i18n("Classic Windows XP style"), i18n("Modern Windows XP style")]
                 currentIndex: page.cfg_xpSubstyle === "modern" ? 1 : 0
                 onActivated: index => page.cfg_xpSubstyle = index === 1 ? "modern" : "classic"
+            }
+            RowLayout {
+                visible: page.cfg_menuStyle === "xp"
+                Kirigami.FormData.label: i18n("Colour scheme:")
+                QQC2.ComboBox {
+                    readonly property var keys: ["blue", "olive", "silver", "custom"]
+                    model: [i18n("Blue"), i18n("Olive Green"), i18n("Silver"), i18n("Custom")]
+                    currentIndex: Math.max(0, keys.indexOf(page.cfg_xpColor))
+                    onActivated: index => page.cfg_xpColor = keys[index]
+                }
+                KQuickControls.ColorButton { id: xpCustom; visible: page.cfg_xpColor === "custom"; showAlphaChannel: false }
             }
             QQC2.CheckBox {
                 id: xpTaskbarBox

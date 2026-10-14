@@ -162,6 +162,13 @@
       <label>With the XP style, switch the Plasma Style (panel) to start12-xp-classic / start12-xp-modern</label>
       <default>true</default>
     </entry>
+    <entry name="xpColor" type="String">
+      <label>Windows XP colour scheme (menu + taskbar): blue | olive | silver | custom (from xpCustomColor)</label>
+      <default>blue</default>
+    </entry>
+    <entry name="xpCustomColor" type="Color">
+      <default>#3a6ea5</default>
+    </entry>
     <entry name="savedDesktopTheme" type="String">
       <label>Plasma Style that was active before the XP taskbar theme; restored when leaving XP</label>
       <default></default>
