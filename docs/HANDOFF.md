@@ -69,3 +69,4 @@ Then the taskbar part of Start11 (section 10 of the features doc), if the user w
   `systemctl --user reset-failed plasma-plasmashell.service` then start it.
 - Don't test while the user is actively using the PC; each restart flashes their panel.
 - Never edit files with Python slice/replace on ambiguous anchors (it once wiped main.qml); use Edit.
+- Plasma 6.7 kicker: RunnerModel `runners: []` = NO runners (main.qml spells out the default list); runner result rows have no runner id/matchId, so classify by `url`/`favoriteId` (SearchView `passes`).
