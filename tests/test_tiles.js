@@ -4,7 +4,7 @@ const path = require("path");
 const assert = require("assert");
 const src = fs.readFileSync(path.join(__dirname, "../package/contents/ui/code/tiles.js"), "utf8")
     .replace(/^\.pragma library/m, "");
-const T = new Function(src + "; return { parse, pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest };")();
+const T = new Function(src + "; return { parse, pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile };")();
 
 // 6 columns = 12 units wide: six medium tiles fit in one row.
 let p = T.pack(Array(6).fill({ size: "medium" }), 6);
@@ -68,4 +68,23 @@ assert.strictEqual(T.nearest(R, 1, 0, 1), 4);
 assert.strictEqual(T.nearest(R, 2, 1, 0), -1);   // right edge
 assert.strictEqual(T.nearest(R, 4, 0, -1), 1);
 
+
+// Tile folders (Windows 10): drop a tile on a tile -> folder in the target's place.
+const F0 = [{ name: "", tiles: [{ id: "a", size: "wide" }, { id: "b", size: "medium" }, { id: "c", size: "small" }] }];
+let f = T.dropOnTile(F0, "c", "a");
+assert.deepStrictEqual(f[0].tiles.map(t => t.id), ["folder|1", "b"]);
+assert.deepStrictEqual(f[0].tiles[0], { kind: "folder", id: "folder|1", name: "", size: "wide", tiles: [{ id: "a", size: "wide" }, { id: "c", size: "small" }] });
+f = T.dropOnTile(f, "b", "folder|1");                       // onto the folder: appended
+assert.deepStrictEqual(f[0].tiles[0].tiles.map(t => t.id), ["a", "c", "b"]);
+f = T.dropOnTile(f, "new.desktop", "a");                    // new app onto a tile inside: after it
+assert.deepStrictEqual(f[0].tiles[0].tiles.map(t => t.id), ["a", "new.desktop", "c", "b"]);
+assert.strictEqual(T.findTile(f, "c").f, 0);
+assert.deepStrictEqual(T.dropOnTile(f, "folder|1", "a"), f);  // no nesting
+f = T.place(f, "c", 0, 1);                                  // drag out of the folder
+assert.deepStrictEqual(f[0].tiles.map(t => t.id), ["folder|1", "c"]);
+f = T.remove(T.remove(f, "b"), "new.desktop");             // one tile left: folder dissolves
+assert.deepStrictEqual(f[0].tiles, [{ id: "a", size: "wide" }, { id: "c", size: "small" }]);
+f = T.dropOnTile(T.dropOnTile(F0, "b", "a"), "c", "folder|1");
+assert.strictEqual(T.setProp(f, "folder|1", "name", "Games")[0].tiles[0].name, "Games");
+assert.deepStrictEqual(T.remove(f, "folder|1"), []);        // unpin folder = unpin its tiles
 console.log("tiles.js: all checks passed");

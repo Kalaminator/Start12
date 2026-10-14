@@ -52,12 +52,13 @@ XP taskbar: Plasma Styles `start12-xp-{classic,modern}[-olive|-silver]` generate
 XP Start button: `StartButton.qml` draws the green "start" pill (icon = buttonIcon) when menuStyle is "xp" in a horizontal panel; classic/modern shapes; key `xpStartGreen` (off = scheme colour). Not yet seen on screen.
 Win7/Modern (T04): pins in cfg.pinnedGrid order incl. custom pins, drag to reorder, jump-list arrow, empty-space "Pin website/file/folder".
 Search filters (T03): `win10/SearchView` filter icon row (all styles), `passes()` by runnerId/matchId prefix, favoriteId, url extension; keys `searchFilterIcons`, `searchFilter`. Needs a user check (roles not probed live).
+Tile folders (T05): drop a tile on the right 3/4 of a tile -> `{kind:"folder", id:"folder|N", name, size, tiles}` (`Tiles.dropOnTile`, `findTile` searches folders, `tidy` dissolves 1-tile folders); Tile.qml mini-icon grid, TileGroup opens a row under the group (name field, tiles drag out). Left quarter = insert before.
 Missing: canvas: user-made tabs/groups/pages, folders,
 icon tint, drag between groups. Plasma keeps one popup size for all styles (user drags it).
 
 ## Next (in order)
 Work through docs/TODO.md job by job (T01, T02, T03, T04 done). Use the prompt in docs/AGENT_PROMPT.md, one agent per job,
-then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03 + T04 built (need a user check), next: T05.
+then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03, T04, T05 built (need a user check), next: T06.
 Then the taskbar part of Start11 (section 10 of the features doc), if the user wants it.
 
 ## Testing tips

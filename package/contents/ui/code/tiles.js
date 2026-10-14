@@ -70,11 +70,60 @@ function clone(groups) {
     return JSON.parse(JSON.stringify(groups));
 }
 
+// Finds a tile, also inside folders. { g, i, list }: list is the array holding it (group or folder
+// tiles); f is the folder's index in its group when the tile sits in a folder.
 function findTile(groups, id) {
     for (var g = 0; g < groups.length; g++)
-        for (var i = 0; i < groups[g].tiles.length; i++)
-            if (groups[g].tiles[i].id === id) return { g: g, i: i };
+        for (var i = 0; i < groups[g].tiles.length; i++) {
+            var t = groups[g].tiles[i];
+            if (t.id === id) return { g: g, i: i, list: groups[g].tiles };
+            if (t.kind === "folder")
+                for (var k = 0; k < t.tiles.length; k++)
+                    if (t.tiles[k].id === id) return { g: g, i: k, f: i, list: t.tiles };
+        }
     return null;
+}
+
+// Folders with one tile turn back into that tile (taking the folder's place and size); empty
+// folders and empty unnamed groups vanish.
+function tidy(groups) {
+    groups.forEach(function (grp) {
+        grp.tiles = grp.tiles.filter(function (t) { return t.kind !== "folder" || t.tiles.length > 0; })
+            .map(function (t) {
+                if (t.kind !== "folder" || t.tiles.length > 1) return t;
+                var only = t.tiles[0];
+                only.size = t.size;
+                return only;
+            });
+    });
+    return groups.filter(function (x) { return x.tiles.length > 0 || x.name !== ""; });
+}
+
+function isFolder(id) {
+    return typeof id === "string" && id.indexOf("folder|") === 0;
+}
+
+// Drop tile (or app) id onto tile target: into target's folder, or both become a new folder in
+// target's place (Windows 10 tile folders). A folder dropped on a tile is not nested: no change.
+function dropOnTile(groups, id, target, size) {
+    var out = clone(groups);
+    if (id === target || isFolder(id)) return out;
+    var tile = { id: id, size: size || "medium" };
+    var at = findTile(out, id);
+    if (at) tile = at.list.splice(at.i, 1)[0];
+    var to = findTile(out, target);
+    if (!to) return groups;
+    if (to.f !== undefined) {
+        to.list.splice(to.i + 1, 0, tile);
+    } else if (to.list[to.i].kind === "folder") {
+        to.list[to.i].tiles.push(tile);
+    } else {
+        var n = 1;
+        while (findTile(out, "folder|" + n)) n++;
+        var t = to.list[to.i];
+        to.list[to.i] = { kind: "folder", id: "folder|" + n, name: "", size: t.size, tiles: [t, tile] };
+    }
+    return tidy(out);
 }
 
 // Move (or insert, when the id is not pinned yet) a tile to group g, index i.
@@ -84,8 +133,8 @@ function place(groups, id, g, i, size) {
     var tile = { id: id, size: size || "medium" };
     var at = findTile(out, id);
     if (at) {
-        tile = out[at.g].tiles.splice(at.i, 1)[0];
-        if (at.g === g && at.i < i) i--;
+        tile = at.list.splice(at.i, 1)[0];
+        if (at.g === g && at.f === undefined && at.i < i) i--;
     }
     if (g >= out.length) {
         out.push({ name: "", tiles: [] });
@@ -93,20 +142,20 @@ function place(groups, id, g, i, size) {
     }
     var list = out[g].tiles;
     list.splice(Math.max(0, Math.min(i, list.length)), 0, tile);
-    return out.filter(function (x) { return x.tiles.length > 0 || x.name !== ""; });
+    return tidy(out);
 }
 
 function remove(groups, id) {
     var out = clone(groups);
     var at = findTile(out, id);
-    if (at) out[at.g].tiles.splice(at.i, 1);
-    return out.filter(function (x) { return x.tiles.length > 0 || x.name !== ""; });
+    if (at) at.list.splice(at.i, 1);
+    return tidy(out);
 }
 
 function resize(groups, id, size) {
     var out = clone(groups);
     var at = findTile(out, id);
-    if (at) out[at.g].tiles[at.i].size = size;
+    if (at) at.list[at.i].size = size;
     return out;
 }
 
@@ -123,8 +172,8 @@ function setProp(groups, id, key, value) {
     var out = clone(groups);
     var at = findTile(out, id);
     if (at) {
-        if (value === undefined || value === "") delete out[at.g].tiles[at.i][key];
-        else out[at.g].tiles[at.i][key] = value;
+        if (value === undefined || value === "") delete at.list[at.i][key];
+        else at.list[at.i][key] = value;
     }
     return out;
 }

@@ -19,6 +19,10 @@ Column {
     readonly property var layout: Tiles.pack(group.tiles, metrics.columns)
     readonly property real cell: metrics.unit + metrics.gap
     property var names: ({})   // tile id -> app name, for "Sort A-Z"
+    // Opened folder tile (id): its tiles show in a row under the group.
+    property string openFolder: ""
+    readonly property var folder: group.tiles.find(t => t.id === openFolder && t.kind === "folder") || null
+    readonly property var folderLayout: folder ? Tiles.pack(folder.tiles, metrics.columns) : null
 
     width: metrics.groupWidth
     spacing: Math.round(6 * metrics.s)
@@ -193,6 +197,66 @@ Column {
                 width: p.w * grp.cell - grp.metrics.gap
                 height: p.h * grp.cell - grp.metrics.gap
                 onNameKnown: name => grp.names[tile.id] = name
+                onFolderClicked: rename => {
+                    grp.openFolder = rename || grp.openFolder !== tile.id ? tile.id : "";
+                    if (rename) Qt.callLater(() => { folderName.forceActiveFocus(); folderName.selectAll(); });
+                }
+            }
+        }
+    }
+
+    // ---- Opened folder ----
+    Rectangle {
+        visible: grp.folder !== null
+        width: parent.width
+        height: visible ? folderBody.y + folderBody.height + grp.metrics.gap * 2 : 0
+        radius: Math.round(2 * grp.metrics.s)
+        color: Qt.alpha(grp.metrics.tile, grp.metrics.tileAlpha * 0.6)
+
+        PC3.TextField {
+            id: folderName
+            x: grp.metrics.gap
+            y: grp.metrics.gap
+            width: parent.width - 2 * grp.metrics.gap - closeFolder.width
+            text: grp.folder ? grp.folder.name : ""
+            placeholderText: i18n("Name folder")
+            background: null
+            color: grp.metrics.text
+            font.family: grp.metrics.font
+            font.pixelSize: grp.metrics.fontSize
+            onEditingFinished: if (grp.folder && text !== grp.folder.name)
+                root.saveGroups(Tiles.setProp(root.groups, grp.openFolder, "name", text))
+        }
+        PC3.ToolButton {
+            id: closeFolder
+            anchors.right: parent.right
+            anchors.verticalCenter: folderName.verticalCenter
+            icon.name: "go-up"
+            onClicked: grp.openFolder = ""
+        }
+        Item {
+            id: folderBody
+            y: folderName.y + folderName.height + grp.metrics.gap
+            width: parent.width
+            height: grp.folderLayout ? Math.max(1, grp.folderLayout.rows) * grp.cell - grp.metrics.gap : 0
+            Repeater {
+                model: grp.folder ? grp.folder.tiles : []
+                delegate: Tile {
+                    required property var modelData
+                    required property int index
+                    tile: modelData
+                    tileIndex: index
+                    groupIndex: grp.groupIndex
+                    folderId: grp.openFolder
+                    metrics: grp.metrics
+                    contextMenu: grp.contextMenu
+                    ghost: grp.ghost
+                    readonly property var p: grp.folderLayout.pos[index]
+                    x: p.x * grp.cell
+                    y: p.y * grp.cell
+                    width: p.w * grp.cell - grp.metrics.gap
+                    height: p.h * grp.cell - grp.metrics.gap
+                }
             }
         }
     }

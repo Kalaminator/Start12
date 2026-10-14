@@ -43,7 +43,7 @@ through `root.movePinned`); an arrow at the right of pinned/most-used rows that 
 the kicker jump-list actions (`contextMenu.kickerActions`) + "Pin/Unpin". Key: none.
 Check: drag a pin to the top, reopen the menu, order kept; arrow on Dolphin shows recent folders.
 
-### T05 Win10 tile folders (M)
+### T05 Win10 tile folders (M) -- DONE 2026-10-14 (not yet checked on screen)
 Build: drop a tile onto another tile -> folder tile `{ kind: "folder", name, tiles: [...] }` in
 `code/tiles.js` (`place` into folder, `remove`, `sizeOf`) + `tests/test_tiles.js`; `win10/Tile.qml`
 draws a folder as a grid of mini icons; click expands a row below the group (`TileGroup.qml`) showing
