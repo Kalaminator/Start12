@@ -67,7 +67,7 @@ compact representation; typing or Enter sets `root.searchText` and `root.expande
 the text; Esc clears. Draw it in the menu style's colours (Metrics). ConfigButton checkbox + width.
 Check: field visible on the panel, type "dolp", menu opens on Dolphin results, Esc closes and empties the field.
 
-### T31 Generated taskbar style for every menu style (M)
+### T31 Generated taskbar style for every menu style (M) -- DONE (no settings UI yet; T36)
 Build: generalise `ui/code/xptheme.py` (new entry `--taskbar colour=#.. alpha=0.8 radius=8 line=0 sub=flat`) to
 write `start12-taskbar-<hash>` with `[Settings] FallbackTheme=` the current Plasma Style so only
 `widgets/panel-background.svg` (incl. `translucent/` prefix for blur), `widgets/tasks.svg` and `colors` are

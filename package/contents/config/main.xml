@@ -229,8 +229,32 @@
       <label>With the XP style the panel Start button stays green (like XP); off = scheme colour</label>
       <default>true</default>
     </entry>
+    <entry name="taskbarTheme" type="String">
+      <label>Generated taskbar Plasma Style for any menu style: off | custom (Start11 "Override taskbar colour"); XP taskbar wins</label>
+      <default>off</default>
+    </entry>
+    <entry name="taskbarColor" type="Color">
+      <label>Taskbar colour (Start11 CustomColourTaskbar)</label>
+      <default>#101010</default>
+    </entry>
+    <entry name="taskbarAlpha" type="Int">
+      <label>Taskbar opacity in percent (Start11 TaskbarAlphaValue)</label>
+      <default>80</default>
+      <min>0</min>
+      <max>100</max>
+    </entry>
+    <entry name="taskbarRadius" type="Int">
+      <label>Taskbar corner radius in px (Start11 rounded corners; 2 = square)</label>
+      <default>2</default>
+      <min>2</min>
+      <max>24</max>
+    </entry>
+    <entry name="taskbarLine" type="Bool">
+      <label>Light line on the taskbar edge (off = Start11 HideTaskbarLineEntirely)</label>
+      <default>false</default>
+    </entry>
     <entry name="savedDesktopTheme" type="String">
-      <label>Plasma Style that was active before the XP taskbar theme; restored when leaving XP</label>
+      <label>Plasma Style that was active before the XP / generated taskbar theme; restored when both are off</label>
       <default></default>
     </entry>
   </group>

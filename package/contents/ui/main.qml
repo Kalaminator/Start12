@@ -201,6 +201,12 @@ PlasmoidItem {
         : "start12-xp-" + cfg.xpSubstyle + (cfg.xpColor === "olive" || cfg.xpColor === "silver" ? "-" + cfg.xpColor
                                          : cfg.xpColor === "custom" ? "-custom-" + xpCustomHex : "")
     onXpThemeChanged: syncDesktopTheme()
+    // Generated taskbar for any style (T31, xptheme.py --taskbar): start12-taskbar-<hash of args + fallback>,
+    // FallbackTheme = the user's saved style, so only panel/tasks/colors change. XP taskbar wins.
+    readonly property string taskbarArgs: cfg.taskbarTheme !== "custom" ? ""
+        : "colour=" + cfg.taskbarColor.toString().slice(-6) + " alpha=" + (cfg.taskbarAlpha / 100)
+          + " radius=" + cfg.taskbarRadius + " line=" + (cfg.taskbarLine ? 1 : 0) + " sub=flat"
+    onTaskbarArgsChanged: syncDesktopTheme()
     function syncDesktopTheme() {
         themeReader.connectSource("kreadconfig6 --file plasmarc --group Theme --key name");
     }
@@ -211,13 +217,22 @@ PlasmoidItem {
         onNewData: (sourceName, data) => {
             disconnectSource(sourceName);
             const cur = (data.stdout || "").trim() || "default";
-            const ours = cur.startsWith("start12-xp-");
-            if (root.xpTheme !== "") {
-                if (cur === root.xpTheme)
+            const ours = cur.startsWith("start12-xp-") || cur.startsWith("start12-taskbar-");
+            const fallback = ours ? (root.cfg.savedDesktopTheme || "default") : cur;
+            const want = root.xpTheme !== "" ? root.xpTheme : root.taskbarArgs === "" ? ""
+                : "start12-taskbar-" + Qt.md5(root.taskbarArgs + " " + fallback).slice(0, 10);
+            if (want !== "") {
+                if (cur === want)
                     return;
                 if (!ours)
                     root.cfg.savedDesktopTheme = cur;
-                if (root.xpTheme.includes("-custom-")) {
+                if (want !== root.xpTheme) {
+                    const tdir = "$HOME/.local/share/plasma/desktoptheme/";
+                    const tgen = decodeURIComponent(Qt.resolvedUrl("code/xptheme.py").toString().replace("file://", ""));
+                    root.run("sh -c " + Tiles.shQuote("rm -rf " + tdir + "start12-taskbar-*; python3 " + Tiles.shQuote(tgen)
+                             + " --taskbar " + root.taskbarArgs + " fallback=" + Tiles.shQuote(fallback) + " --out " + tdir + want
+                             + " && plasma-apply-desktoptheme " + want));
+                } else if (root.xpTheme.includes("-custom-")) {
                     const dir = "$HOME/.local/share/plasma/desktoptheme/";
                     const gen = decodeURIComponent(Qt.resolvedUrl("code/xptheme.py").toString().replace("file://", ""));
                     root.run("sh -c 'rm -rf " + dir + "start12-xp-*-custom-*; python3 \"" + gen + "\" --custom "

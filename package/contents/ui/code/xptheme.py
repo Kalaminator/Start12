@@ -1,6 +1,8 @@
 # Generates the Start12 XP Plasma Styles (taskbar: panel-background + tasks 9-slice SVGs, colors, metadata).
 # All schemes x substyles:  python3 xptheme.py <outdir>       (install.sh -> ~/.local/share/plasma/desktoptheme)
 # One custom colour:        python3 xptheme.py --custom '#3a6ea5' --sub classic --out <dir>   (main.qml)
+# Any-style taskbar (T31):  python3 xptheme.py --taskbar colour=#101010 alpha=0.8 radius=8 line=0 sub=flat
+#                             fallback=default --out <dir>   (main.qml; only panel/tasks/colors, rest = fallback)
 import argparse, json, os
 
 def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4), gid="g"):
@@ -177,14 +179,51 @@ def write(base, t, label):
                                "Id": name, "License": "LGPL", "Name": "Start12 XP " + label, "Version": "1.0"},
                    "X-Plasma-API": "5.0"}, f, indent=4)
 
+def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", sub="flat", fallback="default"):
+    """Plasma Style that only replaces panel-background (plain, opaque/ and translucent/ for blur), tasks
+    and colors; everything else comes from FallbackTheme (the user's own style)."""
+    B = "#" + colour.lstrip("#")[-6:]
+    rgb(B)
+    a, r = max(0.0, min(1.0, float(alpha))), max(2, min(24, int(radius)))
+    hi = (mix(B, W, .35), 1) if line not in ("0", "", "false") else None
+    for pre, op in (("", a), ("translucent/", a), ("opaque/", 1)):
+        svg(os.path.join(base, pre + "widgets/panel-background.svg"),
+            [frame("", 10, 10, 60, 40, r, None, [(0, B, op), (1, B, op)], hi=hi, margins=(2, 2, 2, 2), gid="panel"),
+             frame("mask", 10, 70, 60, 40, r, None, [(0, K, 1), (1, K, 1)], gid="mask")],
+            '<rect id="hint-stretch-borders" x="200" y="10" width="1" height="1" fill="none"/>')
+    ink = "#000000" if light(B) else W
+    clear = (None, [(0, ink, 0), (1, ink, 0)], None)
+    tasks = {  # sub=flat (Win10-like); T34 adds more button styles
+        "normal": clear, "minimized": clear,
+        "hover": (None, [(0, ink, .12), (1, ink, .12)], None),
+        "focus": (None, [(0, ink, .22), (1, ink, .22)], None),
+        "attention": (None, [(0, "#f39a32", .8), (1, "#f39a32", .8)], None),
+    }
+    frames = [frame(pfx, 10, 10 + i * 60, 60, 40, 2, bd, st, hi=h, margins=(6, 4, 6, 4), gid="t" + pfx)
+              for i, (pfx, (bd, st, h)) in enumerate(tasks.items())]
+    svg(os.path.join(base, "widgets/tasks.svg"), frames,
+        '<rect id="hint-stretch-borders" x="200" y="10" width="1" height="1" fill="none"/>')
+    with open(os.path.join(base, "colors"), "w") as f:
+        f.write(colors(B))
+    with open(os.path.join(base, "plasmarc"), "w") as f:
+        f.write("[Settings]\nFallbackTheme=%s\n\n[AdaptiveTransparency]\nenabled=false\n" % fallback)
+    name = os.path.basename(os.path.normpath(base))
+    with open(os.path.join(base, "metadata.json"), "w") as f:
+        json.dump({"KPlugin": {"Authors": [{"Name": "Start12"}], "Description": "Start12 taskbar on top of " + fallback,
+                               "Id": name, "License": "LGPL", "Name": "Start12 Taskbar " + B, "Version": "1.0"},
+                   "X-Plasma-API": "5.0", "X-Plasma-FallbackTheme": fallback}, f, indent=4)
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("outdir", nargs="?")
     ap.add_argument("--custom")
     ap.add_argument("--sub", choices=("classic", "modern"), default="classic")
     ap.add_argument("--out")
+    ap.add_argument("--taskbar", nargs="*", metavar="key=value")
     a = ap.parse_args()
-    if a.custom:
+    if a.taskbar is not None:
+        taskbar(a.out, **dict(kv.split("=", 1) for kv in a.taskbar))
+    elif a.custom:
         rgb(a.custom)  # rejects anything that is not a hex colour
         write(a.out, derive("#" + a.custom.lstrip("#")[-6:], a.sub), "%s %s" % (a.sub.title(), a.custom))
     else:
