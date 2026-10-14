@@ -29,7 +29,8 @@ your own Plasma Style, window decoration and colour scheme first.
 
 - KDE Plasma 6 (tested on Plasma 6.7, Arch Linux, Wayland)
 - `python3` (generates the taskbar styles, title bars and colour schemes)
-- `qdbus6`, `kreadconfig6`, `kwriteconfig6`, `kpackagetool6` (part of Plasma / KDE Frameworks)
+- `qdbus6` (also found as `qdbus-qt6` or `/usr/lib/qt6/bin/qdbus`), `kreadconfig6`, `kwriteconfig6`, `kpackagetool6` (part of Plasma / KDE Frameworks)
+- Works on any Plasma 6 distro: Fedora KDE, openSUSE, Kubuntu 25.04+, Debian 13, KDE neon, Manjaro, EndeavourOS, CachyOS, Bazzite, SteamOS desktop...
 - Optional: `gettext` (rebuild translations), `nodejs` (developer tests)
 
 ## Install

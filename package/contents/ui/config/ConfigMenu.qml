@@ -47,7 +47,7 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Section dividers:")
             text: i18n("Edit menu layout…")
             icon.name: "transform-move-horizontal"
-            onClicked: executable.connectSource("qdbus6 org.kde.plasmashell /PlasmaShell evaluateScript '"
+            onClicked: executable.connectSource("" + Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript '"
                 + "panels().concat(desktops()).forEach(function (c) { c.widgets(\"org.start12.menu\").forEach(function (w) {"
                 + " w.currentConfigGroup = [\"General\"]; w.writeConfig(\"designRequest\", \"" + Date.now() + "\"); w.reloadConfig(); }); });'")
         }

@@ -3,6 +3,7 @@ import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import QtQuick.Dialogs as Dialogs
 import org.kde.kirigami as Kirigami
+import "../code/tiles.js" as Tiles
 import org.kde.kcmutils as KCM
 import org.kde.kquickcontrols as KQuickControls
 import org.kde.plasma.plasma5support as P5Support
@@ -209,7 +210,7 @@ KCM.SimpleKCM {
             text: i18n("Edit panel…")
             // Plasma 6.7 has no "edit mode" shortcut; the shell's editMode D-Bus property works.
             // (Task manager settings can't be opened by script: right-click the taskbar for them.)
-            onClicked: page.run("qdbus6 org.kde.plasmashell /PlasmaShell org.freedesktop.DBus.Properties.Set org.kde.PlasmaShell editMode true")
+            onClicked: page.run("" + Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell org.freedesktop.DBus.Properties.Set org.kde.PlasmaShell editMode true")
         }
     }
 }

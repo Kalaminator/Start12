@@ -1,6 +1,7 @@
 #!/bin/sh
 # Open the Start12 settings window: poke a config key the first Start12 widget listens to.
-exec qdbus6 org.kde.plasmashell /PlasmaShell evaluateScript '
+QD=$(command -v qdbus6 || command -v qdbus-qt6 || echo /usr/lib/qt6/bin/qdbus)
+exec "$QD" org.kde.plasmashell /PlasmaShell evaluateScript '
 var found = false;
 panels().concat(desktops()).forEach(function (c) {
     c.widgets("org.start12.menu").forEach(function (w) {

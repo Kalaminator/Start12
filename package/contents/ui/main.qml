@@ -300,7 +300,7 @@ PlasmoidItem {
             // T41: KWin's blur effect on for the glass frame; the user's blurEnabled is saved in savedBlur ("unset" =
             // no key) and written back when our blur goes off.
             const plug = "kwriteconfig6 --file kwinrc --group Plugins --key blurEnabled ";
-            const fx = f => " && qdbus6 org.kde.KWin /Effects org.kde.kwin.Effects." + f + " blur";
+            const fx = f => " && " + Tiles.QDBUS + " org.kde.KWin /Effects org.kde.kwin.Effects." + f + " blur";
             if (root.wantBlur && root.cfg.savedBlur === "") {
                 root.cfg.savedBlur = blur || "unset";
                 root.run("sh -c " + Tiles.shQuote(plug + "true" + fx("loadEffect")));
@@ -313,7 +313,7 @@ PlasmoidItem {
             const ours = cur.startsWith("__aurorae__svg__start12-");
             const kw = (key, v) => v === "" ? "kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key " + key + " --delete"
                 : "kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key " + key + " " + Tiles.shQuote(v);
-            const reconf = " && qdbus6 org.kde.KWin /KWin reconfigure";
+            const reconf = " && " + Tiles.QDBUS + " org.kde.KWin /KWin reconfigure";
             const dir = "$HOME/.local/share/aurorae/themes/";
             if (root.windowDeco !== "") {
                 const want = "__aurorae__svg__" + root.decoName;
@@ -466,7 +466,7 @@ PlasmoidItem {
             + "const l = raw.split(',').filter(s => s && s.indexOf(" + JSON.stringify(name) + ") < 0); "
             + (on ? "l.push(" + JSON.stringify("file://" + path) + "); " : "")
             + "w.writeConfig('launchers', l); w.reloadConfig(); } }";
-        const dbus = "qdbus6 org.kde.plasmashell /PlasmaShell evaluateScript " + Tiles.shQuote(script);
+        const dbus = "" + Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript " + Tiles.shQuote(script);
         run("sh -c " + Tiles.shQuote(on
             ? "mkdir -p " + Tiles.shQuote(dir) + " && printf %s " + Tiles.shQuote(Tiles.pinDesktop(Tiles.custom(id))) + " > " + Tiles.shQuote(path) + " && " + dbus
             : dbus + "; rm -f " + Tiles.shQuote(path)));
@@ -950,20 +950,20 @@ PlasmoidItem {
             text: i18n("Show desktop")
             icon.name: "user-desktop"
             visible: root.hasMenuItem("desktop")
-            onTriggered: root.run("qdbus6 org.kde.kglobalaccel /component/kwin invokeShortcut \"Show Desktop\"")
+            onTriggered: root.run("" + Tiles.QDBUS + " org.kde.kglobalaccel /component/kwin invokeShortcut \"Show Desktop\"")
         },
         PlasmaCore.Action {
             text: i18n("Edit panel")
             icon.name: "configure-toolbars"
             visible: root.hasMenuItem("editpanel")
-            onTriggered: root.run("qdbus6 org.kde.plasmashell /PlasmaShell org.freedesktop.DBus.Properties.Set org.kde.PlasmaShell editMode true")
+            onTriggered: root.run("" + Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell org.freedesktop.DBus.Properties.Set org.kde.PlasmaShell editMode true")
         },
         PlasmaCore.Action {
             text: i18n("Auto-hide panel")
             icon.name: "view-fullscreen"
             visible: root.hasMenuItem("autohide")
             // flips hiding of the panel holding this widget (found by widget id)
-            onTriggered: root.run("qdbus6 org.kde.plasmashell /PlasmaShell evaluateScript 'for (const p of panels()) { if (p.widgetIds.indexOf(" + Plasmoid.id + ") >= 0) p.hiding = (p.hiding == \"none\" ? \"autohide\" : \"none\"); }'")
+            onTriggered: root.run("" + Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript 'for (const p of panels()) { if (p.widgetIds.indexOf(" + Plasmoid.id + ") >= 0) p.hiding = (p.hiding == \"none\" ? \"autohide\" : \"none\"); }'")
         },
         PlasmaCore.Action {
             isSeparator: true
