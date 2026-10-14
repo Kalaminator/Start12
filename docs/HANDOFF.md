@@ -6,7 +6,7 @@ sends screenshots; they said "keep adding everything, once we have all functions
 
 ## Layout
 - `package/` = the plasmoid. `./install.sh` (runs `node tests/test_tiles.js`, kpackagetool update,
-  installs `extras/start12-settings` + `.desktop`). `./install.sh --restart` also restarts plasmashell.
+  then `contents/ui/code/setup.sh --force`). `./install.sh --restart` also restarts plasmashell.
 - `package/contents/ui/main.qml`: PlasmoidItem, kicker models (RootModel row 1 = all apps, RunnerModel,
   SystemModel created after refresh because it crashes with a null favoritesModel), pin logic
   (`usesTiles` = windows10 -> tile groups JSON `tileGroups`; grid styles -> `pinnedGrid` list),
@@ -26,6 +26,14 @@ sends screenshots; they said "keep adding everything, once we have all functions
 - `config/`: settings pages (Start Menu, Layout, Left side, Look, Search, Start Button). `main.xml` holds
   all keys, labels name the Start11 registry value.
 - `docs/research/start11-features.md` (330 Start11 features) and `start11-internals.md`.
+
+## Store install (T44)
+KDE Store/Discover only unpacks the package, so `main.qml` runs `code/setup.sh` on every start (`setupRunner`,
+then syncDesktopTheme + readBrightness). setup.sh = xptheme.py (desktoptheme, --deco, --scheme) + installs
+`contents/extras/start12-settings(.desktop)`; no-op unless `~/.local/share/start12/setup-version` != metadata
+Version or a start12-xp-classic file / the command is missing. Translations: committed .mo in contents/locale
+(install.sh recompiles when msgfmt exists). Release: `tools/make-release.sh` -> dist/*.plasmoid (git-tracked only,
+Stardock check); store page text + upload steps in docs/STORE.md. Simulated store install verified: themes reappeared.
 
 ## Done and confirmed by the user or screenshots
 Win10 style like their Start11 screenshot, tiles (4 sizes, groups, drag tiles + groups, per-tile icon/

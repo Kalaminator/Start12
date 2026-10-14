@@ -1019,7 +1019,17 @@ PlasmoidItem {
         Plasmoid.activationTogglesExpanded = true;
         rootModel.refresh();
         systemModel = systemModelComponent.createObject(root, { favoritesModel: rootModel.systemFavoritesModel });
-        syncDesktopTheme();
-        readBrightness();   // then syncWindowDeco + syncWindowColors
+        // T44: code/setup.sh makes the generated themes first (KDE Store installs skip install.sh), then the syncs apply them.
+        setupRunner.connectSource("sh " + Tiles.shQuote(decodeURIComponent(Qt.resolvedUrl("code/setup.sh").toString().replace("file://", ""))));
+    }
+    P5Support.DataSource {
+        id: setupRunner
+        engine: "executable"
+        connectedSources: []
+        onNewData: sourceName => {
+            disconnectSource(sourceName);
+            root.syncDesktopTheme();
+            root.readBrightness();   // then syncWindowDeco + syncWindowColors
+        }
     }
 }

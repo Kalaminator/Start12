@@ -42,7 +42,7 @@ KCM.SimpleKCM {
 
     Kirigami.FormLayout {
         // T40: opens the menu in design mode (main.qml watches designRequest), written straight to the
-        // widget's config like extras/start12-settings so it needs no Apply.
+        // widget's config like contents/extras/start12-settings so it needs no Apply.
         QQC2.Button {
             Kirigami.FormData.label: i18n("Section dividers:")
             text: i18n("Edit menu layout…")

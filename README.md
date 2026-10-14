@@ -35,6 +35,12 @@ your own Plasma Style, window decoration and colour scheme first.
 
 ## Install
 
+**From the KDE Store** (updates come through Discover): right-click your panel → *Add or Manage Widgets* →
+*Get New Widgets* → *Download New Plasma Widgets*, search **Start12** and install. On first start the widget
+generates its taskbar styles, title bars, colour schemes and the `start12-settings` command by itself.
+
+**From git:**
+
 ```sh
 git clone https://github.com/Kalaminator/Start12.git
 cd Start12
@@ -45,7 +51,7 @@ Then right-click your panel → *Add or Manage Widgets* → search **Start12** a
 (or replace your current launcher with it). Open its settings with right-click → *Configure Start12*,
 or run `start12-settings`.
 
-Update: `git pull && ./install.sh --restart`.
+Updating: store installs update in Discover (or *Get New Widgets* → *Updates*); git installs with `git pull && ./install.sh --restart`.
 Remove: `kpackagetool6 -t Plasma/Applet -r org.start12.menu`.
 
 ## Images
@@ -61,6 +67,7 @@ or put PNG files in `package/contents/images/StartButtons/`, `MenuTextures/` or 
   pure logic in `contents/ui/code/tiles.js`, theme generator `contents/ui/code/xptheme.py`.
 - `tests/test_tiles.js` — tests for the pure logic (`node tests/test_tiles.js`).
 - `po/` — translations (`package/Messages.sh` extracts strings).
+- `tools/make-release.sh` — builds `dist/org.start12.menu-<version>.plasmoid` for the KDE Store (`docs/STORE.md`).
 - `docs/` — design notes (`HANDOFF.md`), job list (`TODO.md`), Start11 feature research.
 
 ## License
@@ -80,6 +87,11 @@ ventana de configuración con todo en un sitio.
 
 ## Instalar
 
+**Desde la KDE Store** (se actualiza con Discover): clic derecho en el panel → *Añadir o gestionar widgets* →
+*Obtener nuevos widgets* → *Descargar nuevos widgets de Plasma*, busca **Start12** e instálalo.
+
+**Desde git:**
+
 ```sh
 git clone https://github.com/Kalaminator/Start12.git
 cd Start12
@@ -88,6 +100,8 @@ cd Start12
 
 Después: clic derecho en el panel → *Añadir o gestionar widgets* → busca **Start12** y arrástralo al panel.
 La configuración se abre con clic derecho → *Configurar Start12*, o con `start12-settings`.
+
+Actualizar: Discover (tienda) o `git pull && ./install.sh --restart` (git).
 
 Necesitas Plasma 6, `python3` y las herramientas de KDE (`qdbus6`, `kreadconfig6`, `kpackagetool6`).
 
