@@ -91,7 +91,7 @@ Build: `ContextMenu.qml` own items for app rows: "Open file location" (dir of th
 only add if missing). Hook in `win10/AppList.qml`, `common/PinnedGrid.qml`, `styles/windows7.qml`.
 Check: Open file location on Firefox opens /usr/share/applications; renamed pin keeps its name.
 
-### T12 Reset positions / reset all settings (S)
+### T12 Reset positions / reset all settings (S) -- DONE
 Build: `config/ConfigMenu.qml` "Reset icon positions" (clears `tileGroups`, `pinnedGrid`); a "Reset
 Start12 settings" button on `config/ConfigStyle.qml` that sets every key back to its `main.xml` default
 (list the keys in a JS object in `code/defaults.js`; or `kwriteconfig6 --delete` per key via

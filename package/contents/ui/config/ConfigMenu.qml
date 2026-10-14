@@ -23,6 +23,7 @@ KCM.SimpleKCM {
     property alias cfg_highlightNew: highlightNew.checked
     property alias cfg_hideAppList: hideList.checked
     property var cfg_hiddenApps: []
+    property string cfg_resetRequest
 
     Kirigami.FormLayout {
         Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Tiles") }
@@ -96,5 +97,20 @@ KCM.SimpleKCM {
             text: i18n("Clear hidden list")
             onClicked: page.cfg_hiddenApps = []
         }
+
+        Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Reset") }
+        QQC2.Button {
+            text: i18n("Reset icon positions…")
+            icon.name: "edit-reset"
+            onClicked: positionsDialog.open()
+        }
+    }
+
+    Kirigami.PromptDialog {
+        id: positionsDialog
+        title: i18n("Reset icon positions?")
+        subtitle: i18n("Tiles, pinned icons and pin names go back to the fresh-install layout. Press OK/Apply in the settings window afterwards to finish.")
+        standardButtons: Kirigami.Dialog.Ok | Kirigami.Dialog.Cancel
+        onAccepted: page.cfg_resetRequest = "positions|" + Date.now()
     }
 }

@@ -21,6 +21,7 @@ KCM.SimpleKCM {
     property alias cfg_xpStartGreen: xpStartGreenBox.checked
     property string cfg_xpColor
     property alias cfg_xpCustomColor: xpCustom.color
+    property string cfg_resetRequest
 
     readonly property var built: ["windows7", "modern", "windows10", "windows11", "app", "pro", "launcher", "xp"]
     readonly property var styles: [
@@ -160,5 +161,20 @@ KCM.SimpleKCM {
                 }
             }
         }
+
+        Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Reset") }
+        QQC2.Button {
+            text: i18n("Reset all Start12 settings…")
+            icon.name: "edit-reset"
+            onClicked: allDialog.open()
+        }
+    }
+
+    Kirigami.PromptDialog {
+        id: allDialog
+        title: i18n("Reset all Start12 settings?")
+        subtitle: i18n("Every setting, tile and pinned icon goes back to the fresh-install default. If the XP taskbar theme is active, your previous Plasma Style is put back. Press OK/Apply in the settings window afterwards to finish.")
+        standardButtons: Kirigami.Dialog.Ok | Kirigami.Dialog.Cancel
+        onAccepted: page.cfg_resetRequest = "all|" + Date.now()
     }
 }

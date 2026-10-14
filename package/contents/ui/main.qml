@@ -273,6 +273,36 @@ PlasmoidItem {
         }
     }
 
+    // Reset from the settings pages (they set cfg.resetRequest = "positions|<time>" or "all|<time>").
+    // Delayed so the dialog's own Apply finishes writing first. "all" puts every key back to its main.xml
+    // default; savedDesktopTheme is kept so leaving XP (menuStyle default) restores the user's Plasma Style.
+    Timer {
+        id: resetTimer
+        interval: 700
+        property string what: ""
+        onTriggered: {
+            const keep = ["savedDesktopTheme", "resetRequest", "openSettingsRequest", "favorites", "favoritesPortedToKAstats"];
+            const keys = what === "all" ? root.cfg.keys().filter(k => !k.endsWith("Default") && !keep.includes(k))
+                                        : ["tileGroups", "pinnedGrid", "pinnedCaptions", "tilePage"];
+            for (const k of keys) {
+                const d = root.cfg[k + "Default"];
+                if (d !== undefined)
+                    root.cfg[k] = d;
+            }
+            root.cfg.resetRequest = "";
+        }
+    }
+    Connections {
+        target: root.cfg
+        function onResetRequestChanged() {
+            const w = root.cfg.resetRequest.split("|")[0];
+            if (w === "all" || w === "positions") {
+                resetTimer.what = w;
+                resetTimer.restart();
+            }
+        }
+    }
+
     // Per-tile icon and colour pickers, shared by all tiles.
     property string pickingTile: ""
     KIconThemes.IconDialog {
