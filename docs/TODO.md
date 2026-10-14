@@ -181,9 +181,16 @@ Build: `package/Messages.sh` (xgettext over `contents/ui`), `po/es.po`, install 
 config pages and menu strings to Spanish first.
 Check: `LANGUAGE=es plasmashell --replace`, settings window in Spanish.
 
-### T26 Full custom XP theme (M, later -- user will say when)
-User wants a custom theme that covers more than menu + taskbar + Start button (details to ask them
-when we start). Builds on `code/xptheme.py` and the XP palettes in `styles/xp.qml`.
+### T26 Full custom XP theme (M) -- user said "continúa" 2026-10-14; scope chosen by us:
+T26a window decorations: generate an Aurorae theme per XP scheme x substyle (+ custom colour) next to the
+Plasma Styles (classic: Luna blue title bar gradient, rounded top corners, white bold title, red close button,
+blue min/max/help buttons; modern: same palette, flatter, rounder). Apply via kwinrc
+[org.kde.kdecoration2] library=org.kde.kwin.aurorae theme=__aurorae__svg__<name> + `qdbus6 org.kde.KWin /KWin reconfigure`;
+save the user's previous library/theme (new keys) and restore when leaving XP, like `savedDesktopTheme`.
+T26b colours: a Plasma colour scheme per XP scheme (XP beige #ECE9D8 windows, Luna blue selection, matching
+title bar colours) applied with plasma-apply-colorscheme, previous one saved/restored.
+One Bool key `xpWindowTheme` (default false: it changes all windows), checkbox on the Taskbar settings page
+next to the XP taskbar box ("Apply XP look to windows"). Spanish strings.
 
 ## Later phase
 - Taskbar (features doc section 10): separate phase after the menu, if the user wants it.
