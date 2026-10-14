@@ -50,7 +50,8 @@ Missing: Win7/Modern drag to reorder pins + jump-list arrows; canvas: user-made 
 icon tint, drag between groups. Plasma keeps one popup size for all styles (user drags it).
 
 ## Next (in order)
-1. User checks all styles. 2. Canvas extras (own tabs/groups, tint). 3. Win7 jump lists, pin reorder.
+Work through docs/TODO.md job by job (T01, T02 done). Use the prompt in docs/AGENT_PROMPT.md, one agent per job,
+then a load check of all styles every 2-3 jobs. Next: T03 Search filter icons.
 Then the taskbar part of Start11 (section 10 of the features doc), if the user wants it.
 
 ## Testing tips
