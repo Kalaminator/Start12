@@ -207,8 +207,20 @@ PlasmoidItem {
     function windowDecoration() {
         const s = cfg.menuStyle;
         return s === "xp" ? xpScheme : s === "windows7" ? "start12-win7"
-            : "start12-" + (s === "windows10" ? "win10" : "win11") + (userDark ? "-dark" : "-light");
+            : s === "windows10" ? "start12-win10-" + (win10Dark ? "dark" : "light") + (cfg.win10AccentTitles ? "-accent-" + accentHex : "")
+            : "start12-win11-" + (userDark ? "dark" : "light");
     }
+    // T38 Windows 10 colours: light/dark from colorMode (0 Plasma = userDark, 1 dark, 2 light, 3 custom menu colour),
+    // accent = the menu's accent (Plasma or custom).
+    readonly property string accentHex: (cfg.accentMode === 1 ? cfg.accentColor : Kirigami.Theme.highlightColor).toString().slice(-6)
+    readonly property bool win10Dark: cfg.colorMode === 1 || (cfg.colorMode === 0 && userDark)
+        || (cfg.colorMode === 3 && Kirigami.ColorUtils.brightnessForColor(cfg.menuColor) === Kirigami.ColorUtils.Dark)
+    // xptheme.py args for a deco/scheme made at apply time (XP custom colour, Win10 accent title bar); "" = shipped one.
+    function customArgs(name) {
+        return name.includes("-custom-") ? "--custom " + xpCustomHex + " --sub " + cfg.xpSubstyle
+            : name.includes("-accent-") ? "--custom " + accentHex + " --win10 " + (win10Dark ? "dark" : "light") : "";
+    }
+    readonly property string customNames: "\\( -name 'start12-xp-*-custom-*' -o -name 'start12-win10-*-accent-*' \\)"
     readonly property string windowDeco: cfg.windowTheme ? windowDecoration() : ""
     onWindowDecoChanged: readBrightness()
     // Brightness of the user's own colour scheme (the saved one while ours is applied), then both syncs.
@@ -259,11 +271,10 @@ PlasmoidItem {
                     root.cfg.savedDecoTheme = cur;
                 }
                 const gen = decodeURIComponent(Qt.resolvedUrl("code/xptheme.py").toString().replace("file://", ""));
-                const make = !root.windowDeco.includes("-custom-") ? "true"
-                    : "python3 " + Tiles.shQuote(gen) + " --deco --custom " + root.xpCustomHex + " --sub " + root.cfg.xpSubstyle
-                      + " --out " + dir + root.windowDeco;
+                const make = root.customArgs(root.windowDeco) === "" ? "true"
+                    : "python3 " + Tiles.shQuote(gen) + " --deco " + root.customArgs(root.windowDeco) + " --out " + dir + root.windowDeco;
                 root.run("sh -c " + Tiles.shQuote(make + " && " + kw("library", "org.kde.kwin.aurorae") + " && " + kw("theme", want) + reconf
-                         + " && find " + dir + " -maxdepth 1 -name 'start12-xp-*-custom-*' ! -name " + root.windowDeco + " -exec rm -rf {} +"));
+                         + " && find " + dir + " -maxdepth 1 " + root.customNames + " ! -name " + root.windowDeco + " -exec rm -rf {} +"));
             } else if (ours) {
                 root.run("sh -c " + Tiles.shQuote(kw("library", root.cfg.savedDecoLibrary) + " && " + kw("theme", root.cfg.savedDecoTheme) + reconf));
             }
@@ -289,11 +300,10 @@ PlasmoidItem {
                     root.cfg.savedColorScheme = cur;
                 const dir = "$HOME/.local/share/color-schemes/";
                 const gen = decodeURIComponent(Qt.resolvedUrl("code/xptheme.py").toString().replace("file://", ""));
-                const make = !want.includes("-custom-") ? "true"
-                    : "python3 " + Tiles.shQuote(gen) + " --scheme --custom " + root.xpCustomHex + " --sub " + root.cfg.xpSubstyle
-                      + " --out " + dir + want + ".colors";
+                const make = root.customArgs(want) === "" ? "true"
+                    : "python3 " + Tiles.shQuote(gen) + " --scheme " + root.customArgs(want) + " --out " + dir + want + ".colors";
                 root.run("sh -c " + Tiles.shQuote(make + " && plasma-apply-colorscheme " + want
-                         + " && find " + dir + " -maxdepth 1 -name 'start12-xp-*-custom-*' ! -name " + want + ".colors -delete"));
+                         + " && find " + dir + " -maxdepth 1 " + root.customNames + " ! -name " + want + ".colors -delete"));
             } else if (ours) {
                 root.run("plasma-apply-colorscheme " + Tiles.shQuote(root.cfg.savedColorScheme || "BreezeLight"));
             }
@@ -304,8 +314,10 @@ PlasmoidItem {
     // T35: taskbarFollowsStyle picks a preset per menu style instead of the custom keys (T37: others = windows11, xp = none).
     // T34: button style (buttons=plasma|win10|win11|win7), accent for the Win10/11 active bar, solid = focused
     // item less transparent; added to presets and custom alike.
+    // T38 windows10 follows Settings > Personalisation > Colours (light/dark, accent taskbar, transparency).
     readonly property var taskbarPresets: ({
-        "windows10": "colour=101010 alpha=1 radius=2 line=0 buttons=win10",
+        "windows10": "colour=" + (cfg.win10AccentStart ? accentHex : win10Dark ? "101010" : "eeeeee")
+                     + " alpha=" + (cfg.win10Transparency ? 0.85 : 1) + " radius=2 line=0 buttons=win10",
         "windows11": "colour=f3f3f3 alpha=0.8 radius=8 line=0 buttons=win11",
         "windows7": "colour=2a5a96 alpha=0.6 radius=6 line=1 buttons=win7" })
     readonly property string taskbarBase: cfg.taskbarFollowsStyle ? (taskbarPresets[cfg.menuStyle] || (cfg.menuStyle === "xp" ? "" : taskbarPresets.windows11))
@@ -317,7 +329,8 @@ PlasmoidItem {
              + " imagealpha=" + (cfg.taskbarImageAlpha / 100)
              + (cfg.taskbarImageTint ? " tint=" + cfg.accentColor.toString().slice(-6) : ""))
     readonly property string taskbarArgs: taskbarBase === "" ? "" : taskbarBase
-        + " accent=" + cfg.accentColor.toString().slice(-6) + " solid=" + (cfg.taskbarFocusedSolid ? 1 : 0)
+        + " accent=" + (cfg.menuStyle === "windows10" && cfg.win10AccentStart && cfg.taskbarFollowsStyle
+                        ? Qt.lighter("#" + accentHex, 1.6).toString().slice(-6) : cfg.accentColor.toString().slice(-6)) + " solid=" + (cfg.taskbarFocusedSolid ? 1 : 0)
     onTaskbarArgsChanged: syncDesktopTheme()
     function syncDesktopTheme() {
         themeReader.connectSource("kreadconfig6 --file plasmarc --group Theme --key name");

@@ -397,7 +397,8 @@ WIN_SCHEMES = {"win10": dict(B=W, win="#f0f0f0", sel="#0078d7"), "win10-dark": d
 FLAT_GLYPHS = {"close": "M .1,.1 L .9,.9 M .9,.1 L .1,.9", "minimize": "M .05,.5 H .95", "maximize": "M .05,.05 H .95 V .95 H .05 Z",
                "restore": "M .25,.05 H .95 V .75 M .05,.25 H .75 V .95 H .05 Z"}  # thin Windows 10/11 caption glyphs
 
-def write_win_deco(base, kind, dark):
+def write_win_deco(base, kind, dark, accent=None):
+    """T38 accent: Windows 10 "accent colour on title bars", the active title bar and frame in that colour."""
     name = os.path.basename(os.path.normpath(base))
     sch = WIN_SCHEMES[kind + ("-dark" if dark else "")]
     if kind == "win7":  # glass: translucent blue gradient, thick border, glassy buttons, wide red close
@@ -416,6 +417,10 @@ def write_win_deco(base, kind, dark):
         linei = "#3a3a3a" if dark else "#aaaaaa"
         hi, ink = bg, (W if dark else K)
         inki, glyph = mix(ink, bg, .55), ink
+        if accent:
+            act, side, line, hi = [(0, accent)], accent, accent, accent
+            ink = glyph = K if light(accent) else W
+    glyphi = glyph if not accent else (W if dark else K)
     defs_a = deco_frame("decoration", 10, T, S, ry, act, side, line, hi, "da")
     defs_i = deco_frame("decoration-inactive", T + 70, T, S, ry, ina, sidei, linei, hi, "di")
     svg(os.path.join(base, "decoration.svg"), [defs_a, defs_i], size=(130, 2 * T + 140))
@@ -434,7 +439,8 @@ def write_win_deco(base, kind, dark):
                 stops, bd, gop = [(0, top, 1), (.45, bot, 1), (1, mix(bot, W, .3), 1)], ("#1f3d66", .8 if on else .4), 1 if on else .7
             else:
                 red = "#e81123" if kind == "win10" else "#c42b1c"
-                grey = mix(sch["B"], W if dark else K, .12 if mode == "hover" else .2)
+                bar = accent if accent and on else sch["B"]
+                grey = mix(bar, K if light(bar) else W, .12 if mode == "hover" else .2)
                 col = red if btn == "close" and hot else grey
                 stops, bd = [(0, col, (1 if btn == "close" else .9) if hot else 0)], None
                 if btn == "close" and mode == "pressed":
@@ -442,7 +448,7 @@ def write_win_deco(base, kind, dark):
                 gop = 1 if on else .45
             if st.startswith("deactivated"):
                 gop = .35
-            gl = W if (kind == "win7" or (btn == "close" and hot)) else glyph
+            gl = W if (kind == "win7" or (btn == "close" and hot)) else glyph if on else glyphi
             sw = 2.0 if kind == "win7" else 1.0
             frames.append(frame(st, 10, 10 + i * (bh + 20), w, bh, c, bd, stops, gid="b%d" % i, margins=(c, c, c, c),
                                 center='<path d="%s" transform="translate(%s,%s) scale(%s)" fill="none" stroke="%s" stroke-opacity="%s" '
@@ -473,9 +479,14 @@ if __name__ == "__main__":
     ap.add_argument("--taskbar", nargs="*", metavar="key=value")
     ap.add_argument("--deco", action="store_true", help="write Aurorae window decorations instead (T26a)")
     ap.add_argument("--scheme", action="store_true", help="write Plasma colour schemes instead (T26b)")
+    ap.add_argument("--win10", choices=("light", "dark"), help="with --deco/--scheme --custom: Win10 accent title bar (T38)")
     a = ap.parse_args()
     if a.scheme:
-        if a.custom:  # --out is the .colors file; custom: beige windows, selection and title bar in the custom colour
+        if a.custom and a.win10:  # T38: Win10 light/dark scheme with the accent title bar
+            B = "#" + a.custom.lstrip("#")[-6:]
+            rgb(B)
+            write_scheme(a.out, label="Win10 %s Accent" % a.win10.title(), **dict(WIN_SCHEMES["win10" + ("-dark" if a.win10 == "dark" else "")], B=B))
+        elif a.custom:  # --out is the .colors file; custom: beige windows, selection and title bar in the custom colour
             rgb(a.custom)
             B = "#" + a.custom.lstrip("#")[-6:]
             write_scheme(a.out, B, SCHEME_COLOURS["blue"][0], B, "XP %s %s" % (a.sub.title(), a.custom))
@@ -488,7 +499,12 @@ if __name__ == "__main__":
             for name, (kind, dark) in WIN_DECOS.items():
                 write_scheme(os.path.join(a.outdir, name + ".colors"), label=name[8:].replace("-", " ").title(), **WIN_SCHEMES[kind + ("-dark" if dark else "")])
     elif a.deco:
-        if a.custom:
+        if a.custom and a.win10:
+            B = "#" + a.custom.lstrip("#")[-6:]
+            rgb(B)
+            os.makedirs(a.out, exist_ok=True)
+            write_win_deco(a.out, "win10", a.win10 == "dark", B)
+        elif a.custom:
             rgb(a.custom)
             write_deco(a.out, "#" + a.custom.lstrip("#")[-6:], a.sub, "%s %s" % (a.sub.title(), a.custom))
         else:

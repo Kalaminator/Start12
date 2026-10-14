@@ -243,7 +243,7 @@ Settings > Taskbar: exactly two switches at the top, for every style: "Apply the
 Previous decoration/theme restored when switched off. Spanish strings.
 Check: generate each decoration into the scratch dir and render with PySide6; qmllint; ./install.sh.
 
-### T38 Windows 10 personalisation (M) -- user 2026-10-14 "personalización del estilo de Windows 10"
+### T38 Windows 10 personalisation (M) -- DONE -- user 2026-10-14 "personalización del estilo de Windows 10"
 Mirror Windows 10 Settings > Personalisation > Colours, for the windows10 style. A "Windows 10 colours" group
 (visible when menuStyle is windows10, like the XP group in config/ConfigStyle.qml) that reuses the existing keys
 colorMode (Light/Dark/System/Custom) and accentMode/accentColor (System accent / custom), plus new Bools:

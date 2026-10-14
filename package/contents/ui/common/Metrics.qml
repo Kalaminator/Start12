@@ -35,16 +35,19 @@ QtObject {
 
     // Colours: automatic (Plasma), force dark, force light, custom.
     property int mode: cfg.colorMode     // a style can force a mode for one part (Win7 white pane)
-    readonly property color bg: mode === 0 ? Kirigami.Theme.backgroundColor
+    // T38 Windows 10 "Show accent colour on Start and taskbar" / "Transparency effects"
+    readonly property bool win10: cfg.menuStyle === "windows10"
+    readonly property bool accentStart: win10 && cfg.win10AccentStart
+    readonly property color bg: accentStart ? Qt.darker(accent, 1.6) : mode === 0 ? Kirigami.Theme.backgroundColor
                               : mode === 1 ? "#1c1b22" : mode === 2 ? "#f3f3f3" : cfg.menuColor
-    readonly property color text: mode === 0 ? Kirigami.Theme.textColor
+    readonly property color text: accentStart ? "#ffffff" : mode === 0 ? Kirigami.Theme.textColor
                                 : mode === 1 ? "#ffffff" : mode === 2 ? "#1b1b1b" : cfg.textColor
     readonly property color accent: cfg.accentMode === 1 ? cfg.accentColor : Kirigami.Theme.highlightColor
     readonly property color tile: cfg.tileColorMode === 1 ? accent
                                 : cfg.tileColorMode === 2 ? cfg.tileColor : text
     readonly property real tileAlpha: cfg.tileColorMode === 0 ? cfg.tileOpacity / 100
                                     : Math.max(0.05, cfg.tileOpacity / 100 * 4)
-    readonly property real bgAlpha: cfg.solidMenu ? 1 : cfg.menuOpacity / 100
+    readonly property real bgAlpha: cfg.solidMenu || (win10 && !cfg.win10Transparency) ? 1 : cfg.menuOpacity / 100
 
     readonly property string font: cfg.fontFamily !== "" ? cfg.fontFamily : Kirigami.Theme.defaultFont.family
     readonly property real fontSize: px(cfg.fontSize)

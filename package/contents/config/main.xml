@@ -222,6 +222,18 @@
       <label>Apply the menu style's window decoration (Aurorae) and colour scheme (XP for now, see main.qml windowDecoration/windowColors). Changes all windows.</label>
       <default>false</default>
     </entry>
+    <entry name="win10AccentStart" type="Bool">
+      <label>Windows 10 style: show accent colour on Start and taskbar (menu = darkened accent, taskbar = accent)</label>
+      <default>false</default>
+    </entry>
+    <entry name="win10AccentTitles" type="Bool">
+      <label>Windows 10 style: show accent colour on title bars (generated start12-win10-*-accent-hex decoration/scheme)</label>
+      <default>false</default>
+    </entry>
+    <entry name="win10Transparency" type="Bool">
+      <label>Windows 10 style: transparency effects (off = solid menu and taskbar)</label>
+      <default>true</default>
+    </entry>
     <entry name="xpColor" type="String">
       <label>Windows XP colour scheme (menu + taskbar): blue | olive | silver | custom (from xpCustomColor)</label>
       <default>blue</default>
