@@ -322,7 +322,7 @@
     </entry>
     <entry name="buttonMenuItems" type="StringList">
       <label>Start button right-click menu entries</label>
-      <default>settings,files,monitor,terminal,run,power</default>
+      <default>settings,files,monitor,terminal,run,desktop,editpanel,power</default>
     </entry>
   </group>
 

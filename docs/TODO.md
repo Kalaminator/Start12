@@ -76,7 +76,7 @@ Build: add to `common/Places.qml` ids `computer` (`file:///`), `trash` (`trash:/
 list them in `config/ConfigRail.qml` for rail and bottom items; separator draws a line.
 Check: add Trash + separator to the left rail, they show and open.
 
-### T10 Start button menu + surface menu extras (S)
+### T10 Start button menu + surface menu extras (S) - DONE
 Build: `main.qml contextualActions` add "Show desktop" (`Plasmoid.containment.corona`... or
 `qdbus6 org.kde.kglobalaccel /component/kwin invokeShortcut "Show Desktop"`), "Edit panel"
 (`Plasmoid.containment.corona.editMode = true`), "System Settings", "Task Manager"-like "System Monitor"

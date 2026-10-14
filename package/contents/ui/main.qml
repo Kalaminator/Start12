@@ -420,6 +420,18 @@ PlasmoidItem {
             onTriggered: root.run("krunner")
         },
         PlasmaCore.Action {
+            text: i18n("Show desktop")
+            icon.name: "user-desktop"
+            visible: root.hasMenuItem("desktop")
+            onTriggered: root.run("qdbus6 org.kde.kglobalaccel /component/kwin invokeShortcut \"Show Desktop\"")
+        },
+        PlasmaCore.Action {
+            text: i18n("Edit panel")
+            icon.name: "configure-toolbars"
+            visible: root.hasMenuItem("editpanel")
+            onTriggered: Plasmoid.containment.corona.editMode = true
+        },
+        PlasmaCore.Action {
             isSeparator: true
             visible: root.hasMenuItem("power")
         },
