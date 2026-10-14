@@ -47,10 +47,9 @@ or run `start12-settings`.
 Update: `git pull && ./install.sh --restart`.
 Remove: `kpackagetool6 -t Plasma/Applet -r org.start12.menu`.
 
-## Images not included
+## Images
 
-Start11's own Start button images and menu/tab textures are copyrighted by Stardock and are **not** part of this
-project. The *image* Start button mode and the textures work with any PNG: pick your own file in the settings,
+The *image* Start button mode and the menu/tab textures use your own PNG files: pick a file in the settings,
 or put PNG files in `package/contents/images/StartButtons/`, `MenuTextures/` or `TabTextures/` before
 `./install.sh`. The default Start button is the KDE logo (`start-here-kde`); change it under Settings → Start Button.
 
@@ -94,8 +93,7 @@ Necesitas Plasma 6, `python3` y las herramientas de KDE (`qdbus6`, `kreadconfig6
 Todo lo que cambia (estilo de la barra, bordes de ventana, colores) se deshace al apagarlo: Start12 guarda antes
 tu tema de Plasma, tus bordes y tus colores.
 
-Las imágenes de Start11 (botones de inicio y texturas) son de Stardock y **no** se incluyen. Puedes usar cualquier
-PNG tuyo desde la configuración. El botón de inicio usa el logo de KDE; lo puedes cambiar en Configuración → Botón de inicio.
+Para el botón con imagen y las texturas puedes usar cualquier PNG tuyo desde la configuración. El botón de inicio usa el logo de KDE; lo puedes cambiar en Configuración → Botón de inicio.
 
 ## Licencia
 
