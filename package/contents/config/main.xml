@@ -219,7 +219,7 @@
       <default>true</default>
     </entry>
     <entry name="windowTheme" type="Bool">
-      <label>Apply the menu style's window decoration (Aurorae; XP for now, see main.qml windowDecoration). Changes all windows.</label>
+      <label>Apply the menu style's window decoration (Aurorae) and colour scheme (XP for now, see main.qml windowDecoration/windowColors). Changes all windows.</label>
       <default>false</default>
     </entry>
     <entry name="xpColor" type="String">
@@ -316,6 +316,10 @@
     </entry>
     <entry name="savedDecoTheme" type="String">
       <label>kwinrc [org.kde.kdecoration2] theme before windowTheme; restored when it goes off</label>
+      <default></default>
+    </entry>
+    <entry name="savedColorScheme" type="String">
+      <label>kdeglobals [General] ColorScheme before windowTheme; restored when it goes off</label>
       <default></default>
     </entry>
   </group>

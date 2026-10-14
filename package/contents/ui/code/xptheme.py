@@ -2,6 +2,7 @@
 # All schemes x substyles:  python3 xptheme.py <outdir>       (install.sh -> ~/.local/share/plasma/desktoptheme)
 # One custom colour:        python3 xptheme.py --custom '#3a6ea5' --sub classic --out <dir>   (main.qml)
 # Window decorations (T26a): python3 xptheme.py --deco <outdir>  |  --deco --custom <hex> --sub s --out <dir>
+# Colour schemes (T26b):     python3 xptheme.py --scheme <outdir> |  --scheme --custom <hex> --sub s --out <file.colors>
 # Any-style taskbar (T31):  python3 xptheme.py --taskbar colour=#101010 alpha=0.8 radius=8 line=0 buttons=win11 accent=3d8ee6 solid=0
 #                             fallback=default --out <dir>   (main.qml; only panel/tasks/colors, rest = fallback)
 #                             [image=<png/jpg> mode=tile|stretch|top|middle|bottom imagealpha=0.3 tint=3daee9] (T33)
@@ -358,6 +359,30 @@ def write_deco(base, B, sub, label):
                 "X-KDE-PluginInfo-Author=Start12\nX-KDE-PluginInfo-Name=%s\nX-KDE-PluginInfo-Version=1.0\n"
                 "X-KDE-PluginInfo-License=LGPL\n" % (label, name))
 
+# T26b window colours: a Plasma colour scheme (~/.local/share/color-schemes/<name>.colors) per XP scheme, same names.
+# XP: beige windows, white views, selection in the scheme colour (blue Luna #316ac5), title bar = scheme colour.
+SCHEME_COLOURS = {"blue": ("#ece9d8", "#316ac5"), "olive": ("#ece9d8", "#93a070"), "silver": ("#e0dfe3", "#b2b4bf")}
+
+def write_scheme(path, B, win, sel, label):
+    c = lambda h: "%d,%d,%d" % rgb(h)
+    fg, selfg = "#000000", ("#000000" if light(sel) else W)
+    def group(bg, alt, f=fg, focus=sel):
+        return "\n".join(["BackgroundNormal=" + c(bg), "BackgroundAlternate=" + c(alt), "ForegroundNormal=" + c(f),
+                          "ForegroundInactive=" + c(mix(f, bg, .45)), "ForegroundActive=" + c(f), "ForegroundLink=" + c("#0000ff"),
+                          "ForegroundVisited=" + c("#800080"), "ForegroundNegative=" + c("#c00000"), "ForegroundNeutral=" + c("#b06000"),
+                          "ForegroundPositive=" + c("#007000"), "DecorationFocus=" + c(focus), "DecorationHover=" + c(mix(focus, W, .3))])
+    g = {"Window": group(win, mix(win, K, .04)), "View": group(W, mix(win, W, .5)), "Button": group(win, mix(win, K, .06)),
+         "Header": group(win, mix(win, K, .04)), "Tooltip": group("#ffffe1", "#f5f5d0"),
+         "Selection": group(sel, mix(sel, W, .2), selfg, sel),
+         "Complementary": group(B, mix(B, K, .12), "#1f2440" if light(B) else W, mix(B, W, .4))}
+    tfg, Bi = ("#000000" if light(B) else W), mix(B, "#d4d8e4", .55)
+    name = os.path.splitext(os.path.basename(path))[0]
+    with open(path, "w") as f:
+        f.write("".join("[Colors:%s]\n%s\n\n" % kv for kv in g.items()))
+        f.write("[General]\nColorScheme=%s\nName=Start12 XP %s\n\n[KDE]\ncontrast=4\n\n" % (name, label))
+        f.write("[WM]\nactiveBackground=%s\nactiveBlend=%s\nactiveForeground=%s\ninactiveBackground=%s\ninactiveBlend=%s\n"
+                "inactiveForeground=%s\n" % (c(B), c(B), c(tfg), c(Bi), c(Bi), c(mix(tfg, Bi, .3))))
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("outdir", nargs="?")
@@ -366,8 +391,20 @@ if __name__ == "__main__":
     ap.add_argument("--out")
     ap.add_argument("--taskbar", nargs="*", metavar="key=value")
     ap.add_argument("--deco", action="store_true", help="write Aurorae window decorations instead (T26a)")
+    ap.add_argument("--scheme", action="store_true", help="write Plasma colour schemes instead (T26b)")
     a = ap.parse_args()
-    if a.deco:
+    if a.scheme:
+        if a.custom:  # --out is the .colors file; custom: beige windows, selection and title bar in the custom colour
+            rgb(a.custom)
+            B = "#" + a.custom.lstrip("#")[-6:]
+            write_scheme(a.out, B, SCHEME_COLOURS["blue"][0], B, "%s %s" % (a.sub.title(), a.custom))
+        else:
+            os.makedirs(a.outdir, exist_ok=True)
+            for sub in ("classic", "modern"):
+                for sch, (win, sel) in SCHEME_COLOURS.items():
+                    write_scheme(os.path.join(a.outdir, "start12-xp-" + sub + ("" if sch == "blue" else "-" + sch) + ".colors"),
+                                 DECO_BASES[sch], win, sel, "%s %s" % (sub.title(), sch.title()))
+    elif a.deco:
         if a.custom:
             rgb(a.custom)
             write_deco(a.out, "#" + a.custom.lstrip("#")[-6:], a.sub, "%s %s" % (a.sub.title(), a.custom))

@@ -50,8 +50,10 @@ KCM.SimpleKCM {
             text: i18n("Apply matching XP taskbar theme")
         }
         QQC2.CheckBox {
-            id: windowBox   // T26a: main.qml windowDecoration() decides the theme per menu style (XP for now)
+            id: windowBox   // T26a/b: main.qml windowDecoration()/windowColors() decide per menu style (XP for now)
             text: i18n("Apply the theme to windows")
+            QQC2.ToolTip.visible: hovered
+            QQC2.ToolTip.text: i18n("Title bars and colours of every window. Your own ones come back when this is off.")
         }
         QQC2.CheckBox {
             id: followBox

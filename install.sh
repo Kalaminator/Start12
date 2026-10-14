@@ -18,6 +18,8 @@ install -Dm644 extras/start12-settings.desktop "$HOME/.local/share/applications/
 python3 package/contents/ui/code/xptheme.py "$HOME/.local/share/plasma/desktoptheme"
 # Window decorations for the same schemes (T26a, applied when the windowTheme key is on).
 python3 package/contents/ui/code/xptheme.py --deco "$HOME/.local/share/aurorae/themes"
+# Colour schemes for the same schemes (T26b, same windowTheme key).
+python3 package/contents/ui/code/xptheme.py --scheme "$HOME/.local/share/color-schemes"
 if [ "$1" = "--restart" ]; then
     systemctl --user restart plasma-plasmashell.service
 fi

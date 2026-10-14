@@ -246,6 +246,43 @@ PlasmoidItem {
             }
         }
     }
+    // Window colours (T26b, same windowTheme key): Plasma colour scheme per menu style; "" = this style has none
+    // yet (add other styles here). XP ones come from xptheme.py --scheme (install.sh; custom colour made here).
+    function windowColors() {
+        return cfg.menuStyle === "xp" ? xpScheme : "";
+    }
+    readonly property string windowScheme: cfg.windowTheme ? windowColors() : ""
+    onWindowSchemeChanged: syncWindowColors()
+    // Same save/restore idea: kdeglobals [General] ColorScheme is saved in savedColorScheme when ours goes on.
+    function syncWindowColors() {
+        colorReader.connectSource("kreadconfig6 --file kdeglobals --group General --key ColorScheme");
+    }
+    P5Support.DataSource {
+        id: colorReader
+        engine: "executable"
+        connectedSources: []
+        onNewData: (sourceName, data) => {
+            disconnectSource(sourceName);
+            const cur = (data.stdout || "").trim();
+            const ours = cur.startsWith("start12-");
+            const want = root.windowScheme;
+            if (want !== "") {
+                if (cur === want)
+                    return;
+                if (!ours)
+                    root.cfg.savedColorScheme = cur;
+                const dir = "$HOME/.local/share/color-schemes/";
+                const gen = decodeURIComponent(Qt.resolvedUrl("code/xptheme.py").toString().replace("file://", ""));
+                const make = !want.includes("-custom-") ? "true"
+                    : "python3 " + Tiles.shQuote(gen) + " --scheme --custom " + root.xpCustomHex + " --sub " + root.cfg.xpSubstyle
+                      + " --out " + dir + want + ".colors";
+                root.run("sh -c " + Tiles.shQuote(make + " && plasma-apply-colorscheme " + want
+                         + " && find " + dir + " -maxdepth 1 -name 'start12-xp-*-custom-*' ! -name " + want + ".colors -delete"));
+            } else if (ours) {
+                root.run("plasma-apply-colorscheme " + Tiles.shQuote(root.cfg.savedColorScheme || "BreezeLight"));
+            }
+        }
+    }
     // Generated taskbar for any style (T31, xptheme.py --taskbar): start12-taskbar-<hash of args + fallback>,
     // FallbackTheme = the user's saved style, so only panel/tasks/colors change. XP taskbar wins.
     // T35: taskbarFollowsStyle picks a preset per menu style instead of the custom keys (others / xp = none).
@@ -425,7 +462,7 @@ PlasmoidItem {
     }
     // Keys that reset/backup/restore touch: everything in main.xml but bookkeeping and kicker's favorites.
     function userKeys() {
-        const keep = ["savedDesktopTheme", "savedDecoLibrary", "savedDecoTheme", "resetRequest", "openSettingsRequest", "favorites", "favoritesPortedToKAstats"];
+        const keep = ["savedDesktopTheme", "savedDecoLibrary", "savedDecoTheme", "savedColorScheme", "resetRequest", "openSettingsRequest", "favorites", "favoritesPortedToKAstats"];
         return root.cfg.keys().filter(k => !k.endsWith("Default") && !keep.includes(k));
     }
     // Restore: read the backup JSON, write back every known key, then put the Plasma Style in line
@@ -448,6 +485,7 @@ PlasmoidItem {
             }
             root.syncDesktopTheme();
             root.syncWindowDeco();
+            root.syncWindowColors();
         }
     }
     property string doneReset: ""
@@ -836,5 +874,6 @@ PlasmoidItem {
         systemModel = systemModelComponent.createObject(root, { favoritesModel: rootModel.systemFavoritesModel });
         syncDesktopTheme();
         syncWindowDeco();
+        syncWindowColors();
     }
 }
