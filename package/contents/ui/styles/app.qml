@@ -95,7 +95,7 @@ FocusScope {
             anchors.verticalCenter: parent.verticalCenter
             spacing: m.px(2)
             Repeater {
-                model: style.cfg.bottomItems.filter(id => places.info(id) !== undefined).concat(["power"])
+                model: style.cfg.bottomItems.filter(id => places.info(id) !== undefined && !places.info(id).separator).concat(["power"])
                 delegate: PC3.ToolButton {
                     id: sc
                     required property string modelData

@@ -96,14 +96,16 @@ Item {
                 required property string modelData
                 readonly property var item: rail.info(modelData)
                 width: rail.width
-                height: rail.metrics.px(46)
+                readonly property bool sep: item.separator === true
+                height: sep ? rail.metrics.px(9) : rail.metrics.px(46)
+                enabled: !sep
                 hoverEnabled: true
                 onClicked: places.activate(modelData, btn)
-                readonly property bool kbNav: true
+                readonly property bool kbNav: !sep
                 KeyFrame {}
 
                 PC3.ToolTip.text: item.text
-                PC3.ToolTip.visible: hovered && !rail.expanded
+                PC3.ToolTip.visible: hovered && !rail.expanded && !sep
                 PC3.ToolTip.delay: Kirigami.Units.toolTipDelay
 
                 contentItem: Item {}
@@ -112,13 +114,22 @@ Item {
                     opacity: btn.pressed ? 0.16 : (btn.hovered ? 0.08 : 0)
                 }
 
+                Rectangle {
+                    visible: btn.sep
+                    anchors.centerIn: parent
+                    width: parent.width - rail.metrics.px(16)
+                    height: 1
+                    color: rail.metrics.text
+                    opacity: 0.25
+                }
+
                 Kirigami.Icon {
                     id: glyph
                     x: Math.round((rail.metrics.rail - width) / 2)
                     anchors.verticalCenter: parent.verticalCenter
                     width: rail.metrics.railIcon
                     height: width
-                    visible: btn.modelData !== "user" || avatar.status !== Image.Ready
+                    visible: !btn.sep && (btn.modelData !== "user" || avatar.status !== Image.Ready)
                     source: btn.item.icon
                     color: rail.metrics.text
                     isMask: btn.item.icon.endsWith("-symbolic")
@@ -139,7 +150,7 @@ Item {
                 }
 
                 PC3.Label {
-                    visible: rail.expanded
+                    visible: rail.expanded && !btn.sep
                     x: rail.metrics.rail
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width - x - rail.metrics.px(8)

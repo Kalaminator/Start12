@@ -122,19 +122,30 @@ FocusScope {
                     id: place
                     required property string modelData
                     readonly property var info: places.info(modelData)
+                    readonly property bool sep: info.separator === true
                     width: parent.width
-                    height: m.px(36)
+                    height: sep ? m.px(9) : m.px(36)
+                    enabled: !sep
                     hoverEnabled: true
                     leftPadding: m.px(10)
                     onClicked: places.activate(modelData, place)
-                    readonly property bool kbNav: true
+                    readonly property bool kbNav: !sep
                     KeyFrame {}
                     background: Rectangle {
                         radius: m.px(4)
                         color: m.text
                         opacity: place.pressed ? 0.14 : place.hovered ? 0.08 : 0
                     }
+                    Rectangle {
+                        visible: place.sep
+                        anchors.centerIn: parent
+                        width: parent.width
+                        height: 1
+                        color: m.text
+                        opacity: 0.25
+                    }
                     contentItem: Row {
+                        visible: !place.sep
                         spacing: m.px(12)
                         Kirigami.Icon {
                             anchors.verticalCenter: parent.verticalCenter

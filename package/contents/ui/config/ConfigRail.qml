@@ -25,6 +25,14 @@ KCM.SimpleKCM {
         "videos": [i18n("Videos"), "folder-videos"],
         "home": [i18n("Personal folder"), "user-home"],
         "network": [i18n("Network"), "network-workgroup"],
+        "computer": [i18n("Computer"), "computer"],
+        "trash": [i18n("Trash"), "user-trash"],
+        "recent": [i18n("Recent files"), "document-open-recent"],
+        "games": [i18n("Games"), "applications-games"],
+        "printers": [i18n("Printers"), "printer"],
+        "users": [i18n("Users"), "system-users"],
+        "updates": [i18n("Updates"), "system-software-update"],
+        "separator": [i18n("Separator"), "list-remove"],
         "files": [i18n("File Explorer"), "system-file-manager"],
         "personalization": [i18n("Personalization"), "preferences-desktop-theme-global"],
         "settings": [i18n("Settings"), "configure"],
@@ -104,7 +112,7 @@ KCM.SimpleKCM {
                     Layout.fillWidth: true
                     textRole: "text"
                     valueRole: "id"
-                    model: Object.keys(page.builtins).filter(id => !page.cfg_railItems.includes(id))
+                    model: Object.keys(page.builtins).filter(id => id === "separator" || !page.cfg_railItems.includes(id))
                         .map(id => ({ id: id, text: page.builtins[id][0] }))
                 }
                 QQC2.Button { text: i18n("Add"); icon.name: "list-add"; enabled: addBox.count > 0; onClicked: page.add(addBox.currentValue) }

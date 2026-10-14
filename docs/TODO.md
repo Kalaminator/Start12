@@ -69,7 +69,7 @@ right-click "Hide from apps"; `config/ConfigMenu.qml` "Hidden apps" list with "S
 (Check first whether `Kicker.RootModel` exposes `hiddenEntries`; if so bind it instead of filtering.)
 Check: hide Konsole, it vanishes from A-Z and search folders; Clear brings it back.
 
-### T09 More places (S)
+### T09 More places (S) -- DONE
 Build: add to `common/Places.qml` ids `computer` (`file:///`), `trash` (`trash:/`), `recent`
 (`recentlyused:/`), `games` (`applications:/Games`), `printers` (`systemsettings kcm_printer_manager`),
 `users` (`systemsettings kcm_users`), `updates` (`plasma-discover --mode update`), `separator`;

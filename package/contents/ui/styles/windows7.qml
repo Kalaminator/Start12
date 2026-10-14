@@ -80,19 +80,30 @@ FocusScope {
         property string pid
         readonly property var info: places.info(pid)
         property string label: info ? info.text : ""
+        readonly property bool sep: info?.separator === true
         width: parent.width
-        height: style.placeH
+        height: sep ? m.px(9) : style.placeH
+        enabled: !sep
         hoverEnabled: true
         onHoveredChanged: style.hoverIcon = hovered && info ? info.icon : ""
         onClicked: places.activate(pid, pb)
-        readonly property bool kbNav: true
+        readonly property bool kbNav: !sep
         KeyFrame {}
         leftPadding: m.px(8)
         background: HoverBox {
             hot: pb.hovered
             down: pb.pressed
         }
+        Rectangle {
+            visible: pb.sep
+            anchors.centerIn: parent
+            width: parent.width - m.px(8)
+            height: 1
+            color: m.text
+            opacity: 0.25
+        }
         contentItem: Row {
+            visible: !pb.sep
             spacing: m.px(8)
             Kirigami.Icon {
                 visible: style.placeIcons

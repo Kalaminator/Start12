@@ -514,7 +514,7 @@ FocusScope {
                     model: [{ id: "home", main: true }]
                         .concat(rightCol.ids.filter(id => rightCol.folders.includes(id) && id !== "home").map(id => ({ id: id, main: true })))
                         .concat([{ id: "", main: false }])
-                        .concat(rightCol.ids.filter(id => !rightCol.folders.includes(id)).map(id => ({ id: id, main: false })))
+                        .concat(rightCol.ids.filter(id => !rightCol.folders.includes(id)).map(id => ({ id: id === "separator" ? "" : id, main: false })))
                     delegate: PC3.AbstractButton {
                         id: pb
                         required property var modelData
