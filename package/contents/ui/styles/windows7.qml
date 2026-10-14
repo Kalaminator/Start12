@@ -282,6 +282,7 @@ FocusScope {
                             const own = !id ? [] : e.pinned
                                 ? [{ text: i18n("Unpin from Start menu"), icon: "window-unpin", run: () => root.unpin(id) }]
                                 : [{ text: i18n("Pin to Start menu"), icon: "window-pin", run: () => root.pin(id) }];
+                            if (id && e.pinned) own.splice(1, 0, { text: i18n("Rename"), icon: "edit-rename", run: () => root.renamePin(id, app.custom ? app.custom.name : app.role("display")) });
                             contextMenu.show(target ?? app, custom ? null : e.model, custom ? -1 : e.row, own, x, y);
                         }
                         readonly property bool kbNav: !sep
@@ -324,7 +325,7 @@ FocusScope {
                                 y: style.grid ? appIcon.y + appIcon.height + m.px(4) : (parent.height - height) / 2
                                 width: parent.width - x - (app.hasJump ? jump.width : 0)
                                 horizontalAlignment: style.grid ? Text.AlignHCenter : Text.AlignLeft
-                                text: app.custom ? app.custom.name : app.role("display") ?? ""
+                                text: (app.e.pinned ? root.capOf(app.custom ? app.e.id : style.appId(app.e.model, app.e.row)) : "") || (app.custom ? app.custom.name : app.role("display") ?? "")
                                 elide: Text.ElideRight
                                 color: pm.text
                                 font.family: m.font

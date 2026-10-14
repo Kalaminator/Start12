@@ -57,13 +57,14 @@ Pin folders (T06): `pinnedGrid` entry `folder|name|id1,id2` (`Tiles.folderOf/fol
 Tile pages (T07): `tileGroups` = `{pages:[{groups}]}` (`Tiles.parsePages` migrates the flat list; `setPage` keeps app ids unique across pages); `root.groups` = page `cfg.tilePage`, `saveGroups` writes that page, `savePages` all; TileArea dots + wheel (only when nothing scrolls), surface "New page"/"Delete this page" (groups merge into the neighbour), group menu "Move to next/previous page".
 Hidden apps (T08): key `hiddenApps` (desktop ids); `root.isHidden/hideApp`; filtered in AppList, AppCanvas (`group.rows`), XP/Win7 most-used, SearchView `passes`; right-click "Hide from apps"; ConfigMenu list with Show/Clear. Kicker has no hiddenEntries property.
 More places (T09): `Places.qml` ids computer/trash/recent/games/printers/users/updates/separator (`separator: true` item; drawn as a line in LeftRail, Win7/Modern, Pro, XP; skipped in bottom bars of App/Win11; Launcher unchanged); ConfigRail lists them, separator can be added repeatedly. Needs a user check.
+Item menus (T11): `ContextMenu.show` adds "Open file location" for any row with a file: url; "Rename" on grid pins (PinnedGrid, Win7/Modern, XP) via `root.renamePin/capOf/setCap`, key `pinnedCaptions` JSON; Add to Desktop is kicker's. Not shown on Win10 tiles/AppCanvas.
 Start button menu (T10): `contextualActions` "Show desktop" (kglobalaccel) + "Edit panel" (ids `desktop`,`editpanel` in `buttonMenuItems`, ConfigButton); applies to every style incl. XP pill (Plasma owns the right-click, StartButton has no menu of its own); "Lock menu" already existed in TileArea.
 Missing: canvas: user-made tabs/groups/pages, folders,
 icon tint, drag between groups. Plasma keeps one popup size for all styles (user drags it).
 
 ## Next (in order)
 Work through docs/TODO.md job by job (T01, T02, T03, T04 done). Use the prompt in docs/AGENT_PROMPT.md, one agent per job,
-then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03-T09 built (need a user check), T10 built, next: T11.
+then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03-T09 built (need a user check), T10-T11 built, next: T12.
 Then the taskbar part of Start11 (section 10 of the features doc), if the user wants it.
 
 ## Testing tips

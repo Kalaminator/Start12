@@ -84,7 +84,7 @@ exists; register ids in `buttonMenuItems` + `config/ConfigButton.qml`. `win10/Ti
 menu: "Lock menu"/"Unlock menu" toggling `tilesLocked`.
 Check: right-click the start button, Show desktop minimises all; Lock menu stops tile drags.
 
-### T11 Item right-click extras (S)
+### T11 Item right-click extras (S) DONE
 Build: `ContextMenu.qml` own items for app rows: "Open file location" (dir of the kicker `url` role via
 `root.openUrl`), "Rename" for `pinnedGrid` items (key `pinnedCaptions` String JSON id->name, used by
 `PinnedGrid.qml`/`PinnedPane.qml`), "Create shortcut on desktop" (kicker's "Add to Desktop" exists;

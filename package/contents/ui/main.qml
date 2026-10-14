@@ -52,6 +52,22 @@ PlasmoidItem {
     function hideApp(id) {
         if (id && !isHidden(id)) cfg.hiddenApps = cfg.hiddenApps.concat([String(id).replace(/^applications:/, "")]);
     }
+    // Renamed pins (key pinnedCaptions, JSON id -> name); capOf returns "" when not renamed.
+    function capOf(id) {
+        try { return JSON.parse(cfg.pinnedCaptions)[id] || ""; } catch (e) { return ""; }
+    }
+    function setCap(id, name) {
+        let m = {};
+        try { m = JSON.parse(cfg.pinnedCaptions); } catch (e) {}
+        if (name) m[id] = name; else delete m[id];
+        cfg.pinnedCaptions = JSON.stringify(m);
+    }
+    function renamePin(id, current) {
+        close();
+        renameDialog.pinId = id;
+        renameField.text = capOf(id) || current || "";
+        renameDialog.show();
+    }
     function pin(id) {
         if (!id || isPinned(id)) return;
         if (!usesTiles) {
@@ -324,6 +340,33 @@ PlasmoidItem {
                 Layout.alignment: Qt.AlignRight
                 QQC2.Button { text: i18n("Pin"); icon.name: "window-pin"; onClicked: webDialog.accept() }
                 QQC2.Button { text: i18n("Cancel"); icon.name: "dialog-cancel"; onClicked: webDialog.close() }
+            }
+        }
+    }
+    Window {
+        id: renameDialog
+        property string pinId: ""
+        title: i18n("Rename")
+        width: Kirigami.Units.gridUnit * 18
+        height: renameLayout.implicitHeight + Kirigami.Units.largeSpacing * 2
+        color: Kirigami.Theme.backgroundColor
+        onVisibleChanged: if (visible) { requestActivate(); renameField.forceActiveFocus(); renameField.selectAll(); }
+        function accept() { root.setCap(pinId, renameField.text.trim()); close(); }
+        ColumnLayout {
+            id: renameLayout
+            anchors.fill: parent
+            anchors.margins: Kirigami.Units.largeSpacing
+            QQC2.Label { text: i18n("Name (empty = original):") }
+            QQC2.TextField {
+                id: renameField
+                Layout.fillWidth: true
+                onAccepted: renameDialog.accept()
+                Keys.onEscapePressed: renameDialog.close()
+            }
+            RowLayout {
+                Layout.alignment: Qt.AlignRight
+                QQC2.Button { text: i18n("OK"); icon.name: "dialog-ok"; onClicked: renameDialog.accept() }
+                QQC2.Button { text: i18n("Cancel"); icon.name: "dialog-cancel"; onClicked: renameDialog.close() }
             }
         }
     }

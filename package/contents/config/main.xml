@@ -116,6 +116,10 @@
       <label>Pinned apps of the grid styles (Windows 11, App, Pro), in order</label>
       <default>systemsettings.desktop,org.kde.dolphin.desktop,org.kde.konsole.desktop,firefox.desktop</default>
     </entry>
+    <entry name="pinnedCaptions" type="String">
+      <label>Renamed pins as JSON: {id: name}</label>
+      <default>{}</default>
+    </entry>
     <entry name="pinnedColumns" type="Int">
       <label>Pinned grid columns</label>
       <default>6</default>

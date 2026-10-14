@@ -31,6 +31,9 @@ Item {
         menuRoot.model = model;
         menuRoot.row = row;
         let list = ownItems.slice();
+        // Open file location: folder of the row's file: url (apps -> the .desktop file's folder).
+        const u = model && row >= 0 ? String(model.data(model.index(row, 0), model.KItemModels.KRoleNames.role("url")) ?? "") : "";
+        if (u.startsWith("file:///")) list.push({ text: i18n("Open file location"), icon: "folder-open", run: () => Qt.openUrlExternally(u.replace(/\/[^\/]*$/, "/")) });
         const extra = kickerActions(model, row);
         if (extra.length) {
             if (list.length) list.push({ type: "separator" });

@@ -342,6 +342,7 @@ FocusScope {
                                     const n = style.cfg.pinnedGrid.length;
                                     own = [
                                         { text: i18n("Unpin from Start menu"), icon: "window-unpin", run: () => root.unpin(id) },
+                                        { text: i18n("Rename"), icon: "edit-rename", run: () => root.renamePin(id, app.custom ? app.custom.name : app.role("display")) },
                                         { text: i18n("Move up"), icon: "go-up", enabled: e.index > 0, run: () => root.movePinned(id, e.index - 1) },
                                         { text: i18n("Move down"), icon: "go-down", enabled: e.index < n - 1, run: () => root.movePinned(id, e.index + 1) }
                                     ];
@@ -379,7 +380,7 @@ FocusScope {
                                     x: appIcon.width + m.px(8)
                                     anchors.verticalCenter: parent.verticalCenter
                                     width: parent.width - x
-                                    text: app.custom ? app.custom.name : app.role("display") ?? app.e.id ?? ""
+                                    text: (app.e.kind === "pin" ? root.capOf(app.e.id) : "") || (app.custom ? app.custom.name : app.role("display") ?? app.e.id ?? "")
                                     elide: Text.ElideRight
                                     color: app.hot ? c.hoverText : c.text
                                     font.family: m.font

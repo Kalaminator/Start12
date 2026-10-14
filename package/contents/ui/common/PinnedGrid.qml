@@ -135,6 +135,7 @@ Item {
                 { text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) },
                 { text: i18n("Move out of folder"), icon: "go-first", visible: inFolder, enabled: inFolder,
                   run: () => root.movePinned(id, grid.openFolder + 1) },
+                { text: i18n("Rename"), icon: "edit-rename", run: () => root.renamePin(id, custom ? custom.name : role("display")) },
                 { text: i18n("Move to front"), icon: "go-first", enabled: index > 0 || inFolder, run: () => root.movePinned(id, 0) }
             ].filter(m => m.visible !== false), x, y);
         }
@@ -197,7 +198,7 @@ Item {
                 width: cell.width - grid.metrics.px(8)
                 anchors.horizontalCenter: parent.horizontalCenter
                 horizontalAlignment: Text.AlignHCenter
-                text: cell.pinFolder ? cell.pinFolder.name : cell.custom ? cell.custom.name : fav.count > 0 ? cell.role("display") : cell.modelData
+                text: cell.pinFolder ? cell.pinFolder.name : root.capOf(cell.modelData) ? root.capOf(cell.modelData) : cell.custom ? cell.custom.name : fav.count > 0 ? cell.role("display") : cell.modelData
                 elide: Text.ElideRight
                 maximumLineCount: 1
                 color: grid.metrics.text
