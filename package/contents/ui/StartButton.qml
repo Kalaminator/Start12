@@ -245,7 +245,7 @@ MouseArea {
             anchors.leftMargin: 2
             anchors.rightMargin: -2
             radius: xpPill.r
-            topLeftRadius: xpPill.modern ? xpPill.r : 0
+            topLeftRadius: xpPill.modern && xpPill.reach === 0 ? xpPill.r : 0   // square where it meets the screen edge
             bottomLeftRadius: topLeftRadius
             color: "#000000"
             opacity: xpPill.modern ? 0.18 : 0.35
@@ -269,7 +269,7 @@ MouseArea {
             anchors.topMargin: xpPill.modern ? 2 : 0
             anchors.bottomMargin: anchors.topMargin
             radius: xpPill.r
-            topLeftRadius: xpPill.modern ? xpPill.r : 0
+            topLeftRadius: xpPill.modern && xpPill.reach === 0 ? xpPill.r : 0   // square where it meets the screen edge
             bottomLeftRadius: topLeftRadius
             border.width: 1
             border.color: Qt.darker(xpPill.tone, xpPill.modern ? 1.25 : 1.5)
