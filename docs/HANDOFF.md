@@ -82,8 +82,8 @@ Layout polish (T28): full screen: `root.fillScreen` (Win10/Win11 stretch) / `roo
 ## Next (in order)
 T01-T25 all built (2026-10-14). Load check of all 8 styles: no QML errors. Seen on screen by me: XP (all colours, start button),
 T03 filters, T05 folder. Everything else only lint + load check; the user has not tried T05-T25 yet -> ask for feedback first.
-Open: T26 full custom XP theme (user will say when); taskbar part of Start11
-(section 10 of the features doc) if the user wants it. Settings reset/restore: request runs once (`doneReset` guard).
+T27-T28 polish done; full screen fixed and seen on screen. Open: T26 full custom XP theme (user will say when);
+taskbar part: docs/TASKBAR_PLAN.md jobs T29-T36, wait for the user to pick. Settings reset/restore: request runs once (`doneReset` guard).
 
 ## Testing tips
 - See the menu: in the INSTALLED copy only, add
