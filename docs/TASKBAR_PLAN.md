@@ -102,7 +102,7 @@ Build: key `taskbarFollowsStyle` (default off): when on, `syncDesktopTheme` pick
 translucent glass, xp = existing XP style, others = off) instead of the custom keys. ConfigStyle checkbox.
 Check: switch Win10 -> Win11 -> XP, panel follows each time; off restores the saved style.
 
-### T36 Settings page "Taskbar" (S)
+### T36 Settings page "Taskbar" (S) -- DONE
 Build: `config/ConfigTaskbar.qml` gathering the keys of T29-T35 plus a short note with buttons for what stock
 Plasma covers: "Edit panel…" (reuse the T10 `editpanel` action), "Task Manager settings…" (evaluateScript
 `widget.showConfigurationInterface()` on the panel's task manager). Register in `config/config.qml`. Translate new

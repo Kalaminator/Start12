@@ -28,6 +28,11 @@ ConfigModel {
         source: "config/ConfigSearch.qml"
     }
     ConfigCategory {
+        name: i18n("Taskbar")
+        icon: "preferences-desktop-icons"
+        source: "config/ConfigTaskbar.qml"
+    }
+    ConfigCategory {
         name: i18n("Start Button")
         icon: "start-here-kde"
         source: "config/ConfigButton.qml"

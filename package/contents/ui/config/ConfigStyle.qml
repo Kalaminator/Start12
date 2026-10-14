@@ -21,9 +21,7 @@ KCM.SimpleKCM {
     property alias cfg_win7Substyle: subBox.currentIndex
     property alias cfg_modernSubstyle: modernSubBox.currentIndex
     property string cfg_xpSubstyle
-    property alias cfg_xpTaskbarTheme: xpTaskbarBox.checked
     property alias cfg_xpStartGreen: xpStartGreenBox.checked
-    property alias cfg_taskbarFollowsStyle: taskbarFollowBox.checked
     property string cfg_xpColor
     property alias cfg_xpCustomColor: xpCustom.color
     property string cfg_resetRequest
@@ -128,18 +126,9 @@ KCM.SimpleKCM {
                 KQuickControls.ColorButton { id: xpCustom; visible: page.cfg_xpColor === "custom"; showAlphaChannel: false }
             }
             QQC2.CheckBox {
-                id: xpTaskbarBox
-                visible: page.cfg_menuStyle === "xp"
-                text: i18n("Apply matching XP taskbar theme")
-            }
-            QQC2.CheckBox {
                 id: xpStartGreenBox
                 visible: page.cfg_menuStyle === "xp"
                 text: i18n("Green XP Start button")
-            }
-            QQC2.CheckBox {
-                id: taskbarFollowBox
-                text: i18n("Taskbar follows the menu style")
             }
             QQC2.ComboBox {
                 id: sizeBox
