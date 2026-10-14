@@ -204,18 +204,22 @@ PlasmoidItem {
     // Generated taskbar for any style (T31, xptheme.py --taskbar): start12-taskbar-<hash of args + fallback>,
     // FallbackTheme = the user's saved style, so only panel/tasks/colors change. XP taskbar wins.
     // T35: taskbarFollowsStyle picks a preset per menu style instead of the custom keys (others / xp = none).
+    // T34: button style (buttons=plasma|win10|win11|win7), accent for the Win10/11 active bar, solid = focused
+    // item less transparent; added to presets and custom alike.
     readonly property var taskbarPresets: ({
-        "windows10": "colour=101010 alpha=1 radius=2 line=0 sub=flat",
-        "windows11": "colour=f3f3f3 alpha=0.8 radius=8 line=0 sub=flat",
-        "windows7": "colour=2a5a96 alpha=0.6 radius=6 line=1 sub=flat" })
-    readonly property string taskbarArgs: cfg.taskbarFollowsStyle ? (taskbarPresets[cfg.menuStyle] || "")
+        "windows10": "colour=101010 alpha=1 radius=2 line=0 buttons=win10",
+        "windows11": "colour=f3f3f3 alpha=0.8 radius=8 line=0 buttons=win11",
+        "windows7": "colour=2a5a96 alpha=0.6 radius=6 line=1 buttons=win7" })
+    readonly property string taskbarBase: cfg.taskbarFollowsStyle ? (taskbarPresets[cfg.menuStyle] || "")
         : cfg.taskbarTheme !== "custom" ? ""
         : "colour=" + cfg.taskbarColor.toString().slice(-6) + " alpha=" + (cfg.taskbarAlpha / 100)
-          + " radius=" + cfg.taskbarRadius + " line=" + (cfg.taskbarLine ? 1 : 0) + " sub=flat"
+          + " radius=" + cfg.taskbarRadius + " line=" + (cfg.taskbarLine ? 1 : 0) + " buttons=" + Tiles.shQuote(cfg.taskbarButtons)
           // T33 texture (path shell-quoted: it ends up in sh -c; the hash makes a new theme per change)
           + (cfg.taskbarImage === "" ? "" : " image=" + Tiles.shQuote(cfg.taskbarImage) + " mode=" + cfg.taskbarImageMode
              + " imagealpha=" + (cfg.taskbarImageAlpha / 100)
              + (cfg.taskbarImageTint ? " tint=" + Kirigami.Theme.highlightColor.toString().slice(-6) : ""))
+    readonly property string taskbarArgs: taskbarBase === "" ? "" : taskbarBase
+        + " accent=" + Kirigami.Theme.highlightColor.toString().slice(-6) + " solid=" + (cfg.taskbarFocusedSolid ? 1 : 0)
     onTaskbarArgsChanged: syncDesktopTheme()
     function syncDesktopTheme() {
         themeReader.connectSource("kreadconfig6 --file plasmarc --group Theme --key name");

@@ -1,14 +1,16 @@
 # Generates the Start12 XP Plasma Styles (taskbar: panel-background + tasks 9-slice SVGs, colors, metadata).
 # All schemes x substyles:  python3 xptheme.py <outdir>       (install.sh -> ~/.local/share/plasma/desktoptheme)
 # One custom colour:        python3 xptheme.py --custom '#3a6ea5' --sub classic --out <dir>   (main.qml)
-# Any-style taskbar (T31):  python3 xptheme.py --taskbar colour=#101010 alpha=0.8 radius=8 line=0 sub=flat
+# Any-style taskbar (T31):  python3 xptheme.py --taskbar colour=#101010 alpha=0.8 radius=8 line=0 buttons=win11 accent=3d8ee6 solid=0
 #                             fallback=default --out <dir>   (main.qml; only panel/tasks/colors, rest = fallback)
 #                             [image=<png/jpg> mode=tile|stretch|top|middle|bottom imagealpha=0.3 tint=3daee9] (T33)
 import argparse, base64, json, os, struct
 
-def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4), gid="g", center=""):
+def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4), gid="g", center="", under=None):
     """9 pieces of a rounded box. stops: [(offset, color, opacity)] vertical gradient.
-    border: (color, opacity) or None. hi: top highlight (color, opacity) or None."""
+    border: (color, opacity) or None. hi: top highlight (color, opacity) or None.
+    under: (color, opacity, height, full) bar on the bottom edge (T34 task indicator); full = also in the
+    corners, else only the stretched middle piece with round ends (Win11 pill, inset by c)."""
     p = (prefix + "-") if prefix else ""
     defs = '<linearGradient id="%s" gradientUnits="userSpaceOnUse" x1="0" y1="%d" x2="0" y2="%d">%s</linearGradient>' % (
         gid, y0, y0 + H, "".join('<stop offset="%s" stop-color="%s" stop-opacity="%s"/>' % s for s in stops))
@@ -39,8 +41,8 @@ def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4),
             body += '<path d="M %s,%s A %s %s 0 0 %d %s,%s L %s,%s A %s %s 0 0 %d %s,%s Z" %s/>' % (
                 cx + sx * c, cy, c, c, sw, cx, cy + sy * c, cx, cy + sy * (c - b), c - b, c - b, 1 - sw, cx + sx * (c - b), cy, B)
         body += corner(cx, cy, sx, sy, c - b, F)
-        if hi and sy < 0:
-            pass
+        if under and under[3] and sy > 0:
+            body += rect(bx, by + c - under[2], c, under[2], 'fill="%s" fill-opacity="%s"' % under[:2])
         g(name, body)
     piece_corner("topleft", x1, y1, -1, -1, x0, y0)
     piece_corner("topright", x2, y1, 1, -1, x2, y0)
@@ -50,7 +52,11 @@ def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4),
     if hi:
         top += rect(x1, y0 + b, W - 2 * c, 1, 'fill="%s" fill-opacity="%s"' % hi)
     g("top", top)
-    g("bottom", rect(x1, y2, W - 2 * c, c - b, F) + (rect(x1, y0 + H - b, W - 2 * c, b, B) if border else ""))
+    bar = ""
+    if under:
+        bar = '<rect x="%s" y="%s" width="%s" height="%s" rx="%s" fill="%s" fill-opacity="%s"/>' % (
+            x1, y0 + H - under[2], W - 2 * c, under[2], 0 if under[3] else under[2] / 2, under[0], under[1])
+    g("bottom", rect(x1, y2, W - 2 * c, c - b, F) + (rect(x1, y0 + H - b, W - 2 * c, b, B) if border else "") + bar)
     g("left", (rect(x0, y1, b, H - 2 * c, B) if border else "") + rect(x0 + b, y1, c - b, H - 2 * c, F))
     g("right", rect(x2, y1, c - b, H - 2 * c, F) + (rect(x0 + W - b, y1, b, H - 2 * c, B) if border else ""))
     g("center", rect(x1, y1, W - 2 * c, H - 2 * c, F) + center)
@@ -193,8 +199,8 @@ def imgsize(data):
         i += 2 + ln
     raise ValueError("not a PNG or JPEG image")
 
-def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", sub="flat", fallback="default",
-            image="", mode="tile", imagealpha="1", tint=""):
+def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", fallback="default",
+            image="", mode="tile", imagealpha="1", tint="", buttons="win10", accent="", solid="0"):
     """Plasma Style that only replaces panel-background (plain, opaque/ and translucent/ for blur), tasks
     and colors; everything else comes from FallbackTheme (the user's own style).
     T33 texture: image (PNG/JPEG) in the 9-slice center; mode tile (native size, hint-tile-center) | stretch |
@@ -229,17 +235,33 @@ def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", sub="flat
              frame("mask", 10, 20 + fh, fw, fh, r, None, [(0, K, 1), (1, K, 1)], gid="mask")],
             hints.replace('x="200"', 'x="%d"' % (fw + 40)), size=(fw + 60, 2 * fh + 40))
     ink = "#000000" if light(B) else W
-    clear = (None, [(0, ink, 0), (1, ink, 0)], None)
-    tasks = {  # sub=flat (Win10-like); T34 adds more button styles
-        "normal": clear, "minimized": clear,
-        "hover": (None, [(0, ink, .12), (1, ink, .12)], None),
-        "focus": (None, [(0, ink, .22), (1, ink, .22)], None),
-        "attention": (None, [(0, "#f39a32", .8), (1, "#f39a32", .8)], None),
-    }
-    frames = [frame(pfx, 10, 10 + i * 60, 60, 40, 2, bd, st, hi=h, margins=(6, 4, 6, 4), gid="t" + pfx)
-              for i, (pfx, (bd, st, h)) in enumerate(tasks.items())]
-    svg(os.path.join(base, "widgets/tasks.svg"), frames,
-        '<rect id="hint-stretch-borders" x="200" y="10" width="1" height="1" fill="none"/>')
+    acc = "#" + (accent.lstrip("#")[-6:] or "3d8ee6")
+    fa = 2 if solid not in ("0", "", "false") else 1  # T34 Start11 "Paint focused item backgrounds less transparent"
+    def fill(col, op, op2=None):
+        return [(0, col, min(1, op)), (1, col, min(1, op if op2 is None else op2))]
+    clear = (None, fill(ink, 0), None)
+    att = (None, fill("#f39a32", .8), None)
+    # T34 buttons: (corner, {prefix: (border, stops, hi, under)}); plasma = no tasks.svg, the fallback's is used.
+    # ponytail: indicators sit on the bottom edge (bottom panel); a left/top panel would need north-/west- prefixes.
+    tasks = {
+        "win10": (2, {"normal": clear + ((ink, .45, 2, True),), "minimized": clear + ((ink, .3, 2, True),),
+                      "hover": (None, fill(ink, .12), None, (ink, .45, 2, True)),
+                      "focus": (None, fill(ink, .18 * fa), None, (acc, 1, 2, True)), "attention": att + (None,)}),
+        "win11": (6, {"normal": clear + ((ink, .4, 3, False),), "minimized": clear + ((ink, .25, 3, False),),
+                      "hover": (None, fill(ink, .08), None, (ink, .4, 3, False)),
+                      "focus": ((ink, .08), fill(ink, .1 * fa), None, (acc, 1, 3, False)), "attention": att + (None,)}),
+        "win7": (3, {"normal": ((W, .25), fill(W, .14, .02), (W, .3), None),
+                     "minimized": ((W, .15), fill(W, .07, .01), None, None),
+                     "hover": ((W, .45), fill(W, .3, .08), (W, .5), None),
+                     "focus": ((W, .55), fill(W, .22 * fa, .06 * fa), (W, .6), None),
+                     "attention": ((W, .5), fill("#f39a32", .85, .55), (W, .5), None)}),
+    }.get(buttons)
+    if tasks:
+        c, states = tasks
+        frames = [frame(pfx, 10, 10 + i * 60, 60, 40, c, bd, st, hi=h, margins=(6, 4, 6, 4), gid="t" + pfx, under=u)
+                  for i, (pfx, (bd, st, h, u)) in enumerate(states.items())]
+        svg(os.path.join(base, "widgets/tasks.svg"), frames,
+            '<rect id="hint-stretch-borders" x="200" y="10" width="1" height="1" fill="none"/>')
     with open(os.path.join(base, "colors"), "w") as f:
         f.write(colors(B))
     with open(os.path.join(base, "plasmarc"), "w") as f:

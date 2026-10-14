@@ -257,6 +257,14 @@
       <label>Light line on the taskbar edge (off = Start11 HideTaskbarLineEntirely)</label>
       <default>false</default>
     </entry>
+    <entry name="taskbarButtons" type="String">
+      <label>Taskbar button style in the generated taskbar: plasma | win10 | win11 | win7 (Start11 taskbar button style)</label>
+      <default>win10</default>
+    </entry>
+    <entry name="taskbarFocusedSolid" type="Bool">
+      <label>Active task button less transparent (Start11 "Paint focused item backgrounds less transparent")</label>
+      <default>false</default>
+    </entry>
     <entry name="taskbarImage" type="String">
       <label>Taskbar texture, PNG/JPEG path (Start11 TaskbarImage); empty = none</label>
       <default></default>

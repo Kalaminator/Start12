@@ -22,6 +22,8 @@ KCM.SimpleKCM {
     property string cfg_taskbarImageMode
     property alias cfg_taskbarImageAlpha: tbImageAlpha.value
     property alias cfg_taskbarImageTint: tbImageTint.checked
+    property string cfg_taskbarButtons
+    property alias cfg_taskbarFocusedSolid: tbSolid.checked
     property alias cfg_taskbarSearch: searchBox.checked
     property alias cfg_taskbarSearchWidth: searchWidth.value
 
@@ -100,6 +102,22 @@ KCM.SimpleKCM {
                 }
                 QQC2.CheckBox { id: tbImageTint; text: i18n("Tint with the accent colour") }
             }
+        }
+        // T34: task button look in the generated tasks.svg (presets pick their own; "Plasma" keeps the style's)
+        QQC2.ComboBox {
+            enabled: customBox.checked && !followBox.checked
+            Kirigami.FormData.label: i18n("Task buttons:")
+            textRole: "text"
+            valueRole: "value"
+            model: [{ value: "plasma", text: i18n("Plasma Style") }, { value: "win10", text: i18n("Windows 10 (bar under active)") },
+                    { value: "win11", text: i18n("Windows 11 (pill under active)") }, { value: "win7", text: i18n("Windows 7 (glass)") }]
+            Component.onCompleted: currentIndex = Math.max(0, indexOfValue(page.cfg_taskbarButtons))
+            onActivated: page.cfg_taskbarButtons = currentValue
+        }
+        QQC2.CheckBox {
+            id: tbSolid
+            enabled: customBox.checked || followBox.checked
+            text: i18n("Paint the active button less transparent")
         }
 
         Item { Kirigami.FormData.isSection: true }

@@ -90,7 +90,7 @@ Build: on top of T31: keys `taskbarImage`, `taskbarImageMode` (tile|stretch|top|
 the image (base64 `<image>` with `preserveAspectRatio`/pattern) into panel-background.svg; ConfigLook-style picker.
 Check: pick a PNG, tiled vs stretched visible on the panel; alpha 30 % blends with the colour.
 
-### T34 Taskbar button style (M)
+### T34 Taskbar button style (M) -- DONE
 Build: on top of T31: key `taskbarButtons` (plasma|win10|win11|win7): xptheme.py writes `tasks.svg` variants
 (Win10 flat bar under active + hover fill, Win11 pill indicator and rounded hover, Win7 glass button) and
 `taskbarFocusedSolid` (active task less transparent, Start11 "Paint focused item backgrounds less transparent").
