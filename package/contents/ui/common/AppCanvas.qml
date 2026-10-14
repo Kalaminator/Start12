@@ -10,18 +10,23 @@ import org.kde.kitemmodels as KItemModels
 import "../code/tiles.js" as Tiles
 
 // Start11 v2 "application canvas": tabs, each with Fences-like groups of icons.
-// Tabs: Pinned (Pin to Start lands here), Apps (one group per KDE category), Recent.
+// Built-in tabs: Pinned (Pin to Start lands here), Apps (one group per KDE category), Recent.
+// User tabs after them (key canvasLayout, Tiles.parseCanvas): own groups of apps, filled by dragging
+// apps in from the list or between groups. Right-click a tab / group header / empty space for the menus.
 // Groups get a colour and a recoloured texture from images/TabTextures, like Start11.
-// ponytail: fixed tabs; user-made tabs/groups/pages (Start11 "New tab", "Add group") come later.
 Item {
     id: canvas
 
     required property QtObject metrics
     required property var contextMenu
+    required property Item ghost
     readonly property QtObject m: metrics
     readonly property var cfg: Plasmoid.configuration
-    property int tab: Math.min(cfg.canvasTab, tabs.length - 1)
+    property int tabSel: cfg.canvasTab
+    readonly property int tab: Math.max(0, Math.min(tabSel, tabs.length - 1))
     property int rev: 0
+    readonly property var layout: Tiles.parseCanvas(cfg.canvasLayout)
+    readonly property int user: tab - 3   // index into layout.tabs, < 0 on a built-in tab
 
     readonly property real pad: m.px(8)
     readonly property real cellW: m.px(76)
@@ -30,6 +35,7 @@ Item {
 
     function reset() {
         rev++;
+        tabSel = cfg.canvasTab;
         recentDocs.refresh();
         flick.contentY = 0;
     }
@@ -44,7 +50,26 @@ Item {
         shownItems: Kicker.RecentUsageModel.OnlyDocs
     }
 
-    readonly property var tabs: [i18n("Pinned"), i18n("Apps"), i18n("Recent")]
+    readonly property var tabs: [i18n("Pinned"), i18n("Apps"), i18n("Recent")].concat(layout.tabs.map(t => t.name))
+    function save(c) { cfg.canvasLayout = JSON.stringify(c); }
+    // Drops app id into group g of the current user tab, before app "before" ("" = at the end).
+    function place(id, g, before) {
+        id = String(id || "").replace(/^applications:/, "");
+        if (user >= 0 && id && !id.startsWith("file:") && !Tiles.custom(id) && !Tiles.isFolder(id))
+            save(Tiles.canvasPlace(layout, user, id, g, before, i18n("New group")));
+    }
+    function newTab() {
+        save(Tiles.canvasAddTab(layout, i18n("New tab")));
+        tabSel = tabs.length;   // clamped to the last tab = the new one
+    }
+    // Empty space / tab menu.
+    readonly property var surfaceItems: [
+        { text: i18n("New tab"), icon: "tab-new", run: () => canvas.newTab() }
+    ].concat(user >= 0 ? [{ text: i18n("Add group"), icon: "list-add", run: () => canvas.addGroup() }] : []).concat([
+        { text: i18n("Always open on this tab"), icon: "bookmark-new", checkable: true, checked: cfg.canvasTab === tab,
+          run: () => { canvas.cfg.canvasTab = canvas.tab; } }
+    ])
+    function addGroup() { save(Tiles.canvasAddGroup(layout, user, i18n("New group"))); }
     // Groups of the current tab: { name, src }. ("model" would clash with the Repeater's own.)
     readonly property var groups: {
         rev;
@@ -54,6 +79,7 @@ Item {
             return [{ name: i18n("Pinned"), src: pinnedModel }]
                 .concat(custom.length ? [{ name: i18n("Shortcuts"), custom: custom }] : []);
         }
+        if (user >= 0) return (layout.tabs[user]?.groups ?? []).map((g, i) => ({ name: g.name, colour: g.colour, ids: g.ids, g: i }));
         if (tab === 2) return [{ name: i18n("Most used"), src: root.frequentAppsModel },
                                { name: i18n("Recent files"), src: recentDocs }];
         const rm = root.rootModel;
@@ -96,9 +122,22 @@ Item {
                 hoverEnabled: true
                 leftPadding: m.px(10)
                 rightPadding: m.px(10)
-                onClicked: {
-                    canvas.tab = index;
-                    canvas.cfg.canvasTab = index;
+                onClicked: canvas.tabSel = index
+                TapHandler {
+                    acceptedButtons: Qt.RightButton
+                    onTapped: point => {
+                        canvas.tabSel = tabButton.index;
+                        const u = tabButton.index - 3;
+                        const own = u < 0 ? [] : [
+                            { text: i18n("Rename"), icon: "edit-rename",
+                              run: () => root.askName(canvas.layout.tabs[u].name, n => canvas.save(Tiles.canvasRename(canvas.layout, u, -1, n))) },
+                            { text: i18n("Move tab left"), icon: "go-previous", enabled: u > 0,
+                              run: () => { canvas.save(Tiles.canvasMoveTab(canvas.layout, u, -1)); canvas.tabSel--; } },
+                            { text: i18n("Move tab right"), icon: "go-next", enabled: u < canvas.layout.tabs.length - 1,
+                              run: () => { canvas.save(Tiles.canvasMoveTab(canvas.layout, u, 1)); canvas.tabSel++; } },
+                            { text: i18n("Delete tab"), icon: "edit-delete", run: () => canvas.save(Tiles.canvasDeleteTab(canvas.layout, u)) }];
+                        canvas.contextMenu.show(tabButton, null, -1, own.concat(canvas.surfaceItems), point.position.x, point.position.y);
+                    }
                 }
                 background: Rectangle {
                     radius: m.px(3)
@@ -124,9 +163,22 @@ Item {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         clip: true
-        contentHeight: flow.implicitHeight
+        contentHeight: Math.max(flow.implicitHeight, height)   // empty space below the groups takes right-clicks
         boundsBehavior: Flickable.StopAtBounds
         QQC2.ScrollBar.vertical: PC3.ScrollBar {}
+
+        TapHandler {
+            acceptedButtons: Qt.RightButton
+            onTapped: point => canvas.contextMenu.show(flick, null, -1, canvas.surfaceItems, point.position.x, point.position.y)
+        }
+        // Empty space of a user tab: drop makes a new group.
+        DropArea {
+            width: flick.width
+            height: Math.max(flick.height, flow.implicitHeight)
+            enabled: canvas.user >= 0
+            keys: ["start12-tile"]
+            onDropped: d => canvas.place(d.source.favoriteId, canvas.groups.length, "")
+        }
 
         Flow {
             id: flow
@@ -141,8 +193,9 @@ Item {
                     id: group
                     required property var modelData
                     required property int index
-                    readonly property var src: modelData?.src ?? null
-                    readonly property color tint: canvas.groupColor(index)
+                    readonly property bool isUser: modelData?.ids !== undefined
+                    readonly property var src: modelData?.src ?? (isUser ? own : null)
+                    readonly property color tint: modelData?.colour || canvas.groupColor(index)
                     readonly property var customs: modelData?.custom ?? null
                     // Source rows that are not hidden (pins stay), cell i shows src row rows[i].
                     readonly property var rows: {
@@ -150,7 +203,7 @@ Item {
                         const n = src ? src.count : 0;
                         canvas.cfg.hiddenApps;
                         for (let r = 0; r < n; r++)
-                            if (src === canvas.pinnedModel || !root.isHidden(canvas.appId(src, r))) out.push(r);
+                            if (isUser || src === pinnedModel || !root.isHidden(canvas.appId(src, r))) out.push(r);
                         return out;
                     }
                     readonly property int count: customs ? customs.length : rows.length
@@ -161,6 +214,19 @@ Item {
                     color: Qt.alpha(tint, 0.22)
                     border.color: Qt.alpha(tint, 0.6)
                     clip: true
+
+                    // User group: its apps (pinned folders/websites are not taken).
+                    Kicker.SimpleFavoritesModel {
+                        id: own
+                        favorites: group.modelData?.ids ?? []
+                    }
+                    // Dropped on the group, not on an app: add at the end.
+                    DropArea {
+                        anchors.fill: parent
+                        enabled: group.isUser
+                        keys: ["start12-tile"]
+                        onDropped: d => canvas.place(d.source.favoriteId, group.modelData.g, "")
+                    }
 
                     // Grey Start11 texture, coloured by the tint under it.
                     Image {
@@ -177,6 +243,19 @@ Item {
                         height: m.px(26)
                         radius: parent.radius
                         color: Qt.alpha(group.tint, 0.75)
+                        MouseArea {
+                            anchors.fill: parent
+                            enabled: group.isUser
+                            acceptedButtons: Qt.RightButton
+                            onClicked: m => {
+                                const u = canvas.user, g = group.modelData.g;
+                                canvas.contextMenu.show(header, null, -1, [
+                                    { text: i18n("Rename"), icon: "edit-rename",
+                                      run: () => root.askName(group.modelData.name, n => canvas.save(Tiles.canvasRename(canvas.layout, u, g, n))) },
+                                    { text: i18n("Delete group"), icon: "edit-delete", run: () => canvas.save(Tiles.canvasDeleteGroup(canvas.layout, u, g)) },
+                                    { type: "separator" }].concat(canvas.surfaceItems), m.x, m.y);
+                            }
+                        }
                         PC3.Label {
                             anchors.fill: parent
                             anchors.leftMargin: m.px(10)
@@ -242,7 +321,7 @@ Item {
                                 background: Rectangle {
                                     radius: m.px(4)
                                     color: m.text
-                                    opacity: cell.pressed ? 0.15 : cell.hovered ? 0.1 : 0
+                                    opacity: cell.pressed || cellMouse.pressed ? 0.15 : cell.hovered ? 0.1 : 0
                                 }
                                 contentItem: Column {
                                     topPadding: m.px(6)
@@ -264,21 +343,65 @@ Item {
                                         font.pixelSize: Math.round(m.fontSize * 0.85)
                                     }
                                 }
-                                TapHandler {
-                                    acceptedButtons: Qt.RightButton
-                                    onTapped: point => {
-                                        if (group.customs) {
-                                            const c = group.customs[cell.index];
-                                            canvas.contextMenu.show(cell, null, -1, [{ text: i18n("Unpin from Start"), icon: "window-unpin",
-                                                run: () => root.unpin(c.id) }], point.position.x, point.position.y);
-                                            return;
+                                function menu(x, y) {
+                                    if (group.customs) {
+                                        const c = group.customs[index];
+                                        canvas.contextMenu.show(cell, null, -1, [{ text: i18n("Unpin from Start"), icon: "window-unpin",
+                                            run: () => root.unpin(c.id) }], x, y);
+                                        return;
+                                    }
+                                    const id = canvas.appId(group.src, row);
+                                    const own = !id || id.startsWith("file:") ? [] : root.isPinned(id)
+                                        ? [{ text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) }]
+                                        : [{ text: i18n("Pin to Start"), icon: "window-pin", run: () => root.pin(id) }];
+                                    if (group.isUser) own.push({ text: i18n("Remove from group"), icon: "list-remove",
+                                        run: () => canvas.save(Tiles.canvasRemove(canvas.layout, canvas.user, id)) });
+                                    else if (id && !id.startsWith("file:")) own.push({ text: i18n("Hide from apps"), icon: "hint", run: () => root.hideApp(id) });
+                                    canvas.contextMenu.show(cell, group.src, row, own, x, y);
+                                }
+                                // Drop on an app of a user group: insert before it.
+                                DropArea {
+                                    anchors.fill: parent
+                                    enabled: group.isUser
+                                    keys: ["start12-tile"]
+                                    onDropped: d => canvas.place(d.source.favoriteId, group.modelData.g, canvas.appId(group.src, cell.row))
+                                }
+                                // Click, right-click, and drag (user groups only) like PinnedGrid.
+                                MouseArea {
+                                    id: cellMouse
+                                    anchors.fill: parent
+                                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                    preventStealing: true
+                                    property point pressPos
+                                    property bool dragging: false
+                                    onPressed: m => pressPos = Qt.point(m.x, m.y)
+                                    onPositionChanged: m => {
+                                        if (!dragging && pressed && group.isUser && Math.hypot(m.x - pressPos.x, m.y - pressPos.y) > Qt.styleHints.startDragDistance) {
+                                            dragging = true;
+                                            canvas.ghost.favoriteId = canvas.appId(group.src, cell.row);
+                                            canvas.ghost.icon = cell.role("decoration");
+                                            canvas.ghost.Drag.active = true;
                                         }
-                                        const id = canvas.appId(group.src, cell.row);
-                                        const own = !id || id.startsWith("file:") ? [] : root.isPinned(id)
-                                            ? [{ text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) }]
-                                            : [{ text: i18n("Pin to Start"), icon: "window-pin", run: () => root.pin(id) }];
-                                        if (id && !id.startsWith("file:")) own.push({ text: i18n("Hide from apps"), icon: "hint", run: () => root.hideApp(id) });
-                                        canvas.contextMenu.show(cell, group.src, cell.row, own, point.position.x, point.position.y);
+                                        if (dragging) {
+                                            const p = mapToItem(canvas.ghost.parent, m.x, m.y);
+                                            canvas.ghost.x = p.x - canvas.ghost.width / 2;
+                                            canvas.ghost.y = p.y - canvas.ghost.height / 2;
+                                        }
+                                    }
+                                    onReleased: m => {
+                                        if (dragging) {
+                                            canvas.ghost.Drag.drop();
+                                            canvas.ghost.Drag.active = false;
+                                            dragging = false;
+                                        } else if (m.button === Qt.LeftButton && containsMouse) {
+                                            cell.clicked();
+                                        } else if (m.button === Qt.RightButton) {
+                                            cell.menu(m.x, m.y);
+                                        }
+                                    }
+                                    onCanceled: {
+                                        canvas.ghost.Drag.active = false;
+                                        dragging = false;
                                     }
                                 }
                             }

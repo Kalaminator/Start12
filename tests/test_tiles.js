@@ -4,7 +4,7 @@ const path = require("path");
 const assert = require("assert");
 const src = fs.readFileSync(path.join(__dirname, "../package/contents/ui/code/tiles.js"), "utf8")
     .replace(/^\.pragma library/m, "");
-const T = new Function(src + "; return { pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder, parsePages, setPage, newPage, deletePage, moveGroupToPage, shQuote, writeFileCmd };")();
+const T = new Function(src + "; return { pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder, parsePages, setPage, newPage, deletePage, moveGroupToPage, shQuote, writeFileCmd, parseCanvas, canvasAddTab, canvasDeleteTab, canvasMoveTab, canvasAddGroup, canvasDeleteGroup, canvasRename, canvasPlace, canvasRemove };")();
 
 // 6 columns = 12 units wide: six medium tiles fit in one row.
 let p = T.pack(Array(6).fill({ size: "medium" }), 6);
@@ -113,6 +113,24 @@ assert.deepStrictEqual(P[1].groups, [{ name: "A", tiles: [] }]); // named group 
 P = T.deletePage(P, 0);                                          // first page: groups go to the next
 assert.deepStrictEqual(P, [{ groups: [{ name: "", tiles: [{ id: "a" }] }, { name: "A", tiles: [] }] }]);
 assert.deepStrictEqual(T.deletePage(P, 0), P);                   // last page stays
+// App canvas user tabs: "Work" with two groups, apps dragged in and between groups.
+let C = T.parseCanvas("bad");
+assert.deepStrictEqual(C, { tabs: [] });
+C = T.canvasAddGroup(T.canvasAddGroup(T.canvasAddTab(C, "Work"), 0, "Mail"), 0, "Code");
+C = T.canvasPlace(C, 0, "a", 0, "", "");
+C = T.canvasPlace(C, 0, "b", 0, "a", "");                 // before a
+assert.deepStrictEqual(C.tabs[0].groups[0].ids, ["b", "a"]);
+C = T.canvasPlace(C, 0, "a", 1, "", "");                  // dragged to the other group
+assert.deepStrictEqual(C.tabs[0].groups.map(g => g.ids), [["b"], ["a"]]);
+C = T.canvasPlace(C, 0, "c", 5, "", "New");               // empty space: new group
+assert.deepStrictEqual(C.tabs[0].groups[2], { name: "New", colour: "", ids: ["c"] });
+C = T.canvasRemove(T.canvasDeleteGroup(C, 0, 2), 0, "a");
+assert.deepStrictEqual(C.tabs[0].groups.map(g => g.ids), [["b"], []]);
+C = T.canvasRename(T.canvasRename(T.canvasAddTab(C, "X"), 1, -1, "Y"), 0, 1, "Dev");
+assert.deepStrictEqual([C.tabs[1].name, C.tabs[0].groups[1].name], ["Y", "Dev"]);
+assert.strictEqual(T.canvasMoveTab(C, 0, -1), C);
+assert.deepStrictEqual(T.canvasMoveTab(C, 0, 1).tabs.map(t => t.name), ["Y", "Work"]);
+assert.deepStrictEqual(T.parseCanvas(JSON.stringify(T.canvasDeleteTab(C, 0))).tabs.map(t => t.name), ["Y"]);
 // Backup file write survives quotes, $, newlines, unicode, spaces in the path.
 {
     const os = require("os"), cp = require("child_process");

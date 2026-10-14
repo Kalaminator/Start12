@@ -275,6 +275,68 @@ function placeInFolder(list, id, target, name) {
     return out;
 }
 
+// App canvas user tabs (key canvasLayout): { tabs: [{ name, groups: [{ name, colour, ids }] }] }.
+// colour "" = automatic hue. All helpers return a new object.
+function parseCanvas(json) {
+    try {
+        var c = JSON.parse(json);
+        if (c && Array.isArray(c.tabs)) return c;
+    } catch (e) {}
+    return { tabs: [] };
+}
+function canvasAddTab(c, name) {
+    c = clone(c);
+    c.tabs.push({ name: name, groups: [] });
+    return c;
+}
+function canvasDeleteTab(c, t) {
+    c = clone(c);
+    c.tabs.splice(t, 1);
+    return c;
+}
+function canvasMoveTab(c, t, d) {
+    if (t + d < 0 || t + d >= c.tabs.length) return c;
+    c = clone(c);
+    c.tabs.splice(t + d, 0, c.tabs.splice(t, 1)[0]);
+    return c;
+}
+function canvasAddGroup(c, t, name) {
+    c = clone(c);
+    c.tabs[t].groups.push({ name: name, colour: "", ids: [] });
+    return c;
+}
+function canvasDeleteGroup(c, t, g) {
+    c = clone(c);
+    c.tabs[t].groups.splice(g, 1);
+    return c;
+}
+// g < 0 renames the tab itself.
+function canvasRename(c, t, g, name) {
+    c = clone(c);
+    (g < 0 ? c.tabs[t] : c.tabs[t].groups[g]).name = name;
+    return c;
+}
+// Puts app id into group g of tab t before app "before" (end when absent) and out of the tab's
+// other groups. g past the last group makes a new group named "name".
+function canvasPlace(c, t, id, g, before, name) {
+    if (id === before) return c;
+    c = clone(c);
+    var gs = c.tabs[t].groups;
+    if (g >= gs.length) {
+        gs.push({ name: name || "", colour: "", ids: [] });
+        g = gs.length - 1;
+    }
+    gs.forEach(function (x) { var k = x.ids.indexOf(id); if (k >= 0) x.ids.splice(k, 1); });
+    var i = gs[g].ids.indexOf(before);
+    gs[g].ids.splice(i < 0 ? gs[g].ids.length : i, 0, id);
+    return c;
+}
+function canvasRemove(c, t, id) {
+    c = clone(c);
+    c.tabs[t].groups.forEach(function (x) { x.ids = x.ids.filter(function (y) { return y !== id; }); });
+    return c;
+}
+
 // Move group "from" so it ends up before the group now at "to" (to === length: last).
 function moveGroup(groups, from, to) {
     var out = clone(groups);

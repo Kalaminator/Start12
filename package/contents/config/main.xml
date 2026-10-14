@@ -201,8 +201,12 @@
 
   <group name="Canvas">
     <entry name="canvasTab" type="Int">
-      <label>App canvas tab (0 Pinned, 1 Apps, 2 Recent); remembers the last one</label>
+      <label>App canvas tab the menu opens on (0 Pinned, 1 Apps, 2 Recent, 3+ user tabs); set by "Always open on this tab"</label>
       <default>0</default>
+    </entry>
+    <entry name="canvasLayout" type="String">
+      <label>App canvas user tabs, JSON {tabs:[{name, groups:[{name, colour, ids}]}]}</label>
+      <default>{"tabs":[]}</default>
     </entry>
     <entry name="canvasTextures" type="Bool">
       <label>Draw the Start11 tab textures behind each canvas group</label>

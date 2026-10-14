@@ -64,8 +64,16 @@ PlasmoidItem {
     }
     function renamePin(id, current) {
         close();
+        renameDialog.apply = null;
         renameDialog.pinId = id;
         renameField.text = capOf(id) || current || "";
+        renameDialog.show();
+    }
+    // Same dialog for any name (canvas tabs/groups): fn(newName) runs on OK.
+    function askName(current, fn) {
+        close();
+        renameDialog.apply = fn;
+        renameField.text = current || "";
         renameDialog.show();
     }
     function pin(id) {
@@ -419,17 +427,22 @@ PlasmoidItem {
     Window {
         id: renameDialog
         property string pinId: ""
+        property var apply: null
         title: i18n("Rename")
         width: Kirigami.Units.gridUnit * 18
         height: renameLayout.implicitHeight + Kirigami.Units.largeSpacing * 2
         color: Kirigami.Theme.backgroundColor
         onVisibleChanged: if (visible) { requestActivate(); renameField.forceActiveFocus(); renameField.selectAll(); }
-        function accept() { root.setCap(pinId, renameField.text.trim()); close(); }
+        function accept() {
+            if (apply) apply(renameField.text.trim());
+            else root.setCap(pinId, renameField.text.trim());
+            close();
+        }
         ColumnLayout {
             id: renameLayout
             anchors.fill: parent
             anchors.margins: Kirigami.Units.largeSpacing
-            QQC2.Label { text: i18n("Name (empty = original):") }
+            QQC2.Label { text: renameDialog.apply ? i18n("Name:") : i18n("Name (empty = original):") }
             QQC2.TextField {
                 id: renameField
                 Layout.fillWidth: true

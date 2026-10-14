@@ -112,7 +112,7 @@ sets the popup to the screen size (`Plasmoid.containment.screenGeometry`, minus 
 `keepPanelVisible`); `common/Metrics.qml heightFor()` honours it; Win10 tile area gets more columns.
 Check: enable, menu covers the screen, Esc closes; disable, back to Tall.
 
-### T15 App canvas: user-made tabs and groups (M)
+### T15 App canvas: user-made tabs and groups (M) -- DONE 2026-10-14 (not yet checked on screen)
 Build: `common/AppCanvas.qml`: key `canvasLayout` String JSON `{ tabs: [ { name, groups: [ { name,
 colour, ids } ] } ] }` (today's Pinned/Apps/Recent stay as built-in tabs); surface menu "New tab", "Add
 group", "Rename", "Delete group", "Move tab left/right"; drag pins between groups (reuse DragGhost);

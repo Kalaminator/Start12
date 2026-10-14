@@ -121,6 +121,7 @@ FocusScope {
         width: Math.min(style.canvasW, parent.width / 2)
         metrics: m
         contextMenu: contextMenu
+        ghost: ghost
     }
 
     Rectangle {
