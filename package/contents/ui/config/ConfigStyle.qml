@@ -15,6 +15,8 @@ KCM.SimpleKCM {
     property string cfg_menuStyle
     property alias cfg_menuSize: sizeBox.currentIndex
     property alias cfg_menuHeight: heightSpin.value
+    property alias cfg_fullScreen: fullScreenBox.checked
+    property alias cfg_keepPanelVisible: keepPanelBox.checked
     property real cfg_uiScale
     property alias cfg_win7Substyle: subBox.currentIndex
     property alias cfg_modernSubstyle: modernSubBox.currentIndex
@@ -147,6 +149,15 @@ KCM.SimpleKCM {
                 stepSize: 20
                 textFromValue: v => v === 0 ? i18n("From size") : v + " px"
                 valueFromText: t => parseInt(t) || 0
+            }
+            QQC2.CheckBox {
+                id: fullScreenBox
+                text: i18n("Use full screen menu")
+            }
+            QQC2.CheckBox {
+                id: keepPanelBox
+                enabled: fullScreenBox.checked
+                text: i18n("Keep the panel visible")
             }
             RowLayout {
                 Kirigami.FormData.label: i18n("Adjust global menu scaling:")

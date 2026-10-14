@@ -106,7 +106,7 @@ it back and restarts plasmashell; buttons "Backup settings…" / "Restore settin
 (FileDialog, run the script). Pins are included (unlike Start11).
 Check: backup, reset (T12), restore, settings and pins are back.
 
-### T14 Full screen menu (M)
+### T14 Full screen menu (M) -- DONE 2026-10-14 (not yet checked on screen)
 Build: keys `fullScreen` Bool (`UseFullScreenMenu`), `keepPanelVisible` Bool (`SemiFull`); `main.qml`
 sets the popup to the screen size (`Plasmoid.containment.screenGeometry`, minus the panel when
 `keepPanelVisible`); `common/Metrics.qml heightFor()` honours it; Win10 tile area gets more columns.

@@ -29,6 +29,7 @@ QtObject {
 
     // Menu height from "What size should it be?" (or a custom height).
     function heightFor(sizes) {
+        if (cfg.fullScreen) return root.fullRect.height;   // main.qml: screen (minus panel)
         return cfg.menuHeight > 0 ? px(cfg.menuHeight) : px(sizes[cfg.menuSize] ?? sizes[1]);
     }
 

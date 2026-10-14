@@ -18,6 +18,14 @@
       <label>Custom menu height in px; 0 = from Size</label>
       <default>0</default>
     </entry>
+    <entry name="fullScreen" type="Bool">
+      <label>UseFullScreenMenu: menu covers the whole screen</label>
+      <default>false</default>
+    </entry>
+    <entry name="keepPanelVisible" type="Bool">
+      <label>SemiFull: full screen menu leaves the panel visible</label>
+      <default>false</default>
+    </entry>
     <entry name="uiScale" type="Double">
       <label>UISCALE: extra scale for the whole menu</label>
       <default>1.0</default>

@@ -464,6 +464,14 @@ PlasmoidItem {
         }
     }
 
+    // Full screen menu (UseFullScreenMenu): the popup takes the screen size, or the screen minus
+    // the panels with SemiFull. Win10 tile groups then wrap into more columns (TileArea Flow).
+    readonly property rect fullRect: {
+        const c = Plasmoid.containment;
+        const r = c ? (cfg.keepPanelVisible ? c.availableScreenRect : c.screenGeometry) : null;
+        return r && r.width > 0 ? Qt.rect(0, 0, r.width, r.height) : Qt.rect(0, 0, 1280, 800);
+    }
+
     Plasmoid.icon: "start-here-kde"
     // On the desktop (or in a test window) show the menu itself.
     preferredRepresentation: Plasmoid.formFactor === PlasmaCore.Types.Planar ? fullRepresentation : compactRepresentation
@@ -474,7 +482,8 @@ PlasmoidItem {
         focus: true
 
         // The style gives the start size; the user can drag the popup edges to resize it.
-        Layout.preferredWidth: styleLoader.item ? styleLoader.item.implicitWidth : 600
+        Layout.preferredWidth: root.cfg.fullScreen ? root.fullRect.width
+                             : styleLoader.item ? styleLoader.item.implicitWidth : 600
         Layout.preferredHeight: styleLoader.item ? styleLoader.item.implicitHeight : 600
         Layout.minimumWidth: styleLoader.item && styleLoader.item.minimumWidth ? styleLoader.item.minimumWidth : 300
         Layout.minimumHeight: Math.round(320 * root.cfg.uiScale)
@@ -485,7 +494,7 @@ PlasmoidItem {
             interval: 400
             onTriggered: {
                 const h = Math.round(full.height / root.cfg.uiScale);
-                if (root.expanded && Math.abs(full.height - full.Layout.preferredHeight) > 2) {
+                if (root.expanded && !root.cfg.fullScreen && Math.abs(full.height - full.Layout.preferredHeight) > 2) {
                     root.cfg.menuHeight = h;
                 }
             }

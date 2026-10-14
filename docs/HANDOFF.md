@@ -61,12 +61,13 @@ Item menus (T11): `ContextMenu.show` adds "Open file location" for any row with 
 Reset (T12): key `resetRequest` ("positions|all|time", set by a confirm dialog on ConfigMenu/ConfigStyle, acted on after Apply), `main.qml resetTimer` writes every `<key>Default`; `savedDesktopTheme` is kept so leaving XP restores the Plasma Style. Needs a user check (cfg.keys()/Default props untested live).
 Backup/restore (T13): ConfigStyle "Backup settings…"/"Restore settings…" FileDialogs set `resetRequest` "backup|t|file" / "restore|t|file"; main.qml writes all `userKeys()` (pins included) as JSON via `Tiles.writeFileCmd`, `backupReader` reads it back, then `syncDesktopTheme()`. Needs a user check.
 Start button menu (T10): `contextualActions` "Show desktop" (kglobalaccel) + "Edit panel" (ids `desktop`,`editpanel` in `buttonMenuItems`, ConfigButton); applies to every style incl. XP pill (Plasma owns the right-click, StartButton has no menu of its own); "Lock menu" already existed in TileArea.
+Full screen (T14): keys `fullScreen`/`keepPanelVisible` (ConfigStyle checkboxes); `main.qml fullRect` (containment screenGeometry or availableScreenRect) sets popup width, `Metrics.heightFor` returns its height for every style; height drag not saved then. Win10 tile groups wrap via TileArea Flow. Needs a user check (Plasma may clamp the popup to the panel side).
 Missing: canvas: user-made tabs/groups/pages, folders,
 icon tint, drag between groups. Plasma keeps one popup size for all styles (user drags it).
 
 ## Next (in order)
 Work through docs/TODO.md job by job (T01, T02, T03, T04 done). Use the prompt in docs/AGENT_PROMPT.md, one agent per job,
-then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03-T09 built (need a user check), T10-T11 built, T12-T13 built, next: T14.
+then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03-T09 built (need a user check), T10-T11 built, T12-T14 built, next: T15.
 Then the taskbar part of Start11 (section 10 of the features doc), if the user wants it.
 
 ## Testing tips
