@@ -138,7 +138,7 @@ shown under the box when the field is empty and focused (Win11/Pro/Launcher styl
 "Clear search history" button in `config/ConfigSearch.qml`; `searchHistoryEnabled` Bool.
 Check: search "kate", Enter, reopen: "kate" listed, click runs it; Clear empties it.
 
-### T19 Tile look extras (S)
+### T19 Tile look extras (S) - DONE
 Build: keys `tileImage` String + `tileImageOpacity` Int (`TileImage`, image behind every tile, picker in
 `config/ConfigLook.qml` Tiles group), `greyIcons` Bool (`MultiEffect` saturation 0 in `Tile.qml` and
 `AppList.qml`), per-tile "Hide caption" (tiles.js `setProp(id, "hideText")`, `Tile.qml` context menu).

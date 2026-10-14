@@ -259,6 +259,18 @@
       <label>TileAlphaValue, percent</label>
       <default>14</default>
     </entry>
+    <entry name="tileImage" type="String">
+      <label>TileImage: absolute path of an image shown behind every tile; empty = none</label>
+      <default></default>
+    </entry>
+    <entry name="tileImageOpacity" type="Int">
+      <label>TileImage opacity, percent</label>
+      <default>60</default>
+    </entry>
+    <entry name="greyIcons" type="Bool">
+      <label>Show app icons in grey</label>
+      <default>false</default>
+    </entry>
     <entry name="texture" type="String">
       <label>BackgroundImage: file in images/MenuTextures, or an absolute path; empty = none</label>
       <default></default>

@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Effects
 import QtQuick.Controls as QQC2
 import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PC3
@@ -214,6 +215,8 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     width: visible ? list.metrics.listIcon : 0
                     height: width
+                    layer.enabled: Plasmoid.configuration.greyIcons
+                    layer.effect: MultiEffect { saturation: -1 }
                     source: row.e.kind === "app" ? list.roleData(row.e.model, row.e.row, "decoration")
                           : row.e.kind === "folder" ? "folder" : row.e.icon || ""
                 }

@@ -66,10 +66,11 @@ Canvas tabs (T15): key `canvasLayout` JSON (`Tiles.parseCanvas/canvasPlace/...`)
 Filtered folders (T17): key `filteredFolders` JSON, ConfigMenu "Filtered folders" list/add (path ~ ok, include/exclude regex, case-insensitive, `Tiles.filterFile`); App canvas "Add filtered folder: <name>" (group `filtered: name`, live lookup, FolderListModel); Win7/Modern All Programs lists them as folders after the apps (AppList `showFilteredFolders`). Needs a user check.
 Search history (T18): keys `searchHistory`/`searchHistoryEnabled`, written in SearchView.activate; SearchBox shows a popup when empty+focused (Win11/Pro/Launcher); ConfigSearch checkbox + Clear. Needs a user check.
 Canvas group settings (T16): user-group header menu (colour, Icon tinting = `isMask`, Auto tint = `Kirigami.ImageColors`, rows/icon size/texture submenus, Launch entire group, Resort A-Z = `Tiles.canvasSort`), group fields via `Tiles.canvasSet`; sources "Add a folder as group" (`folder` url, FolderListModel, `Tiles.fileIcon`) and "Add Steam folder" (main.qml `listSteamGames` greps ~/.local/share/applications for steam://rungameid, read once). "Recent searches" group = `searches:true` + `Tiles.pushHistory` (T18). Needs a user check. Plasma keeps one popup size for all styles (user drags it).
+Tile look (T19): keys `tileImage`/`tileImageOpacity` (Image inside Tile background, ConfigLook picker) and `greyIcons` (layer MultiEffect saturation -1 on Tile + AppList icons); per-tile hide caption already existed (`caption` prop). Needs a user check.
 
 ## Next (in order)
 Work through docs/TODO.md job by job (T01, T02, T03, T04 done). Use the prompt in docs/AGENT_PROMPT.md, one agent per job,
-then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03-T09 built (need a user check), T10-T11 built, T12-T18 built, next: T19.
+then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03-T09 built (need a user check), T10-T11 built, T12-T18 built, T19 built, next: T20.
 Then the taskbar part of Start11 (section 10 of the features doc), if the user wants it.
 
 ## Testing tips

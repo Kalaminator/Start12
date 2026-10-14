@@ -23,6 +23,9 @@ KCM.SimpleKCM {
     property alias cfg_tileColorMode: tileMode.currentIndex
     property alias cfg_tileColor: tileColor.color
     property alias cfg_tileOpacity: tileOpacity.value
+    property string cfg_tileImage
+    property alias cfg_tileImageOpacity: tileImageOpacity.value
+    property alias cfg_greyIcons: greyIcons.checked
     property string cfg_texture
     property alias cfg_textureMode: textureMode.currentIndex
     property alias cfg_textureOpacity: textureOpacity.value
@@ -44,6 +47,13 @@ KCM.SimpleKCM {
         title: i18n("Pick custom texture…")
         nameFilters: [i18n("Images (*.png *.jpg *.jpeg *.webp *.svg)")]
         onAccepted: page.cfg_texture = decodeURIComponent(selectedFile.toString().replace("file://", ""))
+    }
+
+    Dialogs.FileDialog {
+        id: tileImageFile
+        title: i18n("Pick tile image…")
+        nameFilters: [i18n("Images (*.png *.jpg *.jpeg *.webp *.svg)")]
+        onAccepted: page.cfg_tileImage = decodeURIComponent(selectedFile.toString().replace("file://", ""))
     }
 
     Kirigami.FormLayout {
@@ -92,6 +102,19 @@ KCM.SimpleKCM {
             QQC2.Slider { id: tileOpacity; from: 0; to: 100; stepSize: 1 }
             QQC2.Label { text: i18n("%1% solid", Math.round(tileOpacity.value)) }
         }
+        RowLayout {
+            Kirigami.FormData.label: i18n("Tile image:")
+            QQC2.Label { text: page.cfg_tileImage ? page.cfg_tileImage.split("/").pop() : i18n("None") }
+            QQC2.Button { text: i18n("Pick image…"); icon.name: "document-open"; onClicked: tileImageFile.open() }
+            QQC2.Button { icon.name: "edit-clear"; visible: page.cfg_tileImage !== ""; onClicked: page.cfg_tileImage = "" }
+        }
+        RowLayout {
+            Kirigami.FormData.label: i18n("Tile image opacity:")
+            enabled: page.cfg_tileImage !== ""
+            QQC2.Slider { id: tileImageOpacity; from: 0; to: 100; stepSize: 1 }
+            QQC2.Label { text: i18n("%1%", Math.round(tileImageOpacity.value)) }
+        }
+        QQC2.CheckBox { id: greyIcons; Kirigami.FormData.label: i18n("Icons:"); text: i18n("Show app icons in grey") }
 
         Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Texture") }
 

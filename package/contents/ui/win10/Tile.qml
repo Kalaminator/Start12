@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Effects
 import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PC3
 import org.kde.plasma.private.kicker as Kicker
@@ -60,6 +61,14 @@ PC3.AbstractButton {
         border.width: drop.containsDrag && drop.intoFolder ? Math.max(2, Math.round(2 * tile.metrics.s))
                     : tile.hovered ? Math.max(1, Math.round(tile.metrics.s)) : 0
         border.color: drop.containsDrag && drop.intoFolder ? tile.metrics.accent : Qt.alpha(tile.metrics.text, 0.35)
+        Image {
+            visible: Plasmoid.configuration.tileImage !== ""
+            anchors.fill: parent
+            source: visible ? "file://" + Plasmoid.configuration.tileImage : ""
+            fillMode: Image.PreserveAspectCrop
+            opacity: Plasmoid.configuration.tileImageOpacity / 100
+            asynchronous: true
+        }
         // Drop marker: a bar on the left edge.
         Rectangle {
             visible: drop.containsDrag && !drop.intoFolder
@@ -111,6 +120,8 @@ PC3.AbstractButton {
             anchors.verticalCenterOffset: label.visible ? -Math.round(label.height / 3) : 0
             width: side
             height: side
+            layer.enabled: Plasmoid.configuration.greyIcons
+            layer.effect: MultiEffect { saturation: -1 }
             source: tile.tile.icon ? (tile.tile.icon.startsWith("/") ? "file://" + tile.tile.icon : tile.tile.icon)
                   : tile.appIcon
         }
