@@ -71,12 +71,9 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Plasma settings:")
             icon.name: "configure-toolbars"
             text: i18n("Edit panel…")
-            onClicked: page.run("qdbus6 org.kde.kglobalaccel /component/plasmashell invokeShortcut \"edit mode\"")
-        }
-        QQC2.Button {
-            icon.name: "configure"
-            text: i18n("Task Manager settings…")
-            onClicked: page.run("qdbus6 org.kde.plasmashell /PlasmaShell evaluateScript 'for (const p of panels()) for (const id of p.widgetIds) { const w = p.widgetById(id); if (w.type == \"org.kde.plasma.taskmanager\") w.showConfigurationInterface(); }'")
+            // Plasma 6.7 has no "edit mode" shortcut; the shell's editMode D-Bus property works.
+            // (Task manager settings can't be opened by script: right-click the taskbar for them.)
+            onClicked: page.run("qdbus6 org.kde.plasmashell /PlasmaShell org.freedesktop.DBus.Properties.Set org.kde.PlasmaShell editMode true")
         }
     }
 }
