@@ -51,7 +51,8 @@ icon tint, drag between groups. Plasma keeps one popup size for all styles (user
 
 ## Next (in order)
 Work through docs/TODO.md job by job (T01, T02 done). Use the prompt in docs/AGENT_PROMPT.md, one agent per job,
-then a load check of all styles every 2-3 jobs. Next: T03 Search filter icons.
+then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). Next: T04 first (user wants
+Modern/Win7 to show web/file/folder pins too), then T03.
 Then the taskbar part of Start11 (section 10 of the features doc), if the user wants it.
 
 ## Testing tips
