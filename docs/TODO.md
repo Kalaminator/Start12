@@ -126,7 +126,7 @@ Build (after T15): per-group settings menu in `AppCanvas.qml`: colour, "Icon tin
 (`Qt.labs.folderlistmodel`), "Add Steam folder" (desktop files `steam_app_*`), "Recent searches" (T18).
 Check: folder ~/Projects as a group lists its files; Launch entire group opens all.
 
-### T17 Filtered folders (M, low)
+### T17 Filtered folders (M, low) -- DONE
 Build (after T16): key `filteredFolders` String JSON `[ { name, path, include, exclude } ]`;
 `config/ConfigMenu.qml` "Manage filtered folders" (path, include regex, exclude regex); usable as a
 canvas group source and as a Win7 All Programs folder. Filter with JS `RegExp` over file names.

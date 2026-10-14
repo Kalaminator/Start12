@@ -4,7 +4,7 @@ const path = require("path");
 const assert = require("assert");
 const src = fs.readFileSync(path.join(__dirname, "../package/contents/ui/code/tiles.js"), "utf8")
     .replace(/^\.pragma library/m, "");
-const T = new Function(src + "; return { pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder, parsePages, setPage, newPage, deletePage, moveGroupToPage, shQuote, writeFileCmd, parseCanvas, canvasAddTab, canvasDeleteTab, canvasMoveTab, canvasAddGroup, canvasDeleteGroup, canvasRename, canvasPlace, canvasRemove, canvasSet, canvasSort, fileIcon, pushHistory };")();
+const T = new Function(src + "; return { pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder, parsePages, setPage, newPage, deletePage, moveGroupToPage, shQuote, writeFileCmd, parseCanvas, canvasAddTab, canvasDeleteTab, canvasMoveTab, canvasAddGroup, canvasDeleteGroup, canvasRename, canvasPlace, canvasRemove, canvasSet, canvasSort, fileIcon, pushHistory, parseFiltered, filterFile, dirUrl };")();
 
 // 6 columns = 12 units wide: six medium tiles fit in one row.
 let p = T.pack(Array(6).fill({ size: "medium" }), 6);
@@ -148,4 +148,15 @@ assert.deepStrictEqual([T.fileIcon("A.PDF"), T.fileIcon("x", true), T.fileIcon("
 assert.deepStrictEqual(T.pushHistory(["a", "b"], " b "), ["b", "a"]);
 assert.deepStrictEqual(T.pushHistory(["a"], ""), ["a"]);
 assert.strictEqual(T.pushHistory("0123456789".split(""), "x").length, 10);
+// Filtered folders.
+{
+    const F = T.parseFiltered('[{"name":"PDFs","path":"~/Downloads","include":"pdf$"},{"name":"x"},5]');
+    assert.strictEqual(F.length, 1);
+    assert.deepStrictEqual(["a.pdf", "b.PDF", "c.txt", "pdfs"].filter(n => T.filterFile(F[0], n)), ["a.pdf", "b.PDF"]);
+    assert.deepStrictEqual(["a.txt", "b.tmp"].filter(n => T.filterFile({ exclude: "\\.tmp$" }, n)), ["a.txt"]);
+    assert.ok(T.filterFile({ include: "(" }, "any"));
+    assert.deepStrictEqual(T.parseFiltered("bad"), []);
+    assert.strictEqual(T.dirUrl("~/Downloads", "file:///home/u/"), "file:///home/u/Downloads");
+    assert.strictEqual(T.dirUrl("/tmp", "file:///home/u"), "file:///tmp");
+}
 console.log("tiles.js: all checks passed");

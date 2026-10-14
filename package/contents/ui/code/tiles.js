@@ -373,6 +373,27 @@ function fileIcon(name, isDir) {
     return map[ext] || "text-x-generic";
 }
 
+// Filtered folders (key filteredFolders): [{ name, path, include, exclude }], regexes over file names.
+function parseFiltered(json) {
+    try {
+        var a = JSON.parse(json || "[]");
+        return Array.isArray(a) ? a.filter(function (f) { return f && f.name && f.path; }) : [];
+    } catch (e) { return []; }
+}
+// A bad regex counts as no filter.
+function filterFile(f, name) {
+    function test(re) { try { return new RegExp(re, "i").test(name); } catch (e) { return null; } }
+    if (f.include && test(f.include) === false) return false;
+    return !(f.exclude && test(f.exclude) === true);
+}
+// "~/x", "/x" or "file:///x" -> file url; home = file url of the home folder.
+function dirUrl(path, home) {
+    path = String(path || "");
+    if (path.startsWith("file:")) return path;
+    if (path === "~" || path.startsWith("~/")) return String(home).replace(/\/$/, "") + path.slice(1);
+    return "file://" + path;
+}
+
 // Move group "from" so it ends up before the group now at "to" (to === length: last).
 function moveGroup(groups, from, to) {
     var out = clone(groups);

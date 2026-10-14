@@ -85,6 +85,10 @@
       <label>ShowHidden: apps hidden from the lists (desktop ids)</label>
       <default></default>
     </entry>
+    <entry name="filteredFolders" type="String">
+      <label>Filtered folders: JSON [{ name, path, include, exclude }] (regexes over file names)</label>
+      <default>[]</default>
+    </entry>
     <entry name="hideAppList" type="Bool">
       <label>HideAppsList: tiles only</label>
       <default>false</default>

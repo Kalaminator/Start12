@@ -70,8 +70,11 @@ Item {
         { text: i18n("New tab"), icon: "tab-new", run: () => canvas.newTab() }
     ].concat(user >= 0 ? [{ text: i18n("Add group"), icon: "list-add", run: () => canvas.addGroup() },
                           { text: i18n("Add a folder as group…"), icon: "folder-new", run: () => canvas.addFolder() },
-                          { text: i18n("Add Steam folder"), icon: "applications-games", run: () => canvas.addSteam() },
-                          { text: i18n("Add recent searches"), icon: "search", run: () => canvas.addGroupWith(canvas.user, i18n("Recent searches"), "searches", true) }] : []).concat([
+                          { text: i18n("Add Steam folder"), icon: "applications-games", run: () => canvas.addSteam() }]
+                         .concat(root.filteredFolders.map(f => ({ text: i18n("Add filtered folder: %1", f.name), icon: "view-filter",
+                                                                  run: () => canvas.addGroupWith(canvas.user, f.name, "filtered", f.name) })))
+                         .concat([
+                          { text: i18n("Add recent searches"), icon: "search", run: () => canvas.addGroupWith(canvas.user, i18n("Recent searches"), "searches", true) }]) : []).concat([
         { text: i18n("Always open on this tab"), icon: "bookmark-new", checkable: true, checked: cfg.canvasTab === tab,
           run: () => { canvas.cfg.canvasTab = canvas.tab; } }
     ])
@@ -216,7 +219,9 @@ Item {
                     required property var modelData
                     required property int index
                     readonly property bool isUser: modelData?.ids !== undefined
-                    readonly property string folder: modelData?.folder ?? ""
+                    // Filtered folder (T17): looked up by name, so editing it in the settings applies here.
+                    readonly property var ff: modelData?.filtered ? root.filteredFolders.find(f => f.name === modelData.filtered) ?? null : null
+                    readonly property string folder: ff ? root.folderUrl(ff) : modelData?.folder ?? ""
                     readonly property bool takesDrops: isUser && !folder && !modelData?.searches
                     readonly property var src: modelData?.src ?? (folder ? folderModel : isUser ? own : null)
                     readonly property color tint: modelData?.tint === "auto" && autoTint.dominant.valid ? autoTint.dominant
@@ -289,7 +294,8 @@ Item {
                         const n = src ? src.count : 0;
                         canvas.cfg.hiddenApps;
                         for (let r = 0; r < n; r++)
-                            if (isUser || src === pinnedModel || !root.isHidden(canvas.appId(src, r))) out.push(r);
+                            if (ff && !Tiles.filterFile(ff, src.get(r, "fileName"))) continue;
+                            else if (isUser || src === pinnedModel || !root.isHidden(canvas.appId(src, r))) out.push(r);
                         return out;
                     }
                     readonly property int count: customs ? customs.length : rows.length

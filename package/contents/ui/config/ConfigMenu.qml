@@ -5,6 +5,7 @@ import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
+import "../code/tiles.js" as Tiles
 
 // Start11Config "Configure menu": tiles and the apps list (Windows 10 style).
 KCM.SimpleKCM {
@@ -23,6 +24,7 @@ KCM.SimpleKCM {
     property alias cfg_highlightNew: highlightNew.checked
     property alias cfg_hideAppList: hideList.checked
     property var cfg_hiddenApps: []
+    property string cfg_filteredFolders
     property string cfg_resetRequest
 
     Kirigami.FormLayout {
@@ -96,6 +98,44 @@ KCM.SimpleKCM {
             visible: page.cfg_hiddenApps.length > 0
             text: i18n("Clear hidden list")
             onClicked: page.cfg_hiddenApps = []
+        }
+
+        // Manage filtered folders: used as App canvas groups and Windows 7 All Programs folders.
+        Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Filtered folders") }
+
+        Repeater {
+            model: Tiles.parseFiltered(page.cfg_filteredFolders)
+            delegate: RowLayout {
+                required property var modelData
+                required property int index
+                QQC2.Label {
+                    text: modelData.name + "  (" + modelData.path + (modelData.include ? ", +" + modelData.include : "")
+                          + (modelData.exclude ? ", -" + modelData.exclude : "") + ")"
+                }
+                QQC2.Button {
+                    text: i18n("Remove")
+                    onClicked: {
+                        const a = Tiles.parseFiltered(page.cfg_filteredFolders);
+                        a.splice(index, 1);
+                        page.cfg_filteredFolders = JSON.stringify(a);
+                    }
+                }
+            }
+        }
+        QQC2.TextField { id: ffName; Kirigami.FormData.label: i18n("Name:"); placeholderText: i18n("PDFs") }
+        QQC2.TextField { id: ffPath; Kirigami.FormData.label: i18n("Folder:"); placeholderText: "~/Downloads" }
+        QQC2.TextField { id: ffInclude; Kirigami.FormData.label: i18n("Include (regex):"); placeholderText: "pdf$" }
+        QQC2.TextField { id: ffExclude; Kirigami.FormData.label: i18n("Exclude (regex):") }
+        QQC2.Button {
+            text: i18n("Add filtered folder")
+            icon.name: "list-add"
+            enabled: ffName.text.trim() !== "" && ffPath.text.trim() !== ""
+            onClicked: {
+                const a = Tiles.parseFiltered(page.cfg_filteredFolders);
+                a.push({ name: ffName.text.trim(), path: ffPath.text.trim(), include: ffInclude.text, exclude: ffExclude.text });
+                page.cfg_filteredFolders = JSON.stringify(a);
+                ffName.text = ffPath.text = ffInclude.text = ffExclude.text = "";
+            }
         }
 
         Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Reset") }

@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtCore
 import QtQuick.Layouts
 import QtQuick.Dialogs as Dialogs
 import QtQuick.Controls as QQC2
@@ -395,6 +396,9 @@ PlasmoidItem {
     }
     // Desktop ids of installed Steam games (Steam writes <Game>.desktop with steam://rungameid), for fn(ids).
     property var steamDone: null
+    // Filtered folders (T17): [{ name, path, include, exclude }]; folderUrl(f) = its file url.
+    readonly property var filteredFolders: Tiles.parseFiltered(cfg.filteredFolders)
+    function folderUrl(f) { return Tiles.dirUrl(f.path, StandardPaths.writableLocation(StandardPaths.HomeLocation)); }
     function listSteamGames(fn) {
         steamDone = fn;
         steamLister.connectSource("grep -l steam://rungameid ~/.local/share/applications/*.desktop; true");

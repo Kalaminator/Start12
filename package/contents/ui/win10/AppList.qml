@@ -6,7 +6,9 @@ import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PC3
 import org.kde.kirigami as Kirigami
 import org.kde.kitemmodels as KItemModels
+import Qt.labs.folderlistmodel
 import "../common"
+import "../code/tiles.js" as Tiles
 
 // Windows 10 all-apps list: optional "Recently added" / "Most used", then
 // # A..Z with letter headers. Click a letter for the jump grid. Folders open in place.
@@ -21,6 +23,9 @@ Item {
     property var entries: []
     property var openFolders: ({})
     property bool jumpMode: false
+    // Windows 7 All Programs: filtered folders (T17) after the apps, opened in place like category folders.
+    property bool showFilteredFolders: false
+    readonly property var filtered: showFilteredFolders ? root.filteredFolders : []
 
     function roleData(model, row, name) {
         return model.data(model.index(row, 0), model.KItemModels.KRoleNames.role(name));
@@ -84,7 +89,27 @@ Item {
                 out.push(...appEntries(e.model, 1));
             }
         }
+        for (let i = 0; i < filtered.length; i++) {
+            const f = filtered[i], fm = folderModels.objectAt(i), key = "filtered|" + f.name;
+            out.push({ kind: "folder", name: f.name, key: key, depth: 0 });
+            if (!openFolders[key] || !fm) continue;
+            for (let r = 0; r < fm.count; r++) {
+                const n = fm.get(r, "fileName");
+                if (Tiles.filterFile(f, n))
+                    out.push({ kind: "file", name: n, url: fm.get(r, "fileUrl"), icon: Tiles.fileIcon(n, fm.get(r, "fileIsDir")), depth: 1 });
+            }
+        }
         entries = out;
+    }
+    Instantiator {
+        id: folderModels
+        model: list.filtered
+        delegate: FolderListModel {
+            required property var modelData
+            folder: root.folderUrl(modelData)
+            showDirsFirst: true
+            onCountChanged: list.rebuild()
+        }
     }
 
     function reset() {
@@ -113,7 +138,7 @@ Item {
     function kbStep(cur, dx, dy) {
         if (dy === 0 || jumpMode) return null;
         let i = cur && cur === view.currentItem ? view.currentIndex : -1;
-        do { i += dy; } while (i >= 0 && i < entries.length && entries[i].kind !== "app" && entries[i].kind !== "folder");
+        do { i += dy; } while (i >= 0 && i < entries.length && !["app", "folder", "file"].includes(entries[i].kind));
         if (i < 0 || i >= entries.length) return null;
         view.currentIndex = i;
         return view.currentItem;
@@ -139,6 +164,7 @@ Item {
         function onShowRecentlyAddedChanged() { list.rebuild(); }
         function onShowMostUsedChanged() { list.rebuild(); }
         function onHiddenAppsChanged() { list.rebuild(); }
+        function onFilteredFoldersChanged() { list.rebuild(); }
     }
     Component.onCompleted: rebuild()
 
@@ -183,13 +209,13 @@ Item {
             contentItem: Item {
                 Kirigami.Icon {
                     id: rowIcon
-                    visible: row.e.kind === "app" || row.e.kind === "folder"
+                    visible: row.e.kind === "app" || row.e.kind === "folder" || row.e.kind === "file"
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     width: visible ? list.metrics.listIcon : 0
                     height: width
                     source: row.e.kind === "app" ? list.roleData(row.e.model, row.e.row, "decoration")
-                          : row.e.kind === "folder" ? "folder" : ""
+                          : row.e.kind === "folder" ? "folder" : row.e.icon || ""
                 }
                 PC3.Label {
                     id: rowLabel
@@ -232,7 +258,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: Math.round(14 * list.metrics.s)
                 height: width
-                source: list.openFolders[row.e.name] ? "arrow-up" : "arrow-down"
+                source: list.openFolders[row.e.key || row.e.name] ? "arrow-up" : "arrow-down"
                 color: list.metrics.text
                 isMask: true
             }
@@ -241,7 +267,9 @@ Item {
                 if (e.kind === "header") {
                     list.jumpMode = true;
                 } else if (e.kind === "folder") {
-                    list.toggleFolder(e.name);
+                    list.toggleFolder(e.key || e.name);
+                } else if (e.kind === "file") {
+                    root.openUrl(e.url);
                 } else if (e.kind === "app") {
                     e.model.trigger(e.row, "", null);
                     root.close();
