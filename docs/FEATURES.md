@@ -224,7 +224,7 @@ Un menú pequeño con acciones rápidas. Eliges las entradas en la página Botó
 
 ## Modo diseño
 
-Se abre desde la página Diseño o desde el menú de clic derecho. El menú sigue abierto y aparece una barra encima. Arrastra los divisores entre secciones para cambiar su tamaño. *Restablecer* devuelve los tamaños por defecto y *Hecho* termina el modo diseño. Cerrar el menú también lo termina.
+Se abre desde la página Distribución o desde el menú de clic derecho. El menú sigue abierto y aparece una barra encima. Arrastra los divisores entre secciones para cambiar su tamaño. *Restablecer* devuelve los tamaños por defecto y *Hecho* termina el modo diseño. Cerrar el menú también lo termina.
 
 ## Búsqueda
 
