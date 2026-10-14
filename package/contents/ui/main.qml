@@ -691,7 +691,7 @@ PlasmoidItem {
             text: i18n("Edit panel")
             icon.name: "configure-toolbars"
             visible: root.hasMenuItem("editpanel")
-            onTriggered: Plasmoid.containment.corona.editMode = true
+            onTriggered: root.run("qdbus6 org.kde.plasmashell /PlasmaShell org.freedesktop.DBus.Properties.Set org.kde.PlasmaShell editMode true")
         },
         PlasmaCore.Action {
             text: i18n("Auto-hide panel")
