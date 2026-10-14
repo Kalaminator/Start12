@@ -53,12 +53,13 @@ XP Start button: `StartButton.qml` draws the green "start" pill (icon = buttonIc
 Win7/Modern (T04): pins in cfg.pinnedGrid order incl. custom pins, drag to reorder, jump-list arrow, empty-space "Pin website/file/folder".
 Search filters (T03): `win10/SearchView` filter icon row (all styles), `passes()` by runnerId/matchId prefix, favoriteId, url extension; keys `searchFilterIcons`, `searchFilter`. Needs a user check (roles not probed live).
 Tile folders (T05): drop a tile on the right 3/4 of a tile -> `{kind:"folder", id:"folder|N", name, size, tiles}` (`Tiles.dropOnTile`, `findTile` searches folders, `tidy` dissolves 1-tile folders); Tile.qml mini-icon grid, TileGroup opens a row under the group (name field, tiles drag out). Left quarter = insert before.
+Pin folders (T06): `pinnedGrid` entry `folder|name|id1,id2` (`Tiles.folderOf/folderEntry/allPins/removePin/placeInFolder`); PinnedGrid drop on right 3/4 of an icon = folder, 2x2 mini icons, click opens a `PC3.Popup` (name field, drag apps out); "Unpin folder" puts its apps back. Win7/App flatten folders; XP does not yet.
 Missing: canvas: user-made tabs/groups/pages, folders,
 icon tint, drag between groups. Plasma keeps one popup size for all styles (user drags it).
 
 ## Next (in order)
 Work through docs/TODO.md job by job (T01, T02, T03, T04 done). Use the prompt in docs/AGENT_PROMPT.md, one agent per job,
-then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03, T04, T05 built (need a user check), next: T06.
+then a load check of all styles every 2-3 jobs. T01 pinning confirmed by the user (Win11). T03, T04, T05, T06 built (need a user check), next: T07.
 Then the taskbar part of Start11 (section 10 of the features doc), if the user wants it.
 
 ## Testing tips

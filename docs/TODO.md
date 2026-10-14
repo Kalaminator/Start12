@@ -50,7 +50,7 @@ draws a folder as a grid of mini icons; click expands a row below the group (`Ti
 its tiles; right-click "Name folder", "Unpin folder". Mirrors `FoldersInPlace`.
 Check: `node tests/test_tiles.js` passes; drop Firefox on Dolphin, folder tile appears, opens, closes.
 
-### T06 Win11 pinned folders (M)
+### T06 Win11 pinned folders (M) - DONE
 Build: `pinnedGrid` entry `folder|name|id1,id2,...`; `common/PinnedGrid.qml` draws it with 4 mini icons,
 click opens a popup grid (`PC3.Popup`) with its apps; drop an icon onto an icon creates one; right-click
 "Rename folder", "Unpin folder". Helpers in `code/tiles.js` (`folderOf`, `placeInFolder`) + tests.

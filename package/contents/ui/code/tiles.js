@@ -190,6 +190,51 @@ function placeInList(list, id, i) {
     return out;
 }
 
+// Pinned grid folders (Windows 11): entry "folder|name|id1,id2,...".
+// ponytail: comma-separated ids; a pinned url containing "," would split, escape if that happens.
+function folderOf(entry) {
+    if (!isFolder(entry)) return null;
+    var p = entry.split("|");
+    var ids = p.slice(2).join("|");
+    return { name: p[1], ids: ids ? ids.split(",") : [] };
+}
+
+function folderEntry(name, ids) {
+    return "folder|" + String(name).replace(/[|,]/g, " ") + "|" + ids.join(",");
+}
+
+// Every pinned id, folders opened up.
+function allPins(list) {
+    var out = [];
+    list.forEach(function (e) { var f = folderOf(e); out = out.concat(f ? f.ids : [e]); });
+    return out;
+}
+
+// Unpin id from the list or from its folder; a folder left with one app turns back into it.
+function removePin(list, id) {
+    var out = [];
+    list.forEach(function (e) {
+        var f = folderOf(e);
+        if (!f) { if (e !== id) out.push(e); return; }
+        var ids = f.ids.filter(function (x) { return x !== id; });
+        if (ids.length > 1) out.push(folderEntry(f.name, ids));
+        else if (ids.length === 1) out.push(ids[0]);
+    });
+    return out;
+}
+
+// Drop id onto list entry target: into target's folder, or both become a new folder in target's
+// place. Folders do not nest.
+function placeInFolder(list, id, target, name) {
+    if (id === target || isFolder(id) || list.indexOf(target) < 0) return list;
+    var f = folderOf(target);
+    var out = removePin(list, id);
+    var i = out.indexOf(target);
+    if (i < 0) return list;
+    out[i] = f ? folderEntry(f.name, f.ids.concat([id])) : folderEntry(name || "Folder", [target, id]);
+    return out;
+}
+
 // Move group "from" so it ends up before the group now at "to" (to === length: last).
 function moveGroup(groups, from, to) {
     var out = clone(groups);

@@ -36,7 +36,7 @@ Item {
 
     Kicker.SimpleFavoritesModel {
         id: pinnedModel
-        favorites: canvas.cfg.pinnedGrid
+        favorites: Tiles.allPins(canvas.cfg.pinnedGrid)
     }
     Kicker.RecentUsageModel {
         id: recentDocs

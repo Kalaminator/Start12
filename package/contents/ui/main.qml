@@ -36,7 +36,7 @@ PlasmoidItem {
         cfg.tileGroups = JSON.stringify(g);
     }
     function isPinned(id) {
-        return usesTiles ? Tiles.findTile(groups, id) !== null : cfg.pinnedGrid.includes(id);
+        return usesTiles ? Tiles.findTile(groups, id) !== null : Tiles.allPins(cfg.pinnedGrid).includes(id);
     }
     function pin(id) {
         if (!id || isPinned(id)) return;
@@ -52,7 +52,7 @@ PlasmoidItem {
         if (usesTiles) {
             saveGroups(Tiles.remove(groups, id));
         } else {
-            cfg.pinnedGrid = cfg.pinnedGrid.filter(x => x !== id);
+            cfg.pinnedGrid = Tiles.removePin(cfg.pinnedGrid, id);
         }
     }
     // Pins whose app is not installed (e.g. the default Konsole pin) are hidden, not removed.
@@ -60,10 +60,10 @@ PlasmoidItem {
     // (preferred://browser) while another app is missing, the rewritten one may hide too.
     Kicker.SimpleFavoritesModel {
         id: pinCheck
-        favorites: cfg.pinnedGrid.filter(id => !Tiles.custom(id))
+        favorites: Tiles.allPins(cfg.pinnedGrid).filter(id => !Tiles.custom(id))
     }
     readonly property var missingPins: {
-        const apps = cfg.pinnedGrid.filter(id => !Tiles.custom(id)); // not pinCheck.favorites: the model drops missing ids there
+        const apps = Tiles.allPins(cfg.pinnedGrid).filter(id => !Tiles.custom(id)); // not pinCheck.favorites: the model drops missing ids there
         if (pinCheck.count >= apps.length) return [];
         const role = pinCheck.KItemModels.KRoleNames.role("favoriteId");
         const have = [];
@@ -73,7 +73,21 @@ PlasmoidItem {
     }
     readonly property var shownPins: cfg.pinnedGrid.filter(id => !missingPins.includes(id))
     function movePinned(id, index) {
-        cfg.pinnedGrid = Tiles.placeInList(cfg.pinnedGrid, id, index);
+        // Out of a folder: unpin it there first (a dissolving folder keeps its place).
+        const list = cfg.pinnedGrid.includes(id) ? cfg.pinnedGrid : Tiles.removePin(cfg.pinnedGrid, id);
+        cfg.pinnedGrid = Tiles.placeInList(list, id, index);
+    }
+    // Pinned grid folders (Windows 11): drop id on entry target; rename; unpin = its apps back in place.
+    function folderPins(id, target) {
+        cfg.pinnedGrid = Tiles.placeInFolder(cfg.pinnedGrid, id, target, i18n("Folder"));
+    }
+    function renameFolder(entry, name) {
+        const f = Tiles.folderOf(entry);
+        if (f) cfg.pinnedGrid = cfg.pinnedGrid.map(e => e === entry ? Tiles.folderEntry(name, f.ids) : e);
+    }
+    function unfoldFolder(entry) {
+        const f = Tiles.folderOf(entry), i = cfg.pinnedGrid.indexOf(entry);
+        if (f && i >= 0) cfg.pinnedGrid = cfg.pinnedGrid.slice(0, i).concat(f.ids, cfg.pinnedGrid.slice(i + 1));
     }
 
     // ---- Models from KDE's own launcher library ----

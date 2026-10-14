@@ -4,7 +4,7 @@ const path = require("path");
 const assert = require("assert");
 const src = fs.readFileSync(path.join(__dirname, "../package/contents/ui/code/tiles.js"), "utf8")
     .replace(/^\.pragma library/m, "");
-const T = new Function(src + "; return { parse, pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile };")();
+const T = new Function(src + "; return { parse, pack, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder };")();
 
 // 6 columns = 12 units wide: six medium tiles fit in one row.
 let p = T.pack(Array(6).fill({ size: "medium" }), 6);
@@ -87,4 +87,17 @@ assert.deepStrictEqual(f[0].tiles, [{ id: "a", size: "wide" }, { id: "c", size: 
 f = T.dropOnTile(T.dropOnTile(F0, "b", "a"), "c", "folder|1");
 assert.strictEqual(T.setProp(f, "folder|1", "name", "Games")[0].tiles[0].name, "Games");
 assert.deepStrictEqual(T.remove(f, "folder|1"), []);        // unpin folder = unpin its tiles
+
+// Pinned grid folders (Win11): "folder|name|id1,id2".
+let L = T.placeInFolder(["a", "b", "c"], "c", "a", "Games");
+assert.deepStrictEqual(L, ["folder|Games|a,c", "b"]);
+assert.deepStrictEqual(T.folderOf(L[0]), { name: "Games", ids: ["a", "c"] });
+L = T.placeInFolder(L, "b", L[0]);                          // onto the folder: appended
+assert.deepStrictEqual(L, ["folder|Games|a,c,b"]);
+assert.deepStrictEqual(T.placeInFolder(L, L[0], "x"), L);   // no nesting / unknown target
+assert.deepStrictEqual(T.allPins(["x", ...L]), ["x", "a", "c", "b"]);
+L = T.removePin(T.removePin(L, "c"), "b");                  // one left: folder dissolves
+assert.deepStrictEqual(L, ["a"]);
+assert.strictEqual(T.folderEntry("A|b,c", ["x"]), "folder|A b c|x");
+assert.deepStrictEqual(T.folderOf("custom|x|y|z"), null);
 console.log("tiles.js: all checks passed");

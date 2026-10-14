@@ -134,7 +134,7 @@ FocusScope {
     // ---- Pinned + most used ----
     Kicker.SimpleFavoritesModel {
         id: pinnedModel
-        favorites: style.cfg.pinnedGrid
+        favorites: Tiles.allPins(style.cfg.pinnedGrid)
     }
     function roleData(model, row, name) {
         return model.data(model.index(row, 0), model.KItemModels.KRoleNames.role(name));
