@@ -212,6 +212,10 @@ PlasmoidItem {
         : cfg.taskbarTheme !== "custom" ? ""
         : "colour=" + cfg.taskbarColor.toString().slice(-6) + " alpha=" + (cfg.taskbarAlpha / 100)
           + " radius=" + cfg.taskbarRadius + " line=" + (cfg.taskbarLine ? 1 : 0) + " sub=flat"
+          // T33 texture (path shell-quoted: it ends up in sh -c; the hash makes a new theme per change)
+          + (cfg.taskbarImage === "" ? "" : " image=" + Tiles.shQuote(cfg.taskbarImage) + " mode=" + cfg.taskbarImageMode
+             + " imagealpha=" + (cfg.taskbarImageAlpha / 100)
+             + (cfg.taskbarImageTint ? " tint=" + Kirigami.Theme.highlightColor.toString().slice(-6) : ""))
     onTaskbarArgsChanged: syncDesktopTheme()
     function syncDesktopTheme() {
         themeReader.connectSource("kreadconfig6 --file plasmarc --group Theme --key name");

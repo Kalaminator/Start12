@@ -3,9 +3,10 @@
 # One custom colour:        python3 xptheme.py --custom '#3a6ea5' --sub classic --out <dir>   (main.qml)
 # Any-style taskbar (T31):  python3 xptheme.py --taskbar colour=#101010 alpha=0.8 radius=8 line=0 sub=flat
 #                             fallback=default --out <dir>   (main.qml; only panel/tasks/colors, rest = fallback)
-import argparse, json, os
+#                             [image=<png/jpg> mode=tile|stretch|top|middle|bottom imagealpha=0.3 tint=3daee9] (T33)
+import argparse, base64, json, os, struct
 
-def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4), gid="g"):
+def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4), gid="g", center=""):
     """9 pieces of a rounded box. stops: [(offset, color, opacity)] vertical gradient.
     border: (color, opacity) or None. hi: top highlight (color, opacity) or None."""
     p = (prefix + "-") if prefix else ""
@@ -52,19 +53,19 @@ def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4),
     g("bottom", rect(x1, y2, W - 2 * c, c - b, F) + (rect(x1, y0 + H - b, W - 2 * c, b, B) if border else ""))
     g("left", (rect(x0, y1, b, H - 2 * c, B) if border else "") + rect(x0 + b, y1, c - b, H - 2 * c, F))
     g("right", rect(x2, y1, c - b, H - 2 * c, F) + (rect(x0 + W - b, y1, b, H - 2 * c, B) if border else ""))
-    g("center", rect(x1, y1, W - 2 * c, H - 2 * c, F))
+    g("center", rect(x1, y1, W - 2 * c, H - 2 * c, F) + center)
     l, t, r, bm = margins
     hy = y0 + H + 2
     for i, (side, w, h) in enumerate([("left", l, 1), ("top", 1, t), ("right", r, 1), ("bottom", 1, bm)]):
         out.append('<rect id="%shint-%s-margin" x="%d" y="%d" width="%d" height="%d" fill="none"/>' % (p, side, x0 + i * 10, hy, w, h))
     return defs, "".join(out)
 
-def svg(path, frames, extra=""):
+def svg(path, frames, extra="", size=(400, 0)):
     defs, body = zip(*frames)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
-        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="400" height="%d">\n<defs>%s</defs>\n%s%s\n</svg>\n'
-                % (len(frames) * 60 + 20, "".join(defs), "\n".join(body), extra))
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="%d" height="%d">\n<defs>%s</defs>\n%s%s\n</svg>\n'
+                % (size[0], size[1] or len(frames) * 60 + 20, "".join(defs), "\n".join(body), extra))
 
 W, K = "#ffffff", "#000000"
 ORANGE = [(0, "#fcc77b", 1), (1, "#f39a32", 1)]
@@ -179,18 +180,54 @@ def write(base, t, label):
                                "Id": name, "License": "LGPL", "Name": "Start12 XP " + label, "Version": "1.0"},
                    "X-Plasma-API": "5.0"}, f, indent=4)
 
-def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", sub="flat", fallback="default"):
+def imgsize(data):
+    """(w, h) of PNG / JPEG bytes."""
+    if data[:8] == b"\x89PNG\r\n\x1a\n":
+        return struct.unpack(">II", data[16:24])
+    i = 2
+    while i < len(data) - 9:  # JPEG: walk the segments to the SOFn frame header
+        seg, ln = data[i + 1], struct.unpack(">H", data[i + 2:i + 4])[0]
+        if 0xC0 <= seg <= 0xCF and seg not in (0xC4, 0xC8, 0xCC):
+            h, w = struct.unpack(">HH", data[i + 5:i + 9])
+            return w, h
+        i += 2 + ln
+    raise ValueError("not a PNG or JPEG image")
+
+def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", sub="flat", fallback="default",
+            image="", mode="tile", imagealpha="1", tint=""):
     """Plasma Style that only replaces panel-background (plain, opaque/ and translucent/ for blur), tasks
-    and colors; everything else comes from FallbackTheme (the user's own style)."""
+    and colors; everything else comes from FallbackTheme (the user's own style).
+    T33 texture: image (PNG/JPEG) in the 9-slice center; mode tile (native size, hint-tile-center) | stretch |
+    top/middle/bottom (scaled to cover a panel-shaped box, cropped at that edge); tint = colour multiplied over."""
     B = "#" + colour.lstrip("#")[-6:]
     rgb(B)
     a, r = max(0.0, min(1.0, float(alpha))), max(2, min(24, int(radius)))
     hi = (mix(B, W, .35), 1) if line not in ("0", "", "false") else None
+    fw, fh, tex, hints = 60, 40, "", '<rect id="hint-stretch-borders" x="200" y="10" width="1" height="1" fill="none"/>'
+    if image:
+        with open(image, "rb") as f:
+            data = f.read()
+        iw, ih = imgsize(data)
+        mime = "png" if data[:4] == b"\x89PNG" else "jpeg"
+        if mode == "tile":
+            fw, fh = iw + 2 * r, ih + 2 * r
+            hints += '<rect id="hint-tile-center" x="200" y="20" width="1" height="1" fill="none"/>'
+        elif mode != "stretch":
+            # ponytail: the center piece is panel-shaped (48:1), Plasma stretches it; exact for a ~1920x40 panel
+            fw, fh = 960 + 2 * r, 20 + 2 * r
+        par = {"stretch": "none", "top": "xMidYMin slice", "middle": "xMidYMid slice", "bottom": "xMidYMax slice"}.get(mode, "none")
+        x, y, w, h = 10 + r, 10 + r, fw - 2 * r, fh - 2 * r
+        tex = '<image x="%d" y="%d" width="%d" height="%d" preserveAspectRatio="%s" opacity="{op}" xlink:href="data:image/%s;base64,%s"/>' % (
+            x, y, w, h, par, mime, base64.b64encode(data).decode())
+        if tint:
+            tex += '<rect x="%d" y="%d" width="%d" height="%d" fill="#%s" comp-op="multiply"/>' % (
+                x, y, w, h, tint.lstrip("#")[-6:])
     for pre, op in (("", a), ("translucent/", a), ("opaque/", 1)):
+        t = tex.replace("{op}", "%.3f" % (op * max(0.0, min(1.0, float(imagealpha)))))
         svg(os.path.join(base, pre + "widgets/panel-background.svg"),
-            [frame("", 10, 10, 60, 40, r, None, [(0, B, op), (1, B, op)], hi=hi, margins=(2, 2, 2, 2), gid="panel"),
-             frame("mask", 10, 70, 60, 40, r, None, [(0, K, 1), (1, K, 1)], gid="mask")],
-            '<rect id="hint-stretch-borders" x="200" y="10" width="1" height="1" fill="none"/>')
+            [frame("", 10, 10, fw, fh, r, None, [(0, B, op), (1, B, op)], hi=hi, margins=(2, 2, 2, 2), gid="panel", center=t),
+             frame("mask", 10, 20 + fh, fw, fh, r, None, [(0, K, 1), (1, K, 1)], gid="mask")],
+            hints.replace('x="200"', 'x="%d"' % (fw + 40)), size=(fw + 60, 2 * fh + 40))
     ink = "#000000" if light(B) else W
     clear = (None, [(0, ink, 0), (1, ink, 0)], None)
     tasks = {  # sub=flat (Win10-like); T34 adds more button styles

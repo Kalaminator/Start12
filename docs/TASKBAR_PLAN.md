@@ -84,7 +84,7 @@ Build: "Pin to taskbar" in `ContextMenu.qml` for `custom|...` pins (T01) and for
 config of the Task Manager (`org.kde.plasma.icontasks` or `taskmanager`) in the start button's panel. "Unpin from
 taskbar" removes both. Check: pin a URL and ~/Pictures from the menu, both appear on the panel and open; unpin removes them.
 
-### T33 Taskbar texture (M)
+### T33 Taskbar texture (M) -- DONE
 Build: on top of T31: keys `taskbarImage`, `taskbarImageMode` (tile|stretch|top|middle|bottom), `taskbarImageAlpha`,
 `taskbarImageTint` (accent colour multiply) (Start11 `TaskbarImage`, `CustomTextureAlignment`); xptheme.py embeds
 the image (base64 `<image>` with `preserveAspectRatio`/pattern) into panel-background.svg; ConfigLook-style picker.

@@ -257,6 +257,24 @@
       <label>Light line on the taskbar edge (off = Start11 HideTaskbarLineEntirely)</label>
       <default>false</default>
     </entry>
+    <entry name="taskbarImage" type="String">
+      <label>Taskbar texture, PNG/JPEG path (Start11 TaskbarImage); empty = none</label>
+      <default></default>
+    </entry>
+    <entry name="taskbarImageMode" type="String">
+      <label>Texture placement: tile | stretch | top | middle | bottom (Start11 tile/stretch, CustomTextureAlignment)</label>
+      <default>tile</default>
+    </entry>
+    <entry name="taskbarImageAlpha" type="Int">
+      <label>Texture opacity in percent (Start11 texture alpha)</label>
+      <default>100</default>
+      <min>0</min>
+      <max>100</max>
+    </entry>
+    <entry name="taskbarImageTint" type="Bool">
+      <label>Tint the texture with the accent colour, multiply (Start11 accent tint)</label>
+      <default>false</default>
+    </entry>
     <entry name="taskbarPins" type="StringList">
       <label>Custom pins (custom|...) also pinned to the taskbar (Start11 taskbar pins of files, folders, websites)</label>
       <default></default>

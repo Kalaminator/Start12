@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
+import QtQuick.Dialogs as Dialogs
 import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
 import org.kde.kquickcontrols as KQuickControls
@@ -17,6 +18,10 @@ KCM.SimpleKCM {
     property alias cfg_taskbarAlpha: tbAlpha.value
     property alias cfg_taskbarRadius: tbRadius.value
     property alias cfg_taskbarLine: tbLine.checked
+    property string cfg_taskbarImage
+    property string cfg_taskbarImageMode
+    property alias cfg_taskbarImageAlpha: tbImageAlpha.value
+    property alias cfg_taskbarImageTint: tbImageTint.checked
     property alias cfg_taskbarSearch: searchBox.checked
     property alias cfg_taskbarSearchWidth: searchWidth.value
 
@@ -27,6 +32,13 @@ KCM.SimpleKCM {
         onNewData: sourceName => disconnectSource(sourceName)
     }
     function run(cmd) { executable.connectSource(cmd); }
+
+    Dialogs.FileDialog {
+        id: tbImageFile
+        title: i18n("Pick taskbar texture…")
+        nameFilters: [i18n("Images (*.png *.jpg *.jpeg)")]
+        onAccepted: page.cfg_taskbarImage = decodeURIComponent(selectedFile.toString().replace("file://", ""))
+    }
 
     Kirigami.FormLayout {
         QQC2.CheckBox {
@@ -61,6 +73,33 @@ KCM.SimpleKCM {
                 valueFromText: t => parseInt(t) || 2
             }
             QQC2.CheckBox { id: tbLine; text: i18n("Light line on the taskbar edge") }
+        }
+        // T33: texture drawn inside the generated panel background (xptheme.py image=...)
+        ColumnLayout {
+            enabled: customBox.checked && !followBox.checked
+            Kirigami.FormData.label: i18n("Texture:")
+            RowLayout {
+                QQC2.Label { text: page.cfg_taskbarImage ? page.cfg_taskbarImage.split("/").pop() : i18n("None") }
+                QQC2.Button { text: i18n("Pick image…"); icon.name: "document-open"; onClicked: tbImageFile.open() }
+                QQC2.Button { icon.name: "edit-clear"; visible: page.cfg_taskbarImage !== ""; onClicked: page.cfg_taskbarImage = "" }
+            }
+            ColumnLayout {
+                enabled: page.cfg_taskbarImage !== ""
+                QQC2.ComboBox {
+                    textRole: "text"
+                    valueRole: "value"
+                    model: [{ value: "tile", text: i18n("Tile") }, { value: "stretch", text: i18n("Stretch") },
+                            { value: "top", text: i18n("Align top") }, { value: "middle", text: i18n("Align middle") },
+                            { value: "bottom", text: i18n("Align bottom") }]
+                    Component.onCompleted: currentIndex = Math.max(0, indexOfValue(page.cfg_taskbarImageMode))
+                    onActivated: page.cfg_taskbarImageMode = currentValue
+                }
+                RowLayout {
+                    QQC2.Slider { id: tbImageAlpha; from: 0; to: 100; stepSize: 1 }
+                    QQC2.Label { text: i18n("%1% opaque", Math.round(tbImageAlpha.value)) }
+                }
+                QQC2.CheckBox { id: tbImageTint; text: i18n("Tint with the accent colour") }
+            }
         }
 
         Item { Kirigami.FormData.isSection: true }
