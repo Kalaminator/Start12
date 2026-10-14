@@ -21,7 +21,9 @@ KCM.SimpleKCM {
     property alias cfg_win7Substyle: subBox.currentIndex
     property alias cfg_modernSubstyle: modernSubBox.currentIndex
     property string cfg_xpSubstyle
-    property alias cfg_xpStartGreen: xpStartGreenBox.checked
+    property bool cfg_xpStartGreen
+    property bool cfg_xpStartCustom
+    property alias cfg_xpStartColor: xpStartColor.color
     property string cfg_xpColor
     property alias cfg_xpCustomColor: xpCustom.color
     property string cfg_resetRequest
@@ -125,10 +127,18 @@ KCM.SimpleKCM {
                 }
                 KQuickControls.ColorButton { id: xpCustom; visible: page.cfg_xpColor === "custom"; showAlphaChannel: false }
             }
-            QQC2.CheckBox {
-                id: xpStartGreenBox
+            RowLayout {
                 visible: page.cfg_menuStyle === "xp"
-                text: i18n("Green XP Start button")
+                Kirigami.FormData.label: i18n("Start button colour:")
+                QQC2.ComboBox {
+                    model: [i18n("XP green"), i18n("Colour scheme"), i18n("Custom")]
+                    currentIndex: page.cfg_xpStartCustom ? 2 : page.cfg_xpStartGreen ? 0 : 1
+                    onActivated: index => {
+                        page.cfg_xpStartCustom = index === 2;
+                        page.cfg_xpStartGreen = index === 0;
+                    }
+                }
+                KQuickControls.ColorButton { id: xpStartColor; visible: page.cfg_xpStartCustom; showAlphaChannel: false }
             }
             QQC2.ComboBox {
                 id: sizeBox

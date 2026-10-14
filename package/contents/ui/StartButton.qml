@@ -161,14 +161,47 @@ MouseArea {
     }
 
     // XP: green pill (classic: square left, round right; modern: fully round, glow on hover).
-    // Key xpStartGreen keeps it green in every scheme like XP; off = scheme colour.
+    // Colour: xpStartCustom = xpStartColor; else xpStartGreen keeps it green like XP; else scheme colour.
+    // It reaches the panel's left edge when the button is the panel's first item.
     Item {
         id: xpPill
         visible: button.xp
         anchors.fill: face
+        anchors.leftMargin: -reach
+        anchors.bottomMargin: -reachBottom
+        // Gaps between the panel's left/bottom edges and the button (panel padding): the pill grows into
+        // them, to the left only when the button is the first thing on the panel (a small gap). Not up:
+        // the panel window is taller than the visible bar.
+        property real reach: 0
+        property real reachBottom: 0
+        function measure() {
+            const p = button.mapToItem(null, 0, 0);
+            const small = v => v > 0 && v < button.height / 2 ? v : 0;
+            reach = p.x > 0 && p.x < button.height ? p.x : 0;
+            reachBottom = button.Window.window ? small(button.Window.window.height - p.y - button.height) : 0;
+        }
+        Component.onCompleted: Qt.callLater(measure)
+        Connections {
+            target: button
+            function onWidthChanged() { Qt.callLater(xpPill.measure) }
+            function onHeightChanged() { Qt.callLater(xpPill.measure) }
+            function onXChanged() { Qt.callLater(xpPill.measure) }
+        }
+        Connections {
+            target: button.parent
+            function onXChanged() { Qt.callLater(xpPill.measure) }
+        }
+        Timer { interval: 1500; running: button.xp; onTriggered: xpPill.measure() }
+        MouseArea {
+            width: xpPill.reach
+            height: parent.height
+            onPressed: button.wasExpanded = root.expanded
+            onClicked: root.expanded = !button.wasExpanded
+        }
         readonly property bool modern: button.cfg.xpSubstyle === "modern"
         readonly property var schemeBase: ({ blue: "#2f6fd8", olive: "#7a924f", silver: "#9a9ab4" })
-        readonly property color base: button.cfg.xpStartGreen ? "#3c9a3c"
+        readonly property color base: button.cfg.xpStartCustom ? button.cfg.xpStartColor
+            : button.cfg.xpStartGreen ? "#3c9a3c"
             : button.cfg.xpColor === "custom" ? button.cfg.xpCustomColor
             : (schemeBase[button.cfg.xpColor] || schemeBase.blue)
         readonly property color tone: button.frame === 2 ? Qt.darker(base, 1.25)
@@ -220,7 +253,7 @@ MouseArea {
         Row {
             id: xpRow
             anchors.verticalCenter: shape.verticalCenter
-            x: Math.round(xpPill.height * (xpPill.modern ? 0.3 : 0.2))
+            x: xpPill.reach + Math.round(xpPill.height * (xpPill.modern ? 0.3 : 0.2))
             spacing: Math.round(xpPill.height * 0.12)
             Kirigami.Icon {
                 anchors.verticalCenter: parent.verticalCenter

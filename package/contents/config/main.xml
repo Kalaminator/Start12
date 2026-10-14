@@ -229,6 +229,13 @@
       <label>With the XP style the panel Start button stays green (like XP); off = scheme colour</label>
       <default>true</default>
     </entry>
+    <entry name="xpStartCustom" type="Bool">
+      <label>XP Start button uses xpStartColor (wins over xpStartGreen)</label>
+      <default>false</default>
+    </entry>
+    <entry name="xpStartColor" type="Color">
+      <default>#3c9a3c</default>
+    </entry>
     <entry name="taskbarTheme" type="String">
       <label>Generated taskbar Plasma Style for any menu style: off | custom (Start11 "Override taskbar colour"); XP taskbar wins</label>
       <default>off</default>
