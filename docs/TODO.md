@@ -181,6 +181,10 @@ Build: `package/Messages.sh` (xgettext over `contents/ui`), `po/es.po`, install 
 config pages and menu strings to Spanish first.
 Check: `LANGUAGE=es plasmashell --replace`, settings window in Spanish.
 
+### T26 Full custom XP theme (M, later -- user will say when)
+User wants a custom theme that covers more than menu + taskbar + Start button (details to ask them
+when we start). Builds on `code/xptheme.py` and the XP palettes in `styles/xp.qml`.
+
 ## Later phase
 - Taskbar (features doc section 10): separate phase after the menu, if the user wants it.
 

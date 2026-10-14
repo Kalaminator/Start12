@@ -169,6 +169,10 @@
     <entry name="xpCustomColor" type="Color">
       <default>#3a6ea5</default>
     </entry>
+    <entry name="xpStartGreen" type="Bool">
+      <label>With the XP style the panel Start button stays green (like XP); off = scheme colour</label>
+      <default>true</default>
+    </entry>
     <entry name="savedDesktopTheme" type="String">
       <label>Plasma Style that was active before the XP taskbar theme; restored when leaving XP</label>
       <default></default>

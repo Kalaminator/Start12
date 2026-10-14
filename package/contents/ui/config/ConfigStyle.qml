@@ -18,6 +18,7 @@ KCM.SimpleKCM {
     property alias cfg_modernSubstyle: modernSubBox.currentIndex
     property string cfg_xpSubstyle
     property alias cfg_xpTaskbarTheme: xpTaskbarBox.checked
+    property alias cfg_xpStartGreen: xpStartGreenBox.checked
     property string cfg_xpColor
     property alias cfg_xpCustomColor: xpCustom.color
 
@@ -124,6 +125,11 @@ KCM.SimpleKCM {
                 id: xpTaskbarBox
                 visible: page.cfg_menuStyle === "xp"
                 text: i18n("Apply matching XP taskbar theme")
+            }
+            QQC2.CheckBox {
+                id: xpStartGreenBox
+                visible: page.cfg_menuStyle === "xp"
+                text: i18n("Green XP Start button")
             }
             QQC2.ComboBox {
                 id: sizeBox
