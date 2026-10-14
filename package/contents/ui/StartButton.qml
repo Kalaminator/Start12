@@ -168,17 +168,24 @@ MouseArea {
         visible: button.xp
         anchors.fill: face
         anchors.leftMargin: -reach
+        anchors.topMargin: -reachTop
         anchors.bottomMargin: -reachBottom
-        // Gaps between the panel's left/bottom edges and the button (panel padding): the pill grows into
-        // them, to the left only when the button is the first thing on the panel (a small gap). Not up:
-        // the panel window is taller than the visible bar.
+        // Gaps between the bar's edges and the button (panel padding): the pill grows into them, so it is
+        // as tall as the bar; to the left only when the button is the first thing on the panel.
         property real reach: 0
+        property real reachTop: 0
         property real reachBottom: 0
         function measure() {
             const p = button.mapToItem(null, 0, 0);
             const small = v => v > 0 && v < button.height / 2 ? v : 0;
             reach = p.x > 0 && p.x < button.height ? p.x : 0;
-            reachBottom = button.Window.window ? small(button.Window.window.height - p.y - button.height) : 0;
+            // ponytail: the panel window has invisible room on its inner side (floating/shadow), so only
+            // the gap on the screen-edge side is measured; the bar's padding is the same on the other side.
+            const win = button.Window.window;
+            const edge = Plasmoid.location === PlasmaCore.Types.TopEdge ? small(p.y)
+                       : win ? small(win.height - p.y - button.height) : 0;
+            reachTop = edge;
+            reachBottom = edge;
         }
         Component.onCompleted: Qt.callLater(measure)
         Connections {
@@ -191,6 +198,13 @@ MouseArea {
             target: button.parent
             function onXChanged() { Qt.callLater(xpPill.measure) }
         }
+        // The panel window resizes after the button when the bar gets thinner or thicker.
+        Connections {
+            target: button.Window.window
+            function onHeightChanged() { remeasure.restart() }
+            function onWidthChanged() { remeasure.restart() }
+        }
+        Timer { id: remeasure; interval: 300; onTriggered: xpPill.measure() }
         Timer { interval: 1500; running: button.xp; onTriggered: xpPill.measure() }
         MouseArea {
             width: xpPill.reach

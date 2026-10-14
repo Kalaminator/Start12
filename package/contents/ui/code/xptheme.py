@@ -171,7 +171,7 @@ def write(base, t, label):
     name = os.path.basename(os.path.normpath(base))
     # panel: square, 2px edge rows; top edge = light line
     svg(os.path.join(base, "widgets/panel-background.svg"),
-        [frame("", 10, 10, 60, 40, 2, None, t["panel"], hi=t["edge"], margins=(2, 3, 2, 2), gid="panel")],
+        [frame("", 10, 10, 60, 40, 2, None, t["panel"], hi=t["edge"], margins=(2, 2, 2, 2), gid="panel")],
         '<rect id="hint-stretch-borders" x="200" y="10" width="1" height="1" fill="none"/>')
     frames = [frame(pfx, 10, 10 + i * 60, 60, 40, t["c"], bd, st, hi=hi, margins=(6, 4, 6, 4), gid="t" + pfx)
               for i, (pfx, (bd, st, hi)) in enumerate(t["tasks"].items())]
