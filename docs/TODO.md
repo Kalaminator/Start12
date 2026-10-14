@@ -242,3 +242,15 @@ Settings > Taskbar: exactly two switches at the top, for every style: "Apply the
 (sets both xpTaskbarTheme and taskbarFollowsStyle) and "Apply the theme to windows" (`windowTheme`).
 Previous decoration/theme restored when switched off. Spanish strings.
 Check: generate each decoration into the scratch dir and render with PySide6; qmllint; ./install.sh.
+
+### T38 Windows 10 personalisation (M) -- user 2026-10-14 "personalización del estilo de Windows 10"
+Mirror Windows 10 Settings > Personalisation > Colours, for the windows10 style. A "Windows 10 colours" group
+(visible when menuStyle is windows10, like the XP group in config/ConfigStyle.qml) that reuses the existing keys
+colorMode (Light/Dark/System/Custom) and accentMode/accentColor (System accent / custom), plus new Bools:
+`win10AccentStart` "Show accent colour on Start and taskbar" (menu background = darkened accent, taskbar
+colour = accent), `win10AccentTitles` "Show accent colour on title bars" (win10 decoration title bar = accent),
+`win10Transparency` "Transparency effects" (menu transparency + taskbar alpha 0.85 vs 1).
+Wire into: the windows10 taskbar preset (taskbarPresets/taskbarArgs: colour, alpha follow the choices; light/dark
+from colorMode), the windows10 window decoration + colour scheme (T37 `windowDecoration()`: light/dark from colorMode,
+accent title bar = generated custom deco/scheme with the accent hex, old custom ones cleaned like xp custom).
+Spanish strings. Check: generate into the scratch dir + PySide6 render; qmllint; ./install.sh.
