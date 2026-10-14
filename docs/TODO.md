@@ -132,7 +132,7 @@ Build (after T16): key `filteredFolders` String JSON `[ { name, path, include, e
 canvas group source and as a Win7 All Programs folder. Filter with JS `RegExp` over file names.
 Check: folder ~/Downloads, include `pdf$`, group lists only PDFs.
 
-### T18 Search history (S)
+### T18 Search history (S) -- DONE
 Build: key `searchHistory` StringList (last 10 launched queries, written in `SearchView.activate`);
 shown under the box when the field is empty and focused (Win11/Pro/Launcher styles with a search box);
 "Clear search history" button in `config/ConfigSearch.qml`; `searchHistoryEnabled` Bool.

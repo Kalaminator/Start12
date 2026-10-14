@@ -70,7 +70,8 @@ Item {
         { text: i18n("New tab"), icon: "tab-new", run: () => canvas.newTab() }
     ].concat(user >= 0 ? [{ text: i18n("Add group"), icon: "list-add", run: () => canvas.addGroup() },
                           { text: i18n("Add a folder as group…"), icon: "folder-new", run: () => canvas.addFolder() },
-                          { text: i18n("Add Steam folder"), icon: "applications-games", run: () => canvas.addSteam() }] : []).concat([
+                          { text: i18n("Add Steam folder"), icon: "applications-games", run: () => canvas.addSteam() },
+                          { text: i18n("Add recent searches"), icon: "search", run: () => canvas.addGroupWith(canvas.user, i18n("Recent searches"), "searches", true) }] : []).concat([
         { text: i18n("Always open on this tab"), icon: "bookmark-new", checkable: true, checked: cfg.canvasTab === tab,
           run: () => { canvas.cfg.canvasTab = canvas.tab; } }
     ])
@@ -99,7 +100,8 @@ Item {
             return [{ name: i18n("Pinned"), src: pinnedModel }]
                 .concat(custom.length ? [{ name: i18n("Shortcuts"), custom: custom }] : []);
         }
-        if (user >= 0) return (layout.tabs[user]?.groups ?? []).map((g, i) => Object.assign({}, g, { g: i }));
+        if (user >= 0) return (layout.tabs[user]?.groups ?? []).map((g, i) => Object.assign({}, g, { g: i },
+            g.searches ? { custom: Array.from(cfg.searchHistory).map(q => ({ name: q, icon: "search", query: q })) } : {}));
         if (tab === 2) return [{ name: i18n("Most used"), src: root.frequentAppsModel },
                                { name: i18n("Recent files"), src: recentDocs }];
         const rm = root.rootModel;
@@ -215,7 +217,7 @@ Item {
                     required property int index
                     readonly property bool isUser: modelData?.ids !== undefined
                     readonly property string folder: modelData?.folder ?? ""
-                    readonly property bool takesDrops: isUser && !folder
+                    readonly property bool takesDrops: isUser && !folder && !modelData?.searches
                     readonly property var src: modelData?.src ?? (folder ? folderModel : isUser ? own : null)
                     readonly property color tint: modelData?.tint === "auto" && autoTint.dominant.valid ? autoTint.dominant
                                                   : modelData?.colour || canvas.groupColor(index)
@@ -230,10 +232,12 @@ Item {
                         if (folder) return Tiles.fileIcon(src.get(row, "fileName"), src.get(row, "fileIsDir"));
                         return canvas.roleData(src, row, "decoration");
                     }
+                    // A recent search puts its query back into the search box.
+                    function openCustom(c) { c.query ? root.searchText = c.query : root.openCustom(c); }
                     function launchAll() {
                         const rs = rows.slice();   // triggering may reorder Most used
                         for (let i = 0; i < count; i++) {
-                            if (customs) root.openCustom(customs[i]);
+                            if (customs) group.openCustom(customs[i]);
                             else if (folder) Qt.openUrlExternally(src.get(rs[i], "fileUrl"));
                             else src.trigger(rs[i], "", null);
                         }
@@ -390,7 +394,7 @@ Item {
                                 hoverEnabled: true
                                 onClicked: {
                                     if (group.customs) {
-                                        root.openCustom(group.customs[index]);
+                                        group.openCustom(group.customs[index]);
                                         return;
                                     }
                                     if (group.folder) {

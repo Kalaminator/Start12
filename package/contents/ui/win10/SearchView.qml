@@ -6,6 +6,7 @@ import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PC3
 import org.kde.kirigami as Kirigami
 import org.kde.kitemmodels as KItemModels
+import "../code/tiles.js" as Tiles
 
 // Search results (KRunner): "Best match" first, then results, optionally grouped
 // by type (Apps, Files, Settings ...). Last row: search the internet.
@@ -127,6 +128,7 @@ Item {
         const e = rows[index];
         if (!e) return;
         if (e.kind === "hit") {
+            if (cfg.searchHistoryEnabled) cfg.searchHistory = Tiles.pushHistory(cfg.searchHistory, root.searchText);
             e.model.trigger(e.row, "", null);
             root.close();
         } else if (e.kind === "web") {

@@ -343,6 +343,12 @@ function canvasSet(c, t, g, key, value) {
     c.tabs[t].groups[g][key] = value;
     return c;
 }
+// Search history: newest first, no duplicates, at most 10.
+function pushHistory(list, q) {
+    q = String(q || "").trim();
+    if (!q) return Array.from(list);
+    return [q].concat(Array.from(list).filter(function (x) { return x !== q; })).slice(0, 10);
+}
 // Resort A-Z by names { id: name }; ids without a name keep their order at the end.
 function canvasSort(c, t, g, names) {
     c = clone(c);

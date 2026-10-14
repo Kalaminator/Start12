@@ -306,6 +306,14 @@
       <label>Show filter icons above search results (Apps, Settings, Documents ...)</label>
       <default>true</default>
     </entry>
+    <entry name="searchHistoryEnabled" type="Bool">
+      <label>Remember the last searches that were launched</label>
+      <default>true</default>
+    </entry>
+    <entry name="searchHistory" type="StringList">
+      <label>Last 10 launched search queries, newest first</label>
+      <default></default>
+    </entry>
     <entry name="searchFilter" type="String">
       <label>Last used search filter: "" (all), apps, settings, documents, music, pictures, videos, files, web</label>
       <default></default>

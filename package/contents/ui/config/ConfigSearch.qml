@@ -12,6 +12,8 @@ KCM.SimpleKCM {
     property alias cfg_groupResults: group.checked
     property alias cfg_showWebSearch: web.checked
     property alias cfg_searchFilterIcons: filterIcons.checked
+    property alias cfg_searchHistoryEnabled: history.checked
+    property var cfg_searchHistory: []
     property alias cfg_webSearchUrl: webUrl.text
     property var cfg_searchRunners: []
 
@@ -38,6 +40,12 @@ KCM.SimpleKCM {
         QQC2.CheckBox { id: group; text: i18n("Group results by type (Apps, Files, Settings …)") }
         QQC2.CheckBox { id: web; text: i18n("Show search the internet button") }
         QQC2.CheckBox { id: filterIcons; text: i18n("Show filter icons above the results (Apps, Documents, Web …)") }
+        QQC2.CheckBox { id: history; text: i18n("Remember recent searches") }
+        QQC2.Button {
+            text: i18n("Clear search history")
+            enabled: page.cfg_searchHistory.length > 0
+            onClicked: page.cfg_searchHistory = []
+        }
         QQC2.TextField {
             id: webUrl
             enabled: web.checked
