@@ -757,6 +757,7 @@ PlasmoidItem {
         // forces the size through the minimum.
         Layout.minimumWidth: root.cfg.fullScreen ? root.fullRect.width
                            : designW > 0 ? designW
+                           : shrink && styleLoader.item ? styleLoader.item.implicitWidth
                            : styleLoader.item && styleLoader.item.minimumWidth ? styleLoader.item.minimumWidth : 300
         // Design mode: Plasma keeps the dragged popup width, so pin it (min = max) at the opening width
         // plus whatever the style's implicitWidth gains from a divider (Win10 list, App canvas): the
@@ -771,10 +772,13 @@ PlasmoidItem {
                 if (root.designMode && styleLoader.item) full.designBase = full.width - styleLoader.item.implicitWidth;
             }
         }
-        Layout.minimumHeight: root.cfg.fullScreen ? root.fullRect.height : Math.round(320 * root.cfg.uiScale)
-        // Leaving full screen: Plasma saved the full-screen popup size, so cap the size once at the
-        // style's size until the popup has opened and stored the smaller size again.
+        Layout.minimumHeight: root.cfg.fullScreen ? root.fullRect.height
+                            : shrink && styleLoader.item ? styleLoader.item.implicitHeight : Math.round(320 * root.cfg.uiScale)
+        // Plasma keeps one saved popup size for every style. After leaving full screen or switching style
+        // (or menu size), pin the popup once (min = max) at the style's own size until it has opened and
+        // stored that size; the user can drag it afterwards as before.
         property bool shrink: false
+        onShrinkChanged: if (shrink && root.expanded) shrinkDone.restart()   // style switched while open
         Layout.maximumWidth: designW > 0 ? designW
                            : shrink && styleLoader.item ? styleLoader.item.implicitWidth : Number.POSITIVE_INFINITY
         Layout.maximumHeight: shrink && styleLoader.item ? styleLoader.item.implicitHeight : Number.POSITIVE_INFINITY
@@ -783,6 +787,11 @@ PlasmoidItem {
             function onFullScreenChanged() {
                 if (!root.cfg.fullScreen) full.shrink = true;
             }
+            function onMenuSizeChanged() { full.shrink = true; }
+        }
+        Connections {
+            target: root
+            function onStyleFileChanged() { full.shrink = true; }
         }
         Timer {
             id: shrinkDone
@@ -834,7 +843,7 @@ PlasmoidItem {
             anchors.fill: parent
             anchors.leftMargin: gapX
             anchors.rightMargin: gapX
-            anchors.topMargin: atTop ? 0 : gapY       // sits on the panel side
+            anchors.topMargin: (atTop ? 0 : gapY) + (root.designMode ? designBar.height : 0)   // sits on the panel side; design bar above
             anchors.bottomMargin: atTop ? gapY : 0
 
             Loader {
@@ -845,12 +854,13 @@ PlasmoidItem {
             }
         }
 
-        // Design mode bar over the top of the menu.
+        // Design mode bar above the menu (the menu moves down, nothing is covered).
         Rectangle {
+            id: designBar
             visible: root.designMode
             anchors.left: frame.left
             anchors.right: frame.right
-            anchors.top: frame.top
+            anchors.bottom: frame.top
             height: designRow.implicitHeight + Kirigami.Units.smallSpacing * 2
             color: Kirigami.Theme.highlightColor
             RowLayout {
