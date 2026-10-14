@@ -694,6 +694,13 @@ PlasmoidItem {
             onTriggered: Plasmoid.containment.corona.editMode = true
         },
         PlasmaCore.Action {
+            text: i18n("Auto-hide panel")
+            icon.name: "view-fullscreen"
+            visible: root.hasMenuItem("autohide")
+            // flips hiding of the panel holding this widget (found by widget id)
+            onTriggered: root.run("qdbus6 org.kde.plasmashell /PlasmaShell evaluateScript 'for (const p of panels()) { if (p.widgetIds.indexOf(" + Plasmoid.id + ") >= 0) p.hiding = (p.hiding == \"none\" ? \"autohide\" : \"none\"); }'")
+        },
+        PlasmaCore.Action {
             isSeparator: true
             visible: root.hasMenuItem("power")
         },

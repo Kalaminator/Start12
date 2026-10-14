@@ -23,7 +23,7 @@ KCM.SimpleKCM {
 
     readonly property var menuChoices: [
         ["settings", i18n("Settings")], ["files", i18n("File Explorer")], ["monitor", i18n("System Monitor")],
-        ["terminal", i18n("Terminal")], ["run", i18n("Run…")], ["desktop", i18n("Show desktop")], ["editpanel", i18n("Edit panel")], ["power", i18n("Lock, sign out, sleep, restart, shut down")]
+        ["terminal", i18n("Terminal")], ["run", i18n("Run…")], ["desktop", i18n("Show desktop")], ["editpanel", i18n("Edit panel")], ["autohide", i18n("Auto-hide panel")], ["power", i18n("Lock, sign out, sleep, restart, shut down")]
     ]
 
     FolderListModel {

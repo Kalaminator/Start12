@@ -53,7 +53,7 @@ Counts: a = 20 (4 partial), b = 8, c = 8.
 Same rules as docs/TODO.md: one agent per job, `./install.sh`, check on screen, errors via journalctl, new keys in
 `config/main.xml` with a `<label>` naming the Start11 value. Context cap ~100k per agent.
 
-### T29 Autohide toggle in the start-button menu (S)
+### T29 Autohide toggle in the start-button menu (S) -- DONE
 Build: id `autohide` in `buttonMenuItems` (ConfigButton list, main.qml `contextualActions` next to "Show desktop"/
 "Edit panel"): runs `qdbus6 org.kde.plasmashell /PlasmaShell evaluateScript` with a script that finds the panel on
 `Plasmoid.screen` + `Plasmoid.location` (`panels()` loop) and flips `panel.hiding` between `none` and `autohide`.
