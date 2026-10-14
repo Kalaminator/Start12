@@ -272,3 +272,17 @@ apply to the active style (windows10, windows11 and the styles that use the wind
   windows10 AND windows11 (+ styles using its look) follow them; windows7 glass tinted by the accent.
 - "Transparency effects" (win10Transparency).
 Keep keys where possible (no migration needed); Spanish strings; same no-apply/scratch-render checks.
+
+### T40 Design mode: drag the divider between menu sections (M) -- user 2026-10-14
+User: the split between sections (list | icons, icons | list, pane | places) is fixed in some styles; it should be
+locked normally, but a "design mode" (like Plasma's edit mode) lets you move it.
+Build: shared `common/SplitHandle.qml` (vertical divider; normal mode = today's look and not draggable; design mode =
+visible grip bar, resize cursor, drag changes the left section width with min/max limits). One key `splits` (String JSON
+{ "<style or style/part>": width in unscaled px }) + `root.splitFor(name, default)` / `root.setSplit(name, w)`.
+Wire into every style with a side-by-side split: windows10 (app list | tiles), windows7 + modern (pane | places),
+xp (left | right), pro (left | right panel), app (canvas | app list); Win11/launcher have none (say so).
+Design mode: `root.designMode` (not saved); entered from the Start button right-click "Edit menu layout" and from a
+button on the Layout settings page ("Edit menu layout…" opens the menu in design mode); while on, the menu stays open on
+outside clicks, shows a small top bar "Design mode — drag the dividers" with "Reset" (clears this style's splits) and
+"Done". The popup width follows (implicitWidth uses the split) so the other side keeps its size.
+Spanish strings. Check: qmllint, ./install.sh; tests for any pure helper in tiles.js.
