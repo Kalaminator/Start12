@@ -45,7 +45,7 @@ Rectangle {
     Item {
         anchors.fill: parent
         anchors.margins: 6
-        visible: pv.styleId === "windows7" || pv.styleId === "modern"
+        visible: pv.styleId === "windows7" || pv.styleId === "modern" || pv.styleId === "xp"
         Lines { y: 2; count: 9 }
         Rectangle { x: parent.width * 0.6 - 4; width: 1; height: parent.height; color: pv.dim }
         Lines { x: parent.width * 0.6 + 4; y: 2; count: 7 }
