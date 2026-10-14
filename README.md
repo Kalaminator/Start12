@@ -18,9 +18,15 @@ window with everything in one place.
 - **Windows**: matching title bars (Aurorae) and colour schemes, accent colour on Start, taskbar and title bars
   (Windows-like *Colours* page with the 48 Windows accent colours).
 - Design mode: drag the dividers between menu sections.
+- **Window glass**: window opacity, blur behind frames, corner radius and title bar height.
+- **Menu position** Left / Center / Right (Right mirrors the layout), optionally with a centred Start button and
+  taskbar icons like Windows 11.
+- Works on any Plasma 6 distro; install from the KDE Store and get updates through Discover.
 - Full-screen menu, backup / restore / reset of all settings.
 - 11 languages: English, Spanish, French, German, Italian, Brazilian Portuguese, Russian, Arabic,
   Simplified Chinese, Japanese, Hindi (it follows your Plasma language).
+
+Full list of features: [docs/FEATURES.md](docs/FEATURES.md)
 
 Everything you change (taskbar style, title bars, colours) is undone when you switch it off: Start12 saves
 your own Plasma Style, window decoration and colour scheme first.
@@ -84,6 +90,11 @@ Start11 are trademarks of their owners.
 Un menú Inicio para **KDE Plasma 6** inspirado en Stardock Start11: ocho estilos de menú (Windows 10, 11, 7, XP,
 Modern, App, Pro, Launcher), una barra de tareas a juego, barras de título y colores de ventana a juego, y una
 ventana de configuración con todo en un sitio.
+
+Lista completa de funciones: [docs/FEATURES.md](docs/FEATURES.md) (en la parte "Funciones (español)").
+
+Incluye cristal de ventana (opacidad, desenfoque, radio de esquinas), posición del menú Izquierda / Centro / Derecha
+con botón y barra centrados opcionales, funciona en cualquier distro con Plasma 6 y se actualiza con Discover.
 
 ## Instalar
 
