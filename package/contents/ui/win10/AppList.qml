@@ -73,7 +73,7 @@ Item {
         // "Place folders at the bottom of the list": folders after all the letters.
         if (cfg.categoryFolders && cfg.foldersAtBottom) {
             items = items.filter(e => e.kind !== "folder").concat(items.filter(e => e.kind === "folder"));
-        } else {
+        } else if (!cfg.categoryFolders) {
             items = appEntries(rm.modelForRow(1), 0);
         }
 
