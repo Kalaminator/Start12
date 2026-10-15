@@ -129,6 +129,9 @@ Column {
             width: parent.width
             placeholderText: i18n("Name group")
             selectByMouse: true
+            // The theme's selection colour can match the field (both accent red): use the text colour.
+            selectionColor: grp.metrics.text
+            selectedTextColor: grp.metrics.bg
             onAccepted: { grp.rename(text); visible = false; }
             onActiveFocusChanged: if (!activeFocus && visible) { grp.rename(text); visible = false; }
             Keys.onEscapePressed: visible = false
@@ -240,6 +243,8 @@ Column {
                 width: parent.width - 2 * grp.metrics.gap - closeFolder.width
                 text: grp.folder ? grp.folder.name : ""
                 placeholderText: i18n("Name folder")
+                selectionColor: grp.metrics.text
+                selectedTextColor: grp.metrics.bg
                 background: null
                 color: grp.metrics.text
                 font.family: grp.metrics.headerFont
