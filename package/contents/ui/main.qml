@@ -263,6 +263,7 @@ ContainmentItem {
     // Brightness of the user's own colour scheme (the saved one while ours is applied), then both syncs.
     property bool userDark: false
     function readBrightness() {
+        if (!configReady) return;   // never act on default settings before migrateConfig is done
         brightReader.connectSource("S=" + Tiles.shQuote(cfg.savedColorScheme) + "; f=kdeglobals; "
             + "case \"$(kreadconfig6 --file kdeglobals --group General --key ColorScheme)\" in start12-*) "
             + "f=$(ls \"$HOME/.local/share/color-schemes/$S.colors\" \"/usr/share/color-schemes/$S.colors\" 2>/dev/null | head -1);; esac; "
@@ -290,6 +291,7 @@ ContainmentItem {
     // Same save/restore idea as syncDesktopTheme: kwinrc [org.kde.kdecoration2] library + theme are saved in
     // savedDecoLibrary/savedDecoTheme when ours goes on and written back when it goes off.
     function syncWindowDeco() {
+        if (!configReady) return;   // never act on default settings before migrateConfig is done
         const rd = key => "\"$(kreadconfig6 --file kwinrc --group org.kde.kdecoration2 --key " + key + ")\"";
         decoReader.connectSource("printf '%s|%s|%s' " + rd("library") + " " + rd("theme")
             + " \"$(kreadconfig6 --file kwinrc --group Plugins --key blurEnabled)\"");
@@ -342,6 +344,7 @@ ContainmentItem {
     }
     // Window colours (T26b, same windowTheme key and name as windowDeco). Same save/restore idea: kdeglobals [General] ColorScheme is saved in savedColorScheme when ours goes on.
     function syncWindowColors() {
+        if (!configReady) return;   // never act on default settings before migrateConfig is done
         colorReader.connectSource("kreadconfig6 --file kdeglobals --group General --key ColorScheme");
     }
     P5Support.DataSource {
@@ -395,6 +398,7 @@ ContainmentItem {
                         ? Qt.lighter("#" + accentHex, 1.6).toString().slice(-6) : cfg.accentColor.toString().slice(-6)) + " solid=" + (cfg.taskbarFocusedSolid ? 1 : 0)
     onTaskbarArgsChanged: syncDesktopTheme()
     function syncDesktopTheme() {
+        if (!configReady) return;   // never act on default settings before migrateConfig is done
         themeReader.connectSource("kreadconfig6 --file plasmarc --group Theme --key name");
     }
     P5Support.DataSource {
@@ -488,6 +492,7 @@ ContainmentItem {
     readonly property bool centerPanel: cfg.menuPosition === 1 && cfg.centerTaskbar
     onCenterPanelChanged: syncCenterPanel()
     function syncCenterPanel() {
+        if (!configReady) return;   // never act on default settings before migrateConfig is done
         const head = "const ID = " + Plasmoid.id + ", M = 'start12Centre';"
             + "for (const p of panels()) { if (p.widgetIds.indexOf(ID) < 0 || p.location === 'left' || p.location === 'right') continue; "
             + "const mine = p.widgets('org.kde.plasma.panelspacer').filter(w => { w.currentConfigGroup = ['General']; return String(w.readConfig(M, '')) === 'true'; }); "
@@ -587,7 +592,7 @@ ContainmentItem {
     }
     // Keys that reset/backup/restore touch: everything in main.xml but bookkeeping and kicker's favorites.
     function userKeys() {
-        const keep = ["savedDesktopTheme", "savedDecoLibrary", "savedDecoTheme", "savedColorScheme", "savedBlur", "resetRequest", "openSettingsRequest", "designRequest", "favorites", "favoritesPortedToKAstats"];
+        const keep = ["savedDesktopTheme", "savedDecoLibrary", "savedDecoTheme", "savedColorScheme", "savedBlur", "resetRequest", "openSettingsRequest", "designRequest", "favorites", "favoritesPortedToKAstats", "configMigrated"];
         return root.cfg.keys().filter(k => !k.endsWith("Default") && !keep.includes(k));
     }
     // Restore: read the backup JSON, write back every known key, then put the Plasma Style in line
@@ -1246,9 +1251,36 @@ ContainmentItem {
     Component.onCompleted: {
         Plasmoid.activationTogglesExpanded = true;
         for (let i = 0; i < Containment.applets.length; i++) hostApplet(Containment.applets[i]);
-        appletSync.start();
         rootModel.refresh();
         systemModel = systemModelComponent.createObject(root, { favoritesModel: rootModel.systemFavoritesModel });
+        if (configReady)
+            onReady();
+        else
+            migrateConfig();
+    }
+    // A Containment's config() is its own appletsrc group, a plain applet's is the "Configuration" subgroup
+    // (libplasma Applet::config()), so after the PlasmoidItem -> ContainmentItem switch Plasmoid.configuration
+    // read [Applets][N][General] etc. and saw defaults. Once per applet: copy every [Applets][N][Configuration][*]
+    // group up one level through the shell's scripting API (raw strings, no type guessing), set configMigrated,
+    // reloadConfig. The old groups stay (rollback to the PlasmoidItem build keeps working). A new widget has none.
+    readonly property bool configReady: cfg.configMigrated
+    onConfigReadyChanged: if (configReady) onReady()
+    function migrateConfig() {
+        const script = "const ID = " + Plasmoid.id + ";"
+            + "for (const c of panels().concat(desktops())) for (const w of c.widgets()) { if (w.id != ID) continue;"
+            + " c.currentConfigGroup = ['Applets', String(ID), 'Configuration'];"
+            + " const old = {}; for (const g of c.configGroups.slice()) { c.currentConfigGroup = ['Applets', String(ID), 'Configuration', g]; old[g] = {};"
+            + "  for (const k of c.configKeys.slice()) old[g][k] = c.readConfig(k, ''); }"
+            + " for (const g in old) { w.currentConfigGroup = [g]; for (const k in old[g]) w.writeConfig(k, old[g][k]); }"
+            + " w.currentConfigGroup = ['General']; w.writeConfig('configMigrated', 'true'); w.reloadConfig(); }";
+        run(Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript " + Tiles.shQuote(script));
+    }
+    property bool readyDone: false
+    function onReady() {
+        if (readyDone) return;   // configReady can flip after onCompleted already saw it true
+        readyDone = true;
+        appletSync.start();
+        syncCenterPanel();
         // T44: code/setup.sh makes the generated themes first (KDE Store installs skip install.sh), then the syncs apply them.
         setupRunner.connectSource("sh " + Tiles.shQuote(decodeURIComponent(Qt.resolvedUrl("code/setup.sh").toString().replace("file://", ""))));
     }
