@@ -46,6 +46,8 @@ Column {
     // ---- Title ----
     Item {
         width: parent.width
+        // Whole title row, so the hidden "=" button shows when the mouse is over its own spot too.
+        HoverHandler { id: titleHover }
         height: Math.round(30 * grp.metrics.s)
 
         // Drop on the group name: a tile goes first in this group, a group goes before this one.
@@ -120,7 +122,6 @@ Column {
             font.family: grp.metrics.headerFont
             font.pixelSize: grp.metrics.headerFontSize
             elide: Text.ElideRight
-            HoverHandler { id: titleHover }
         }
         PC3.TextField {
             id: editor
@@ -151,7 +152,7 @@ Column {
         // "=" handle, like Windows 10, opens the group menu.
         PC3.ToolButton {
             id: menuBtn
-            visible: titleHover.hovered || hovered
+            visible: titleHover.hovered
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             icon.name: "application-menu-symbolic"
