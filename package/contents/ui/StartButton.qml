@@ -115,7 +115,7 @@ MouseArea {
 
     // T42 Menu position Center/Right: the popup's visualParent (main.qml full.place() moves and sizes it).
     readonly property Item popupAnchor: popupAnchorItem
-    Item { id: popupAnchorItem; height: button.height }
+    Item { id: popupAnchorItem; }
 
     Accessible.name: Plasmoid.title
     Accessible.role: Accessible.Button

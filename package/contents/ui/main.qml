@@ -473,60 +473,60 @@ PlasmoidItem {
         cfg.taskbarPins = on ? cfg.taskbarPins.concat([id]) : cfg.taskbarPins.filter(p => p !== id);
     }
 
-    // T42: Menu position Center + key centerTaskbar = Windows 11 taskbar. In this widget's (horizontal) panel:
-    // two expanding panel spacers marked start12Centre, one right before the Start button and one after the
-    // last Task Manager, and the Task Manager(s) stop filling the panel (key "fill", old value kept in
-    // start12Fill). Turning it off removes the marked spacers and puts "fill" back, so the old layout returns.
-    // Order: a second script (1 s later, once the new spacers are in the panel layout) sets Widget.index,
-    // which makes plasmashell call the panel's reorderApplets() live (writing AppletOrder alone does not).
-    // Each sync marks its spacers with a new token and removes all older marked ones: a removed widget stays in
-    // p.widgets() for a while (Plasma keeps it for undo), so old spacers must never be reused.
-    // Menu position Right + centerTaskbar = mirrored panel: the whole widget order is reversed (clock, tray and
-    // show desktop go left, Start goes to the right end) with one spacer before the Task Manager so the tasks sit
-    // next to Start. The original order is kept in the panel's start12PanelOrder key and put back when it ends.
+    // T42: Menu position + key centerTaskbar = the panel follows the menu (any panel edge, along the panel):
+    // Center: two expanding panel spacers marked start12Centre, one right before the Start button and one after
+    // the last Task Manager (tasks stop filling the panel: key "fill", old value kept in start12Fill), so Start
+    // and the tasks sit centred; the rest stays at the far end.
+    // Right: the whole widget order reversed (show desktop, clock, tray first, Start at the far end) with one
+    // spacer before the Task Manager so the tasks sit next to Start. The user's order is kept in the panel's
+    // start12PanelOrder key and put back when it ends. Off: spacers removed, fill and order put back.
+    // One script does it all and is idempotent: it reads the mode from this widget's config, compares the
+    // wanted order with the panel's and only touches what differs, printing "done" when nothing was left to do.
+    // The shell loop runs it again until "done" (checks the result of the pass before); flock keeps two syncs
+    // from interleaving. So the panelMode change at every plasmashell start (config load) is a no-op.
+    // Widget.index set = live reorder (AppletOrder writes alone do not). A removed widget stays in p.widgets()
+    // for undo (its config already reads empty), so removed ids are listed in the panel's start12Gone key
+    // and ignored (ids are never reused; the list drops ids no longer in the panel).
     readonly property int panelMode: !cfg.centerTaskbar ? 0 : cfg.menuPosition === 1 ? 1 : cfg.menuPosition === 2 ? 2 : 0
     readonly property bool centerPanel: panelMode !== 0
     onPanelModeChanged: syncCenterPanel()
     function syncCenterPanel() {
-        const token = String(Date.now());
-        const head = "const ID = " + Plasmoid.id + ", M = 'start12Centre', T = '" + token + "';"
-            + "for (const p of panels()) { if (p.widgetIds.indexOf(ID) < 0 || p.location === 'left' || p.location === 'right') continue; "
-            + "const marked = v => p.widgets('org.kde.plasma.panelspacer').filter(w => { w.currentConfigGroup = ['General']; const m = String(w.readConfig(M, '')); return v ? m === v : m !== ''; }); "
-            + "const mine = marked(T); "
-            + "const tasks = p.widgets().filter(w => /icontasks|taskmanager/.test(w.type)); "
-            + "const byId = id => p.widgets().find(x => x.id === id); "
-            + "p.currentConfigGroup = ['General']; const saved = String(p.readConfig('start12PanelOrder', '')); ";
-        // Undo the mirror: widgets back to the saved order (ones gone since are skipped).
-        const unmirror = "if (saved) { saved.split(';').map(Number).forEach((id, i) => { const w = byId(id); if (w) w.index = i; }); "
-            + "p.currentConfigGroup = ['General']; p.writeConfig('start12PanelOrder', ''); } ";
-        const dbus = Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript ";
-        const off = head + unmirror + "for (const w of marked('')) w.remove(); "
-                + "for (const w of tasks) { w.currentConfigGroup = ['General']; const f = String(w.readConfig('start12Fill', '')); "
-                + "if (f) { w.writeConfig('fill', f !== 'false'); w.writeConfig('start12Fill', ''); w.reloadConfig(); } } }";
-        if (!centerPanel) {
-            run(dbus + Tiles.shQuote(off));
-            return;
-        }
-        const n = panelMode === 2 ? 1 : 2;
-        const add = head + (panelMode === 1 ? unmirror : "") + "for (const w of marked('')) w.remove(); "
-            + "for (const w of tasks) { w.currentConfigGroup = ['General']; if (!String(w.readConfig('start12Fill', ''))) w.writeConfig('start12Fill', String(w.readConfig('fill', true))); w.writeConfig('fill', false); w.reloadConfig(); } "
-            + "for (let i = 0; i < " + n + "; i++) { const s = p.addWidget('org.kde.plasma.panelspacer'); s.currentConfigGroup = ['General']; s.writeConfig(M, T); s.reloadConfig(); } }";
-        // index = position in the order without the moved widget: spacer 1 right before Start, spacer 2 after the last task manager.
-        const centre = "let o = ord(mine[0]); mine[0].index = o.indexOf(ID); "
-            + "if (mine.length > 1) { o = ord(mine[1]); let end = o.indexOf(ID); for (const w of tasks) end = Math.max(end, o.indexOf(w.id)); mine[1].index = end + 1; } ";
-        // Mirror: reverse the order without our spacers (saved first, unless already mirrored), spacer before the tasks.
-        const mirror = "const spacers = marked('').map(w => w.id); "
-            + "const cur = String(p.readConfig('AppletOrder', '')).split(';').map(Number).filter(i => i && spacers.indexOf(i) < 0); "
-            + "if (!saved) p.writeConfig('start12PanelOrder', cur.join(';')); "
-            + "const rev = (saved ? saved.split(';').map(Number).filter(i => byId(i)) : cur).slice().reverse(); "
-            + "const t = rev.findIndex(i => tasks.some(w => w.id === i)); rev.splice(t < 0 ? rev.indexOf(ID) : t, 0, mine[0].id); "
-            + "rev.forEach((id, i) => { const w = byId(id); if (w) w.index = i; }); ";
-        const order = head + "if (mine.length < " + n + ") continue; p.currentConfigGroup = ['General']; "
-            + "const ord = x => String(p.readConfig('AppletOrder', '')).split(';').map(Number).filter(i => i && i !== x.id); "
-            + (panelMode === 2 ? mirror : centre)
-            // the spacers' optimalSize binding misses the move: flip "expanding" so it recomputes (centred).
-            + "for (const s of mine) { s.writeConfig('expanding', false); s.reloadConfig(); s.writeConfig('expanding', true); s.reloadConfig(); } }";
-        run(dbus + Tiles.shQuote(add) + "; sleep 1; " + dbus + Tiles.shQuote(order));
+        const js = "const ID = " + Plasmoid.id + ", M = 'start12Centre'; let out = 'done';"
+            + "const get = (w, g, k, d) => { w.currentConfigGroup = [g]; return String(w.readConfig(k, d)); };"
+            + "for (const p of panels()) { const me = p.widgets().find(w => w.id === ID); if (!me) continue;"
+            + " const pos = Number(get(me, 'Style', 'menuPosition', 0)), on = get(me, 'Style', 'centerTaskbar', false) === 'true';"
+            + " const mode = !on ? 0 : pos === 1 ? 1 : pos === 2 ? 2 : 0, n = [0, 2, 1][mode];"
+            + " p.currentConfigGroup = ['General']; const goneWas = String(p.readConfig('start12Gone', ''));"
+            + " const gone = goneWas.split(';').map(Number).filter(i => p.widgetIds.indexOf(i) >= 0), live = () => p.widgets().filter(w => gone.indexOf(w.id) < 0);"
+            + " const mark = w => w.type === 'org.kde.plasma.panelspacer' ? get(w, 'General', M, '') : '';"
+            + " const mine = live().filter(w => mark(w) !== '');"
+            + " while (mine.length > n) { const s = mine.pop(); gone.push(s.id); s.remove(); out = 'again'; }"
+            + " p.currentConfigGroup = ['General']; if (gone.join(';') !== goneWas) p.writeConfig('start12Gone', gone.join(';'));"
+            + " while (mine.length < n) { const s = p.addWidget('org.kde.plasma.panelspacer'); s.currentConfigGroup = ['General']; s.writeConfig(M, '1'); s.writeConfig('expanding', true); s.reloadConfig(); mine.push(s); }"
+            + " const others = live().filter(w => mark(w) === '').sort((a, b) => a.index - b.index), ids = others.map(w => w.id);"
+            + " const tasks = others.filter(w => /icontasks|taskmanager/.test(w.type)).map(w => w.id), isTask = id => tasks.indexOf(id) >= 0;"
+            + " p.currentConfigGroup = ['General']; const saved = String(p.readConfig('start12PanelOrder', '')).split(';').map(Number).filter(i => ids.indexOf(i) >= 0);"
+            + " const base = saved.length ? saved.concat(ids.filter(i => saved.indexOf(i) < 0)) : ids;"
+            + " if (mode === 2 && !saved.length) p.writeConfig('start12PanelOrder', base.join(';'));"
+            + " const want = mode === 2 ? base.slice().reverse() : base.slice();"
+            + " if (mode === 1) { want.splice(want.indexOf(ID), 0, mine[0].id); let e = want.indexOf(ID); want.forEach((id, i) => { if (isTask(id)) e = Math.max(e, i); }); want.splice(e + 1, 0, mine[1].id); }"
+            + " if (mode === 2) { const t = want.findIndex(isTask); want.splice(t < 0 ? want.indexOf(ID) : t, 0, mine[0].id); }"
+            + " const all = others.concat(mine), byId = id => all.find(w => w.id === id);"
+            + " const cur = all.slice().sort((a, b) => a.index - b.index).map(w => w.id);"
+            // one move per pass (several index sets in one script land out of order), the next pass checks it (a just-added spacer reads index -1).
+            + " const i = want.findIndex((id, k) => byId(id).index < 0 || cur[k] !== id);"
+            // the saved order goes only once it is back (each pass rebuilds the wanted order from it).
+            + " if (i < 0 && mode !== 2 && saved.length) { p.currentConfigGroup = ['General']; p.writeConfig('start12PanelOrder', ''); }"
+            + " if (i >= 0) { byId(want[i]).index = i;"
+            // the spacers' optimalSize binding misses the move: flip "expanding" so it recomputes.
+            + "  for (const s of mine) { s.currentConfigGroup = ['General']; s.writeConfig('expanding', false); s.reloadConfig(); s.writeConfig('expanding', true); s.reloadConfig(); } out = 'again'; }"
+            + " for (const id of tasks) { const w = byId(id), f = get(w, 'General', 'start12Fill', '');"
+            + "  if (mode && !f) { w.writeConfig('start12Fill', get(w, 'General', 'fill', true)); w.writeConfig('fill', false); w.reloadConfig(); out = 'again'; }"
+            + "  if (!mode && f) { w.writeConfig('fill', f !== 'false'); w.writeConfig('start12Fill', ''); w.reloadConfig(); out = 'again'; } } }"
+            + "print(out);";
+        const dbus = Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript " + Tiles.shQuote(js);
+        const loop = "for i in $(seq 25); do [ \"$(" + dbus + ")\" = done ] && break; sleep 0.3; done";
+        run("flock \"${XDG_RUNTIME_DIR:-/tmp}/start12-panel.lock\" sh -c " + Tiles.shQuote(loop));
     }
 
     // Find a power/session action by its id ("shutdown", "reboot", ...).
@@ -925,7 +925,7 @@ PlasmoidItem {
                 }
             }
         }
-        onHeightChanged: if (root.expanded) saveHeight.restart()
+        onHeightChanged: if (root.expanded) saveHeight.restart(); else place()
 
         // T42 Menu position (key menuPosition 0 left, 1 center, 2 right), horizontal panels only. The popup
         // (AppletPopup) lines its edge up with its visualParent, normally the Start button. For Center/Right it
@@ -947,7 +947,8 @@ PlasmoidItem {
             const w = popupWindow, btn = root.compactRepresentationItem;
             if (!w || !btn || !btn.popupAnchor || w.visualParent === undefined) return;
             const g = Plasmoid.containment ? Plasmoid.containment.screenGeometry : null;
-            const pos = Plasmoid.formFactor === PlasmaCore.Types.Horizontal && !root.cfg.fullScreen && g && g.width > 0 ? root.cfg.menuPosition : 0;
+            const pos = !root.cfg.fullScreen && g && g.width > 0 ? root.cfg.menuPosition : 0;
+            const vert = Plasmoid.formFactor === PlasmaCore.Types.Vertical;   // left/right panel: top / middle / bottom
             if (pos !== 1 && pos !== 2) {
                 if (w.visualParent !== btn) w.visualParent = btn;
                 return;
@@ -956,9 +957,17 @@ PlasmoidItem {
             // centerTaskbar adds its spacers and a button-relative x went stale (popup opened off-centre).
             const a = btn.popupAnchor, o = btn.mapToGlobal(0, 0), sc = btn.mapToItem(null, 0, 0);
             if (btn.Window.contentItem && a.parent !== btn.Window.contentItem) a.parent = btn.Window.contentItem;
-            a.width = w.width;
-            a.y = sc.y;
-            a.x = (pos === 1 ? g.x + (g.width - w.width) / 2 : g.x + g.width - w.width) - (o.x - sc.x);
+            if (vert) {
+                a.width = btn.width;
+                a.height = w.height;
+                a.x = sc.x;
+                a.y = (pos === 1 ? g.y + (g.height - w.height) / 2 : g.y + g.height - w.height) - (o.y - sc.y);
+            } else {
+                a.width = w.width;
+                a.height = btn.height;
+                a.y = sc.y;
+                a.x = (pos === 1 ? g.x + (g.width - w.width) / 2 : g.x + g.width - w.width) - (o.x - sc.x);
+            }
             w.visualParent = a;
         }
 
