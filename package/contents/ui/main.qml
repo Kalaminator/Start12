@@ -643,6 +643,18 @@ PlasmoidItem {
         close();
         iconDialog.open();
     }
+    Dialogs.FileDialog {
+        id: tileImageDialog
+        title: i18n("Pick tile image…")
+        nameFilters: [i18n("Images (*.png *.jpg *.jpeg *.webp *.svg)")]
+        onAccepted: root.saveGroups(Tiles.setProp(root.groups, root.pickingTile, "image",
+            decodeURIComponent(selectedFile.toString().replace("file://", ""))))
+    }
+    function pickTileImage(id) {
+        pickingTile = id;
+        close();
+        tileImageDialog.open();
+    }
     function pickTileColor(id, current) {
         pickingTile = id;
         colorDialog.apply = null;

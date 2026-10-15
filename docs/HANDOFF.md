@@ -125,3 +125,5 @@ taskbar part: docs/TASKBAR_PLAN.md jobs T29-T36 all built, seen on screen (T30-T
 - 2026-10-14 end of session: repo public at https://github.com/Kalaminator/Start12 (MIT). taskbarFollowsStyle now default true
   (taskbar follows every menu style, not only XP; checked: win10/win11/win7 get their own start12-taskbar-*, modern/app/pro/launcher
   share the win11 one). 11 languages in po/. Next idea (not started): per-style Start buttons like the XP pill (Win7 orb, Win10/11 look).
+
+Tile sizes + images (2026-10-15): `Tiles.SIZES` has wideLargeH (8x4) and wideLargeV (4x8); Resize submenu lists them. Right-click: "Tile colour" is a submenu of 12 preset colours (text only, no swatch) + Custom colour... + Reset; big sizes (large/wideLargeH/V) get "Set tile image..." / "Remove tile image" (tile prop `image`, `root.pickTileImage` in main.qml; overrides global tileImage, rounded mask). Seen on screen (image on wideLargeH, red wideLargeV). New strings extracted by Messages.sh into po/es.po but NOT yet translated to Spanish (msgstr empty).

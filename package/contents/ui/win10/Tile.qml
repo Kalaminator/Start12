@@ -34,6 +34,7 @@ PC3.AbstractButton {
     // Pinned website/file/folder instead of an app.
     readonly property var custom: Tiles.custom(tile.tile.id)
     readonly property var appIcon: isFolder ? "folder" : custom ? (custom.icon || "folder") : valid ? role("decoration") : "dialog-question"
+    readonly property bool big: ["large", "wideLargeH", "wideLargeV"].includes(tile.tile.size)
     readonly property bool small: tile.tile.size === "small"
     readonly property bool showCaption: tile.tile.caption === "show" ? true
         : tile.tile.caption === "hide" ? false : !Plasmoid.configuration.hideTileText
@@ -62,12 +63,18 @@ PC3.AbstractButton {
                     : tile.hovered ? Math.max(1, Math.round(tile.metrics.s)) : 0
         border.color: drop.containsDrag && drop.intoFolder ? tile.metrics.accent : Qt.alpha(tile.metrics.text, 0.35)
         Image {
-            visible: Plasmoid.configuration.tileImage !== ""
+            readonly property string path: tile.tile.image || Plasmoid.configuration.tileImage
+            visible: path !== ""
             anchors.fill: parent
-            source: visible ? "file://" + Plasmoid.configuration.tileImage : ""
+            source: visible ? "file://" + path : ""
             fillMode: Image.PreserveAspectCrop
-            opacity: Plasmoid.configuration.tileImageOpacity / 100
+            opacity: tile.tile.image ? 1 : Plasmoid.configuration.tileImageOpacity / 100
             asynchronous: true
+            layer.enabled: visible
+            layer.effect: MultiEffect {
+                maskEnabled: true
+                maskSource: ShaderEffectSource { sourceItem: Rectangle { width: tile.width; height: tile.height; radius: Math.round(2 * tile.metrics.s) } }
+            }
         }
         // Drop marker: a bar on the left edge.
         Rectangle {
@@ -86,7 +93,7 @@ PC3.AbstractButton {
         Grid {
             id: mini
             visible: tile.isFolder
-            readonly property int cols: tile.small ? 2 : tile.tile.size === "wide" ? 6 : 3
+            readonly property int cols: tile.small ? 2 : tile.tile.size === "wide" ? 6 : tile.tile.size === "wideLargeH" ? 9 : 3
             readonly property int rowsMax: tile.small ? 2 : 3
             readonly property real side: Math.floor(Math.min(parent.width / cols, (parent.height - (label.visible ? label.height : 0)) / rowsMax) * 0.7)
             anchors.centerIn: parent
@@ -115,7 +122,7 @@ PC3.AbstractButton {
         Kirigami.Icon {
             visible: !tile.isFolder
             readonly property real side: Math.round(Math.min(tile.width, tile.height)
-                * Plasmoid.configuration.tileIconScale / 100 * (tile.tile.size === "large" ? 0.8 : 1))
+                * Plasmoid.configuration.tileIconScale / 100 * (tile.big ? 0.8 : 1))
             anchors.centerIn: parent
             anchors.verticalCenterOffset: label.visible ? -Math.round(label.height / 3) : 0
             width: side
@@ -151,6 +158,11 @@ PC3.AbstractButton {
         }
     }
 
+    readonly property var presets: [
+        [i18n("Red"), "#E81123"], [i18n("Orange"), "#F7630C"], [i18n("Yellow"), "#FFB900"], [i18n("Green"), "#107C10"],
+        [i18n("Teal"), "#00B7C3"], [i18n("Blue"), "#0078D7"], [i18n("Navy"), "#0063B1"], [i18n("Purple"), "#8764B8"],
+        [i18n("Pink"), "#E3008C"], [i18n("Grey"), "#69797E"], [i18n("Dark"), "#2D2D2D"], [i18n("Brown"), "#7A574A"]]
+
     function menuItems() {
         const id = tile.tile.id;
         const set = (key, value) => root.saveGroups(Tiles.setProp(root.groups, id, key, value));
@@ -164,11 +176,18 @@ PC3.AbstractButton {
         items.push(
             { text: tile.showCaption ? i18n("Hide icon text") : i18n("Show icon text"), icon: "format-text-bold",
               run: () => set("caption", tile.showCaption ? "hide" : "show") },
-            { text: i18n("Tile colour…"), icon: "color-management", run: () => root.pickTileColor(id, tile.tile.color) },
-            { text: i18n("Reset tile colour"), icon: "edit-undo", enabled: !!tile.tile.color, run: () => set("color", "") });
+            { text: i18n("Tile colour"), icon: "color-management", subActions: presets.map(c => ({
+                text: c[0], checkable: true, checked: (tile.tile.color || "").toLowerCase() === c[1].toLowerCase(),
+                run: () => set("color", c[1]) })).concat([
+                { text: i18n("Custom colour…"), run: () => root.pickTileColor(id, tile.tile.color) },
+                { text: i18n("Reset tile colour"), enabled: !!tile.tile.color, run: () => set("color", "") }]) });
+        if (big) items.push(
+            { text: i18n("Set tile image…"), icon: "viewimage", run: () => root.pickTileImage(id) },
+            { text: i18n("Remove tile image"), icon: "edit-delete", enabled: !!tile.tile.image, run: () => set("image", "") });
         if (!Plasmoid.configuration.tilesLocked && !folderId) {
             items.push({ text: i18n("Resize"), icon: "transform-scale", subActions: [
-                ["small", i18n("Small")], ["medium", i18n("Medium")], ["wide", i18n("Wide")], ["large", i18n("Large")]
+                ["small", i18n("Small")], ["medium", i18n("Medium")], ["wide", i18n("Wide")], ["large", i18n("Large")],
+                ["wideLargeH", i18n("W. Large H.")], ["wideLargeV", i18n("W. Large V.")]
             ].map(s => ({
                 text: s[1], checkable: true, checked: tile.tile.size === s[0],
                 run: () => root.saveGroups(Tiles.resize(root.groups, id, s[0]))

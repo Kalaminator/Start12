@@ -186,4 +186,14 @@ assert.strictEqual(T.pushHistory("0123456789".split(""), "x").length, 10);
     assert.deepStrictEqual(JSON.parse(j), { windows10: 300, xpx: 5 });
     assert.strictEqual(T.splitSet(j, "windows10", null), '{"xpx":5}');
 }
+// Big sizes (wideLargeH 8x4, wideLargeV 4x8), also in a narrow 2-unit group.
+{
+    let p = T.pack([{ size: "wideLargeH" }, { size: "wideLargeV" }, { size: "small" }], 6);
+    assert.deepStrictEqual(p.pos[0], { x: 0, y: 0, w: 8, h: 4 });
+    assert.deepStrictEqual(p.pos[1], { x: 8, y: 0, w: 4, h: 8 });
+    assert.strictEqual(p.rows, 8);
+    p = T.pack([{ size: "wideLargeH" }, { size: "wideLargeV" }], 1);
+    assert.deepStrictEqual(p.pos[0], { x: 0, y: 0, w: 2, h: 4 });
+    assert.deepStrictEqual(p.pos[1], { x: 0, y: 4, w: 2, h: 8 });
+}
 console.log("tiles.js: all checks passed");
