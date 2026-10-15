@@ -1,6 +1,6 @@
 import QtQuick
 
-// Calendar: month grid on big sizes (today in the accent colour); day number + weekday on small/medium/wide.
+// Calendar: month grid on big sizes (today circled in the text colour); day number + weekday on small/medium/wide.
 Item {
     id: w
     required property QtObject metrics
@@ -27,7 +27,7 @@ Item {
             width: parent.width
             horizontalAlignment: Text.AlignHCenter
             text: w.now.getDate()
-            color: w.metrics.accent
+            color: w.metrics.text
             font.family: w.metrics.font
             font.bold: true
             font.pixelSize: Math.round(w.u * (w.size === "small" ? 0.6 : 0.42))
@@ -84,13 +84,14 @@ Item {
                         width: Math.min(parent.width, parent.height)
                         height: width
                         radius: width / 2
-                        color: w.metrics.accent
+                        // Text colour, not accent: tiles are often accent coloured.
+                        color: w.metrics.text
                     }
                     Text {
                         anchors.centerIn: parent
                         text: cell.row === 0 ? w.loc.dayName((w.first + cell.index) % 7, Locale.NarrowFormat)
                             : cell.day >= 1 && cell.day <= w.days ? cell.day : ""
-                        color: cell.today ? "#ffffff" : w.metrics.text
+                        color: cell.today ? w.metrics.bg : w.metrics.text
                         opacity: cell.row === 0 ? 0.6 : 1
                         font.family: w.metrics.font
                         font.pixelSize: Math.max(7, Math.min(Math.round(w.u * 0.07), cell.height * 0.7))
