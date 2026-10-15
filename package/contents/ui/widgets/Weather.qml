@@ -17,6 +17,8 @@ Item {
     readonly property bool tiny: size === "small"
     readonly property bool big: ["large", "wideLargeH", "wideLargeV", "hugeH", "hugeV"].includes(size)
     readonly property real u: Math.min(width, height)
+    // Big tiles also hold the forecast row, so the top part shrinks to leave room for it.
+    readonly property real k: big ? 0.75 : 1
     property string status: ""
 
     function icon(c) {
@@ -88,14 +90,14 @@ Item {
             anchors.horizontalCenter: w.tiny ? parent.horizontalCenter : undefined
             spacing: w.metrics.px(6)
             Kirigami.Icon {
-                width: Math.round(w.u * (w.tiny ? 0.34 : 0.3)); height: width
+                width: Math.round(w.u * (w.tiny ? 0.34 : 0.3 * w.k)); height: width
                 source: w.wx ? w.icon(w.wx.code) : ""
             }
             Lbl {
                 anchors.verticalCenter: parent.verticalCenter
                 text: w.wx ? w.deg(w.wx.temp) : ""
                 font.bold: true
-                font.pixelSize: Math.max(10, Math.round(w.u * (w.tiny ? 0.28 : 0.26)))
+                font.pixelSize: Math.max(10, Math.round(w.u * (w.tiny ? 0.28 : 0.26 * w.k)))
             }
         }
         Column {
@@ -105,13 +107,13 @@ Item {
             Lbl {
                 width: parent.width
                 text: w.wx ? w.wx.place : ""
-                font.pixelSize: Math.max(8, Math.round(w.u * 0.12))
+                font.pixelSize: Math.max(8, Math.round(w.u * 0.12 * w.k))
             }
             Lbl {
                 width: parent.width
                 opacity: 0.8
                 text: w.wx && w.wx.days.length ? w.deg(w.wx.days[0].max) + " / " + w.deg(w.wx.days[0].min) : ""
-                font.pixelSize: Math.max(8, Math.round(w.u * 0.11))
+                font.pixelSize: Math.max(8, Math.round(w.u * 0.11 * w.k))
             }
         }
         Row {
