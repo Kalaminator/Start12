@@ -161,8 +161,36 @@ function isFolder(id) {
 
 // Widget tiles: id "widget|<kind>|<n>" (n makes each one unique). Rendered by ui/widgets/<Kind>.qml.
 var WIDGETS = ["clock", "calendar", "sysmon", "drives", "weather", "notes", "photo"];
+// Real KDE widgets (child applets of our containment) are tiles "applet|<applet.id>" and count as widgets.
 function isWidget(id) {
-    return typeof id === "string" && id.indexOf("widget|") === 0;
+    return typeof id === "string" && (id.indexOf("widget|") === 0 || isApplet(id));
+}
+function isApplet(id) {
+    return typeof id === "string" && id.indexOf("applet|") === 0;
+}
+// Add applet tile "applet|<aid>" to group gi of page p (a new group when the page has none).
+function addApplet(pages, p, aid, gi) {
+    var g = pages[p].groups;
+    gi = Math.min(gi || 0, Math.max(0, g.length - 1));
+    return setPage(pages, p, place(g, "applet|" + aid, gi, g.length ? g[gi].tiles.length : 0, "large"));
+}
+// Restore check: drop applet tiles whose applet is gone and repeats of one applet (first one stays);
+// applets without a tile get one at the end of the first group of page 0.
+function syncApplets(pages, aids) {
+    var live = aids.map(String), seen = {};
+    var out = clone(pages).map(function (pg) {
+        pg.groups.forEach(function (grp) {
+            grp.tiles = grp.tiles.filter(function (t) {
+                if (!isApplet(t.id)) return true;
+                var a = t.id.slice(7);
+                if (live.indexOf(a) < 0 || seen[a]) return false;
+                return (seen[a] = true);
+            });
+        });
+        return { groups: tidy(pg.groups) };
+    });
+    live.forEach(function (a) { if (!seen[a]) out = addApplet(out, 0, a, 0); });
+    return out;
 }
 function widgetKind(id) {
     return isWidget(id) ? id.split("|")[1] : "";

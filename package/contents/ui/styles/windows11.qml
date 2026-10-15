@@ -375,8 +375,8 @@ FocusScope {
 
     Connections {
         target: root
-        function onExpandedChanged() {
-            if (root.expanded) {
+        function onMenuOpenChanged() {
+            if (root.menuOpen) {
                 style.view = style.cfg.openAllApps ? "all" : "home";
                 style.forceActiveFocus();
                 appList.reset();

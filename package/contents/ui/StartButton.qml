@@ -13,7 +13,7 @@ MouseArea {
 
     readonly property var cfg: Plasmoid.configuration
     readonly property bool vertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
-    readonly property int frame: pressed || root.expanded ? 2 : (onFace ? 1 : 0)
+    readonly property int frame: pressed || root.menuOpen ? 2 : (onFace ? 1 : 0)
     readonly property string imageSource: cfg.buttonImage.startsWith("/")
         ? "file://" + cfg.buttonImage
         : Qt.resolvedUrl("../images/StartButtons/" + cfg.buttonImage)
@@ -35,8 +35,8 @@ MouseArea {
     hoverEnabled: true
     readonly property bool onFace: containsMouse && (vertical || mouseX < buttonWidth)
     property bool wasExpanded
-    onPressed: wasExpanded = root.expanded
-    onClicked: mouse => { if (vertical || mouse.x < buttonWidth) root.expanded = !wasExpanded; }
+    onPressed: wasExpanded = root.menuOpen
+    onClicked: mouse => { if (vertical || mouse.x < buttonWidth) root.menuOpen = !wasExpanded; }
 
     // The button's own area; the search field sits to its right.
     Item {
@@ -89,25 +89,26 @@ MouseArea {
         onActiveFocusChanged: if (!activeFocus) Plasmoid.status = oldStatus
         onTextEdited: {
             root.searchText = text;
-            if (text !== "") root.expanded = true;
+            if (text !== "") root.menuOpen = true;
         }
-        Keys.onReturnPressed: root.expanded = true
-        Keys.onEnterPressed: root.expanded = true
+        Keys.onReturnPressed: root.menuOpen = true
+        Keys.onEnterPressed: root.menuOpen = true
         Keys.onEscapePressed: {
             root.searchText = "";
-            root.expanded = false;
+            root.menuOpen = false;
         }
     }
 
     // Plasma draws an "expanded" mark (widgets/tabbar active-tab) under the button while the menu is open;
-    // XP's button has none (it peeked out at the pill's round corner as a yellow line).
+    // XP's button has none (it peeked out at the pill's round corner as a yellow line). Start12 is a containment,
+    // which libplasma always reports as expanded, so the mark is also hidden while the menu is closed.
     readonly property Item expandedMark: {
         for (let p = parent; p; p = p.parent)
             if (p.expandedFeedback !== undefined) return p.expandedFeedback;
         return null;
     }
     Binding {
-        when: button.xp && button.expandedMark !== null
+        when: button.expandedMark !== null && (button.xp || !root.menuOpen)
         target: button.expandedMark
         property: "visible"
         value: false
@@ -166,7 +167,7 @@ MouseArea {
         visible: !button.xp && button.cfg.buttonMode !== 0
         radius: 4
         color: Kirigami.Theme.textColor
-        opacity: button.onFace || root.expanded ? 0.1 : 0
+        opacity: button.onFace || root.menuOpen ? 0.1 : 0
     }
 
     // Mode 2: any icon. Pressing squeezes it a little, like the Windows 11 Start button.
@@ -229,8 +230,8 @@ MouseArea {
         MouseArea {
             width: xpPill.reach
             height: parent.height
-            onPressed: button.wasExpanded = root.expanded
-            onClicked: root.expanded = !button.wasExpanded
+            onPressed: button.wasExpanded = root.menuOpen
+            onClicked: root.menuOpen = !button.wasExpanded
         }
         readonly property bool modern: button.cfg.xpSubstyle === "modern"
         readonly property var schemeBase: ({ blue: "#2f6fd8", olive: "#7a924f", silver: "#9a9ab4" })

@@ -158,7 +158,8 @@ Column {
             icon.name: "application-menu-symbolic"
             onClicked: grp.contextMenu.show(menuBtn, null, -1, [
                 { text: i18n("Name group"), icon: "edit-rename", run: () => grp.startRename() },
-                { text: i18n("Add widget"), icon: "view-grid", subActions: root.widgetItems.map(k => ({ text: k.text, run: () => root.savePages(Tiles.addWidget(root.pages, root.tilePage, k.kind, grp.groupIndex)) })) },
+                { text: i18n("Add widget"), icon: "view-grid", subActions: root.widgetItems.map(k => ({ text: k.text, icon: k.icon,
+                    run: () => k.kind ? root.savePages(Tiles.addWidget(root.pages, root.tilePage, k.kind, grp.groupIndex)) : root.appletPicker.openFor(grp.groupIndex) })) },
                 { text: i18n("Resort group A-Z"), icon: "view-sort-ascending",
                   run: () => root.saveGroups(Tiles.sortGroup(root.groups, grp.groupIndex, grp.names)) },
                 { text: i18n("Move group up"), icon: "go-up", enabled: grp.groupIndex > 0,

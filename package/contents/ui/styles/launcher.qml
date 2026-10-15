@@ -127,8 +127,8 @@ FocusScope {
 
     Connections {
         target: root
-        function onExpandedChanged() {
-            if (root.expanded) {
+        function onMenuOpenChanged() {
+            if (root.menuOpen) {
                 pane.reset();
                 searchField.forceActiveFocus();
             }
