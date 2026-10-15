@@ -6,7 +6,7 @@ import org.kde.plasma.components as PC3
 import org.kde.kirigami as Kirigami
 import "../code/tiles.js" as Tiles
 
-// One named group of tiles. Click the title to rename it.
+// One named group of tiles. Double-click the title to rename it.
 Column {
     id: grp
 
@@ -68,7 +68,7 @@ Column {
             color: grp.metrics.accent
         }
 
-        // Click the name to rename; drag it to move the whole group.
+        // Double-click the name to rename; drag it to move the whole group.
         MouseArea {
             id: titleMouse
             anchors.fill: parent
@@ -99,10 +99,9 @@ Column {
                     grp.ghost.Drag.active = false;
                     grp.ghost.kind = "tile";
                     dragging = false;
-                } else if (containsMouse) {
-                    grp.startRename();
                 }
             }
+            onDoubleClicked: grp.startRename()
             onCanceled: {
                 grp.ghost.Drag.active = false;
                 grp.ghost.kind = "tile";
@@ -133,6 +132,18 @@ Column {
             onAccepted: { grp.rename(text); visible = false; }
             onActiveFocusChanged: if (!activeFocus && visible) { grp.rename(text); visible = false; }
             Keys.onEscapePressed: visible = false
+        }
+        // While naming, a press anywhere else in the menu ends it (saves the name); the press still
+        // reaches whatever is under it.
+        MouseArea {
+            parent: editor.Window.contentItem
+            anchors.fill: parent
+            z: 1000
+            enabled: editor.visible
+            onPressed: m => {
+                m.accepted = false;
+                if (!editor.contains(mapToItem(editor, m.x, m.y))) editor.focus = false;
+            }
         }
         // "=" handle, like Windows 10, opens the group menu.
         PC3.ToolButton {

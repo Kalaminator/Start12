@@ -76,8 +76,6 @@ Item {
         contentWidth: width
         contentHeight: flow.height + newGroupDrop.height
         boundsBehavior: Flickable.StopAtBounds
-        // A mouse drag in a name field selects text; otherwise the flickable steals it to scroll.
-        interactive: !(Window.activeFocusItem && "selectByMouse" in Window.activeFocusItem)
         QQC2.ScrollBar.vertical: PC3.ScrollBar {}
 
         WheelHandler {
