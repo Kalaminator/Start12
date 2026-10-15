@@ -788,6 +788,10 @@ PlasmoidItem {
         { text: i18n("Pin folder…"), icon: "folder-new", run: () => root.pinNew("folder") }
     ]
 
+    // "Add widget" submenu (TileArea, TileGroup): a new kind = Tiles.WIDGETS + here + Tile.widgetFile + widgets/<Kind>.qml.
+    readonly property var widgetItems: [["clock", i18n("Clock")], ["calendar", i18n("Calendar")], ["sysmon", i18n("System monitor")]]
+        .map(k => ({ kind: k[0], text: k[1], run: () => savePages(Tiles.addWidget(pages, tilePage, k[0])) }))
+
     onExpandedChanged: {
         if (root.expanded) {
             rootModel.refresh();

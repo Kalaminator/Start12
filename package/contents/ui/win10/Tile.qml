@@ -29,11 +29,13 @@ PC3.AbstractButton {
     signal folderClicked(bool rename)
 
     readonly property bool isFolder: tile.tile.kind === "folder"
+    readonly property bool isWidget: Tiles.isWidget(tile.tile.id)
+    readonly property string widgetFile: ({ clock: "Clock", calendar: "Calendar", sysmon: "SysMon" })[Tiles.widgetKind(tile.tile.id)] || ""
 
-    readonly property bool valid: fav.count > 0
+    readonly property bool valid: !isWidget && fav.count > 0
     // Pinned website/file/folder instead of an app.
     readonly property var custom: Tiles.custom(tile.tile.id)
-    readonly property var appIcon: isFolder ? "folder" : custom ? (custom.icon || "folder") : valid ? role("decoration") : "dialog-question"
+    readonly property var appIcon: isWidget ? "preferences-system-time" : isFolder ? "folder" : custom ? (custom.icon || "folder") : valid ? role("decoration") : "dialog-question"
     readonly property bool big: ["large", "wideLargeH", "wideLargeV", "hugeH", "hugeV"].includes(tile.tile.size)
     readonly property bool small: tile.tile.size === "small"
     readonly property bool showCaption: tile.tile.caption === "show" ? true
@@ -41,18 +43,22 @@ PC3.AbstractButton {
 
     Kicker.SimpleFavoritesModel {
         id: fav
-        favorites: [tile.tile.id]
+        favorites: tile.isWidget ? [] : [tile.tile.id]
     }
     function role(name) {
         return fav.count > 0 ? fav.data(fav.index(0, 0), fav.KItemModels.KRoleNames.role(name)) : undefined;
     }
-    readonly property string appName: isFolder ? (tile.tile.name || i18n("Folder")) : custom ? custom.name : valid ? role("display") : tile.tile.id
+    readonly property string appName: isWidget ? widgetName() : isFolder ? (tile.tile.name || i18n("Folder")) : custom ? custom.name : valid ? role("display") : tile.tile.id
+    function widgetName() {
+        const k = Tiles.widgetKind(tile.tile.id);
+        return k === "clock" ? i18n("Clock") : k === "calendar" ? i18n("Calendar") : k === "sysmon" ? i18n("System monitor") : k;
+    }
     onAppNameChanged: nameKnown(appName)
     Component.onCompleted: nameKnown(appName)
 
     hoverEnabled: true
     PC3.ToolTip.text: appName
-    PC3.ToolTip.visible: hovered && !showCaption && !mouse.dragging
+    PC3.ToolTip.visible: hovered && !showCaption && !isWidget && !mouse.dragging
     PC3.ToolTip.delay: Kirigami.Units.toolTipDelay
 
     background: Rectangle {
@@ -120,7 +126,7 @@ PC3.AbstractButton {
             }
         }
         Kirigami.Icon {
-            visible: !tile.isFolder && !(tile.big && tile.tile.image && tile.tile.imageIcon === "hide")
+            visible: !tile.isFolder && !tile.isWidget && !(tile.big && tile.tile.image && tile.tile.imageIcon === "hide")
             // Big tiles: exactly twice a medium tile's icon (medium = 2 units).
             readonly property real side: Math.round(2 * tile.metrics.unit * (tile.big ? 2 : 1)
                 * Plasmoid.configuration.tileIconScale / 100)
@@ -132,6 +138,20 @@ PC3.AbstractButton {
             layer.effect: MultiEffect { saturation: -1 }
             source: tile.tile.icon ? (tile.tile.icon.startsWith("/") ? "file://" + tile.tile.icon : tile.tile.icon)
                   : tile.appIcon
+        }
+        Loader {
+            id: widgetLoader
+            active: tile.isWidget && tile.widgetFile !== ""
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: label.visible ? label.top : parent.bottom
+            Component.onCompleted: if (active) setSource("../widgets/" + tile.widgetFile + ".qml",
+                { metrics: tile.metrics, size: tile.tile.size, active: root.expanded })
+            onLoaded: {
+                item.size = Qt.binding(() => tile.tile.size);
+                item.active = Qt.binding(() => root.expanded);
+            }
         }
         PC3.Label {
             id: label
@@ -151,6 +171,8 @@ PC3.AbstractButton {
     function launch() {
         if (isFolder) {
             folderClicked(false);
+        } else if (isWidget) {
+            return;   // ponytail: widgets do nothing on click
         } else if (custom) {
             root.openCustom(custom);
         } else if (valid) {
@@ -242,18 +264,19 @@ PC3.AbstractButton {
         const items = isFolder ? [
             { text: i18n("Name folder"), icon: "edit-rename", run: () => tile.folderClicked(true) },
             { text: i18n("Unpin folder from Start"), icon: "window-unpin", run: () => root.unpin(id) }
-        ] : [{ text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) }];
-        if (!isFolder) items.push(
+        ] : isWidget ? [{ text: i18n("Remove widget"), icon: "edit-delete", run: () => root.unpin(id) }]
+          : [{ text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) }];
+        if (!isFolder && !isWidget) items.push(
             { text: i18n("Set icon…"), icon: "preferences-desktop-icons", run: () => root.pickTileIcon(id) },
             { text: i18n("Reset custom icon"), icon: "edit-undo", enabled: !!tile.tile.icon, run: () => set("icon", "") });
         items.push(
             { text: tile.showCaption ? i18n("Hide icon text") : i18n("Show icon text"), icon: "format-text-bold",
               run: () => set("caption", tile.showCaption ? "hide" : "show") },
             { text: i18n("Tile colour…"), icon: "color-management", run: () => colorPopup.open() });
-        if (big) items.push(
+        if (big && !isWidget) items.push(
             { text: i18n("Set tile image…"), icon: "viewimage", run: () => root.pickTileImage(id) },
             { text: i18n("Remove tile image"), icon: "edit-delete", enabled: !!tile.tile.image, run: () => set("image", "") });
-        if (big && tile.tile.image) items.push(
+        if (big && !isWidget && tile.tile.image) items.push(
             { text: tile.tile.imageIcon === "hide" ? i18n("Show icon") : i18n("Hide icon"), icon: "view-visible",
               run: () => set("imageIcon", tile.tile.imageIcon === "hide" ? "" : "hide") });
         if (!Plasmoid.configuration.tilesLocked && !folderId) {
@@ -275,12 +298,13 @@ PC3.AbstractButton {
         id: drop
         anchors.fill: parent
         keys: ["start12-tile"]
-        readonly property bool intoFolder: !!drag.source && !Tiles.isFolder(drag.source.favoriteId)
+        readonly property bool intoFolder: !!drag.source && !Tiles.isFolder(drag.source.favoriteId) && !tile.isWidget
+            && !Tiles.isWidget(drag.source.favoriteId)
             && (tile.folderId !== "" || drag.x > tile.width / 4)
         onDropped: d => {
             const id = d.source.favoriteId;
             if (id === tile.tile.id) return;
-            if (!Tiles.isFolder(id) && (tile.folderId !== "" || d.x > tile.width / 4)) {
+            if (!Tiles.isFolder(id) && !tile.isWidget && !Tiles.isWidget(id) && (tile.folderId !== "" || d.x > tile.width / 4)) {
                 root.saveGroups(Tiles.dropOnTile(root.groups, id, tile.tile.id));
             } else if (tile.folderId === "") {
                 root.saveGroups(Tiles.place(root.groups, id, tile.groupIndex, tile.tileIndex));

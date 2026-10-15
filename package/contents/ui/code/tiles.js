@@ -159,11 +159,37 @@ function isFolder(id) {
     return typeof id === "string" && id.indexOf("folder|") === 0;
 }
 
+// Widget tiles: id "widget|<kind>|<n>" (n makes each one unique). Rendered by ui/widgets/<Kind>.qml.
+var WIDGETS = ["clock", "calendar", "sysmon"];
+function isWidget(id) {
+    return typeof id === "string" && id.indexOf("widget|") === 0;
+}
+function widgetKind(id) {
+    return isWidget(id) ? id.split("|")[1] : "";
+}
+// A free id for a new widget of this kind (unique across all pages).
+function widgetId(pages, kind) {
+    var n = 1;
+    while (pages.some(function (p) { return findTile(p.groups, "widget|" + kind + "|" + n); })) n++;
+    return "widget|" + kind + "|" + n;
+}
+// Add a widget to group gi (default the first) of page p; a new group when the page has none.
+function addWidget(pages, p, kind, gi) {
+    var id = widgetId(pages, kind);
+    var g = pages[p].groups;
+    gi = gi || 0;
+    return setPage(pages, p, place(g, id, gi, g.length ? g[gi].tiles.length : 0, kind === "sysmon" ? "wide" : "medium"));
+}
+
 // Drop tile (or app) id onto tile target: into target's folder, or both become a new folder in
 // target's place (Windows 10 tile folders). A folder dropped on a tile is not nested: no change.
 function dropOnTile(groups, id, target, size) {
     var out = clone(groups);
     if (id === target || isFolder(id)) return out;
+    if (isWidget(id) || isWidget(target)) {   // widgets never join folders: just move before the target
+        var w = findTile(out, target);
+        return w && w.f === undefined ? place(groups, id, w.g, w.i, size) : groups;
+    }
     var tile = { id: id, size: size || "medium" };
     var at = findTile(out, id);
     if (at) tile = at.list.splice(at.i, 1)[0];

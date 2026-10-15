@@ -34,6 +34,7 @@ Item {
             { text: i18n("New group"), icon: "list-add",
               run: () => root.saveGroups(root.groups.concat([{ name: i18n("New group"), tiles: [] }])) },
             ...root.pinNewItems,
+            { text: i18n("Add widget"), icon: "view-grid", subActions: root.widgetItems },
             { type: "separator" },
             { text: i18n("New page"), icon: "document-new",
               run: () => { root.savePages(Tiles.newPage(root.pages)); area.showPage(root.pages.length - 1); } },
