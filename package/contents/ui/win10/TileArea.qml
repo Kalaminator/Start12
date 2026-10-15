@@ -20,6 +20,8 @@ Item {
         flick.contentY = 0;
     }
     property real wheelAcc: 0
+    // Height that shows every group of this page plus a small new-group drop zone, without scrolling.
+    readonly property real neededHeight: flow.height + metrics.unit * 2 + flick.anchors.topMargin + flick.anchors.bottomMargin
     function wheelPage(event) {
         wheelAcc += event.angleDelta.y;
         if (Math.abs(wheelAcc) < 120) return;   // touchpads send many small steps
@@ -109,7 +111,7 @@ Item {
             id: newGroupDrop
             anchors.top: flow.bottom
             width: flow.width
-            height: Math.max(area.metrics.unit * 4, flick.height - flow.height)
+            height: Math.max(area.metrics.unit * 2, flick.height - flow.height)
             keys: ["start12-tile", "start12-group"]
             onDropped: drop => {
                 if (drop.source.kind === "group") {

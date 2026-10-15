@@ -22,7 +22,9 @@ FocusScope {
     readonly property real listW: style.cfg.hideAppList ? 0 : root.splitFor(style.cfg.menuStyle, m.list)
 
     implicitWidth: m.rail + listW + m.pad * 2 + m.groupCols * m.groupWidth + (m.groupCols - 1) * m.pad * 2
-    implicitHeight: m.heightFor([480, 600, 480, 640])
+    implicitHeight: Math.max(m.heightFor([480, 600, 480, 640]), minimumHeight)
+    // Tall enough for the tile groups, so the tile area needs no scroll bar (the user can still drag it bigger).
+    readonly property real minimumHeight: tiles.neededHeight
     // Narrowest: rail + list + one tile group.
     readonly property real minimumWidth: m.rail + listW + m.pad * 2 + m.groupWidth
 

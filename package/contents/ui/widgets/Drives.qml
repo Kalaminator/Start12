@@ -100,7 +100,9 @@ Item {
                 height: w.rowH
                 Kirigami.Icon {
                     id: ic
-                    x: w.metrics.px(6)
+                    // anchors, not x: the mirrored menu (Right) flips anchors, and the text column hangs off them
+                    anchors.left: parent.left
+                    anchors.leftMargin: w.metrics.px(6)
                     anchors.verticalCenter: parent.verticalCenter
                     width: w.metrics.px(24); height: width
                     source: row.modelData.removable ? "drive-removable-media" : "drive-harddisk"
