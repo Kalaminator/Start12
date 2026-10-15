@@ -12,6 +12,9 @@ Item {
     property var save: function (key, value) {}
 
     readonly property string loc: tdata.loc || ""
+    // i18n is not reachable inside the XMLHttpRequest callbacks, so these texts are made here.
+    readonly property string unavailable: i18n("Weather unavailable")
+    readonly property string notFound: i18n("Location not found")
     readonly property var wx: tdata.wx && tdata.wx.q === loc ? tdata.wx : null
     readonly property bool fahrenheit: Qt.locale().measurementSystem === Locale.ImperialUSSystem
     readonly property bool tiny: size === "small"
@@ -33,7 +36,7 @@ Item {
         x.onreadystatechange = () => {
             if (x.readyState !== 4) return;
             try { if (x.status === 200) { ok(JSON.parse(x.responseText)); return; } } catch (e) {}
-            w.status = i18n("Weather unavailable");
+            w.status = w.unavailable;
         };
         x.open("GET", url);
         x.send();
@@ -53,7 +56,7 @@ Item {
         if (tdata.wx && tdata.wx.q === q) forecast(tdata.wx.place, tdata.wx.lat, tdata.wx.lon);
         else get("https://geocoding-api.open-meteo.com/v1/search?count=1&name=" + encodeURIComponent(q) + "&language=" + Qt.locale().name.split("_")[0], g => {
             if (g.results && g.results.length) forecast(g.results[0].name, g.results[0].latitude, g.results[0].longitude);
-            else w.status = i18n("Location not found");
+            else w.status = w.notFound;
         });
     }
     onActiveChanged: if (active) refresh()
