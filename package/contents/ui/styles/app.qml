@@ -208,8 +208,8 @@ FocusScope {
 
     Connections {
         target: root
-        function onExpandedChanged() {
-            if (root.expanded) {
+        function onMenuOpenChanged() {
+            if (root.menuOpen) {
                 canvas.reset();
                 appList.reset();
                 style.forceActiveFocus();

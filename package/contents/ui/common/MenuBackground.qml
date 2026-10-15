@@ -23,7 +23,7 @@ Item {
     onWinChanged: Qt.callLater(hideThemeFrame)
     Connections {
         target: root
-        function onExpandedChanged() { bgRoot.hideThemeFrame(); }
+        function onMenuOpenChanged() { bgRoot.hideThemeFrame(); }
     }
 
     // Grow over the (now invisible) popup frame.

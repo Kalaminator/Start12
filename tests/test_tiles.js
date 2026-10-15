@@ -4,7 +4,7 @@ const path = require("path");
 const assert = require("assert");
 const src = fs.readFileSync(path.join(__dirname, "../package/contents/ui/code/tiles.js"), "utf8")
     .replace(/^\.pragma library/m, "");
-const T = new Function(src + "; return { pack, rowEnd, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder, parsePages, setPage, newPage, deletePage, moveGroupToPage, shQuote, writeFileCmd, parseCanvas, canvasAddTab, canvasDeleteTab, canvasMoveTab, canvasAddGroup, canvasDeleteGroup, canvasRename, canvasPlace, canvasRemove, canvasSet, canvasSort, fileIcon, pushHistory, parseFiltered, filterFile, dirUrl, pinDesktop, splitGet, splitSet, splitReset, isWidget, widgetId, addWidget };")();
+const T = new Function(src + "; return { pack, rowEnd, place, remove, resize, sortGroup, setProp, placeInList, moveGroup, custom, customFor, nearest, dropOnTile, findTile, folderOf, folderEntry, allPins, removePin, placeInFolder, parsePages, setPage, newPage, deletePage, moveGroupToPage, shQuote, writeFileCmd, parseCanvas, canvasAddTab, canvasDeleteTab, canvasMoveTab, canvasAddGroup, canvasDeleteGroup, canvasRename, canvasPlace, canvasRemove, canvasSet, canvasSort, fileIcon, pushHistory, parseFiltered, filterFile, dirUrl, pinDesktop, splitGet, splitSet, splitReset, isWidget, widgetId, addWidget, isApplet, addApplet, syncApplets };")();
 
 // 6 columns = 12 units wide: six medium tiles fit in one row.
 let p = T.pack(Array(6).fill({ size: "medium" }), 6);
@@ -225,5 +225,15 @@ assert.strictEqual(T.pushHistory("0123456789".split(""), "x").length, 10);
     assert.strictEqual(r[0].tiles.length, 2);
     r = T.place(g, "widget|clock|1", 1, 0);
     assert.strictEqual(r[1].tiles[0].id, "widget|clock|1");
+}
+{   // applet tiles: no folders, one tile per live applet
+    assert.ok(T.isApplet("applet|5") && T.isWidget("applet|5") && !T.isApplet("widget|clock|1"));
+    let A = T.addApplet([{ groups: [] }], 0, 5);
+    assert.strictEqual(A[0].groups[0].tiles[0].id, "applet|5");
+    A = [{ groups: [{ name: "", tiles: [{ id: "applet|5" }, { id: "a" }, { id: "applet|9" }] }] }, { groups: [{ name: "", tiles: [{ id: "applet|5" }] }] }];
+    A = T.syncApplets(A, [5, 7]);
+    assert.deepStrictEqual(A[0].groups[0].tiles.map(t => t.id), ["applet|5", "a", "applet|7"]);
+    assert.strictEqual(A[1].groups.length, 0);
+    assert.strictEqual(T.dropOnTile(A[0].groups, "a", "applet|5")[0].tiles.some(t => t.kind === "folder"), false);
 }
 console.log("tiles.js: all checks passed");

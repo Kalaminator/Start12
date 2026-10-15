@@ -568,6 +568,10 @@
       <label>Design mode divider widths, JSON { "style" or "style/part": unscaled px }</label>
       <default>{}</default>
     </entry>
+    <entry name="configMigrated" type="Bool">
+      <label>Set once the old PlasmoidItem settings ([Configuration][*] groups) were copied to the containment's own groups</label>
+      <default>false</default>
+    </entry>
     <entry name="favoritesPortedToKAstats" type="Bool">
       <default>false</default>
     </entry>

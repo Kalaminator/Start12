@@ -14,7 +14,8 @@ import org.kde.kitemmodels as KItemModels
 import org.kde.iconthemes as KIconThemes
 import "code/tiles.js" as Tiles
 
-PlasmoidItem {
+// Root is a ContainmentItem (metadata CustomEmbedded) so real KDE widgets can live in tiles (applet|<id>).
+ContainmentItem {
     id: root
 
     readonly property var cfg: Plasmoid.configuration
@@ -30,7 +31,6 @@ PlasmoidItem {
     // Design mode (T40, not saved): dividers between menu sections can be dragged (common/SplitHandle).
     // The menu stays open on outside clicks; closing it ends design mode.
     property bool designMode: false
-    hideOnWindowDeactivate: !designMode
     // Divider widths: `name` = "<style>" or "<style>/<part>"; stored unscaled, returned scaled.
     function splitFor(name, def) {
         const w = Tiles.splitGet(cfg.splits, name);
@@ -41,7 +41,7 @@ PlasmoidItem {
     }
     function editLayout() {
         designMode = true;
-        expanded = true;
+        menuOpen = true;
     }
     Connections {
         target: root.cfg
@@ -109,6 +109,11 @@ PlasmoidItem {
         saveGroups(Tiles.place(groups, id, g, groups.length ? groups[g].tiles.length : 0));
     }
     function unpin(id) {
+        if (Tiles.isApplet(id)) {
+            const a = appletFor(id);
+            removedApplets.push(Number(String(id).slice(7)));   // "remove" only marks it transient (undo); a twin may stay
+            if (a) a.internalAction("remove").trigger();
+        }
         if (usesTiles) {
             // Folder ids repeat across pages: a folder only goes on the shown page.
             savePages(Tiles.isFolder(id) ? Tiles.setPage(pages, tilePage, Tiles.remove(groups, id))
@@ -258,6 +263,7 @@ PlasmoidItem {
     // Brightness of the user's own colour scheme (the saved one while ours is applied), then both syncs.
     property bool userDark: false
     function readBrightness() {
+        if (!configReady) return;   // never act on default settings before migrateConfig is done
         brightReader.connectSource("S=" + Tiles.shQuote(cfg.savedColorScheme) + "; f=kdeglobals; "
             + "case \"$(kreadconfig6 --file kdeglobals --group General --key ColorScheme)\" in start12-*) "
             + "f=$(ls \"$HOME/.local/share/color-schemes/$S.colors\" \"/usr/share/color-schemes/$S.colors\" 2>/dev/null | head -1);; esac; "
@@ -285,6 +291,7 @@ PlasmoidItem {
     // Same save/restore idea as syncDesktopTheme: kwinrc [org.kde.kdecoration2] library + theme are saved in
     // savedDecoLibrary/savedDecoTheme when ours goes on and written back when it goes off.
     function syncWindowDeco() {
+        if (!configReady) return;   // never act on default settings before migrateConfig is done
         const rd = key => "\"$(kreadconfig6 --file kwinrc --group org.kde.kdecoration2 --key " + key + ")\"";
         decoReader.connectSource("printf '%s|%s|%s' " + rd("library") + " " + rd("theme")
             + " \"$(kreadconfig6 --file kwinrc --group Plugins --key blurEnabled)\"");
@@ -337,6 +344,7 @@ PlasmoidItem {
     }
     // Window colours (T26b, same windowTheme key and name as windowDeco). Same save/restore idea: kdeglobals [General] ColorScheme is saved in savedColorScheme when ours goes on.
     function syncWindowColors() {
+        if (!configReady) return;   // never act on default settings before migrateConfig is done
         colorReader.connectSource("kreadconfig6 --file kdeglobals --group General --key ColorScheme");
     }
     P5Support.DataSource {
@@ -390,6 +398,7 @@ PlasmoidItem {
                         ? Qt.lighter("#" + accentHex, 1.6).toString().slice(-6) : cfg.accentColor.toString().slice(-6)) + " solid=" + (cfg.taskbarFocusedSolid ? 1 : 0)
     onTaskbarArgsChanged: syncDesktopTheme()
     function syncDesktopTheme() {
+        if (!configReady) return;   // never act on default settings before migrateConfig is done
         themeReader.connectSource("kreadconfig6 --file plasmarc --group Theme --key name");
     }
     P5Support.DataSource {
@@ -433,7 +442,7 @@ PlasmoidItem {
     }
     function openUrl(url) {
         Qt.openUrlExternally(url);
-        root.expanded = false;
+        root.menuOpen = false;
     }
     // Pinned website/file/folder (Tiles.custom): open its target, or run "cmd:..." targets.
     function openCustom(c) {
@@ -491,6 +500,7 @@ PlasmoidItem {
     readonly property bool centerPanel: panelMode !== 0
     onPanelModeChanged: syncCenterPanel()
     function syncCenterPanel() {
+        if (!configReady) return;   // never act on default settings before migrateConfig is done
         const js = "const ID = " + Plasmoid.id + ", M = 'start12Centre'; let out = 'done';"
             + "const get = (w, g, k, d) => { w.currentConfigGroup = [g]; return String(w.readConfig(k, d)); };"
             + "for (const p of panels()) { const me = p.widgets().find(w => w.id === ID); if (!me) continue;"
@@ -550,7 +560,7 @@ PlasmoidItem {
     }
 
     function close() {
-        root.expanded = false;
+        root.menuOpen = false;
     }
 
     // The Start12 settings window (Plasma's configure dialog with our pages).
@@ -604,7 +614,7 @@ PlasmoidItem {
     }
     // Keys that reset/backup/restore touch: everything in main.xml but bookkeeping and kicker's favorites.
     function userKeys() {
-        const keep = ["savedDesktopTheme", "savedDecoLibrary", "savedDecoTheme", "savedColorScheme", "savedBlur", "resetRequest", "openSettingsRequest", "designRequest", "favorites", "favoritesPortedToKAstats"];
+        const keep = ["savedDesktopTheme", "savedDecoLibrary", "savedDecoTheme", "savedColorScheme", "savedBlur", "resetRequest", "openSettingsRequest", "designRequest", "favorites", "favoritesPortedToKAstats", "configMigrated"];
         return root.cfg.keys().filter(k => !k.endsWith("Default") && !keep.includes(k));
     }
     // Restore: read the backup JSON, write back every known key, then put the Plasma Style in line
@@ -832,9 +842,65 @@ PlasmoidItem {
     readonly property var widgetItems: [["clock", i18n("Clock")], ["calendar", i18n("Calendar")], ["sysmon", i18n("System monitor")],
         ["drives", i18n("Drives")], ["weather", i18n("Weather")], ["notes", i18n("Notes")], ["photo", i18n("Photo")]]
         .map(k => ({ kind: k[0], text: k[1], run: () => savePages(Tiles.addWidget(pages, tilePage, k[0])) }))
+        .concat([{ kind: "", text: i18n("KDE widgets…"), icon: "plasmagik", run: () => appletPicker.openFor(0) }])   // kind "" = real widget
 
-    onExpandedChanged: {
-        if (root.expanded) {
+    // Real KDE widgets: child applets of this containment, one tile "applet|<applet.id>" each.
+    property var appletItems: ({})          // applet.id -> its PlasmoidItem (reparented into the tile)
+    property int pendingAppletGroup: -1     // group for the applet being created by the picker
+    property var removedApplets: []         // ids removed this session (still listed until Plasma deletes them)
+    function appletFor(tileId) {
+        const aid = Number(String(tileId).slice(7));
+        const list = Containment.applets;
+        for (let i = 0; i < list.length; i++) if (list[i].id === aid) return list[i];
+        return null;
+    }
+    function hostApplet(applet) {
+        if (appletItems[applet.id]) return;   // ponytail: plasmawindowed restores children twice, first one wins
+        const it = root.itemFor(applet);
+        if (!it) return;
+        // Like on the desktop: a widget that picks its own look (analog clock = face, its full rep is a calendar)
+        // or switches by size keeps that; one with no preference shows its full representation.
+        if (!it.preferredRepresentation) it.preferredRepresentation = it.fullRepresentation;
+        it.visible = false;
+        const m = Object.assign({}, appletItems);
+        m[applet.id] = it;
+        appletItems = m;
+    }
+    function addApplet(pluginName, gi) {
+        pendingAppletGroup = gi;
+        appletPicker.explorer.addApplet(pluginName);   // Containment.onAppletAdded places the tile
+    }
+    Containment.onAppletAdded: (applet, geometry) => {
+        hostApplet(applet);
+        if (pendingAppletGroup >= 0) {
+            savePages(Tiles.addApplet(pages, tilePage, applet.id, pendingAppletGroup));
+            pendingAppletGroup = -1;
+        }
+        appletSync.restart();
+    }
+    Containment.onAppletRemoved: applet => {
+        const m = Object.assign({}, appletItems);
+        delete m[applet.id];
+        appletItems = m;
+        appletSync.restart();
+    }
+    // Restore check (also after adds/removes): each live applet has exactly one tile, tiles of gone applets go.
+    Timer {
+        id: appletSync
+        interval: 1000
+        onTriggered: {
+            const ids = [];
+            const list = root.Containment.applets;
+            for (let i = 0; i < list.length; i++)
+                if (ids.indexOf(list[i].id) < 0 && root.removedApplets.indexOf(list[i].id) < 0) ids.push(list[i].id);
+            const next = Tiles.syncApplets(root.pages, ids);
+            if (JSON.stringify(next) !== JSON.stringify(root.pages)) root.savePages(next);
+        }
+    }
+    readonly property AppletPicker appletPicker: AppletPicker {}
+
+    onMenuOpenChanged: {
+        if (root.menuOpen) {
             rootModel.refresh();
         } else {
             searchText = "";
@@ -855,13 +921,72 @@ PlasmoidItem {
     readonly property bool narrowFull: cfg.fullScreen && !fillScreen
 
     Plasmoid.icon: "start-here-kde"
-    // On the desktop (or in a test window) show the menu itself.
-    preferredRepresentation: Plasmoid.formFactor === PlasmaCore.Types.Planar ? fullRepresentation : compactRepresentation
-    compactRepresentation: StartButton {}
+    // A containment (needed to host real widgets) is always "expanded" in libplasma and never gets a
+    // compact representation or popup, so Start12 does what the system tray does: the button is a child of
+    // root and the menu lives in our own AppletPopup (docs/research/real-widgets-spike.md, Follow-up).
+    // menuOpen replaces PlasmoidItem.expanded. On the desktop (or in a test window) the menu shows inline.
+    property bool menuOpen: false
+    readonly property bool planar: Plasmoid.formFactor === PlasmaCore.Types.Planar
+    Plasmoid.onActivated: menuOpen = !menuOpen   // Meta key (ShellCorona::activateLauncherMenu)
+    Layout.minimumWidth: planar ? full.Layout.minimumWidth : startButton.Layout.minimumWidth
+    Layout.minimumHeight: planar ? full.Layout.minimumHeight : startButton.Layout.minimumHeight
+    Layout.preferredWidth: planar ? full.Layout.preferredWidth : startButton.Layout.preferredWidth
+    Layout.preferredHeight: planar ? full.Layout.preferredHeight : startButton.Layout.preferredHeight
 
-    fullRepresentation: Item {
+    StartButton {
+        id: startButton
+        anchors.fill: parent
+        visible: !root.planar
+    }
+
+    // Hosted widgets open their own popups (digital clock calendar); keep the menu open meanwhile.
+    readonly property bool appletPopupOpen: {
+        for (const k in appletItems) if (appletItems[k].expanded) return true;
+        return false;
+    }
+    property int statusBeforeOpen: PlasmaCore.Types.ActiveStatus
+    Timer {
+        id: expandedSync   // as plasma-desktop CompactApplet: lets a click on the button after an outside close stay a close
+        interval: 100
+        onTriggered: root.menuOpen = popup.visible
+    }
+    PlasmaCore.AppletPopup {
+        id: popup
+        visualParent: startButton
+        appletInterface: root
+        mainItem: root.planar ? null : full
+        visible: root.menuOpen && !root.planar
+        hideOnWindowDeactivate: !root.designMode && !root.appletPopupOpen
+        popupDirection: switch (Plasmoid.location) {
+            case PlasmaCore.Types.TopEdge: return Qt.BottomEdge;
+            case PlasmaCore.Types.LeftEdge: return Qt.RightEdge;
+            case PlasmaCore.Types.RightEdge: return Qt.LeftEdge;
+            default: return Qt.TopEdge;
+        }
+        margin: (Plasmoid.containmentDisplayHints & PlasmaCore.Types.ContainmentPrefersFloatingApplets) ? Kirigami.Units.largeSpacing : 0
+        floating: Plasmoid.location === PlasmaCore.Types.Floating
+        removeBorderStrategy: Plasmoid.location === PlasmaCore.Types.Floating
+            ? PlasmaCore.AppletPopup.AtScreenEdges
+            : PlasmaCore.AppletPopup.AtScreenEdges | PlasmaCore.AppletPopup.AtPanelEdges
+        backgroundHints: (Plasmoid.containmentDisplayHints & PlasmaCore.Types.ContainmentPrefersOpaqueBackground)
+            ? PlasmaCore.AppletPopup.SolidBackground : PlasmaCore.AppletPopup.StandardBackground
+        onVisibleChanged: {
+            if (!visible) {
+                expandedSync.restart();
+                Plasmoid.status = root.statusBeforeOpen;
+            } else {
+                root.statusBeforeOpen = Plasmoid.status;
+                Plasmoid.status = PlasmaCore.Types.RequiresAttentionStatus;   // keeps an auto-hide panel up
+                requestActivate();
+                full.forceActiveFocus();
+            }
+        }
+    }
+
+    Item {
         id: full
         focus: true
+        anchors.fill: root.planar ? root : undefined
 
         // The style gives the start size; the user can drag the popup edges to resize it.
         Layout.preferredWidth: root.cfg.fullScreen ? root.fullRect.width
@@ -893,7 +1018,7 @@ PlasmoidItem {
         // (or menu size), pin the popup once (min = max) at the style's own size until it has opened and
         // stored that size; the user can drag it afterwards as before.
         property bool shrink: false
-        onShrinkChanged: if (shrink && root.expanded) shrinkDone.restart()   // style switched while open
+        onShrinkChanged: if (shrink && root.menuOpen) shrinkDone.restart()   // style switched while open
         Layout.maximumWidth: designW > 0 ? designW
                            : shrink && styleLoader.item ? styleLoader.item.implicitWidth : Number.POSITIVE_INFINITY
         Layout.maximumHeight: shrink && styleLoader.item ? styleLoader.item.implicitHeight : Number.POSITIVE_INFINITY
@@ -920,12 +1045,12 @@ PlasmoidItem {
             interval: 400
             onTriggered: {
                 const h = Math.round(full.height / root.cfg.uiScale);
-                if (root.expanded && !root.cfg.fullScreen && Math.abs(full.height - full.Layout.preferredHeight) > 2) {
+                if (root.menuOpen && !root.cfg.fullScreen && Math.abs(full.height - full.Layout.preferredHeight) > 2) {
                     root.cfg.menuHeight = h;
                 }
             }
         }
-        onHeightChanged: if (root.expanded) saveHeight.restart(); else place()
+        onHeightChanged: if (root.menuOpen) saveHeight.restart(); else place()
 
         // T42 Menu position (key menuPosition 0 left, 1 center, 2 right), horizontal panels only. The popup
         // (AppletPopup) lines its edge up with its visualParent, normally the Start button. For Center/Right it
@@ -934,17 +1059,17 @@ PlasmoidItem {
         // the popup there. Done while closed (and once when the popup window first appears) so it opens in place.
         readonly property var popupWindow: Window.window
         onPopupWindowChanged: place()
-        onWidthChanged: if (!root.expanded) place()
+        onWidthChanged: if (!root.menuOpen) place()
         Connections {
             target: root
-            function onExpandedChanged() { if (!root.expanded) full.place(); }
+            function onMenuOpenChanged() { if (!root.menuOpen) full.place(); }
         }
         Connections {
             target: root.cfg
             function onMenuPositionChanged() { full.place(); }
         }
         function place() {
-            const w = popupWindow, btn = root.compactRepresentationItem;
+            const w = popupWindow, btn = startButton;
             if (!w || !btn || !btn.popupAnchor || w.visualParent === undefined) return;
             const g = Plasmoid.containment ? Plasmoid.containment.screenGeometry : null;
             const pos = !root.cfg.fullScreen && g && g.width > 0 ? root.cfg.menuPosition : 0;
@@ -979,9 +1104,9 @@ PlasmoidItem {
         }
         Connections {
             target: root
-            function onExpandedChanged() {
-                if (root.expanded && full.shrink) shrinkDone.restart();
-                if (root.expanded && root.cfg.animateMenu) openAnim.restart();
+            function onMenuOpenChanged() {
+                if (root.menuOpen && full.shrink) shrinkDone.restart();
+                if (root.menuOpen && root.cfg.animateMenu) openAnim.restart();
                 else { openAnim.stop(); full.opacity = 1; styleLoader.anchors.topMargin = 0; }
             }
         }
@@ -991,7 +1116,7 @@ PlasmoidItem {
             anchors.fill: parent
             visible: root.narrowFull
             color: Qt.rgba(0, 0, 0, 0.5)
-            MouseArea { anchors.fill: parent; onClicked: root.expanded = false }
+            MouseArea { anchors.fill: parent; onClicked: root.menuOpen = false }
         }
 
         Item {
@@ -1156,8 +1281,38 @@ PlasmoidItem {
 
     Component.onCompleted: {
         Plasmoid.activationTogglesExpanded = true;
+        for (let i = 0; i < Containment.applets.length; i++) hostApplet(Containment.applets[i]);
         rootModel.refresh();
         systemModel = systemModelComponent.createObject(root, { favoritesModel: rootModel.systemFavoritesModel });
+        if (configReady)
+            onReady();
+        else
+            migrateConfig();
+    }
+    // A Containment's config() is its own appletsrc group, a plain applet's is the "Configuration" subgroup
+    // (libplasma Applet::config()), so after the PlasmoidItem -> ContainmentItem switch Plasmoid.configuration
+    // read [Applets][N][General] etc. and saw defaults. Once per applet: copy every [Applets][N][Configuration][*]
+    // group up one level through the shell's scripting API (raw strings, no type guessing), set configMigrated,
+    // reloadConfig. The old groups stay (rollback to the PlasmoidItem build keeps working). A new widget has none.
+    readonly property bool configReady: cfg.configMigrated
+    onConfigReadyChanged: if (configReady) onReady()
+    function migrateConfig() {
+        const script = "const ID = " + Plasmoid.id + ";"
+            + "for (const c of panels().concat(desktops())) for (const w of c.widgets()) { if (w.id != ID) continue;"
+            + " c.currentConfigGroup = ['Applets', String(ID), 'Configuration'];"
+            + " const old = {}; for (const g of c.configGroups.slice()) { c.currentConfigGroup = ['Applets', String(ID), 'Configuration', g]; old[g] = {};"
+            // one-shot *Request keys (open settings, design mode, reset/backup) are not copied: changing them acts.
+            + "  for (const k of c.configKeys.slice()) if (!/Request$/.test(k)) old[g][k] = c.readConfig(k, ''); }"
+            + " for (const g in old) { w.currentConfigGroup = [g]; for (const k in old[g]) w.writeConfig(k, old[g][k]); }"
+            + " w.currentConfigGroup = ['General']; w.writeConfig('configMigrated', 'true'); w.reloadConfig(); }";
+        run(Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript " + Tiles.shQuote(script));
+    }
+    property bool readyDone: false
+    function onReady() {
+        if (readyDone) return;   // configReady can flip after onCompleted already saw it true
+        readyDone = true;
+        appletSync.start();
+        syncCenterPanel();
         // T44: code/setup.sh makes the generated themes first (KDE Store installs skip install.sh), then the syncs apply them.
         setupRunner.connectSource("sh " + Tiles.shQuote(decodeURIComponent(Qt.resolvedUrl("code/setup.sh").toString().replace("file://", ""))));
     }
