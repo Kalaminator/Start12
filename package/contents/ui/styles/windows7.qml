@@ -662,8 +662,8 @@ FocusScope {
 
     Connections {
         target: root
-        function onExpandedChanged() {
-            if (root.expanded) {
+        function onMenuOpenChanged() {
+            if (root.menuOpen) {
                 style.allPrograms = style.cfg.openAllApps;
                 style.hoverIcon = "";
                 style.rev++;

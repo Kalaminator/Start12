@@ -151,10 +151,10 @@ PC3.AbstractButton {
             anchors.top: parent.top
             anchors.bottom: label.visible ? label.top : parent.bottom
             Component.onCompleted: if (active) setSource("../widgets/" + tile.widgetFile + ".qml",
-                { metrics: tile.metrics, size: tile.tile.size, active: root.expanded })
+                { metrics: tile.metrics, size: tile.tile.size, active: root.menuOpen })
             onLoaded: {
                 item.size = Qt.binding(() => tile.tile.size);
-                item.active = Qt.binding(() => root.expanded);
+                item.active = Qt.binding(() => root.menuOpen);
                 if (item.tdata !== undefined) {
                     item.tdata = Qt.binding(() => tile.tile);
                     item.save = (key, value) => root.saveGroups(Tiles.setProp(root.groups, tile.tile.id, key, value));

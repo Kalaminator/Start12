@@ -104,7 +104,7 @@ Item {
 
     Connections {
         target: root
-        function onExpandedChanged() { root.kbCurrent = null; }
+        function onMenuOpenChanged() { root.kbCurrent = null; }
         function onSearchingChanged() { root.kbCurrent = null; }
     }
 }

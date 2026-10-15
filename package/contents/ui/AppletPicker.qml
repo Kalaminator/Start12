@@ -15,8 +15,9 @@ Window {
     id: picker
     property int group: 0
     readonly property alias explorer: explorer
-    // Panel-only or launcher widgets make no sense inside a tile.
-    readonly property var skip: /systemtray|taskmanager|icontasks|panelspacer|marginsseparator|kickoff|kicker|kickerdash|windowlist|showdesktop|org\.start12\./
+    // Only widgets that make sense inside a Start menu tile (panel, tray, launcher, spacer, battery,
+    // network... are left out). The list only shows installed widgets, so missing ones need no check.
+    readonly property var allow: /^org\.kde\.(plasma\.(analogclock|digitalclock|fuzzyclock|binaryclock|calendar|weather|notes|systemmonitor(\..+)?|mediacontroller|timer|comic|mediaframe|colorpicker|calculator|fifteenpuzzle)|plasma_applet_dict|kdeconnect)$/
 
     function openFor(gi) {
         group = gi;
@@ -71,7 +72,7 @@ Window {
                     id: row
                     required property int index
                     required property var model
-                    readonly property bool hidden: picker.skip.test(model.pluginName)
+                    readonly property bool hidden: !picker.allow.test(model.pluginName)
                     width: ListView.view.width
                     height: hidden ? 0 : implicitHeight
                     visible: !hidden

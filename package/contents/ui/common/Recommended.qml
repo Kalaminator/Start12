@@ -29,7 +29,7 @@ Item {
     }
     Connections {
         target: root
-        function onExpandedChanged() { if (root.expanded) recent.refresh(); }
+        function onMenuOpenChanged() { if (root.menuOpen) recent.refresh(); }
     }
 
     function roleData(row, name) {

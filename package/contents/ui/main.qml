@@ -31,7 +31,6 @@ ContainmentItem {
     // Design mode (T40, not saved): dividers between menu sections can be dragged (common/SplitHandle).
     // The menu stays open on outside clicks; closing it ends design mode.
     property bool designMode: false
-    hideOnWindowDeactivate: !designMode
     // Divider widths: `name` = "<style>" or "<style>/<part>"; stored unscaled, returned scaled.
     function splitFor(name, def) {
         const w = Tiles.splitGet(cfg.splits, name);
@@ -42,7 +41,7 @@ ContainmentItem {
     }
     function editLayout() {
         designMode = true;
-        expanded = true;
+        menuOpen = true;
     }
     Connections {
         target: root.cfg
@@ -439,7 +438,7 @@ ContainmentItem {
     }
     function openUrl(url) {
         Qt.openUrlExternally(url);
-        root.expanded = false;
+        root.menuOpen = false;
     }
     // Pinned website/file/folder (Tiles.custom): open its target, or run "cmd:..." targets.
     function openCustom(c) {
@@ -534,7 +533,7 @@ ContainmentItem {
     }
 
     function close() {
-        root.expanded = false;
+        root.menuOpen = false;
     }
 
     // The Start12 settings window (Plasma's configure dialog with our pages).
@@ -832,7 +831,9 @@ ContainmentItem {
         if (appletItems[applet.id]) return;   // ponytail: plasmawindowed restores children twice, first one wins
         const it = root.itemFor(applet);
         if (!it) return;
-        it.preferredRepresentation = it.fullRepresentation;   // the widget itself, not its panel icon
+        // Like on the desktop: a widget that picks its own look (analog clock = face, its full rep is a calendar)
+        // or switches by size keeps that; one with no preference shows its full representation.
+        if (!it.preferredRepresentation) it.preferredRepresentation = it.fullRepresentation;
         it.visible = false;
         const m = Object.assign({}, appletItems);
         m[applet.id] = it;
@@ -871,8 +872,8 @@ ContainmentItem {
     }
     readonly property AppletPicker appletPicker: AppletPicker {}
 
-    onExpandedChanged: {
-        if (root.expanded) {
+    onMenuOpenChanged: {
+        if (root.menuOpen) {
             rootModel.refresh();
         } else {
             searchText = "";
@@ -893,13 +894,72 @@ ContainmentItem {
     readonly property bool narrowFull: cfg.fullScreen && !fillScreen
 
     Plasmoid.icon: "start-here-kde"
-    // On the desktop (or in a test window) show the menu itself.
-    preferredRepresentation: Plasmoid.formFactor === PlasmaCore.Types.Planar ? fullRepresentation : compactRepresentation
-    compactRepresentation: StartButton {}
+    // A containment (needed to host real widgets) is always "expanded" in libplasma and never gets a
+    // compact representation or popup, so Start12 does what the system tray does: the button is a child of
+    // root and the menu lives in our own AppletPopup (docs/research/real-widgets-spike.md, Follow-up).
+    // menuOpen replaces PlasmoidItem.expanded. On the desktop (or in a test window) the menu shows inline.
+    property bool menuOpen: false
+    readonly property bool planar: Plasmoid.formFactor === PlasmaCore.Types.Planar
+    Plasmoid.onActivated: menuOpen = !menuOpen   // Meta key (ShellCorona::activateLauncherMenu)
+    Layout.minimumWidth: planar ? full.Layout.minimumWidth : startButton.Layout.minimumWidth
+    Layout.minimumHeight: planar ? full.Layout.minimumHeight : startButton.Layout.minimumHeight
+    Layout.preferredWidth: planar ? full.Layout.preferredWidth : startButton.Layout.preferredWidth
+    Layout.preferredHeight: planar ? full.Layout.preferredHeight : startButton.Layout.preferredHeight
 
-    fullRepresentation: Item {
+    StartButton {
+        id: startButton
+        anchors.fill: parent
+        visible: !root.planar
+    }
+
+    // Hosted widgets open their own popups (digital clock calendar); keep the menu open meanwhile.
+    readonly property bool appletPopupOpen: {
+        for (const k in appletItems) if (appletItems[k].expanded) return true;
+        return false;
+    }
+    property int statusBeforeOpen: PlasmaCore.Types.ActiveStatus
+    Timer {
+        id: expandedSync   // as plasma-desktop CompactApplet: lets a click on the button after an outside close stay a close
+        interval: 100
+        onTriggered: root.menuOpen = popup.visible
+    }
+    PlasmaCore.AppletPopup {
+        id: popup
+        visualParent: startButton
+        appletInterface: root
+        mainItem: root.planar ? null : full
+        visible: root.menuOpen && !root.planar
+        hideOnWindowDeactivate: !root.designMode && !root.appletPopupOpen
+        popupDirection: switch (Plasmoid.location) {
+            case PlasmaCore.Types.TopEdge: return Qt.BottomEdge;
+            case PlasmaCore.Types.LeftEdge: return Qt.RightEdge;
+            case PlasmaCore.Types.RightEdge: return Qt.LeftEdge;
+            default: return Qt.TopEdge;
+        }
+        margin: (Plasmoid.containmentDisplayHints & PlasmaCore.Types.ContainmentPrefersFloatingApplets) ? Kirigami.Units.largeSpacing : 0
+        floating: Plasmoid.location === PlasmaCore.Types.Floating
+        removeBorderStrategy: Plasmoid.location === PlasmaCore.Types.Floating
+            ? PlasmaCore.AppletPopup.AtScreenEdges
+            : PlasmaCore.AppletPopup.AtScreenEdges | PlasmaCore.AppletPopup.AtPanelEdges
+        backgroundHints: (Plasmoid.containmentDisplayHints & PlasmaCore.Types.ContainmentPrefersOpaqueBackground)
+            ? PlasmaCore.AppletPopup.SolidBackground : PlasmaCore.AppletPopup.StandardBackground
+        onVisibleChanged: {
+            if (!visible) {
+                expandedSync.restart();
+                Plasmoid.status = root.statusBeforeOpen;
+            } else {
+                root.statusBeforeOpen = Plasmoid.status;
+                Plasmoid.status = PlasmaCore.Types.RequiresAttentionStatus;   // keeps an auto-hide panel up
+                requestActivate();
+                full.forceActiveFocus();
+            }
+        }
+    }
+
+    Item {
         id: full
         focus: true
+        anchors.fill: root.planar ? root : undefined
 
         // The style gives the start size; the user can drag the popup edges to resize it.
         Layout.preferredWidth: root.cfg.fullScreen ? root.fullRect.width
@@ -931,7 +991,7 @@ ContainmentItem {
         // (or menu size), pin the popup once (min = max) at the style's own size until it has opened and
         // stored that size; the user can drag it afterwards as before.
         property bool shrink: false
-        onShrinkChanged: if (shrink && root.expanded) shrinkDone.restart()   // style switched while open
+        onShrinkChanged: if (shrink && root.menuOpen) shrinkDone.restart()   // style switched while open
         Layout.maximumWidth: designW > 0 ? designW
                            : shrink && styleLoader.item ? styleLoader.item.implicitWidth : Number.POSITIVE_INFINITY
         Layout.maximumHeight: shrink && styleLoader.item ? styleLoader.item.implicitHeight : Number.POSITIVE_INFINITY
@@ -958,12 +1018,12 @@ ContainmentItem {
             interval: 400
             onTriggered: {
                 const h = Math.round(full.height / root.cfg.uiScale);
-                if (root.expanded && !root.cfg.fullScreen && Math.abs(full.height - full.Layout.preferredHeight) > 2) {
+                if (root.menuOpen && !root.cfg.fullScreen && Math.abs(full.height - full.Layout.preferredHeight) > 2) {
                     root.cfg.menuHeight = h;
                 }
             }
         }
-        onHeightChanged: if (root.expanded) saveHeight.restart()
+        onHeightChanged: if (root.menuOpen) saveHeight.restart()
 
         // T42 Menu position (key menuPosition 0 left, 1 center, 2 right), horizontal panels only. The popup
         // (AppletPopup) lines its edge up with its visualParent, normally the Start button. For Center/Right it
@@ -972,17 +1032,17 @@ ContainmentItem {
         // the popup there. Done while closed (and once when the popup window first appears) so it opens in place.
         readonly property var popupWindow: Window.window
         onPopupWindowChanged: place()
-        onWidthChanged: if (!root.expanded) place()
+        onWidthChanged: if (!root.menuOpen) place()
         Connections {
             target: root
-            function onExpandedChanged() { if (!root.expanded) full.place(); }
+            function onMenuOpenChanged() { if (!root.menuOpen) full.place(); }
         }
         Connections {
             target: root.cfg
             function onMenuPositionChanged() { full.place(); }
         }
         function place() {
-            const w = popupWindow, btn = root.compactRepresentationItem;
+            const w = popupWindow, btn = startButton;
             if (!w || !btn || !btn.popupAnchor || w.visualParent === undefined) return;
             const g = Plasmoid.containment ? Plasmoid.containment.screenGeometry : null;
             const pos = Plasmoid.formFactor === PlasmaCore.Types.Horizontal && !root.cfg.fullScreen && g && g.width > 0 ? root.cfg.menuPosition : 0;
@@ -1008,9 +1068,9 @@ ContainmentItem {
         }
         Connections {
             target: root
-            function onExpandedChanged() {
-                if (root.expanded && full.shrink) shrinkDone.restart();
-                if (root.expanded && root.cfg.animateMenu) openAnim.restart();
+            function onMenuOpenChanged() {
+                if (root.menuOpen && full.shrink) shrinkDone.restart();
+                if (root.menuOpen && root.cfg.animateMenu) openAnim.restart();
                 else { openAnim.stop(); full.opacity = 1; styleLoader.anchors.topMargin = 0; }
             }
         }
@@ -1020,7 +1080,7 @@ ContainmentItem {
             anchors.fill: parent
             visible: root.narrowFull
             color: Qt.rgba(0, 0, 0, 0.5)
-            MouseArea { anchors.fill: parent; onClicked: root.expanded = false }
+            MouseArea { anchors.fill: parent; onClicked: root.menuOpen = false }
         }
 
         Item {
