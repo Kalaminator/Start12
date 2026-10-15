@@ -32,6 +32,8 @@ PC3.AbstractButton {
     readonly property bool isWidget: Tiles.isWidget(tile.tile.id)
     readonly property string widgetFile: ({ clock: "Clock", calendar: "Calendar", sysmon: "SysMon", drives: "Drives", weather: "Weather", notes: "Notes", photo: "Photo" })[Tiles.widgetKind(tile.tile.id)] || ""
 
+    // Real KDE widget (tile "applet|<id>"): its PlasmoidItem from main.qml, shown in appletSlot.
+    readonly property Item appletItem: Tiles.isApplet(tile.tile.id) ? (root.appletItems[Number(tile.tile.id.slice(7))] || null) : null
     readonly property bool valid: !isWidget && fav.count > 0
     // Pinned website/file/folder instead of an app.
     readonly property var custom: Tiles.custom(tile.tile.id)
@@ -51,6 +53,7 @@ PC3.AbstractButton {
     readonly property string appName: isWidget ? widgetName() : isFolder ? (tile.tile.name || i18n("Folder")) : custom ? custom.name : valid ? role("display") : tile.tile.id
     function widgetName() {
         const k = Tiles.widgetKind(tile.tile.id);
+        if (Tiles.isApplet(tile.tile.id)) return appletItem ? appletItem.plasmoid.title : i18n("Widget");
         return k === "clock" ? i18n("Clock") : k === "calendar" ? i18n("Calendar") : k === "sysmon" ? i18n("System monitor")
             : k === "drives" ? i18n("Drives") : k === "weather" ? i18n("Weather") : k === "notes" ? i18n("Notes") : k === "photo" ? i18n("Photo") : k;
     }
@@ -157,6 +160,24 @@ PC3.AbstractButton {
                     item.save = (key, value) => root.saveGroups(Tiles.setProp(root.groups, tile.tile.id, key, value));
                 }
             }
+        }
+        Item {
+            id: appletSlot
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: label.visible ? label.top : parent.bottom
+            readonly property Item w: tile.appletItem
+            function host() {
+                if (!w) return;
+                w.parent = appletSlot;
+                w.anchors.fill = appletSlot;
+                w.visible = true;
+            }
+            onWChanged: host()
+            Component.onCompleted: host()
+            // The item belongs to the applet: hand it back (hidden) before this tile goes.
+            Component.onDestruction: if (w && w.parent === appletSlot) { w.anchors.fill = undefined; w.visible = false; w.parent = root; }
         }
         PC3.Label {
             id: label
@@ -269,6 +290,9 @@ PC3.AbstractButton {
         const items = isFolder ? [
             { text: i18n("Name folder"), icon: "edit-rename", run: () => tile.folderClicked(true) },
             { text: i18n("Unpin folder from Start"), icon: "window-unpin", run: () => root.unpin(id) }
+        ] : appletItem ? [
+            { text: i18n("Configure widget…"), icon: "configure", run: () => appletItem.plasmoid.internalAction("configure").trigger() },
+            { text: i18n("Remove widget"), icon: "edit-delete", run: () => root.unpin(id) }
         ] : isWidget ? [{ text: i18n("Remove widget"), icon: "edit-delete", run: () => root.unpin(id) }]
           : [{ text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) }];
         const wk = Tiles.widgetKind(id);
@@ -326,7 +350,8 @@ PC3.AbstractButton {
     MouseArea {
         id: mouse
         anchors.fill: parent
-        z: Tiles.widgetKind(tile.tile.id) === "notes" ? -1 : 0   // Notes: clicks go to the text field above
+        // Notes and real KDE widgets: clicks go to the content above; what it does not take comes here.
+        z: Tiles.widgetKind(tile.tile.id) === "notes" || Tiles.isApplet(tile.tile.id) ? -1 : 0
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         // Without this the tile area (a Flickable) steals vertical drags and cancels them.
         preventStealing: true

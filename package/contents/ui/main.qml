@@ -14,7 +14,8 @@ import org.kde.kitemmodels as KItemModels
 import org.kde.iconthemes as KIconThemes
 import "code/tiles.js" as Tiles
 
-PlasmoidItem {
+// Root is a ContainmentItem (metadata CustomEmbedded) so real KDE widgets can live in tiles (applet|<id>).
+ContainmentItem {
     id: root
 
     readonly property var cfg: Plasmoid.configuration
@@ -109,6 +110,11 @@ PlasmoidItem {
         saveGroups(Tiles.place(groups, id, g, groups.length ? groups[g].tiles.length : 0));
     }
     function unpin(id) {
+        if (Tiles.isApplet(id)) {
+            const a = appletFor(id);
+            removedApplets.push(Number(String(id).slice(7)));   // "remove" only marks it transient (undo); a twin may stay
+            if (a) a.internalAction("remove").trigger();
+        }
         if (usesTiles) {
             // Folder ids repeat across pages: a folder only goes on the shown page.
             savePages(Tiles.isFolder(id) ? Tiles.setPage(pages, tilePage, Tiles.remove(groups, id))
@@ -810,6 +816,60 @@ PlasmoidItem {
     readonly property var widgetItems: [["clock", i18n("Clock")], ["calendar", i18n("Calendar")], ["sysmon", i18n("System monitor")],
         ["drives", i18n("Drives")], ["weather", i18n("Weather")], ["notes", i18n("Notes")], ["photo", i18n("Photo")]]
         .map(k => ({ kind: k[0], text: k[1], run: () => savePages(Tiles.addWidget(pages, tilePage, k[0])) }))
+        .concat([{ kind: "", text: i18n("KDE widgets…"), icon: "plasmagik", run: () => appletPicker.openFor(0) }])   // kind "" = real widget
+
+    // Real KDE widgets: child applets of this containment, one tile "applet|<applet.id>" each.
+    property var appletItems: ({})          // applet.id -> its PlasmoidItem (reparented into the tile)
+    property int pendingAppletGroup: -1     // group for the applet being created by the picker
+    property var removedApplets: []         // ids removed this session (still listed until Plasma deletes them)
+    function appletFor(tileId) {
+        const aid = Number(String(tileId).slice(7));
+        const list = Containment.applets;
+        for (let i = 0; i < list.length; i++) if (list[i].id === aid) return list[i];
+        return null;
+    }
+    function hostApplet(applet) {
+        if (appletItems[applet.id]) return;   // ponytail: plasmawindowed restores children twice, first one wins
+        const it = root.itemFor(applet);
+        if (!it) return;
+        it.preferredRepresentation = it.fullRepresentation;   // the widget itself, not its panel icon
+        it.visible = false;
+        const m = Object.assign({}, appletItems);
+        m[applet.id] = it;
+        appletItems = m;
+    }
+    function addApplet(pluginName, gi) {
+        pendingAppletGroup = gi;
+        appletPicker.explorer.addApplet(pluginName);   // Containment.onAppletAdded places the tile
+    }
+    Containment.onAppletAdded: (applet, geometry) => {
+        hostApplet(applet);
+        if (pendingAppletGroup >= 0) {
+            savePages(Tiles.addApplet(pages, tilePage, applet.id, pendingAppletGroup));
+            pendingAppletGroup = -1;
+        }
+        appletSync.restart();
+    }
+    Containment.onAppletRemoved: applet => {
+        const m = Object.assign({}, appletItems);
+        delete m[applet.id];
+        appletItems = m;
+        appletSync.restart();
+    }
+    // Restore check (also after adds/removes): each live applet has exactly one tile, tiles of gone applets go.
+    Timer {
+        id: appletSync
+        interval: 1000
+        onTriggered: {
+            const ids = [];
+            const list = root.Containment.applets;
+            for (let i = 0; i < list.length; i++)
+                if (ids.indexOf(list[i].id) < 0 && root.removedApplets.indexOf(list[i].id) < 0) ids.push(list[i].id);
+            const next = Tiles.syncApplets(root.pages, ids);
+            if (JSON.stringify(next) !== JSON.stringify(root.pages)) root.savePages(next);
+        }
+    }
+    readonly property AppletPicker appletPicker: AppletPicker {}
 
     onExpandedChanged: {
         if (root.expanded) {
@@ -1125,6 +1185,8 @@ PlasmoidItem {
 
     Component.onCompleted: {
         Plasmoid.activationTogglesExpanded = true;
+        for (let i = 0; i < Containment.applets.length; i++) hostApplet(Containment.applets[i]);
+        appletSync.start();
         rootModel.refresh();
         systemModel = systemModelComponent.createObject(root, { favoritesModel: rootModel.systemFavoritesModel });
         // T44: code/setup.sh makes the generated themes first (KDE Store installs skip install.sh), then the syncs apply them.
