@@ -1292,7 +1292,8 @@ ContainmentItem {
             + "for (const c of panels().concat(desktops())) for (const w of c.widgets()) { if (w.id != ID) continue;"
             + " c.currentConfigGroup = ['Applets', String(ID), 'Configuration'];"
             + " const old = {}; for (const g of c.configGroups.slice()) { c.currentConfigGroup = ['Applets', String(ID), 'Configuration', g]; old[g] = {};"
-            + "  for (const k of c.configKeys.slice()) old[g][k] = c.readConfig(k, ''); }"
+            // one-shot *Request keys (open settings, design mode, reset/backup) are not copied: changing them acts.
+            + "  for (const k of c.configKeys.slice()) if (!/Request$/.test(k)) old[g][k] = c.readConfig(k, ''); }"
             + " for (const g in old) { w.currentConfigGroup = [g]; for (const k in old[g]) w.writeConfig(k, old[g][k]); }"
             + " w.currentConfigGroup = ['General']; w.writeConfig('configMigrated', 'true'); w.reloadConfig(); }";
         run(Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript " + Tiles.shQuote(script));
