@@ -650,6 +650,24 @@ PlasmoidItem {
         onAccepted: root.saveGroups(Tiles.setProp(root.groups, root.pickingTile, "image",
             decodeURIComponent(selectedFile.toString().replace("file://", ""))))
     }
+    Dialogs.FileDialog {
+        id: photoFileDialog
+        title: i18n("Choose picture…")
+        nameFilters: [i18n("Images (*.png *.jpg *.jpeg *.webp *.svg)")]
+        onAccepted: root.saveGroups(Tiles.setProp(root.groups, root.pickingTile, "photo",
+            decodeURIComponent(selectedFile.toString().replace("file://", ""))))
+    }
+    Dialogs.FolderDialog {
+        id: photoFolderDialog
+        title: i18n("Choose folder…")
+        onAccepted: root.saveGroups(Tiles.setProp(root.groups, root.pickingTile, "photo",
+            "dir:" + decodeURIComponent(selectedFolder.toString().replace("file://", ""))))
+    }
+    function pickPhoto(id, folder) {
+        pickingTile = id;
+        close();
+        (folder ? photoFolderDialog : photoFileDialog).open();
+    }
     function pickTileImage(id) {
         pickingTile = id;
         close();
@@ -789,7 +807,8 @@ PlasmoidItem {
     ]
 
     // "Add widget" submenu (TileArea, TileGroup): a new kind = Tiles.WIDGETS + here + Tile.widgetFile + widgets/<Kind>.qml.
-    readonly property var widgetItems: [["clock", i18n("Clock")], ["calendar", i18n("Calendar")], ["sysmon", i18n("System monitor")]]
+    readonly property var widgetItems: [["clock", i18n("Clock")], ["calendar", i18n("Calendar")], ["sysmon", i18n("System monitor")],
+        ["drives", i18n("Drives")], ["weather", i18n("Weather")], ["notes", i18n("Notes")], ["photo", i18n("Photo")]]
         .map(k => ({ kind: k[0], text: k[1], run: () => savePages(Tiles.addWidget(pages, tilePage, k[0])) }))
 
     onExpandedChanged: {

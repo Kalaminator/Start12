@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Start12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-15 14:03+0200\n"
+"POT-Creation-Date: 2026-10-15 14:10+0200\n"
 "PO-Revision-Date: 2026-10-14 12:00+0000\n"
 "Last-Translator: Start12\n"
 "Language-Team: Spanish\n"
@@ -124,7 +124,7 @@ msgstr "Archivos recientes"
 #: package/contents/ui/common/AppCanvas.qml:458
 #: package/contents/ui/common/AppCanvas.qml:466
 #: package/contents/ui/common/PinnedGrid.qml:138
-#: package/contents/ui/main.qml:747 package/contents/ui/styles/windows7.qml:300
+#: package/contents/ui/main.qml:765 package/contents/ui/styles/windows7.qml:300
 #: package/contents/ui/styles/xp.qml:346
 msgid "Rename"
 msgstr "Cambiar nombre"
@@ -187,17 +187,17 @@ msgstr "Tamaño de iconos"
 
 #: package/contents/ui/common/AppCanvas.qml:288
 #: package/contents/ui/config/ConfigStyle.qml:148
-#: package/contents/ui/win10/Tile.qml:284
+#: package/contents/ui/win10/Tile.qml:295
 msgid "Small"
 msgstr "Pequeño"
 
 #: package/contents/ui/common/AppCanvas.qml:288
-#: package/contents/ui/win10/Tile.qml:284
+#: package/contents/ui/win10/Tile.qml:295
 msgid "Medium"
 msgstr "Mediano"
 
 #: package/contents/ui/common/AppCanvas.qml:288
-#: package/contents/ui/win10/Tile.qml:284
+#: package/contents/ui/win10/Tile.qml:295
 msgid "Large"
 msgstr "Grande"
 
@@ -223,7 +223,7 @@ msgstr "(Vacío)"
 #: package/contents/ui/common/Recommended.qml:71
 #: package/contents/ui/win10/AppList.qml:176
 #: package/contents/ui/win10/SearchView.qml:291
-#: package/contents/ui/win10/Tile.qml:268
+#: package/contents/ui/win10/Tile.qml:273
 msgid "Unpin from Start"
 msgstr "Desanclar de Inicio"
 
@@ -350,7 +350,7 @@ msgstr "Actualizaciones"
 #: package/contents/ui/common/Places.qml:41
 #: package/contents/ui/config/ConfigButton.qml:25
 #: package/contents/ui/config/ConfigRail.qml:39
-#: package/contents/ui/main.qml:1015
+#: package/contents/ui/main.qml:1034
 msgid "File Explorer"
 msgstr "Explorador de archivos"
 
@@ -363,7 +363,7 @@ msgstr "Personalización"
 #: package/contents/ui/config/ConfigButton.qml:25
 #: package/contents/ui/config/ConfigRail.qml:41
 #: package/contents/ui/config/ConfigSearch.qml:24
-#: package/contents/ui/main.qml:1009
+#: package/contents/ui/main.qml:1028
 #: package/contents/ui/win10/SearchView.qml:31
 msgid "Settings"
 msgstr "Configuración"
@@ -371,21 +371,21 @@ msgstr "Configuración"
 #: package/contents/ui/common/Places.qml:44
 #: package/contents/ui/config/ConfigButton.qml:26
 #: package/contents/ui/config/ConfigRail.qml:42
-#: package/contents/ui/main.qml:1027
+#: package/contents/ui/main.qml:1046
 msgid "Terminal"
 msgstr "Terminal"
 
 #: package/contents/ui/common/Places.qml:45
 #: package/contents/ui/config/ConfigButton.qml:25
 #: package/contents/ui/config/ConfigRail.qml:43
-#: package/contents/ui/main.qml:1021
+#: package/contents/ui/main.qml:1040
 msgid "System Monitor"
 msgstr "Monitor del sistema"
 
 #: package/contents/ui/common/Places.qml:46
 #: package/contents/ui/config/ConfigButton.qml:26
 #: package/contents/ui/config/ConfigRail.qml:44
-#: package/contents/ui/main.qml:1033
+#: package/contents/ui/main.qml:1052
 msgid "Run…"
 msgstr "Ejecutar…"
 
@@ -403,13 +403,13 @@ msgstr "Energía"
 
 #: package/contents/ui/common/Places.qml:63
 #: package/contents/ui/config/ConfigRail.qml:49
-#: package/contents/ui/main.qml:1062
+#: package/contents/ui/main.qml:1081
 msgid "Lock"
 msgstr "Bloquear"
 
 #: package/contents/ui/common/Places.qml:64
 #: package/contents/ui/config/ConfigRail.qml:49
-#: package/contents/ui/main.qml:1068
+#: package/contents/ui/main.qml:1087
 msgid "Sign out"
 msgstr "Cerrar sesión"
 
@@ -420,7 +420,7 @@ msgstr "Cambiar de usuario"
 
 #: package/contents/ui/common/Places.qml:66
 #: package/contents/ui/config/ConfigRail.qml:50
-#: package/contents/ui/main.qml:1074
+#: package/contents/ui/main.qml:1093
 msgid "Sleep"
 msgstr "Suspender"
 
@@ -431,13 +431,13 @@ msgstr "Hibernar"
 
 #: package/contents/ui/common/Places.qml:68
 #: package/contents/ui/config/ConfigRail.qml:50
-#: package/contents/ui/main.qml:1080
+#: package/contents/ui/main.qml:1099
 msgid "Restart"
 msgstr "Reiniciar"
 
 #: package/contents/ui/common/Places.qml:69
 #: package/contents/ui/config/ConfigRail.qml:51
-#: package/contents/ui/main.qml:1086
+#: package/contents/ui/main.qml:1105
 #: package/contents/ui/styles/windows7.qml:614
 msgid "Shut down"
 msgstr "Apagar"
@@ -459,17 +459,17 @@ msgid "Search apps and files"
 msgstr "Buscar aplicaciones y archivos"
 
 #: package/contents/ui/config/ConfigButton.qml:26
-#: package/contents/ui/main.qml:1039
+#: package/contents/ui/main.qml:1058
 msgid "Show desktop"
 msgstr "Mostrar el escritorio"
 
 #: package/contents/ui/config/ConfigButton.qml:26
-#: package/contents/ui/main.qml:1045
+#: package/contents/ui/main.qml:1064
 msgid "Edit panel"
 msgstr "Editar panel"
 
 #: package/contents/ui/config/ConfigButton.qml:26
-#: package/contents/ui/main.qml:1051
+#: package/contents/ui/main.qml:1070
 msgid "Auto-hide panel"
 msgstr "Ocultar panel automáticamente"
 
@@ -629,7 +629,7 @@ msgstr "Elegir textura personalizada…"
 
 #: package/contents/ui/config/ConfigLook.qml:52
 #: package/contents/ui/config/ConfigLook.qml:59
-#: package/contents/ui/main.qml:649
+#: package/contents/ui/main.qml:649 package/contents/ui/main.qml:656
 msgid "Images (*.png *.jpg *.jpeg *.webp *.svg)"
 msgstr "Imágenes (*.png *.jpg *.jpeg *.webp *.svg)"
 
@@ -961,7 +961,7 @@ msgstr "Quitar"
 
 #: package/contents/ui/config/ConfigMenu.qml:153
 #: package/contents/ui/config/ConfigRail.qml:175
-#: package/contents/ui/main.qml:761
+#: package/contents/ui/main.qml:779
 msgid "Name:"
 msgstr "Nombre:"
 
@@ -987,7 +987,7 @@ msgstr "Añadir carpeta filtrada"
 
 #: package/contents/ui/config/ConfigMenu.qml:169
 #: package/contents/ui/config/ConfigStyle.qml:194
-#: package/contents/ui/main.qml:990 package/contents/ui/win10/Tile.qml:256
+#: package/contents/ui/main.qml:1009 package/contents/ui/win10/Tile.qml:261
 msgid "Reset"
 msgstr "Restablecer"
 
@@ -1329,7 +1329,7 @@ msgid "Colour scheme:"
 msgstr "Combinación de colores:"
 
 #: package/contents/ui/config/ConfigStyle.qml:126
-#: package/contents/ui/win10/Tile.qml:187
+#: package/contents/ui/win10/Tile.qml:192
 msgid "Blue"
 msgstr "Azul"
 
@@ -1632,79 +1632,104 @@ msgstr "Desanclar de la barra de tareas"
 msgid "Pin to taskbar"
 msgstr "Anclar a la barra de tareas"
 
-#: package/contents/ui/main.qml:701
+#: package/contents/ui/main.qml:655 package/contents/ui/win10/Tile.qml:278
+msgid "Choose picture…"
+msgstr "Elegir imagen…"
+
+#: package/contents/ui/main.qml:662 package/contents/ui/win10/Tile.qml:279
+msgid "Choose folder…"
+msgstr "Elegir carpeta…"
+
+#: package/contents/ui/main.qml:719
 msgid "Pin file to Start"
 msgstr "Anclar archivo a Inicio"
 
-#: package/contents/ui/main.qml:707
+#: package/contents/ui/main.qml:725
 msgid "Add a folder as group"
 msgstr "Añadir una carpeta como grupo"
 
-#: package/contents/ui/main.qml:707
+#: package/contents/ui/main.qml:725
 msgid "Pin folder to Start"
 msgstr "Anclar carpeta a Inicio"
 
-#: package/contents/ui/main.qml:713
+#: package/contents/ui/main.qml:731
 msgid "Pin website to Start"
 msgstr "Anclar sitio web a Inicio"
 
-#: package/contents/ui/main.qml:728
+#: package/contents/ui/main.qml:746
 msgid "Web address:"
 msgstr "Dirección web:"
 
-#: package/contents/ui/main.qml:738
+#: package/contents/ui/main.qml:756
 msgid "Pin"
 msgstr "Anclar"
 
-#: package/contents/ui/main.qml:739 package/contents/ui/main.qml:771
+#: package/contents/ui/main.qml:757 package/contents/ui/main.qml:789
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: package/contents/ui/main.qml:761
+#: package/contents/ui/main.qml:779
 msgid "Name (empty = original):"
 msgstr "Nombre (vacío = original):"
 
-#: package/contents/ui/main.qml:770
+#: package/contents/ui/main.qml:788
 msgid "OK"
 msgstr "Aceptar"
 
-#: package/contents/ui/main.qml:786
+#: package/contents/ui/main.qml:804
 msgid "Pin website…"
 msgstr "Anclar sitio web…"
 
-#: package/contents/ui/main.qml:787
+#: package/contents/ui/main.qml:805
 msgid "Pin file…"
 msgstr "Anclar archivo…"
 
-#: package/contents/ui/main.qml:788
+#: package/contents/ui/main.qml:806
 msgid "Pin folder…"
 msgstr "Anclar carpeta…"
 
-#: package/contents/ui/main.qml:792 package/contents/ui/win10/Tile.qml:54
+#: package/contents/ui/main.qml:810 package/contents/ui/win10/Tile.qml:54
 msgid "Clock"
 msgstr "Reloj"
 
-#: package/contents/ui/main.qml:792 package/contents/ui/win10/Tile.qml:54
+#: package/contents/ui/main.qml:810 package/contents/ui/win10/Tile.qml:54
 msgid "Calendar"
 msgstr "Calendario"
 
+#: package/contents/ui/main.qml:810 package/contents/ui/win10/Tile.qml:54
 #, fuzzy
 msgid "System monitor"
 msgstr "Monitor del sistema"
 
-#: package/contents/ui/main.qml:985
+#: package/contents/ui/main.qml:811 package/contents/ui/win10/Tile.qml:55
+msgid "Drives"
+msgstr "Unidades"
+
+#: package/contents/ui/main.qml:811 package/contents/ui/win10/Tile.qml:55
+msgid "Weather"
+msgstr "El tiempo"
+
+#: package/contents/ui/main.qml:811 package/contents/ui/win10/Tile.qml:55
+msgid "Notes"
+msgstr "Notas"
+
+#: package/contents/ui/main.qml:811 package/contents/ui/win10/Tile.qml:55
+msgid "Photo"
+msgstr "Foto"
+
+#: package/contents/ui/main.qml:1004
 msgid "Design mode — drag the dividers"
 msgstr "Modo diseño — arrastra los divisores"
 
-#: package/contents/ui/main.qml:995
+#: package/contents/ui/main.qml:1014
 msgid "Done"
 msgstr "Hecho"
 
-#: package/contents/ui/main.qml:1095
+#: package/contents/ui/main.qml:1114
 msgid "Edit menu layout"
 msgstr "Editar diseño del menú"
 
-#: package/contents/ui/main.qml:1100
+#: package/contents/ui/main.qml:1119
 msgctxt "@action:inmenu"
 msgid "Edit Applications…"
 msgstr "Editar aplicaciones…"
@@ -1763,6 +1788,26 @@ msgstr "Cerrar sesión"
 msgid "Turn Off Computer"
 msgstr "Apagar el equipo"
 
+#: package/contents/ui/widgets/Drives.qml:62
+msgid "%1 TB"
+msgstr "%1 TB"
+
+#: package/contents/ui/widgets/Drives.qml:63
+msgid "%1 GB"
+msgstr "%1 GB"
+
+#: package/contents/ui/widgets/Drives.qml:136
+msgid "%1 free of %2"
+msgstr "%1 libres de %2"
+
+#: package/contents/ui/widgets/Notes.qml:25
+msgid "Write a note…"
+msgstr "Escribe una nota…"
+
+#: package/contents/ui/widgets/Photo.qml:54
+msgid "Right-click to choose a picture or folder"
+msgstr "Clic derecho para elegir una imagen o carpeta"
+
 #: package/contents/ui/widgets/SysMon.qml:90
 msgid "CPU"
 msgstr "CPU"
@@ -1770,6 +1815,22 @@ msgstr "CPU"
 #: package/contents/ui/widgets/SysMon.qml:91
 msgid "RAM"
 msgstr "RAM"
+
+#: package/contents/ui/widgets/Weather.qml:34
+msgid "Weather unavailable"
+msgstr "El tiempo no está disponible"
+
+#: package/contents/ui/widgets/Weather.qml:54
+msgid "Location not found"
+msgstr "Ubicación no encontrada"
+
+#: package/contents/ui/widgets/Weather.qml:77
+msgid "Right-click to set location"
+msgstr "Clic derecho para establecer la ubicación"
+
+#: package/contents/ui/widgets/Weather.qml:77
+msgid "Loading…"
+msgstr "Cargando…"
 
 #: package/contents/ui/win10/AppList.qml:35
 msgid "Desktop"
@@ -1809,7 +1870,7 @@ msgid "No items match your search"
 msgstr "Ningún elemento coincide con tu búsqueda"
 
 #: package/contents/ui/win10/TileArea.qml:37
-#: package/contents/ui/win10/TileGroup.qml:160
+#: package/contents/ui/win10/TileGroup.qml:161
 msgid "Add widget"
 msgstr "Añadir widget"
 
@@ -1843,162 +1904,166 @@ msgstr ""
 "Arrastra aplicaciones aquí, o haz clic derecho en una aplicación y elige "
 "«Anclar a Inicio»."
 
-#: package/contents/ui/win10/TileGroup.qml:87
+#: package/contents/ui/win10/TileGroup.qml:89
 msgid "Group"
 msgstr "Grupo"
 
-#: package/contents/ui/win10/TileGroup.qml:117
-#: package/contents/ui/win10/TileGroup.qml:130
-#: package/contents/ui/win10/TileGroup.qml:159
+#: package/contents/ui/win10/TileGroup.qml:119
+#: package/contents/ui/win10/TileGroup.qml:131
+#: package/contents/ui/win10/TileGroup.qml:160
 msgid "Name group"
 msgstr "Nombre del grupo"
 
-#: package/contents/ui/win10/TileGroup.qml:161
+#: package/contents/ui/win10/TileGroup.qml:162
 msgid "Resort group A-Z"
 msgstr "Reordenar grupo A-Z"
 
-#: package/contents/ui/win10/TileGroup.qml:163
+#: package/contents/ui/win10/TileGroup.qml:164
 msgid "Move group up"
 msgstr "Subir grupo"
 
-#: package/contents/ui/win10/TileGroup.qml:165
+#: package/contents/ui/win10/TileGroup.qml:166
 msgid "Move group down"
 msgstr "Bajar grupo"
 
-#: package/contents/ui/win10/TileGroup.qml:167
+#: package/contents/ui/win10/TileGroup.qml:168
 msgid "Move to previous page"
 msgstr "Mover a la página anterior"
 
-#: package/contents/ui/win10/TileGroup.qml:169
+#: package/contents/ui/win10/TileGroup.qml:170
 msgid "Move to next page"
 msgstr "Mover a la página siguiente"
 
-#: package/contents/ui/win10/TileGroup.qml:172
+#: package/contents/ui/win10/TileGroup.qml:173
 msgid "Unpin group from Start"
 msgstr "Desanclar grupo de Inicio"
 
-#: package/contents/ui/win10/TileGroup.qml:246
-#: package/contents/ui/win10/Tile.qml:265
+#: package/contents/ui/win10/TileGroup.qml:247
+#: package/contents/ui/win10/Tile.qml:270
 msgid "Name folder"
 msgstr "Nombre de la carpeta"
 
-#: package/contents/ui/win10/Tile.qml:186
+#: package/contents/ui/win10/Tile.qml:191
 msgid "Red"
 msgstr "Rojo"
 
-#: package/contents/ui/win10/Tile.qml:186
+#: package/contents/ui/win10/Tile.qml:191
 msgid "Orange"
 msgstr "Naranja"
 
-#: package/contents/ui/win10/Tile.qml:186
+#: package/contents/ui/win10/Tile.qml:191
 msgid "Yellow"
 msgstr "Amarillo"
 
-#: package/contents/ui/win10/Tile.qml:186
+#: package/contents/ui/win10/Tile.qml:191
 msgid "Lime"
 msgstr "Lima"
 
-#: package/contents/ui/win10/Tile.qml:187
+#: package/contents/ui/win10/Tile.qml:192
 msgid "Green"
 msgstr "Verde"
 
-#: package/contents/ui/win10/Tile.qml:187
+#: package/contents/ui/win10/Tile.qml:192
 msgid "Teal"
 msgstr "Verde azulado"
 
-#: package/contents/ui/win10/Tile.qml:187
+#: package/contents/ui/win10/Tile.qml:192
 msgid "Cyan"
 msgstr "Cian"
 
-#: package/contents/ui/win10/Tile.qml:188
+#: package/contents/ui/win10/Tile.qml:193
 msgid "Indigo"
 msgstr "Índigo"
 
-#: package/contents/ui/win10/Tile.qml:188
+#: package/contents/ui/win10/Tile.qml:193
 msgid "Purple"
 msgstr "Morado"
 
-#: package/contents/ui/win10/Tile.qml:188
+#: package/contents/ui/win10/Tile.qml:193
 msgid "Pink"
 msgstr "Rosa"
 
-#: package/contents/ui/win10/Tile.qml:188
+#: package/contents/ui/win10/Tile.qml:193
 msgid "Brown"
 msgstr "Marrón"
 
-#: package/contents/ui/win10/Tile.qml:189
+#: package/contents/ui/win10/Tile.qml:194
 msgid "Grey"
 msgstr "Gris"
 
-#: package/contents/ui/win10/Tile.qml:255
+#: package/contents/ui/win10/Tile.qml:260
 msgid "Custom colour…"
 msgstr "Color personalizado…"
 
-#: package/contents/ui/win10/Tile.qml:266
+#: package/contents/ui/win10/Tile.qml:271
 msgid "Unpin folder from Start"
 msgstr "Desanclar carpeta de Inicio"
 
-#: package/contents/ui/win10/Tile.qml:267
+#: package/contents/ui/win10/Tile.qml:272
 msgid "Remove widget"
 msgstr "Quitar widget"
 
-#: package/contents/ui/win10/Tile.qml:270
+#: package/contents/ui/win10/Tile.qml:276
+msgid "Set location…"
+msgstr "Establecer ubicación…"
+
+#: package/contents/ui/win10/Tile.qml:281
 msgid "Set icon…"
 msgstr "Establecer icono…"
 
-#: package/contents/ui/win10/Tile.qml:271
+#: package/contents/ui/win10/Tile.qml:282
 msgid "Reset custom icon"
 msgstr "Restablecer icono personalizado"
 
-#: package/contents/ui/win10/Tile.qml:273
+#: package/contents/ui/win10/Tile.qml:284
 msgid "Hide icon text"
 msgstr "Ocultar texto de iconos"
 
-#: package/contents/ui/win10/Tile.qml:273
+#: package/contents/ui/win10/Tile.qml:284
 msgid "Show icon text"
 msgstr "Mostrar texto de iconos"
 
-#: package/contents/ui/win10/Tile.qml:275
+#: package/contents/ui/win10/Tile.qml:286
 msgid "Tile colour…"
 msgstr "Color del mosaico…"
 
-#: package/contents/ui/win10/Tile.qml:277
+#: package/contents/ui/win10/Tile.qml:288
 msgid "Set tile image…"
 msgstr "Poner imagen al mosaico…"
 
-#: package/contents/ui/win10/Tile.qml:278
+#: package/contents/ui/win10/Tile.qml:289
 msgid "Remove tile image"
 msgstr "Quitar imagen del mosaico"
 
-#: package/contents/ui/win10/Tile.qml:280
+#: package/contents/ui/win10/Tile.qml:291
 msgid "Show icon"
 msgstr "Mostrar icono"
 
-#: package/contents/ui/win10/Tile.qml:280
+#: package/contents/ui/win10/Tile.qml:291
 msgid "Hide icon"
 msgstr "Ocultar icono"
 
-#: package/contents/ui/win10/Tile.qml:283
+#: package/contents/ui/win10/Tile.qml:294
 msgid "Resize"
 msgstr "Cambiar tamaño"
 
-#: package/contents/ui/win10/Tile.qml:284
+#: package/contents/ui/win10/Tile.qml:295
 msgid "Wide"
 msgstr "Ancho"
 
-#: package/contents/ui/win10/Tile.qml:285
+#: package/contents/ui/win10/Tile.qml:296
 msgid "W. Large H."
 msgstr "Muy grande H."
 
-#: package/contents/ui/win10/Tile.qml:285
+#: package/contents/ui/win10/Tile.qml:296
 msgid "W. Large V."
 msgstr "Muy grande V."
 
-#: package/contents/ui/win10/Tile.qml:286
+#: package/contents/ui/win10/Tile.qml:297
 msgid "3x6 H."
 msgstr "3x6 H."
 
-#: package/contents/ui/win10/Tile.qml:286
+#: package/contents/ui/win10/Tile.qml:297
 msgid "3x6 V."
 msgstr "3x6 V."
 

@@ -160,7 +160,7 @@ function isFolder(id) {
 }
 
 // Widget tiles: id "widget|<kind>|<n>" (n makes each one unique). Rendered by ui/widgets/<Kind>.qml.
-var WIDGETS = ["clock", "calendar", "sysmon"];
+var WIDGETS = ["clock", "calendar", "sysmon", "drives", "weather", "notes", "photo"];
 function isWidget(id) {
     return typeof id === "string" && id.indexOf("widget|") === 0;
 }

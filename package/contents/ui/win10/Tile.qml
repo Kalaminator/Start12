@@ -30,7 +30,7 @@ PC3.AbstractButton {
 
     readonly property bool isFolder: tile.tile.kind === "folder"
     readonly property bool isWidget: Tiles.isWidget(tile.tile.id)
-    readonly property string widgetFile: ({ clock: "Clock", calendar: "Calendar", sysmon: "SysMon" })[Tiles.widgetKind(tile.tile.id)] || ""
+    readonly property string widgetFile: ({ clock: "Clock", calendar: "Calendar", sysmon: "SysMon", drives: "Drives", weather: "Weather", notes: "Notes", photo: "Photo" })[Tiles.widgetKind(tile.tile.id)] || ""
 
     readonly property bool valid: !isWidget && fav.count > 0
     // Pinned website/file/folder instead of an app.
@@ -51,7 +51,8 @@ PC3.AbstractButton {
     readonly property string appName: isWidget ? widgetName() : isFolder ? (tile.tile.name || i18n("Folder")) : custom ? custom.name : valid ? role("display") : tile.tile.id
     function widgetName() {
         const k = Tiles.widgetKind(tile.tile.id);
-        return k === "clock" ? i18n("Clock") : k === "calendar" ? i18n("Calendar") : k === "sysmon" ? i18n("System monitor") : k;
+        return k === "clock" ? i18n("Clock") : k === "calendar" ? i18n("Calendar") : k === "sysmon" ? i18n("System monitor")
+            : k === "drives" ? i18n("Drives") : k === "weather" ? i18n("Weather") : k === "notes" ? i18n("Notes") : k === "photo" ? i18n("Photo") : k;
     }
     onAppNameChanged: nameKnown(appName)
     Component.onCompleted: nameKnown(appName)
@@ -151,6 +152,10 @@ PC3.AbstractButton {
             onLoaded: {
                 item.size = Qt.binding(() => tile.tile.size);
                 item.active = Qt.binding(() => root.expanded);
+                if (item.tdata !== undefined) {
+                    item.tdata = Qt.binding(() => tile.tile);
+                    item.save = (key, value) => root.saveGroups(Tiles.setProp(root.groups, tile.tile.id, key, value));
+                }
             }
         }
         PC3.Label {
@@ -172,7 +177,7 @@ PC3.AbstractButton {
         if (isFolder) {
             folderClicked(false);
         } else if (isWidget) {
-            return;   // ponytail: widgets do nothing on click
+            return;   // ponytail: widgets do nothing on click (Drives reacts through widgetClick)
         } else if (custom) {
             root.openCustom(custom);
         } else if (valid) {
@@ -266,6 +271,12 @@ PC3.AbstractButton {
             { text: i18n("Unpin folder from Start"), icon: "window-unpin", run: () => root.unpin(id) }
         ] : isWidget ? [{ text: i18n("Remove widget"), icon: "edit-delete", run: () => root.unpin(id) }]
           : [{ text: i18n("Unpin from Start"), icon: "window-unpin", run: () => root.unpin(id) }];
+        const wk = Tiles.widgetKind(id);
+        if (wk === "weather") items.push(
+            { text: i18n("Set location…"), icon: "mark-location", run: () => root.askName(tile.tile.loc, name => set("loc", name)) });
+        if (wk === "photo") items.push(
+            { text: i18n("Choose picture…"), icon: "viewimage", run: () => root.pickPhoto(id, false) },
+            { text: i18n("Choose folder…"), icon: "folder-pictures", run: () => root.pickPhoto(id, true) });
         if (!isFolder && !isWidget) items.push(
             { text: i18n("Set icon…"), icon: "preferences-desktop-icons", run: () => root.pickTileIcon(id) },
             { text: i18n("Reset custom icon"), icon: "edit-undo", enabled: !!tile.tile.icon, run: () => set("icon", "") });
@@ -315,6 +326,7 @@ PC3.AbstractButton {
     MouseArea {
         id: mouse
         anchors.fill: parent
+        z: Tiles.widgetKind(tile.tile.id) === "notes" ? -1 : 0   // Notes: clicks go to the text field above
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         // Without this the tile area (a Flickable) steals vertical drags and cancels them.
         preventStealing: true
@@ -342,7 +354,10 @@ PC3.AbstractButton {
                 tile.ghost.Drag.active = false;
                 dragging = false;
             } else if (m.button === Qt.LeftButton && containsMouse) {
-                tile.launch();
+                if (tile.isWidget && widgetLoader.item && widgetLoader.item.click) {
+                    const p = mapToItem(widgetLoader.item, m.x, m.y);
+                    widgetLoader.item.click(p.x, p.y);
+                } else tile.launch();
             } else if (m.button === Qt.RightButton) {
                 tile.contextMenu.show(tile, tile.valid ? fav : null, 0, tile.menuItems(), m.x, m.y);
             }
