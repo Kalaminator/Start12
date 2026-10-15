@@ -90,6 +90,7 @@ Item {
     Column {
         visible: !w.tiny
         width: parent.width
+        anchors.verticalCenter: parent.verticalCenter
         Repeater {
             model: w.tiny ? [] : w.drives.slice(0, w.rows)
             delegate: Item {
@@ -128,12 +129,14 @@ Item {
                             width: parent.width * Math.max(0, Math.min(1, 1 - row.modelData.free / row.modelData.total))
                             height: parent.height
                             radius: height / 2
-                            color: w.metrics.accent
+                            color: w.metrics.text   // not accent: tiles are often accent coloured
                         }
                     }
                     Text {
                         width: parent.width
-                        text: i18n("%1 free of %2", w.human(row.modelData.free), w.human(row.modelData.total))
+                        // Narrow tiles drop the total so the free space is not cut off.
+                        text: w.width < w.metrics.px(150) ? i18n("%1 free", w.human(row.modelData.free))
+                            : i18n("%1 free of %2", w.human(row.modelData.free), w.human(row.modelData.total))
                         elide: Text.ElideRight
                         color: w.metrics.text
                         opacity: 0.8
