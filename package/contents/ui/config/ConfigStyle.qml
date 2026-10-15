@@ -30,6 +30,10 @@ KCM.SimpleKCM {
     property alias cfg_xpCustomColor: xpCustom.color
     property string cfg_resetRequest
 
+    // Vertical panel (Types.LeftEdge 5 / RightEdge 6): positions read Top/Middle/Bottom. `plasmoid` is the
+    // applet in the config dialog; guarded in case it is missing.
+    readonly property bool vertical: typeof plasmoid !== "undefined" && !!plasmoid && (plasmoid.location === 5 || plasmoid.location === 6)
+
     readonly property var built: ["windows7", "modern", "windows10", "windows11", "app", "pro", "launcher", "xp"]
     readonly property var styles: [
         ["windows7", i18n("Windows 7 style"), i18n("The classic Windows 7 menu.")],
@@ -150,13 +154,16 @@ KCM.SimpleKCM {
             QQC2.ComboBox {
                 id: positionBox
                 Kirigami.FormData.label: i18n("Menu position:")
-                model: [i18n("Left"), i18n("Center"), i18n("Right")]
+                model: page.vertical ? [i18n("Top"), i18n("Middle"), i18n("Bottom")] : [i18n("Left"), i18n("Center"), i18n("Right")]
             }
             QQC2.CheckBox {
                 id: centerTaskbarBox
                 visible: positionBox.currentIndex !== 0
-                text: positionBox.currentIndex === 2 ? i18n("Also mirror the taskbar (Start button on the right, clock on the left)")
-                    : i18n("Also centre the Start button and the taskbar icons")
+                text: positionBox.currentIndex === 2
+                    ? (page.vertical ? i18n("Also mirror the taskbar (Start button at the bottom)")
+                                     : i18n("Also mirror the taskbar (Start button on the right, clock on the left)"))
+                    : (page.vertical ? i18n("Also centre the Start button and the taskbar icons vertically")
+                                     : i18n("Also centre the Start button and the taskbar icons"))
             }
             QQC2.SpinBox {
                 id: heightSpin

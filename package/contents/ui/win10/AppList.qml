@@ -269,7 +269,9 @@ Item {
                 // "New" mark for newly installed apps (Start11 "Highlight").
                 Rectangle {
                     visible: row.isApp && list.cfg.highlightNew && !!list.roleData(row.e.model, row.e.row, "isNewlyInstalled")
-                    anchors.right: parent.right
+                    // right after the name (anchors.left follows LayoutMirroring), pushed in when the name is elided
+                    anchors.left: rowLabel.left
+                    anchors.leftMargin: Math.max(0, Math.min(rowLabel.contentWidth + list.metrics.px(8), rowLabel.width - width))
                     anchors.verticalCenter: parent.verticalCenter
                     width: newLabel.implicitWidth + list.metrics.px(10)
                     height: newLabel.implicitHeight + list.metrics.px(2)

@@ -497,6 +497,10 @@ ContainmentItem {
     // for undo (its config already reads empty), so removed ids are listed in the panel's start12Gone key
     // and ignored (ids are never reused; the list drops ids no longer in the panel).
     readonly property int panelMode: !cfg.centerTaskbar ? 0 : cfg.menuPosition === 1 ? 1 : cfg.menuPosition === 2 ? 2 : 0
+    // Menu contents mirrored: Right position on horizontal panels; on vertical panels the Start column
+    // sits next to the panel, so mirrored on the right screen edge only, whatever menuPosition is.
+    readonly property bool mirrorMenu: Plasmoid.formFactor === PlasmaCore.Types.Vertical
+        ? Plasmoid.location === PlasmaCore.Types.RightEdge : cfg.menuPosition === 2
     readonly property bool centerPanel: panelMode !== 0
     onPanelModeChanged: syncCenterPanel()
     function syncCenterPanel() {
@@ -1126,7 +1130,7 @@ ContainmentItem {
             readonly property bool atTop: Plasmoid.location === PlasmaCore.Types.TopEdge
             // T42 Menu position Right: the whole menu mirrored (anchors, rows, lists, split handles; styles flip
             // their explicit x with LayoutMirroring.enabled). Tile grids keep their own order inside.
-            LayoutMirroring.enabled: root.cfg.menuPosition === 2
+            LayoutMirroring.enabled: root.mirrorMenu
             LayoutMirroring.childrenInherit: true
             anchors.fill: parent
             anchors.leftMargin: gapX
