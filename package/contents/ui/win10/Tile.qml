@@ -34,7 +34,7 @@ PC3.AbstractButton {
     // Pinned website/file/folder instead of an app.
     readonly property var custom: Tiles.custom(tile.tile.id)
     readonly property var appIcon: isFolder ? "folder" : custom ? (custom.icon || "folder") : valid ? role("decoration") : "dialog-question"
-    readonly property bool big: ["large", "wideLargeH", "wideLargeV"].includes(tile.tile.size)
+    readonly property bool big: ["large", "wideLargeH", "wideLargeV", "hugeH", "hugeV"].includes(tile.tile.size)
     readonly property bool small: tile.tile.size === "small"
     readonly property bool showCaption: tile.tile.caption === "show" ? true
         : tile.tile.caption === "hide" ? false : !Plasmoid.configuration.hideTileText
@@ -93,7 +93,7 @@ PC3.AbstractButton {
         Grid {
             id: mini
             visible: tile.isFolder
-            readonly property int cols: tile.small ? 2 : tile.tile.size === "wide" ? 6 : tile.tile.size === "wideLargeH" ? 9 : 3
+            readonly property int cols: tile.small ? 2 : tile.tile.size === "wide" ? 6 : tile.tile.size === "wideLargeH" || tile.tile.size === "hugeH" ? 9 : 3
             readonly property int rowsMax: tile.small ? 2 : 3
             readonly property real side: Math.floor(Math.min(parent.width / cols, (parent.height - (label.visible ? label.height : 0)) / rowsMax) * 0.7)
             anchors.centerIn: parent
@@ -120,9 +120,10 @@ PC3.AbstractButton {
             }
         }
         Kirigami.Icon {
-            visible: !tile.isFolder
-            readonly property real side: Math.round(Math.min(tile.width, tile.height)
-                * Plasmoid.configuration.tileIconScale / 100 * (tile.big ? 0.8 : 1))
+            visible: !tile.isFolder && !(tile.big && tile.tile.image && tile.tile.imageIcon === "hide")
+            // Big tiles: exactly twice a medium tile's icon (medium = 2 units).
+            readonly property real side: Math.round(2 * tile.metrics.unit * (tile.big ? 2 : 1)
+                * Plasmoid.configuration.tileIconScale / 100)
             anchors.centerIn: parent
             anchors.verticalCenterOffset: label.visible ? -Math.round(label.height / 3) : 0
             width: side
@@ -158,10 +159,76 @@ PC3.AbstractButton {
         }
     }
 
-    readonly property var presets: [
-        [i18n("Red"), "#E81123"], [i18n("Orange"), "#F7630C"], [i18n("Yellow"), "#FFB900"], [i18n("Green"), "#107C10"],
-        [i18n("Teal"), "#00B7C3"], [i18n("Blue"), "#0078D7"], [i18n("Navy"), "#0063B1"], [i18n("Purple"), "#8764B8"],
-        [i18n("Pink"), "#E3008C"], [i18n("Grey"), "#69797E"], [i18n("Dark"), "#2D2D2D"], [i18n("Brown"), "#7A574A"]]
+    // Colour picker columns (rainbow order); shades under each base go light -> dark.
+    readonly property var swatches: [
+        ["#E81123", i18n("Red")], ["#F7630C", i18n("Orange")], ["#FFB900", i18n("Yellow")], ["#8CBD18", i18n("Lime")],
+        ["#107C10", i18n("Green")], ["#008272", i18n("Teal")], ["#00B7C3", i18n("Cyan")], ["#0078D7", i18n("Blue")],
+        ["#4B53BC", i18n("Indigo")], ["#8764B8", i18n("Purple")], ["#E3008C", i18n("Pink")], ["#7A574A", i18n("Brown")],
+        ["#69797E", i18n("Grey")]]
+    readonly property var shadeSteps: [1.9, 1.5, 1.2, -1.3, -1.7]   // >0 Qt.lighter, <0 Qt.darker
+    function shade(base, k) {
+        const f = shadeSteps[k];
+        return String(f > 0 ? Qt.lighter(base, f) : Qt.darker(base, -f)).toLowerCase();
+    }
+    function setColor(c) { root.saveGroups(Tiles.setProp(root.groups, tile.tile.id, "color", c)); colorPopup.close(); }
+
+    PC3.Popup {
+        id: colorPopup
+        readonly property real sq: Math.round(22 * tile.metrics.s)
+        readonly property real gap: Math.max(2, Math.round(2.5 * tile.metrics.s))
+        x: Math.round((tile.width - width) / 2)
+        y: Math.round((tile.height - height) / 2)
+        padding: tile.metrics.px(8)
+        closePolicy: PC3.Popup.CloseOnEscape | PC3.Popup.CloseOnPressOutside
+        contentItem: Column {
+            spacing: tile.metrics.px(8)
+            Row {
+                spacing: colorPopup.gap
+                Repeater {
+                    model: tile.swatches
+                    delegate: Column {
+                        id: col
+                        required property var modelData
+                        spacing: colorPopup.gap
+                        Repeater {
+                            model: 6
+                            delegate: Item {
+                              id: cell
+                              required property int index
+                              width: colorPopup.sq
+                              height: colorPopup.sq + (index === 1 ? colorPopup.gap * 2 : 0)   // gap under the base row
+                              Rectangle {
+                                id: sw
+                                readonly property int index: cell.index
+                                anchors.bottom: parent.bottom
+                                readonly property string hex: index === 0 ? col.modelData[0].toLowerCase() : tile.shade(col.modelData[0], index - 1)
+                                width: colorPopup.sq
+                                height: colorPopup.sq
+                                color: hex
+                                border.width: hex === (tile.tile.color || "").toLowerCase() ? Math.max(2, tile.metrics.px(2))
+                                           : swArea.containsMouse ? 1 : 0
+                                border.color: hex === (tile.tile.color || "").toLowerCase() ? tile.metrics.accent : tile.metrics.text
+                                MouseArea {
+                                    id: swArea
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    onClicked: tile.setColor(sw.hex)
+                                    PC3.ToolTip.text: sw.hex.toUpperCase()
+                                    PC3.ToolTip.visible: containsMouse
+                                }
+                              }
+                            }
+                        }
+                    }
+                }
+            }
+            Row {
+                spacing: tile.metrics.px(8)
+                PC3.Button { text: i18n("Custom colour…"); onClicked: { colorPopup.close(); root.pickTileColor(tile.tile.id, tile.tile.color); } }
+                PC3.Button { text: i18n("Reset"); enabled: !!tile.tile.color; onClicked: tile.setColor("") }
+            }
+        }
+    }
 
     function menuItems() {
         const id = tile.tile.id;
@@ -176,18 +243,18 @@ PC3.AbstractButton {
         items.push(
             { text: tile.showCaption ? i18n("Hide icon text") : i18n("Show icon text"), icon: "format-text-bold",
               run: () => set("caption", tile.showCaption ? "hide" : "show") },
-            { text: i18n("Tile colour"), icon: "color-management", subActions: presets.map(c => ({
-                text: c[0], checkable: true, checked: (tile.tile.color || "").toLowerCase() === c[1].toLowerCase(),
-                run: () => set("color", c[1]) })).concat([
-                { text: i18n("Custom colour…"), run: () => root.pickTileColor(id, tile.tile.color) },
-                { text: i18n("Reset tile colour"), enabled: !!tile.tile.color, run: () => set("color", "") }]) });
+            { text: i18n("Tile colour…"), icon: "color-management", run: () => colorPopup.open() });
         if (big) items.push(
             { text: i18n("Set tile image…"), icon: "viewimage", run: () => root.pickTileImage(id) },
             { text: i18n("Remove tile image"), icon: "edit-delete", enabled: !!tile.tile.image, run: () => set("image", "") });
+        if (big && tile.tile.image) items.push(
+            { text: tile.tile.imageIcon === "hide" ? i18n("Show icon") : i18n("Hide icon"), icon: "view-visible",
+              run: () => set("imageIcon", tile.tile.imageIcon === "hide" ? "" : "hide") });
         if (!Plasmoid.configuration.tilesLocked && !folderId) {
             items.push({ text: i18n("Resize"), icon: "transform-scale", subActions: [
                 ["small", i18n("Small")], ["medium", i18n("Medium")], ["wide", i18n("Wide")], ["large", i18n("Large")],
-                ["wideLargeH", i18n("W. Large H.")], ["wideLargeV", i18n("W. Large V.")]
+                ["wideLargeH", i18n("W. Large H.")], ["wideLargeV", i18n("W. Large V.")],
+                ["hugeH", i18n("3x6 H.")], ["hugeV", i18n("3x6 V.")]
             ].map(s => ({
                 text: s[1], checkable: true, checked: tile.tile.size === s[0],
                 run: () => root.saveGroups(Tiles.resize(root.groups, id, s[0]))

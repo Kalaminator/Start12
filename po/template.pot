@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-15 12:57+0200\n"
+"POT-Creation-Date: 2026-10-15 13:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -187,17 +187,17 @@ msgstr ""
 
 #: package/contents/ui/common/AppCanvas.qml:288
 #: package/contents/ui/config/ConfigStyle.qml:148
-#: package/contents/ui/win10/Tile.qml:189
+#: package/contents/ui/win10/Tile.qml:255
 msgid "Small"
 msgstr ""
 
 #: package/contents/ui/common/AppCanvas.qml:288
-#: package/contents/ui/win10/Tile.qml:189
+#: package/contents/ui/win10/Tile.qml:255
 msgid "Medium"
 msgstr ""
 
 #: package/contents/ui/common/AppCanvas.qml:288
-#: package/contents/ui/win10/Tile.qml:189
+#: package/contents/ui/win10/Tile.qml:255
 msgid "Large"
 msgstr ""
 
@@ -223,7 +223,7 @@ msgstr ""
 #: package/contents/ui/common/Recommended.qml:71
 #: package/contents/ui/win10/AppList.qml:176
 #: package/contents/ui/win10/SearchView.qml:291
-#: package/contents/ui/win10/Tile.qml:172
+#: package/contents/ui/win10/Tile.qml:239
 msgid "Unpin from Start"
 msgstr ""
 
@@ -555,7 +555,6 @@ msgid "Light"
 msgstr ""
 
 #: package/contents/ui/config/ConfigColours.qml:70
-#: package/contents/ui/win10/Tile.qml:164
 msgid "Dark"
 msgstr ""
 
@@ -976,7 +975,7 @@ msgstr ""
 
 #: package/contents/ui/config/ConfigMenu.qml:169
 #: package/contents/ui/config/ConfigStyle.qml:194
-#: package/contents/ui/main.qml:986
+#: package/contents/ui/main.qml:986 package/contents/ui/win10/Tile.qml:228
 msgid "Reset"
 msgstr ""
 
@@ -1309,7 +1308,7 @@ msgid "Colour scheme:"
 msgstr ""
 
 #: package/contents/ui/config/ConfigStyle.qml:126
-#: package/contents/ui/win10/Tile.qml:163
+#: package/contents/ui/win10/Tile.qml:165
 msgid "Blue"
 msgstr ""
 
@@ -1813,102 +1812,122 @@ msgid "Unpin group from Start"
 msgstr ""
 
 #: package/contents/ui/win10/TileGroup.qml:230
-#: package/contents/ui/win10/Tile.qml:170
+#: package/contents/ui/win10/Tile.qml:237
 msgid "Name folder"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:162
+#: package/contents/ui/win10/Tile.qml:164
 msgid "Red"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:162
+#: package/contents/ui/win10/Tile.qml:164
 msgid "Orange"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:162
+#: package/contents/ui/win10/Tile.qml:164
 msgid "Yellow"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:162
+#: package/contents/ui/win10/Tile.qml:164
+msgid "Lime"
+msgstr ""
+
+#: package/contents/ui/win10/Tile.qml:165
 msgid "Green"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:163
+#: package/contents/ui/win10/Tile.qml:165
 msgid "Teal"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:163
-msgid "Navy"
+#: package/contents/ui/win10/Tile.qml:165
+msgid "Cyan"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:163
+#: package/contents/ui/win10/Tile.qml:166
+msgid "Indigo"
+msgstr ""
+
+#: package/contents/ui/win10/Tile.qml:166
 msgid "Purple"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:164
+#: package/contents/ui/win10/Tile.qml:166
 msgid "Pink"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:164
-msgid "Grey"
-msgstr ""
-
-#: package/contents/ui/win10/Tile.qml:164
+#: package/contents/ui/win10/Tile.qml:166
 msgid "Brown"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:171
-msgid "Unpin folder from Start"
+#: package/contents/ui/win10/Tile.qml:167
+msgid "Grey"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:174
-msgid "Set icon…"
-msgstr ""
-
-#: package/contents/ui/win10/Tile.qml:175
-msgid "Reset custom icon"
-msgstr ""
-
-#: package/contents/ui/win10/Tile.qml:177
-msgid "Hide icon text"
-msgstr ""
-
-#: package/contents/ui/win10/Tile.qml:177
-msgid "Show icon text"
-msgstr ""
-
-#: package/contents/ui/win10/Tile.qml:179
-msgid "Tile colour"
-msgstr ""
-
-#: package/contents/ui/win10/Tile.qml:182
+#: package/contents/ui/win10/Tile.qml:227
 msgid "Custom colour…"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:183
-msgid "Reset tile colour"
+#: package/contents/ui/win10/Tile.qml:238
+msgid "Unpin folder from Start"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:185
+#: package/contents/ui/win10/Tile.qml:241
+msgid "Set icon…"
+msgstr ""
+
+#: package/contents/ui/win10/Tile.qml:242
+msgid "Reset custom icon"
+msgstr ""
+
+#: package/contents/ui/win10/Tile.qml:244
+msgid "Hide icon text"
+msgstr ""
+
+#: package/contents/ui/win10/Tile.qml:244
+msgid "Show icon text"
+msgstr ""
+
+#: package/contents/ui/win10/Tile.qml:246
+msgid "Tile colour…"
+msgstr ""
+
+#: package/contents/ui/win10/Tile.qml:248
 msgid "Set tile image…"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:186
+#: package/contents/ui/win10/Tile.qml:249
 msgid "Remove tile image"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:188
+#: package/contents/ui/win10/Tile.qml:251
+msgid "Show icon"
+msgstr ""
+
+#: package/contents/ui/win10/Tile.qml:251
+msgid "Hide icon"
+msgstr ""
+
+#: package/contents/ui/win10/Tile.qml:254
 msgid "Resize"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:189
+#: package/contents/ui/win10/Tile.qml:255
 msgid "Wide"
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:190
+#: package/contents/ui/win10/Tile.qml:256
 msgid "W. Large H."
 msgstr ""
 
-#: package/contents/ui/win10/Tile.qml:190
+#: package/contents/ui/win10/Tile.qml:256
 msgid "W. Large V."
+msgstr ""
+
+#: package/contents/ui/win10/Tile.qml:257
+msgid "3x6 H."
+msgstr ""
+
+#: package/contents/ui/win10/Tile.qml:257
+msgid "3x6 V."
 msgstr ""

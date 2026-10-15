@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Start12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-15 12:57+0200\n"
+"POT-Creation-Date: 2026-10-15 13:24+0200\n"
 "PO-Revision-Date: 2026-10-14 12:00+0000\n"
 "Last-Translator: Start12\n"
 "Language-Team: Spanish\n"
@@ -187,17 +187,17 @@ msgstr "Tamaño de iconos"
 
 #: package/contents/ui/common/AppCanvas.qml:288
 #: package/contents/ui/config/ConfigStyle.qml:148
-#: package/contents/ui/win10/Tile.qml:189
+#: package/contents/ui/win10/Tile.qml:255
 msgid "Small"
 msgstr "Pequeño"
 
 #: package/contents/ui/common/AppCanvas.qml:288
-#: package/contents/ui/win10/Tile.qml:189
+#: package/contents/ui/win10/Tile.qml:255
 msgid "Medium"
 msgstr "Mediano"
 
 #: package/contents/ui/common/AppCanvas.qml:288
-#: package/contents/ui/win10/Tile.qml:189
+#: package/contents/ui/win10/Tile.qml:255
 msgid "Large"
 msgstr "Grande"
 
@@ -223,7 +223,7 @@ msgstr "(Vacío)"
 #: package/contents/ui/common/Recommended.qml:71
 #: package/contents/ui/win10/AppList.qml:176
 #: package/contents/ui/win10/SearchView.qml:291
-#: package/contents/ui/win10/Tile.qml:172
+#: package/contents/ui/win10/Tile.qml:239
 msgid "Unpin from Start"
 msgstr "Desanclar de Inicio"
 
@@ -561,7 +561,6 @@ msgid "Light"
 msgstr "Claro"
 
 #: package/contents/ui/config/ConfigColours.qml:70
-#: package/contents/ui/win10/Tile.qml:164
 msgid "Dark"
 msgstr "Oscuro"
 
@@ -988,7 +987,7 @@ msgstr "Añadir carpeta filtrada"
 
 #: package/contents/ui/config/ConfigMenu.qml:169
 #: package/contents/ui/config/ConfigStyle.qml:194
-#: package/contents/ui/main.qml:986
+#: package/contents/ui/main.qml:986 package/contents/ui/win10/Tile.qml:228
 msgid "Reset"
 msgstr "Restablecer"
 
@@ -1330,7 +1329,7 @@ msgid "Colour scheme:"
 msgstr "Combinación de colores:"
 
 #: package/contents/ui/config/ConfigStyle.qml:126
-#: package/contents/ui/win10/Tile.qml:163
+#: package/contents/ui/win10/Tile.qml:165
 msgid "Blue"
 msgstr "Azul"
 
@@ -1854,115 +1853,132 @@ msgid "Unpin group from Start"
 msgstr "Desanclar grupo de Inicio"
 
 #: package/contents/ui/win10/TileGroup.qml:230
-#: package/contents/ui/win10/Tile.qml:170
+#: package/contents/ui/win10/Tile.qml:237
 msgid "Name folder"
 msgstr "Nombre de la carpeta"
 
-#: package/contents/ui/win10/Tile.qml:162
+#: package/contents/ui/win10/Tile.qml:164
 msgid "Red"
-msgstr ""
+msgstr "Rojo"
 
-#: package/contents/ui/win10/Tile.qml:162
+#: package/contents/ui/win10/Tile.qml:164
 msgid "Orange"
-msgstr ""
+msgstr "Naranja"
 
-#: package/contents/ui/win10/Tile.qml:162
+#: package/contents/ui/win10/Tile.qml:164
 msgid "Yellow"
-msgstr ""
+msgstr "Amarillo"
 
-#: package/contents/ui/win10/Tile.qml:162
-#, fuzzy
+#: package/contents/ui/win10/Tile.qml:164
+msgid "Lime"
+msgstr "Lima"
+
+#: package/contents/ui/win10/Tile.qml:165
 msgid "Green"
-msgstr "Verde oliva"
+msgstr "Verde"
 
-#: package/contents/ui/win10/Tile.qml:163
+#: package/contents/ui/win10/Tile.qml:165
 msgid "Teal"
-msgstr ""
+msgstr "Verde azulado"
 
-#: package/contents/ui/win10/Tile.qml:163
-msgid "Navy"
-msgstr ""
+#: package/contents/ui/win10/Tile.qml:165
+msgid "Cyan"
+msgstr "Cian"
 
-#: package/contents/ui/win10/Tile.qml:163
+#: package/contents/ui/win10/Tile.qml:166
+msgid "Indigo"
+msgstr "Índigo"
+
+#: package/contents/ui/win10/Tile.qml:166
 msgid "Purple"
-msgstr ""
+msgstr "Morado"
 
-#: package/contents/ui/win10/Tile.qml:164
+#: package/contents/ui/win10/Tile.qml:166
 msgid "Pink"
-msgstr ""
+msgstr "Rosa"
 
-#: package/contents/ui/win10/Tile.qml:164
-msgid "Grey"
-msgstr ""
-
-#: package/contents/ui/win10/Tile.qml:164
+#: package/contents/ui/win10/Tile.qml:166
 msgid "Brown"
-msgstr ""
+msgstr "Marrón"
 
-#: package/contents/ui/win10/Tile.qml:171
+#: package/contents/ui/win10/Tile.qml:167
+msgid "Grey"
+msgstr "Gris"
+
+#: package/contents/ui/win10/Tile.qml:227
+msgid "Custom colour…"
+msgstr "Color personalizado…"
+
+#: package/contents/ui/win10/Tile.qml:238
 msgid "Unpin folder from Start"
 msgstr "Desanclar carpeta de Inicio"
 
-#: package/contents/ui/win10/Tile.qml:174
+#: package/contents/ui/win10/Tile.qml:241
 msgid "Set icon…"
 msgstr "Establecer icono…"
 
-#: package/contents/ui/win10/Tile.qml:175
+#: package/contents/ui/win10/Tile.qml:242
 msgid "Reset custom icon"
 msgstr "Restablecer icono personalizado"
 
-#: package/contents/ui/win10/Tile.qml:177
+#: package/contents/ui/win10/Tile.qml:244
 msgid "Hide icon text"
 msgstr "Ocultar texto de iconos"
 
-#: package/contents/ui/win10/Tile.qml:177
+#: package/contents/ui/win10/Tile.qml:244
 msgid "Show icon text"
 msgstr "Mostrar texto de iconos"
 
-#: package/contents/ui/win10/Tile.qml:179
-#, fuzzy
-msgid "Tile colour"
-msgstr "Color de los mosaicos:"
+#: package/contents/ui/win10/Tile.qml:246
+msgid "Tile colour…"
+msgstr "Color del mosaico…"
 
-#: package/contents/ui/win10/Tile.qml:182
-#, fuzzy
-msgid "Custom colour…"
-msgstr "Color personalizado"
-
-#: package/contents/ui/win10/Tile.qml:183
-msgid "Reset tile colour"
-msgstr "Restablecer color del mosaico"
-
-#: package/contents/ui/win10/Tile.qml:185
-#, fuzzy
+#: package/contents/ui/win10/Tile.qml:248
 msgid "Set tile image…"
-msgstr "Elegir imagen de mosaico…"
+msgstr "Poner imagen al mosaico…"
 
-#: package/contents/ui/win10/Tile.qml:186
-#, fuzzy
+#: package/contents/ui/win10/Tile.qml:249
 msgid "Remove tile image"
-msgstr "Imagen del mosaico:"
+msgstr "Quitar imagen del mosaico"
 
-#: package/contents/ui/win10/Tile.qml:188
+#: package/contents/ui/win10/Tile.qml:251
+msgid "Show icon"
+msgstr "Mostrar icono"
+
+#: package/contents/ui/win10/Tile.qml:251
+msgid "Hide icon"
+msgstr "Ocultar icono"
+
+#: package/contents/ui/win10/Tile.qml:254
 msgid "Resize"
 msgstr "Cambiar tamaño"
 
-#: package/contents/ui/win10/Tile.qml:189
+#: package/contents/ui/win10/Tile.qml:255
 msgid "Wide"
 msgstr "Ancho"
 
-#: package/contents/ui/win10/Tile.qml:190
-#, fuzzy
+#: package/contents/ui/win10/Tile.qml:256
 msgid "W. Large H."
-msgstr "Grande"
+msgstr "Muy grande H."
 
-#: package/contents/ui/win10/Tile.qml:190
-#, fuzzy
+#: package/contents/ui/win10/Tile.qml:256
 msgid "W. Large V."
-msgstr "Grande"
+msgstr "Muy grande V."
 
-#~ msgid "Tile colour…"
-#~ msgstr "Color del mosaico…"
+#: package/contents/ui/win10/Tile.qml:257
+msgid "3x6 H."
+msgstr "3x6 H."
+
+#: package/contents/ui/win10/Tile.qml:257
+msgid "3x6 V."
+msgstr "3x6 V."
+
+#, fuzzy
+#~ msgid "Tile colour"
+#~ msgstr "Color de los mosaicos:"
+
+#~ msgid "Reset tile colour"
+#~ msgstr "Restablecer color del mosaico"
 
 #~ msgid "Apply matching XP taskbar theme"
 #~ msgstr "Aplicar el tema de barra de tareas XP correspondiente"

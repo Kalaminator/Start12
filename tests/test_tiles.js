@@ -196,4 +196,17 @@ assert.strictEqual(T.pushHistory("0123456789".split(""), "x").length, 10);
     assert.deepStrictEqual(p.pos[0], { x: 0, y: 0, w: 2, h: 4 });
     assert.deepStrictEqual(p.pos[1], { x: 0, y: 4, w: 2, h: 8 });
 }
+// 3x6 sizes: 12x6 / 6x12, clamped in narrow groups (odd/clamped widths still lay out).
+{
+    let p = T.pack([{ size: "hugeH" }, { size: "hugeV" }, { size: "small" }], 6);
+    assert.deepStrictEqual(p.pos[0], { x: 0, y: 0, w: 12, h: 6 });
+    assert.deepStrictEqual(p.pos[1], { x: 0, y: 6, w: 6, h: 12 });
+    assert.strictEqual(p.rows, 18);
+    p = T.pack([{ size: "hugeH" }, { size: "hugeV" }, { size: "medium" }], 1);
+    assert.deepStrictEqual(p.pos[0], { x: 0, y: 0, w: 2, h: 6 });
+    assert.deepStrictEqual(p.pos[1], { x: 0, y: 6, w: 2, h: 12 });
+    p = T.pack([{ size: "hugeV" }, { size: "wide" }], 2);
+    assert.deepStrictEqual(p.pos[0], { x: 0, y: 0, w: 4, h: 12 });
+    assert.strictEqual(p.pos.length, 2);
+}
 console.log("tiles.js: all checks passed");

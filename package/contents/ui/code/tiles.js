@@ -10,7 +10,9 @@ var SIZES = {
     wide:   { w: 4, h: 2 },
     large:  { w: 4, h: 4 },
     wideLargeH: { w: 8, h: 4 },
-    wideLargeV: { w: 4, h: 8 }
+    wideLargeV: { w: 4, h: 8 },
+    hugeH: { w: 12, h: 6 },
+    hugeV: { w: 6, h: 12 }
 };
 
 // Tile pages (Start11): { "pages": [{ "groups": [...] }] }. The old flat group list becomes page 1.

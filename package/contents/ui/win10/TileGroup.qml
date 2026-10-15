@@ -129,6 +129,7 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width
             placeholderText: i18n("Name group")
+            selectByMouse: true
             onAccepted: { grp.rename(text); visible = false; }
             onActiveFocusChanged: if (!activeFocus && visible) { grp.rename(text); visible = false; }
             Keys.onEscapePressed: visible = false
