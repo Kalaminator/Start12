@@ -180,6 +180,12 @@ PC3.AbstractButton {
         y: Math.round((tile.height - height) / 2)
         padding: tile.metrics.px(8)
         closePolicy: PC3.Popup.CloseOnEscape | PC3.Popup.CloseOnPressOutside
+        // Neutral ground, not the menu's accent-tinted one, so no swatch blends into it.
+        background: Rectangle {
+            color: Kirigami.Theme.backgroundColor
+            border.color: Qt.alpha(Kirigami.Theme.textColor, 0.25)
+            radius: tile.metrics.px(4)
+        }
         contentItem: Column {
             spacing: tile.metrics.px(8)
             Row {
