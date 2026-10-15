@@ -154,8 +154,9 @@ KCM.SimpleKCM {
             }
             QQC2.CheckBox {
                 id: centerTaskbarBox
-                visible: positionBox.currentIndex === 1
-                text: i18n("Also centre the Start button and the taskbar icons")
+                visible: positionBox.currentIndex !== 0
+                text: positionBox.currentIndex === 2 ? i18n("Also mirror the taskbar (Start button on the right, clock on the left)")
+                    : i18n("Also centre the Start button and the taskbar icons")
             }
             QQC2.SpinBox {
                 id: heightSpin
