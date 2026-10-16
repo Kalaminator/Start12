@@ -257,9 +257,9 @@ ContainmentItem {
     readonly property string windowDeco: cfg.windowTheme ? windowDecoration() : ""
     // T41 window glass (Taskbar page): opacity/blur/radius/title height = a deco made at apply time,
     // <windowDeco>-g<opacity>b<blur>r<radius|d>t<title>; the colour scheme keeps the windowDeco name.
-    // W8: Windows 12 windows default to a glass title bar (65 %, blurred) while "Transparency effects" is on.
+    // W8: Windows 12 windows default to a glass title bar (35 %, blurred; 65 % still read as solid accent behind the blur) while "Transparency effects" is on.
     readonly property int windowOpacity: cfg.windowOpacity === 100 && (cfg.windowLook || cfg.menuStyle) === "windows12"
-        && cfg.win10Transparency ? 65 : cfg.windowOpacity
+        && cfg.win10Transparency ? 35 : cfg.windowOpacity
     readonly property string glassSuffix: windowOpacity < 100 || cfg.windowRadius >= 0 || cfg.titleHeight > 0
         ? "-g" + windowOpacity + "b" + (cfg.windowBlur ? 1 : 0) + "r" + (cfg.windowRadius < 0 ? "d" : cfg.windowRadius) + "t" + cfg.titleHeight : ""
     readonly property string decoName: windowDeco === "" ? "" : windowDeco + glassSuffix
