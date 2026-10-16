@@ -3,7 +3,7 @@ import org.kde.plasma.configuration
 // The Start12 settings window, laid out like Start11Config.
 ConfigModel {
     ConfigCategory {
-        name: i18n("Start Menu")
+        name: i18n("Style")
         icon: "preferences-desktop-theme-global"
         source: "config/ConfigStyle.qml"
     }

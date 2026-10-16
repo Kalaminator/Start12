@@ -97,6 +97,17 @@ Keys+menus polish (T27): Win7/XP All Programs button is a KeyNav pane (`kbStep` 
 
 Layout polish (T28): full screen: `root.fillScreen` (Win10/Win11 stretch) / `root.narrowFull` (others keep size, centred on the panel side over a dim backdrop that closes on click; main.qml `frame`); Win10 tile folder row opens under the folder's own row (`Tiles.rowEnd`, TileGroup `folderShift`); `common/SearchHistory.qml` popup in SearchBox, Win7 field (above) and SearchView field (`suggest`: past searches starting with the typed text). Needs a user check.
 
+## Style page, mix and match (T43, 2026-10-16, not seen on screen yet)
+First settings page renamed "Style". `menuStyle` = the Style card (menu + taskbar + windows). New keys, "" = same
+as the style: `menuLook` (any menu id), `taskbarLook` (xp/windows7/10/11/12), `windowLook` (xp/windows7/10/11).
+"Plasma's own" in the Taskbar/Windows combos = the old switches off (`taskbarFollowsStyle` + `xpTaskbarTheme`,
+`windowTheme`), so saved configs need no migration; those switches left the Taskbar page (a note points to Style).
+main.qml: `menuKind` (styleFile, styles/*, StartButton, Metrics, split names) and `taskbarKind` (xpTheme,
+presets, win12Taskbar, accent); windowDecoration() reads `windowLook || menuStyle`. `xpIcons` still follows the card.
+XP substyle/colour options show when any part is XP. `config/TaskbarLayoutBox.qml` = layout combo + `taskbarMagnetic`
+switch (key only, default true; positioning of magnetic islands is a later task), on the Taskbar page W12 group and
+under the cards when the taskbar kind is windows12.
+
 ## Next (in order)
 T01-T25 all built (2026-10-14). Load check of all 8 styles: no QML errors. Seen on screen by me: XP (all colours, start button),
 T03 filters, T05 folder. Everything else only lint + load check; the user has not tried T05-T25 yet -> ask for feedback first.

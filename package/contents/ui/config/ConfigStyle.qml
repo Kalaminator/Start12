@@ -9,7 +9,7 @@ import org.kde.kquickcontrols as KQuickControls
 import QtQuick.Dialogs as Dialogs
 import QtCore
 
-// Start11Config "Start Menu" page: "Which style of Start Menu would you prefer?"
+// Start11Config "Start Menu" page, here "Style": a card sets the menu, the taskbar and the windows (T43).
 KCM.SimpleKCM {
     id: page
     property string cfg_menuStyle
@@ -29,6 +29,21 @@ KCM.SimpleKCM {
     property string cfg_xpColor
     property alias cfg_xpCustomColor: xpCustom.color
     property string cfg_resetRequest
+    // T43 mix and match ("" = same as the style). "Taskbar: none" = taskbarFollowsStyle + xpTaskbarTheme off,
+    // "Windows: none" = windowTheme off (the old Taskbar page switches, so saved configs keep working).
+    property string cfg_menuLook
+    property string cfg_taskbarLook
+    property string cfg_windowLook
+    property bool cfg_taskbarFollowsStyle
+    property bool cfg_xpTaskbarTheme
+    property bool cfg_windowTheme
+    property string cfg_taskbarLayout
+    property bool cfg_taskbarMagnetic
+    readonly property string menuKind: cfg_menuLook || cfg_menuStyle
+    readonly property string taskbarKind: cfg_taskbarFollowsStyle ? cfg_taskbarLook || cfg_menuStyle : ""
+    readonly property string windowKind: cfg_windowTheme ? cfg_windowLook || cfg_menuStyle : ""
+    readonly property bool anyXp: menuKind === "xp" || taskbarKind === "xp" || windowKind === "xp"
+    function setMenu(v) { if (cfg_menuLook) cfg_menuLook = v; else cfg_menuStyle = v; }
 
     // Vertical panel (Types.LeftEdge 5 / RightEdge 6): positions read Top/Middle/Bottom. `plasmoid` is the
     // applet in the config dialog; guarded in case it is missing.
@@ -52,7 +67,12 @@ KCM.SimpleKCM {
 
         Kirigami.Heading {
             level: 2
-            text: i18n("Which style of Start Menu would you prefer?")
+            text: i18n("Which style would you prefer?")
+        }
+        QQC2.Label {
+            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
+            text: i18n("A style sets the Start menu, the taskbar and the window title bars together. Mix them below.")
         }
 
         Flow {
@@ -103,29 +123,79 @@ KCM.SimpleKCM {
         Kirigami.FormLayout {
             Layout.fillWidth: true
 
+            // T43: [value, label]; "" = same as the style, "none" = leave Plasma's own look.
             QQC2.ComboBox {
-                visible: page.cfg_menuStyle === "windows7" || page.cfg_menuStyle === "modern"
+                Kirigami.FormData.label: i18n("Start menu:")
+                readonly property var items: [["", i18n("Same as the style")], ["windows7", i18n("Windows 7 style")],
+                    ["modern", i18n("Modern style")], ["windows10", i18n("Windows 10 style")], ["windows11", i18n("Windows 11 style")],
+                    ["windows12", i18n("Windows 12 style")], ["app", i18n("Windows App style")], ["pro", i18n("Windows Pro style")],
+                    ["launcher", i18n("Windows Launcher style")], ["xp", i18n("Windows XP style")]]
+                model: items.map(i => i[1])
+                currentIndex: Math.max(0, items.findIndex(i => i[0] === page.cfg_menuLook))
+                onActivated: index => page.cfg_menuLook = items[index][0]
+            }
+            QQC2.ComboBox {
+                Kirigami.FormData.label: i18n("Taskbar:")
+                // main.qml taskbarPresets + the XP Plasma Style; the other styles use the Windows 11 preset.
+                readonly property var items: [["", i18n("Same as the style")], ["none", i18n("Plasma's own")],
+                    ["xp", i18n("Windows XP style")], ["windows7", i18n("Windows 7 style")], ["windows10", i18n("Windows 10 style")],
+                    ["windows11", i18n("Windows 11 style")], ["windows12", i18n("Windows 12 style")]]
+                model: items.map(i => i[1])
+                currentIndex: !page.cfg_taskbarFollowsStyle ? 1 : Math.max(0, items.findIndex(i => i[0] === page.cfg_taskbarLook))
+                onActivated: index => {
+                    const v = items[index][0];
+                    page.cfg_taskbarFollowsStyle = page.cfg_xpTaskbarTheme = v !== "none";
+                    if (v !== "none") page.cfg_taskbarLook = v;
+                }
+            }
+            QQC2.ComboBox {
+                Kirigami.FormData.label: i18n("Windows:")
+                // main.qml windowDecoration(): the other styles use the Windows 11 title bars.
+                readonly property var items: [["", i18n("Same as the style")], ["none", i18n("Plasma's own")],
+                    ["xp", i18n("Windows XP style")], ["windows7", i18n("Windows 7 style")], ["windows10", i18n("Windows 10 style")],
+                    ["windows11", i18n("Windows 11 style")]]
+                model: items.map(i => i[1])
+                currentIndex: !page.cfg_windowTheme ? 1 : Math.max(0, items.findIndex(i => i[0] === page.cfg_windowLook))
+                onActivated: index => {
+                    const v = items[index][0];
+                    page.cfg_windowTheme = v !== "none";
+                    if (v !== "none") page.cfg_windowLook = v;
+                }
+            }
+            QQC2.Label {
+                text: i18n("Plasma's own: your Plasma Style or title bars come back.")
+                enabled: false
+            }
+            TaskbarLayoutBox {
+                visible: page.taskbarKind === "windows12"
+                Kirigami.FormData.label: i18n("Taskbar layout:")
+                cfgPage: page
+            }
+            Item { Kirigami.FormData.isSection: true }
+
+            QQC2.ComboBox {
+                visible: page.menuKind === "windows7" || page.menuKind === "modern"
                 Kirigami.FormData.label: i18n("Look:")
                 model: [i18n("Classic"), i18n("Modern")]
-                currentIndex: page.cfg_menuStyle === "modern" ? 1 : 0
-                onActivated: index => page.cfg_menuStyle = index === 1 ? "modern" : "windows7"
+                currentIndex: page.menuKind === "modern" ? 1 : 0
+                onActivated: index => page.setMenu(index === 1 ? "modern" : "windows7")
             }
             QQC2.ComboBox {
                 id: subBox
-                visible: page.cfg_menuStyle === "windows7"
+                visible: page.menuKind === "windows7"
                 Kirigami.FormData.label: i18n("Substyle:")
                 model: [i18n("Windows 7 style"), i18n("Windows 7 style with icons"), i18n("Compact Windows 7 style"),
                         i18n("Grid Windows 7 style"), i18n("Grid Windows 7 style with icons"), i18n("Compact Grid Windows 7 style")]
             }
             QQC2.ComboBox {
                 id: modernSubBox
-                visible: page.cfg_menuStyle === "modern"
+                visible: page.menuKind === "modern"
                 Kirigami.FormData.label: i18n("Substyle:")
                 model: [i18n("Modern style"), i18n("Modern style with icons"), i18n("Compact Modern style"),
                         i18n("Grid Modern style"), i18n("Grid Modern style with icons"), i18n("Compact Grid Modern style")]
             }
             QQC2.ComboBox {
-                visible: page.cfg_menuStyle === "xp"
+                visible: page.anyXp
                 Kirigami.FormData.label: i18n("Substyle:")
                 // Ids stay "classic"/"modern" for saved configs; "luna" = the real XP look.
                 readonly property var ids: ["luna", "classic", "modern"]
@@ -134,7 +204,7 @@ KCM.SimpleKCM {
                 onActivated: index => page.cfg_xpSubstyle = ids[index]
             }
             RowLayout {
-                visible: page.cfg_menuStyle === "xp"
+                visible: page.anyXp
                 Kirigami.FormData.label: i18n("Colour scheme:")
                 QQC2.ComboBox {
                     readonly property var keys: ["blue", "olive", "silver", "custom"]
@@ -145,7 +215,7 @@ KCM.SimpleKCM {
                 KQuickControls.ColorButton { id: xpCustom; visible: page.cfg_xpColor === "custom"; showAlphaChannel: false }
             }
             RowLayout {
-                visible: page.cfg_menuStyle === "xp"
+                visible: page.menuKind === "xp"
                 Kirigami.FormData.label: i18n("Start button colour:")
                 QQC2.ComboBox {
                     model: [i18n("XP green"), i18n("Colour scheme"), i18n("Custom")]

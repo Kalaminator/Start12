@@ -19,7 +19,7 @@ FocusScope {
     }
     readonly property alias metrics: m
     // App list width; design mode drags it (common/SplitHandle), the tiles keep their size.
-    readonly property real listW: style.cfg.hideAppList ? 0 : root.splitFor(style.cfg.menuStyle, m.list)
+    readonly property real listW: style.cfg.hideAppList ? 0 : root.splitFor(root.menuKind, m.list)
 
     implicitWidth: m.rail + listW + m.pad * 2 + m.groupCols * m.groupWidth + (m.groupCols - 1) * m.pad * 2
     // No custom height yet (first open, or style just changed): tall enough for the tile groups, so the tile
@@ -69,7 +69,7 @@ FocusScope {
 
         SplitHandle {
             shown: appList.visible
-            name: style.cfg.menuStyle
+            name: root.menuKind
             value: style.listW
             minimum: m.px(180)
             maximum: m.px(600)

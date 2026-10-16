@@ -7,7 +7,7 @@
 
   <group name="Style">
     <entry name="menuStyle" type="String">
-      <label>windows7 | modern | windows10 | windows11 | app | pro | launcher | xp</label>
+      <label>The Style card: windows7 | modern | windows10 | windows11 | windows12 | app | pro | launcher | xp (menu, taskbar and windows unless menuLook/taskbarLook/windowLook say otherwise)</label>
       <default>windows10</default>
     </entry>
     <entry name="menuSize" type="Int">
@@ -330,6 +330,22 @@
     <entry name="taskbarLayout" type="String">
       <label>Windows 12 taskbar layout: single | split-left | split-right (split is stored only until the island panels exist)</label>
       <default>single</default>
+    </entry>
+    <entry name="taskbarMagnetic" type="Bool">
+      <label>Split layouts: islands sit close together, the group centred on the screen (off = pushed to the screen edges)</label>
+      <default>true</default>
+    </entry>
+    <entry name="menuLook" type="String">
+      <label>T43 Start menu look, empty = same as menuStyle (the Style card); else a menuStyle id</label>
+      <default></default>
+    </entry>
+    <entry name="taskbarLook" type="String">
+      <label>T43 taskbar preset look, empty = same as menuStyle; xp | windows7 | windows10 | windows11 | windows12. Off = taskbarFollowsStyle/xpTaskbarTheme false</label>
+      <default></default>
+    </entry>
+    <entry name="windowLook" type="String">
+      <label>T43 window decoration look, empty = same as menuStyle; xp | windows7 | windows10 | windows11. Off = windowTheme false</label>
+      <default></default>
     </entry>
     <entry name="taskbarRound" type="Int">
       <label>Windows 12 taskbar corners in percent of half the thickness (0 square, 100 pill)</label>

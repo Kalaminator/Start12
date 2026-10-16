@@ -23,7 +23,7 @@ FocusScope {
     readonly property alias metrics: m
     readonly property real pad: m.px(12)
     // Canvas width; design mode drags it (common/SplitHandle), the app list keeps its size.
-    readonly property real canvasW: root.splitFor(cfg.menuStyle, m.px(cfg.menuSize >= 2 ? 420 : 280))
+    readonly property real canvasW: root.splitFor(root.menuKind, m.px(cfg.menuSize >= 2 ? 420 : 280))
 
     implicitWidth: canvasW + m.list + pad * 3
     implicitHeight: m.heightFor([520, 600, 520, 700])
@@ -120,7 +120,7 @@ FocusScope {
         anchors.bottom: parent.bottom
         anchors.margins: style.pad
         // Default: at most half the menu; a dragged width only leaves the app list 220 px.
-        width: Math.max(m.px(160), Math.min(style.canvasW, root.splitFor(style.cfg.menuStyle, -1) < 0 ? parent.width / 2 : parent.width - m.px(220) - style.pad * 3))
+        width: Math.max(m.px(160), Math.min(style.canvasW, root.splitFor(root.menuKind, -1) < 0 ? parent.width / 2 : parent.width - m.px(220) - style.pad * 3))
         metrics: m
         contextMenu: contextMenu
         ghost: ghost
@@ -137,7 +137,7 @@ FocusScope {
     }
 
     SplitHandle {
-        name: style.cfg.menuStyle
+        name: root.menuKind
         value: canvas.width
         minimum: m.px(160)
         maximum: m.px(900)
