@@ -1017,9 +1017,7 @@ ContainmentItem {
             }
         }
         Layout.minimumHeight: root.cfg.fullScreen ? root.fullRect.height
-                            : shrink && styleLoader.item ? styleLoader.item.implicitHeight
-                            : Math.min(root.fullRect.height, Math.max(Math.round(320 * root.cfg.uiScale),
-                                       styleLoader.item && styleLoader.item.minimumHeight ? styleLoader.item.minimumHeight : 0))
+                            : shrink && styleLoader.item ? styleLoader.item.implicitHeight : Math.round(320 * root.cfg.uiScale)
         // Plasma keeps one saved popup size for every style. After leaving full screen or switching style
         // (or menu size), pin the popup once (min = max) at the style's own size until it has opened and
         // stored that size; the user can drag it afterwards as before.
@@ -1035,9 +1033,17 @@ ContainmentItem {
             }
             function onMenuSizeChanged() { full.shrink = true; }
         }
+        // A new style starts from its own height (Win10: tall enough for the tiles), not the old custom one.
+        property string lastStyle: ""
+        Component.onCompleted: lastStyle = root.styleFile   // not a binding: it would update before the handler
         Connections {
             target: root
-            function onStyleFileChanged() { full.shrink = true; }
+            function onStyleFileChanged() {
+                if (!full.lastStyle || root.styleFile === full.lastStyle) return;
+                full.lastStyle = root.styleFile;
+                root.cfg.menuHeight = 0;
+                full.shrink = true;
+            }
         }
         Timer {
             id: shrinkDone
