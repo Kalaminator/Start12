@@ -215,20 +215,17 @@ FocusScope {
             height: 1
             color: Qt.alpha("#ffffff", 0.45)
         }
-        // Luna: soft curved highlight over the top half of the header.
-        Item {
+        // Luna: soft highlight over the top half of the header, edge to edge (rounded like the header's top).
+        Rectangle {
             visible: style.luna
-            x: style.radius
-            width: parent.width - style.radius * 2
-            height: parent.height
-            clip: true
-            Rectangle {
-                x: -width * 0.2
-                y: -height * 0.62
-                width: parent.width * 1.4
-                height: parent.height * 1.2
-                radius: height / 2
-                color: Qt.alpha("#ffffff", 0.13)
+            width: parent.width
+            height: Math.round(parent.height * 0.58)
+            topLeftRadius: style.radius
+            topRightRadius: style.radius
+            gradient: Gradient {
+                GradientStop { position: 0; color: Qt.alpha("#ffffff", 0.16) }
+                GradientStop { position: 0.85; color: Qt.alpha("#ffffff", 0.1) }
+                GradientStop { position: 1; color: Qt.alpha("#ffffff", 0) }
             }
         }
 
