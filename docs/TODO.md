@@ -1,8 +1,8 @@
-# Start12 TODO: Start11 menu features still missing (2026-10-14)
+# Win12 TODO: Start11 menu features still missing (2026-10-14)
 
 Source: docs/research/start11-features.md checked against package/contents (config/main.xml keys,
 ui/**). One job = one agent, 1-3 files, under ~40 tool calls, context cap ~100k. Every job: `./install.sh`,
-open the menu, do the check; errors via `journalctl --user --since "-15 s" | grep start12`. New keys go
+open the menu, do the check; errors via `journalctl --user --since "-15 s" | grep win12`. New keys go
 in `package/contents/config/main.xml` with a `<label>` naming the Start11 registry value. Ordered by
 what the user notices first. Sizes: S = under ~1 h of agent work, M = one full agent.
 
@@ -93,15 +93,15 @@ Check: Open file location on Firefox opens /usr/share/applications; renamed pin 
 
 ### T12 Reset positions / reset all settings (S) -- DONE
 Build: `config/ConfigMenu.qml` "Reset icon positions" (clears `tileGroups`, `pinnedGrid`); a "Reset
-Start12 settings" button on `config/ConfigStyle.qml` that sets every key back to its `main.xml` default
+Win12 settings" button on `config/ConfigStyle.qml` that sets every key back to its `main.xml` default
 (list the keys in a JS object in `code/defaults.js`; or `kwriteconfig6 --delete` per key via
-`extras/start12-reset.sh`). Confirm dialog first.
+`extras/win12-reset.sh`). Confirm dialog first.
 Check: change colour and tiles, Reset, menu is back to the fresh-install look.
 
 ### T13 Backup / restore settings (M) -- DONE (built in QML via resetRequest + JSON file, no script/plasmashell restart)
-Build: `extras/start12-backup.sh backup|restore <file>` that copies the
-`[Containments][*][Applets][*][Configuration]` block of the Start12 applet from
-`~/.config/plasma-org.kde.plasma.desktop-appletsrc` (find by `plugin=org.start12.menu`), restore writes
+Build: `extras/win12-backup.sh backup|restore <file>` that copies the
+`[Containments][*][Applets][*][Configuration]` block of the Win12 applet from
+`~/.config/plasma-org.kde.plasma.desktop-appletsrc` (find by `plugin=org.win12.menu`), restore writes
 it back and restarts plasmashell; buttons "Backup settings…" / "Restore settings…" on `ConfigStyle.qml`
 (FileDialog, run the script). Pins are included (unlike Start11).
 Check: backup, reset (T12), restore, settings and pins are back.
@@ -177,12 +177,12 @@ Check: results show as a dense list in Win7 style.
 
 ### T25 Translations (S) -- DONE
 Build: `package/Messages.sh` (xgettext over `contents/ui`), `po/es.po`, install `.mo` to
-`contents/locale/es/LC_MESSAGES/plasma_applet_org.start12.menu.mo` in `install.sh`; translate the
+`contents/locale/es/LC_MESSAGES/plasma_applet_org.win12.menu.mo` in `install.sh`; translate the
 config pages and menu strings to Spanish first.
 Check: `LANGUAGE=es plasmashell --replace`, settings window in Spanish.
 
 ### T26 Full custom XP theme (M) -- DONE (T26a + T26b, 2026-10-14)
-Built (T26a): xptheme.py `--deco` (Aurorae themes start12-xp-<sub>[-olive|-silver|-custom-<hex>] in ~/.local/share/aurorae/themes,
+Built (T26a): xptheme.py `--deco` (Aurorae themes win12-xp-<sub>[-olive|-silver|-custom-<hex>] in ~/.local/share/aurorae/themes,
 install.sh), key `windowTheme` (renamed from xpWindowTheme: will cover every style; main.qml `windowDecoration()` returns the
 theme per menuStyle, "" = none yet), keys savedDecoLibrary/savedDecoTheme, main.qml `syncWindowDeco()`, Taskbar page checkbox
 "Apply the theme to windows". Not applied live / not seen on screen (user must tick the box).

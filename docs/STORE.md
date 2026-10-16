@@ -3,10 +3,10 @@
 Create the product at https://store.kde.org (log in → *Add Product*).
 
 - **Category:** Plasma 6 Applets / Application Launchers
-- **Name:** Start12
+- **Name:** Win12
 - **Summary:** Start11-style start menu for KDE Plasma 6, eight menu styles with matching taskbar and windows
 - **License:** MIT
-- **Link / source:** https://github.com/Kalaminator/Start12
+- **Link / source:** https://github.com/Kalaminator/Win12
 - **Description:**
 
   > A start menu for KDE Plasma 6 inspired by Stardock Start11. Eight menu styles: Windows 10 (live-tile
@@ -26,7 +26,7 @@ Create the product at https://store.kde.org (log in → *Add Product*).
 1. Bump `KPlugin.Version` in `package/metadata.json` (e.g. 0.1 → 0.2) and commit. Discover only offers an
    update when the store file version is higher, and the widget re-runs its setup (`code/setup.sh`) when the
    version changes.
-2. `./tools/make-release.sh` → `dist/org.start12.menu-<version>.plasmoid` (only git-tracked files; it refuses
+2. `./tools/make-release.sh` → `dist/org.win12.menu-<version>.plasmoid` (only git-tracked files; it refuses
    to build if Stardock assets would be inside).
 3. On the product page: *Edit* → *Files* → upload the new `.plasmoid`, set its version to the same number,
    and archive (hide) the old file so only one is offered.

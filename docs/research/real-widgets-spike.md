@@ -20,7 +20,7 @@ no C++**.
   - `Containment::addApplet` on the panel restores a nested containment "even if new, to have the
     same behavior of Corona::addContainment" and calls `init()` on it (containment.cpp:437-445).
   - Child applets persist under the host's own applet group:
-    `[Containments][<panel>][Applets][<start12>][Applets][<child>]` via `saveContents`/`restoreContents`
+    `[Containments][<panel>][Applets][<win12>][Applets][<child>]` via `saveContents`/`restoreContents`
     recursion; `configNeedsSaving` is chained up to the corona. No extra bookkeeping needed.
 - The QML root of a containment must be `ContainmentItem` (extends `PlasmoidItem`; compact/full
   representation, `Plasmoid.*`, `Plasmoid.configuration`, config dialogs are unchanged).
@@ -44,8 +44,8 @@ no C++**.
 
 ## Experiment (proof)
 
-Throwaway package `org.start12.spike`: `metadata.json` with `"X-Plasma-ContainmentType": "CustomEmbedded"`,
-`main.qml` root `ContainmentItem`, run with `plasmawindowed org.start12.spike` (Wayland session).
+Throwaway package `org.win12.spike`: `metadata.json` with `"X-Plasma-ContainmentType": "CustomEmbedded"`,
+`main.qml` root `ContainmentItem`, run with `plasmawindowed org.win12.spike` (Wayland session).
 Log (run 1):
 
 ```
@@ -63,7 +63,7 @@ but the child was restored **twice** (two Applet objects, same id). libplasma's 
 nested containment exactly once (`addApplet` -> `restore` -> `restoreContents`), so this is probably
 `plasmawindowed` re-adding; it must be re-checked in a real panel and guarded anyway (see risks).
 
-## Approach for Start12 (chosen)
+## Approach for Win12 (chosen)
 
 1. `package/metadata.json`: add `"X-Plasma-ContainmentType": "CustomEmbedded"`.
 2. `package/contents/ui/main.qml`: `PlasmoidItem {` -> `ContainmentItem {` (same import). Everything
@@ -116,7 +116,7 @@ Item {
   (`./install.sh --restart`, then relogin) that `Containment.applets.length` equals the config groups.
 - **Config persistence**: automatic (nested `[Applets]` group in `plasma-org.kde.plasma.desktop-appletsrc`).
   Our own `tileGroups` must reference `widget|<id>`; on restore, drop tiles whose id is gone
-  (`Containment.applets` is the truth). Removing the Start12 applet removes its children with it.
+  (`Containment.applets` is the truth). Removing the Win12 applet removes its children with it.
 - **Popup sizing**: hosted items size to the tile; set `preferredRepresentation = fullRepresentation`
   so a 1x1 tile does not fall back to the panel icon. Respect
   `item.fullRepresentationItem.Layout.minimumWidth/Height` when offering tile sizes (hide 1x1 for
@@ -180,7 +180,7 @@ show it because there the form factor is Planar, where master also prefers the f
 **Chosen fix: the Plasma 6 system tray pattern (option c), no C++.** The tray is a `CustomEmbedded`
 `ContainmentItem` with no `compactRepresentation`/`fullRepresentation` at all: its panel content is
 its own child item and its popup is its own `PlasmaCore.AppletPopup` (`applets/systemtray/qml/main.qml`
-lines 270-345). For Start12:
+lines 270-345). For Win12:
 
 1. Root stays `ContainmentItem` (`CustomEmbedded`), all the branch's applet hosting stays.
 2. Delete `compactRepresentation`/`fullRepresentation`/`preferredRepresentation`. `StartButton {}`
@@ -210,7 +210,7 @@ lines 270-345). For Start12:
 6. Hosted applet popups (digital clock calendar) open as windows parented to our popup; keep the
    earlier plan: while any `item.expanded` is true set `popup.hideOnWindowDeactivate = false`.
 
-Proof (throwaway `org.start12.spike2`, plasmawindowed, isolated `XDG_CONFIG_HOME/DATA_HOME/CACHE_HOME`,
+Proof (throwaway `org.win12.spike2`, plasmawindowed, isolated `XDG_CONFIG_HOME/DATA_HOME/CACHE_HOME`,
 `QT_LOGGING_TO_CONSOLE=1` is needed to see `console.log` when stderr is not a tty):
 
 ```
@@ -229,12 +229,12 @@ D-Bus and its own config/data dirs, so the real plasmashell, panel and `plasma-o
 are never involved (standard KDE dev setup; not run in this research session):
 
 ```
-T=/tmp/start12-nested; mkdir -p $T/config $T/cache $T/data/plasma/plasmoids
-cp -r package $T/data/plasma/plasmoids/org.start12.menu        # the copy under test
+T=/tmp/win12-nested; mkdir -p $T/config $T/cache $T/data/plasma/plasmoids
+cp -r package $T/data/plasma/plasmoids/org.win12.menu        # the copy under test
 dbus-run-session -- env XDG_CONFIG_HOME=$T/config XDG_DATA_HOME=$T/data XDG_CACHE_HOME=$T/cache \
   QT_LOGGING_TO_CONSOLE=1 kwin_wayland --width 1600 --height 900 --xwayland --exit-with-session=plasmashell
 # in a second shell on the SAME nested bus (the dbus-run-session child env), add it to the nested panel:
-#   qdbus6 org.kde.plasmashell /PlasmaShell evaluateScript 'panels()[0].addWidget("org.start12.menu")'
+#   qdbus6 org.kde.plasmashell /PlasmaShell evaluateScript 'panels()[0].addWidget("org.win12.menu")'
 # (or run plasmashell inside a wrapper script that does kwin_wayland ... & then the qdbus call after a sleep)
 ```
 

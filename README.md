@@ -1,4 +1,4 @@
-# Start12
+# Win12
 
 A Start menu for **KDE Plasma 6** inspired by Stardock Start11: eight menu styles (Windows 10, 11, 7, XP,
 Modern, App, Pro, Launcher), a matching taskbar, matching window title bars and colours, and a settings
@@ -28,7 +28,7 @@ window with everything in one place.
 
 Full list of features: [docs/FEATURES.md](docs/FEATURES.md)
 
-Everything you change (taskbar style, title bars, colours) is undone when you switch it off: Start12 saves
+Everything you change (taskbar style, title bars, colours) is undone when you switch it off: Win12 saves
 your own Plasma Style, window decoration and colour scheme first.
 
 ## Requirements
@@ -42,23 +42,23 @@ your own Plasma Style, window decoration and colour scheme first.
 ## Install
 
 **From the KDE Store** (updates come through Discover): right-click your panel → *Add or Manage Widgets* →
-*Get New Widgets* → *Download New Plasma Widgets*, search **Start12** and install. On first start the widget
-generates its taskbar styles, title bars, colour schemes and the `start12-settings` command by itself.
+*Get New Widgets* → *Download New Plasma Widgets*, search **Win12** and install. On first start the widget
+generates its taskbar styles, title bars, colour schemes and the `win12-settings` command by itself.
 
 **From git:**
 
 ```sh
-git clone https://github.com/Kalaminator/Start12.git
-cd Start12
+git clone https://github.com/Kalaminator/Start12.git Win12
+cd Win12
 ./install.sh            # add --restart to reload Plasma right away
 ```
 
-Then right-click your panel → *Add or Manage Widgets* → search **Start12** and drag it to the panel
-(or replace your current launcher with it). Open its settings with right-click → *Configure Start12*,
-or run `start12-settings`.
+Then right-click your panel → *Add or Manage Widgets* → search **Win12** and drag it to the panel
+(or replace your current launcher with it). Open its settings with right-click → *Configure Win12*,
+or run `win12-settings`.
 
 Updating: store installs update in Discover (or *Get New Widgets* → *Updates*); git installs with `git pull && ./install.sh --restart`.
-Remove: `kpackagetool6 -t Plasma/Applet -r org.start12.menu`.
+Remove: `kpackagetool6 -t Plasma/Applet -r org.win12.menu`.
 
 ## Images
 
@@ -68,24 +68,24 @@ or put PNG files in `package/contents/images/StartButtons/`, `MenuTextures/` or 
 
 ## Project layout
 
-- `package/` — the Plasma widget (`org.start12.menu`): `contents/ui/main.qml`, one file per style in
+- `package/` — the Plasma widget (`org.win12.menu`): `contents/ui/main.qml`, one file per style in
   `contents/ui/styles/`, shared parts in `contents/ui/common/`, settings pages in `contents/ui/config/`,
   pure logic in `contents/ui/code/tiles.js`, theme generator `contents/ui/code/xptheme.py`.
 - `tests/test_tiles.js` — tests for the pure logic (`node tests/test_tiles.js`).
 - `po/` — translations (`package/Messages.sh` extracts strings).
-- `tools/make-release.sh` — builds `dist/org.start12.menu-<version>.plasmoid` for the KDE Store (`docs/STORE.md`).
+- `tools/make-release.sh` — builds `dist/org.win12.menu-<version>.plasmoid` for the KDE Store (`docs/STORE.md`).
 - `docs/` — design notes (`HANDOFF.md`), job list (`TODO.md`), Start11 feature research.
 
 ## License
 
 [MIT](LICENSE): free to use, copy, modify, share and sell. Contributions welcome.
 
-Start12 is an independent project, not affiliated with or endorsed by Stardock or Microsoft. Windows and
+Win12 is an independent project, not affiliated with or endorsed by Stardock or Microsoft. Windows and
 Start11 are trademarks of their owners.
 
 ---
 
-# Start12 (español)
+# Win12 (español)
 
 Un menú Inicio para **KDE Plasma 6** inspirado en Stardock Start11: ocho estilos de menú (Windows 10, 11, 7, XP,
 Modern, App, Pro, Launcher), una barra de tareas a juego, barras de título y colores de ventana a juego, y una
@@ -99,24 +99,24 @@ con botón y barra centrados opcionales, funciona en cualquier distro con Plasma
 ## Instalar
 
 **Desde la KDE Store** (se actualiza con Discover): clic derecho en el panel → *Añadir o gestionar widgets* →
-*Obtener nuevos widgets* → *Descargar nuevos widgets de Plasma*, busca **Start12** e instálalo.
+*Obtener nuevos widgets* → *Descargar nuevos widgets de Plasma*, busca **Win12** e instálalo.
 
 **Desde git:**
 
 ```sh
-git clone https://github.com/Kalaminator/Start12.git
-cd Start12
+git clone https://github.com/Kalaminator/Start12.git Win12
+cd Win12
 ./install.sh            # añade --restart para recargar Plasma
 ```
 
-Después: clic derecho en el panel → *Añadir o gestionar widgets* → busca **Start12** y arrástralo al panel.
-La configuración se abre con clic derecho → *Configurar Start12*, o con `start12-settings`.
+Después: clic derecho en el panel → *Añadir o gestionar widgets* → busca **Win12** y arrástralo al panel.
+La configuración se abre con clic derecho → *Configurar Win12*, o con `win12-settings`.
 
 Actualizar: Discover (tienda) o `git pull && ./install.sh --restart` (git).
 
 Necesitas Plasma 6, `python3` y las herramientas de KDE (`qdbus6`, `kreadconfig6`, `kpackagetool6`).
 
-Todo lo que cambia (estilo de la barra, bordes de ventana, colores) se deshace al apagarlo: Start12 guarda antes
+Todo lo que cambia (estilo de la barra, bordes de ventana, colores) se deshace al apagarlo: Win12 guarda antes
 tu tema de Plasma, tus bordes y tus colores.
 
 Para el botón con imagen y las texturas puedes usar cualquier PNG tuyo desde la configuración. El botón de inicio usa el logo de KDE; lo puedes cambiar en Configuración → Botón de inicio.
@@ -125,4 +125,4 @@ Para el botón con imagen y las texturas puedes usar cualquier PNG tuyo desde la
 
 [MIT](LICENSE): puedes usarlo, copiarlo, cambiarlo, compartirlo y venderlo libremente.
 
-Start12 es un proyecto independiente, sin relación con Stardock ni Microsoft.
+Win12 es un proyecto independiente, sin relación con Stardock ni Microsoft.

@@ -1,6 +1,6 @@
 # Prompt for one TODO job (replace TXX). Dispatch with model opus for M jobs, sonnet for S jobs, one job at a time.
 
-You build one job for Start12, a KDE Plasma 6 widget copying Stardock Start11 v2. Project root: /home/kalaminator/Documents/Start12 (git repo).
+You build one job for Win12, a KDE Plasma 6 widget copying Stardock Start11 v2. Project root: /home/kalaminator/Documents/Start12 (git repo).
 
 Read first: docs/HANDOFF.md (architecture, gotchas), then the job "TXX" in docs/TODO.md. Build exactly TXX, nothing else.
 
@@ -17,5 +17,5 @@ Reply in <= 10 lines: what you built, files changed, what the user should look a
 
 # After every 2-3 jobs (main session): one load check of all styles
 Patch the INSTALLED main.qml with a Timer that sets cfg.menuStyle to each style in turn (2.5 s apart, expanded = true),
-restart plasmashell once, then `journalctl --user --since "-30 s" | grep start12` for errors, then `./install.sh`
+restart plasmashell once, then `journalctl --user --since "-30 s" | grep win12` for errors, then `./install.sh`
 and make sure menuStyle is back to the user's choice (currently "modern").

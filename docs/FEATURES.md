@@ -1,6 +1,6 @@
 # Features
 
-Start12 is a Start menu for KDE Plasma 6 with eight menu styles, a matching taskbar, matching window title bars and colours, and one settings window for everything. This guide lists what each option does. Open the settings with right-click on the Start button, then *Configure Start12*, or run `start12-settings`. Start11 images are not included.
+Win12 is a Start menu for KDE Plasma 6 with eight menu styles, a matching taskbar, matching window title bars and colours, and one settings window for everything. This guide lists what each option does. Open the settings with right-click on the Start button, then *Configure Win12*, or run `win12-settings`. Start11 images are not included.
 
 ## Menu styles
 
@@ -41,7 +41,7 @@ Pick a style on the *Start Menu* page.
 
 ## Shortcuts page
 
-- Choose which shortcuts appear on the side list, and their order: user picture, Documents, Downloads, Music, Pictures, Videos, Personal folder, Network, Computer, Trash, Recent files, Games, Printers, Users, Updates, a separator, File Explorer, Personalization, Settings, Terminal, System Monitor, Run, Start12 Settings and Power.
+- Choose which shortcuts appear on the side list, and their order: user picture, Documents, Downloads, Music, Pictures, Videos, Personal folder, Network, Computer, Trash, Recent files, Games, Printers, Users, Updates, a separator, File Explorer, Personalization, Settings, Terminal, System Monitor, Run, Win12 Settings and Power.
 - Add your own location: a folder, a web address or a command, with a name and an icon.
 - Icons only, names on mouse over, or always icons and names; icon size.
 - Align icons to the bottom (Windows 10), smaller place rows (Windows 7, XP, Pro), icon on the Shut down button (Windows 7).
@@ -108,23 +108,23 @@ Type as soon as the menu opens. Results come from the sources chosen on the Sear
 
 ## Taskbar and windows follow the menu style
 
-When switched on, the taskbar (a Plasma Style), the window title bars (Aurorae) and the colour scheme follow the chosen menu style (Windows 10, 11, 7 or XP) and the accent colour. The XP styles need the matching XP taskbar theme. Everything is undone when you switch it off: Start12 saves your own Plasma Style, window decoration and colour scheme first and puts them back.
+When switched on, the taskbar (a Plasma Style), the window title bars (Aurorae) and the colour scheme follow the chosen menu style (Windows 10, 11, 7 or XP) and the accent colour. The XP styles need the matching XP taskbar theme. Everything is undone when you switch it off: Win12 saves your own Plasma Style, window decoration and colour scheme first and puts them back.
 
 ## Languages
 
-English, Spanish, French, German, Italian, Brazilian Portuguese, Russian, Arabic, Simplified Chinese, Japanese and Hindi. Start12 follows your Plasma language.
+English, Spanish, French, German, Italian, Brazilian Portuguese, Russian, Arabic, Simplified Chinese, Japanese and Hindi. Win12 follows your Plasma language.
 
 ## Install and update
 
 - Works on any Plasma 6 distro (Arch, Fedora KDE, openSUSE, Kubuntu, Debian 13, KDE neon, Manjaro and others). It needs `python3` and the normal KDE tools.
-- From the KDE Store: *Add or Manage Widgets*, *Get New Widgets*, search Start12. On first start the widget creates its taskbar styles, title bars, colour schemes and the `start12-settings` command by itself. Updates come through Discover.
+- From the KDE Store: *Add or Manage Widgets*, *Get New Widgets*, search Win12. On first start the widget creates its taskbar styles, title bars, colour schemes and the `win12-settings` command by itself. Updates come through Discover.
 - From git: clone, then run `./install.sh`. Update with `git pull && ./install.sh --restart`.
 
 ---
 
 # Funciones (español)
 
-Start12 es un menú Inicio para KDE Plasma 6 con ocho estilos de menú, una barra de tareas a juego, barras de título y colores de ventana a juego, y una sola ventana de configuración. Esta guía explica qué hace cada opción. Abre la configuración con clic derecho en el botón de inicio y *Configurar Start12*, o ejecuta `start12-settings`. Las imágenes de Start11 no se incluyen.
+Win12 es un menú Inicio para KDE Plasma 6 con ocho estilos de menú, una barra de tareas a juego, barras de título y colores de ventana a juego, y una sola ventana de configuración. Esta guía explica qué hace cada opción. Abre la configuración con clic derecho en el botón de inicio y *Configurar Win12*, o ejecuta `win12-settings`. Las imágenes de Start11 no se incluyen.
 
 ## Estilos de menú
 
@@ -165,7 +165,7 @@ Elige el estilo en la página *Menú de inicio*.
 
 ## Página Accesos directos
 
-- Elige qué accesos aparecen en la lista lateral y su orden: foto de usuario, Documentos, Descargas, Música, Imágenes, Vídeos, Carpeta personal, Red, Equipo, Papelera, Archivos recientes, Juegos, Impresoras, Usuarios, Actualizaciones, un separador, Explorador de archivos, Personalización, Configuración, Terminal, Monitor del sistema, Ejecutar, Configuración de Start12 y Energía.
+- Elige qué accesos aparecen en la lista lateral y su orden: foto de usuario, Documentos, Descargas, Música, Imágenes, Vídeos, Carpeta personal, Red, Equipo, Papelera, Archivos recientes, Juegos, Impresoras, Usuarios, Actualizaciones, un separador, Explorador de archivos, Personalización, Configuración, Terminal, Monitor del sistema, Ejecutar, Configuración de Win12 y Energía.
 - Añade tu propio lugar: una carpeta, una dirección web o un comando, con nombre e icono.
 - Solo iconos, nombres al pasar el ratón, o siempre iconos y nombres; tamaño de icono.
 - Alinear iconos abajo (Windows 10), filas de lugares más pequeñas (Windows 7, XP, Pro), icono en el botón Apagar (Windows 7).
@@ -232,14 +232,14 @@ Escribe en cuanto se abre el menú. Los resultados vienen de las fuentes elegida
 
 ## La barra de tareas y las ventanas siguen el estilo del menú
 
-Al activarlo, la barra de tareas (un estilo de Plasma), las barras de título (Aurorae) y el esquema de colores siguen el estilo de menú elegido (Windows 10, 11, 7 o XP) y el color de acento. Los estilos XP necesitan el tema de barra XP correspondiente. Todo se deshace al apagarlo: Start12 guarda antes tu estilo de Plasma, tus bordes de ventana y tu esquema de colores, y los devuelve.
+Al activarlo, la barra de tareas (un estilo de Plasma), las barras de título (Aurorae) y el esquema de colores siguen el estilo de menú elegido (Windows 10, 11, 7 o XP) y el color de acento. Los estilos XP necesitan el tema de barra XP correspondiente. Todo se deshace al apagarlo: Win12 guarda antes tu estilo de Plasma, tus bordes de ventana y tu esquema de colores, y los devuelve.
 
 ## Idiomas
 
-Inglés, español, francés, alemán, italiano, portugués de Brasil, ruso, árabe, chino simplificado, japonés y hindi. Start12 sigue el idioma de tu Plasma.
+Inglés, español, francés, alemán, italiano, portugués de Brasil, ruso, árabe, chino simplificado, japonés y hindi. Win12 sigue el idioma de tu Plasma.
 
 ## Instalar y actualizar
 
 - Funciona en cualquier distro con Plasma 6 (Arch, Fedora KDE, openSUSE, Kubuntu, Debian 13, KDE neon, Manjaro y otras). Necesita `python3` y las herramientas normales de KDE.
-- Desde la KDE Store: *Añadir o gestionar widgets*, *Obtener nuevos widgets*, busca Start12. Al primer arranque el widget crea por sí solo sus estilos de barra, bordes de ventana, esquemas de color y el comando `start12-settings`. Las actualizaciones llegan por Discover.
+- Desde la KDE Store: *Añadir o gestionar widgets*, *Obtener nuevos widgets*, busca Win12. Al primer arranque el widget crea por sí solo sus estilos de barra, bordes de ventana, esquemas de color y el comando `win12-settings`. Las actualizaciones llegan por Discover.
 - Desde git: clona y ejecuta `./install.sh`. Actualiza con `git pull && ./install.sh --restart`.

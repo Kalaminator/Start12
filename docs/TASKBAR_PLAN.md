@@ -1,4 +1,4 @@
-# Start12 taskbar plan (2026-10-14)
+# Win12 taskbar plan (2026-10-14)
 
 Source: docs/research/start11-features.md section 10 mapped to Plasma 6.7 (Arch, Wayland). Start11 patches
 explorer's taskbar; on Plasma the taskbar = a panel (per screen) + Task Manager widget + the Plasma Style
@@ -7,7 +7,7 @@ styles for XP (`package/contents/ui/code/xptheme.py`, applied/restored by `main.
 "taskbar look" features are mostly a generalisation of that. Anything that needs to re-layout task buttons
 inside the stock Task Manager is out of reach without forking it (not worth it).
 
-Legend: (a) stock Plasma, name the setting. (b) Start12 / generated style / small extra. (c) not doable.
+Legend: (a) stock Plasma, name the setting. (b) Win12 / generated style / small extra. (c) not doable.
 
 ## Map
 
@@ -41,8 +41,8 @@ Legend: (a) stock Plasma, name the setting. (b) Start12 / generated style / smal
 | Autohide toggle in the taskbar menu | b | start-button right-click action flipping the panel's `hiding` via plasmashell scripting (T29) |
 | Reserve one pixel at the edge | c | Plasma's autohide keeps its own edge strip; moot |
 | Clock seconds | a | Digital Clock: Appearance > Show seconds Always / Only in tooltip / Never |
-| Show / hide search on taskbar | b | Plasma has no search bar widget; Start12 can draw one next to the start button (T30) |
-| Taskbar pins: file, folder, website, "Browse for file", "Enter web address" | b | Task Manager launchers only take .desktop files; Start12 writes a .desktop per custom pin and adds it (T32) |
+| Show / hide search on taskbar | b | Plasma has no search bar widget; Win12 can draw one next to the start button (T30) |
+| Taskbar pins: file, folder, website, "Browse for file", "Enter web address" | b | Task Manager launchers only take .desktop files; Win12 writes a .desktop per custom pin and adds it (T32) |
 | Pin folder menu / open folder as a menu | a | Folder View widget in the panel (shows the folder as a popup list) |
 | Multi-monitor primary / secondary | a | one panel per screen, each configured on its own (Edit Mode > Clone panel) |
 
@@ -69,7 +69,7 @@ Check: field visible on the panel, type "dolp", menu opens on Dolphin results, E
 
 ### T31 Generated taskbar style for every menu style (M) -- DONE (no settings UI yet; T36)
 Build: generalise `ui/code/xptheme.py` (new entry `--taskbar colour=#.. alpha=0.8 radius=8 line=0 sub=flat`) to
-write `start12-taskbar-<hash>` with `[Settings] FallbackTheme=` the current Plasma Style so only
+write `win12-taskbar-<hash>` with `[Settings] FallbackTheme=` the current Plasma Style so only
 `widgets/panel-background.svg` (incl. `translucent/` prefix for blur), `widgets/tasks.svg` and `colors` are
 replaced; keys `taskbarTheme` (off|custom), `taskbarColor`, `taskbarAlpha`, `taskbarRadius`, `taskbarLine`
 (Start11 `CustomColourTaskbar`, `TaskbarAlphaValue`, rounded corners, `HideTaskbarLineEntirely`). `main.qml
@@ -79,7 +79,7 @@ shows it, other widgets unchanged; switch off restores Breeze.
 
 ### T32 Pin files, folders and websites to the taskbar (M) -- DONE (custom pins only; apps use kicker "Pin to Task Manager")
 Build: "Pin to taskbar" in `ContextMenu.qml` for `custom|...` pins (T01) and for All-apps rows that kicker's
-"Add to panel" does not cover: write `~/.local/share/applications/start12-pin-<n>.desktop` (`Exec=xdg-open
+"Add to panel" does not cover: write `~/.local/share/applications/win12-pin-<n>.desktop` (`Exec=xdg-open
 <target>`, icon/name from `Tiles.customFor`), then plasmashell `evaluateScript` appends its url to the `launchers`
 config of the Task Manager (`org.kde.plasma.icontasks` or `taskmanager`) in the start button's panel. "Unpin from
 taskbar" removes both. Check: pin a URL and ~/Pictures from the menu, both appear on the panel and open; unpin removes them.
@@ -106,7 +106,7 @@ Check: switch Win10 -> Win11 -> XP, panel follows each time; off restores the sa
 Build: `config/ConfigTaskbar.qml` gathering the keys of T29-T35 plus a short note with buttons for what stock
 Plasma covers: "Edit panel…" (reuse the T10 `editpanel` action), "Task Manager settings…" (evaluateScript
 `widget.showConfigurationInterface()` on the panel's task manager). Register in `config/config.qml`. Translate new
-strings (`package/Messages.sh`, po/es.po). Check: page opens from Start12 Settings, both buttons open the right dialog.
+strings (`package/Messages.sh`, po/es.po). Check: page opens from Win12 Settings, both buttons open the right dialog.
 
 ## Not planned
 Per-pin display selection, "only combine pinned", touch mode, text shadow, animated corner changes, offset
