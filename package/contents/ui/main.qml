@@ -21,7 +21,8 @@ ContainmentItem {
     readonly property var cfg: Plasmoid.configuration
 
     // Styles that have a QML file. The others fall back to Windows 10 for now.
-    readonly property var builtStyles: ["windows7", "modern", "windows10", "windows11", "windows12", "app", "pro", "launcher", "xp"]
+    readonly property var builtStyles: ["windows7", "modern", "windows10", "windows11", "windows12", "app", "pro", "launcher", "xp", "plasma"]
+    // "plasma" = the KDE Plasma card: a Kickoff-like menu, Plasma's own taskbar and title bars.
     // Modern style = the Windows 7 file with a flat look.
     // T43 mix and match: menuStyle = the Style card; menuLook/taskbarLook/windowLook ("" = same as the style)
     // pick another look for the menu, the taskbar preset and the window decoration.
@@ -254,7 +255,7 @@ ContainmentItem {
             : name.includes("-accent-") ? "--custom " + accentHex + " --win10 " + (winDark ? "dark" : "light") + " --kind " + name.split("-")[1] : "";
     }
     readonly property string customNames: "\\( -name 'start12-xp-*-custom-*' -o -name 'start12-win*-accent-*' -o -name 'start12-*-g[0-9]*b[01]r*t[0-9]*' \\)"
-    readonly property string windowDeco: cfg.windowTheme ? windowDecoration() : ""
+    readonly property string windowDeco: cfg.windowTheme && (cfg.windowLook || cfg.menuStyle) !== "plasma" ? windowDecoration() : ""
     // T41 window glass (Taskbar page): opacity/blur/radius/title height = a deco made at apply time,
     // <windowDeco>-g<opacity>b<blur>r<radius|d>t<title>; the colour scheme keeps the windowDeco name.
     // W8: Windows 12 windows default to a glass title bar (35 %, blurred; 65 % still read as solid accent behind the blur) while "Transparency effects" is on.
@@ -421,7 +422,7 @@ ContainmentItem {
     readonly property int barThickness: (Plasmoid.formFactor === PlasmaCore.Types.Vertical ? width : height) + 4
     readonly property int win12Radius: Math.max(2, Math.round((barThickness < 20 ? 46 : barThickness) / 2 * cfg.taskbarRound / 100))
     readonly property bool win12Taskbar: cfg.taskbarFollowsStyle && taskbarKind === "windows12"
-    readonly property string taskbarBase: cfg.taskbarFollowsStyle ? (taskbarPresets[taskbarKind] || (taskbarKind === "xp" ? "" : taskbarPresets.windows11))
+    readonly property string taskbarBase: cfg.taskbarFollowsStyle ? (taskbarPresets[taskbarKind] || (taskbarKind === "xp" || taskbarKind === "plasma" ? "" : taskbarPresets.windows11))
         : cfg.taskbarTheme !== "custom" ? ""
         : "colour=" + cfg.taskbarColor.toString().slice(-6) + " alpha=" + (cfg.taskbarAlpha / 100)
           + " radius=" + cfg.taskbarRadius + " line=" + (cfg.taskbarLine ? 1 : 0) + " buttons=" + Tiles.shQuote(cfg.taskbarButtons)

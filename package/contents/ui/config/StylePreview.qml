@@ -93,6 +93,20 @@ Rectangle {
         Rectangle { anchors.right: parent.right; width: parent.width * 0.35; height: parent.height; radius: 2; color: pv.dim }
         Lines { x: parent.width * 0.7; y: 16; count: 6 }
     }
+    // KDE Plasma (Kickoff): avatar + search, category sidebar | app grid, tabs and power buttons
+    Item {
+        anchors.fill: parent
+        anchors.margins: 6
+        visible: pv.styleId === "plasma"
+        Rectangle { width: 8; height: 8; radius: 4; color: pv.fg }
+        Rectangle { x: 12; y: 1; width: parent.width - 12; height: 6; radius: 3; color: pv.dim }
+        Lines { y: 14; count: 6 }
+        Rectangle { x: parent.width * 0.42; y: 13; width: 1; height: parent.height - 24; color: pv.dim }
+        Squares { x: parent.width * 0.48; y: 14; cols: 4; count: 8; side: 9 }
+        Rectangle { y: parent.height - 6; width: parent.width * 0.4; height: 6; radius: 2; color: Qt.alpha(Kirigami.Theme.highlightColor, 0.7) }
+        Row { anchors.right: parent.right; y: parent.height - 6; spacing: 3
+            Repeater { model: 3; Rectangle { width: 6; height: 6; radius: 3; color: pv.fg } } }
+    }
     // Launcher: big picture, search, large pinned grid
     Item {
         anchors.fill: parent
