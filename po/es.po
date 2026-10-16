@@ -2482,3 +2482,55 @@ msgid ""
 msgstr ""
 "La barra flotante de Windows 12 siempre se oculta sola, así queda como una "
 "isla sobre las ventanas maximizadas. Desactiva «Barra flotante» para una fija."
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "How light:"
+msgstr "Claridad:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Soft tint"
+msgstr "Tono suave"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Near white"
+msgstr "Casi blanco"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "How dark:"
+msgstr "Oscuridad:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Soft dark"
+msgstr "Oscuro suave"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Near black"
+msgstr "Casi negro"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Transparency:"
+msgstr "Transparencia:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Solid"
+msgstr "Opaco"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Clear"
+msgstr "Transparente"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Blur strength:"
+msgstr "Intensidad del desenfoque:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Soft"
+msgstr "Suave"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Strong"
+msgstr "Fuerte"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Taskbar, Start menu and title bars; transparency changes only the background, icons and text stay solid. Blur strength sets KWin's blur for all windows while the Windows 12 look is on; your own value comes back when you leave it."
+msgstr "Barra de tareas, menú Inicio y barras de título; la transparencia cambia solo el fondo, los iconos y el texto siguen opacos. La intensidad del desenfoque cambia el desenfoque de KWin para todas las ventanas mientras el aspecto Windows 12 está activo; tu valor vuelve al salir de él."

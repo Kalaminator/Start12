@@ -193,6 +193,13 @@ slot, W2 waits or works code-only with PySide6/qmlscene checks) -> W6. W4 can be
 - Fix: the style gate now comes from main.qml `islandWant` (@WANT@), so T43 `taskbarLook = windows12` with another menu works and a Windows 12 menu with another taskbar look gets `single`.
 - Seen: split-left and split-right magnetic (centred, 8 px gaps), split-left magnetic off (edges), opened app re-centres, back to single = fill/center, order 29;4;5;6;7;21;22, no extra panels. Glass check: the start12 Plasma Styles set `[AdaptiveTransparency] enabled=false`, so Plasma always uses translucent/ (panel opacity mode is not the cause; its read-back always says translucent with our themes).
 
+### W11 Colour sliders (2026-10-16, real panel, seen on screen)
+- Keys `win12Light`, `win12Dark`, `win12Transparency`, `win12Blur` (Int, -1 = the W8/W10 look; sliders show 80/50/70/8 then). Taskbar page Windows 12 group, es.po.
+- main.qml `win12Hex` (light: #dde1ec soft tint .. #fdfdff, 80 = f7f7fb; dark: #3a3a46 .. #050507) = Windows 12 taskbar colour (not with the accent taskbar) and Metrics.bg for the windows12 menu (only when a slider moved; not with accent Start or custom colours). Transparency = taskbar alpha 1-T, menu bgAlpha 1-T, title bars windowOpacity 100-T (title colour stays the scheme/accent).
+- Blur: `syncBlurStrength()` writes kwinrc `[Effect-blur] BlurStrength` while any Windows 12 part is on with Transparency effects; the user's value is kept in `[Effect-blur] start12Saved` ("unset" = no key) and put back (then deleted) when it goes off; `/KWin reconfigure`.
+- Seen: light 100 + 20 % see-through = near-white bar, dark 100 = near-black bar, BlurStrength=15 written, restored (key gone) on XP. Menu colour not opened on screen.
+- Tray watch (W10 open point) verified: busctl 2 before, 2 after nm-applet start and after quit; the magnetic group re-centred both times.
+
 ## Task B: a lighter tray strip in the XP taskbar
 
 How the Plasma 6.8 tray draws: there is NO package dir (`/usr/share/plasma/plasmoids/org.kde.plasma.systemtray` does not

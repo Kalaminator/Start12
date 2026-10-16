@@ -327,6 +327,22 @@
       <label>Windows 12 auto-hidden taskbar pop-up animation (KWin effect start12panelpop): 0 Plasma slide only, 1 fade, 2 zoom, 3 rise</label>
       <default>2</default>
     </entry>
+    <entry name="win12Light" type="Int">
+      <label>W11 Windows 12 light background (taskbar, menu): 0 soft tint .. 100 near white; -1 = the default look</label>
+      <default>-1</default>
+    </entry>
+    <entry name="win12Dark" type="Int">
+      <label>W11 Windows 12 dark background (taskbar, menu): 0 soft dark .. 100 near black; -1 = the default look</label>
+      <default>-1</default>
+    </entry>
+    <entry name="win12Transparency" type="Int">
+      <label>W11 Windows 12 background see-through % (taskbar, menu, title bars); -1 = the default glass</label>
+      <default>-1</default>
+    </entry>
+    <entry name="win12Blur" type="Int">
+      <label>W11 kwinrc [Effect-blur] BlurStrength (1-15) while a Windows 12 part is on; -1 = the user's own</label>
+      <default>-1</default>
+    </entry>
     <entry name="taskbarLayout" type="String">
       <label>Windows 12 taskbar layout: single | split-left | split-right (split is stored only until the island panels exist)</label>
       <default>single</default>

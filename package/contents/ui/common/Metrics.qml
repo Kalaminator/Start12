@@ -39,7 +39,9 @@ QtObject {
     // (a part with a forced mode, like the Win7 white pane, sets accentStart: false).
     readonly property bool win10: root.menuKind !== "xp"
     property bool accentStart: win10 && cfg.win10AccentStart
-    readonly property color bg: accentStart ? Qt.darker(accent, 1.6) : mode === 0 ? Kirigami.Theme.backgroundColor
+    readonly property color bg: accentStart ? Qt.darker(accent, 1.6)
+                              : root.menuKind === "windows12" && mode !== 3 && (root.winDark ? cfg.win12Dark : cfg.win12Light) >= 0 ? "#" + root.win12Hex   // W11
+                              : mode === 0 ? Kirigami.Theme.backgroundColor
                               : mode === 1 ? "#1c1b22" : mode === 2 ? "#f3f3f3" : cfg.menuColor
     readonly property color text: accentStart ? "#ffffff" : mode === 0 ? Kirigami.Theme.textColor
                                 : mode === 1 ? "#ffffff" : mode === 2 ? "#1b1b1b" : cfg.textColor
@@ -49,7 +51,8 @@ QtObject {
     readonly property real tileAlpha: cfg.tileColorMode === 0 ? cfg.tileOpacity / 100
                                     : Math.max(0.05, cfg.tileOpacity / 100 * 4)
     readonly property real bgAlpha: cfg.solidMenu || (win10 && !cfg.win10Transparency) ? 1
-        : cfg.menuOpacity / 100 * (root.menuKind === "windows12" ? 0.35 : 1)   // W8: Windows 12 glass (88 % -> 31 %)
+        : root.menuKind !== "windows12" ? cfg.menuOpacity / 100
+        : cfg.win12Transparency < 0 ? cfg.menuOpacity / 100 * 0.35 : 1 - cfg.win12Transparency / 100   // W8 glass (88 % -> 31 %), W11 slider
 
     readonly property string font: cfg.fontFamily !== "" ? cfg.fontFamily : Kirigami.Theme.defaultFont.family
     readonly property real fontSize: px(cfg.fontSize)

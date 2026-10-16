@@ -2328,3 +2328,55 @@ msgid ""
 "The floating Windows 12 bar always auto-hides, so it stays an island over "
 "maximized windows. Turn off \"Floating bar\" for a fixed one."
 msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "How light:"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Soft tint"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Near white"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "How dark:"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Soft dark"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Near black"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Transparency:"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Solid"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Clear"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Blur strength:"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Soft"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Strong"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Taskbar, Start menu and title bars; transparency changes only the background, icons and text stay solid. Blur strength sets KWin's blur for all windows while the Windows 12 look is on; your own value comes back when you leave it."
+msgstr ""

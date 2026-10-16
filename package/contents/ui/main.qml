@@ -259,7 +259,7 @@ ContainmentItem {
     // <windowDeco>-g<opacity>b<blur>r<radius|d>t<title>; the colour scheme keeps the windowDeco name.
     // W8: Windows 12 windows default to a glass title bar (35 %, blurred; 65 % still read as solid accent behind the blur) while "Transparency effects" is on.
     readonly property int windowOpacity: cfg.windowOpacity === 100 && (cfg.windowLook || cfg.menuStyle) === "windows12"
-        && cfg.win10Transparency ? 35 : cfg.windowOpacity
+        && cfg.win10Transparency ? (cfg.win12Transparency < 0 ? 35 : 100 - cfg.win12Transparency) : cfg.windowOpacity
     readonly property string glassSuffix: windowOpacity < 100 || cfg.windowRadius >= 0 || cfg.titleHeight > 0
         ? "-g" + windowOpacity + "b" + (cfg.windowBlur ? 1 : 0) + "r" + (cfg.windowRadius < 0 ? "d" : cfg.windowRadius) + "t" + cfg.titleHeight : ""
     readonly property string decoName: windowDeco === "" ? "" : windowDeco + glassSuffix
@@ -393,8 +393,30 @@ ContainmentItem {
                      + " alpha=" + (cfg.win10Transparency ? 0.8 : 1) + " radius=8 line=0 buttons=win11",
         "windows7": "colour=" + (cfg.win10AccentStart ? accentHex : "2a5a96")
                     + " alpha=" + (cfg.win10Transparency ? 0.6 : 1) + " radius=6 line=1 buttons=win7",
-        "windows12": "colour=" + (cfg.win10AccentStart ? accentHex : winDark ? "202028" : "f7f7fb")
-                     + " alpha=" + (cfg.win10Transparency ? (cfg.win10AccentStart ? 0.15 : winDark ? 0.3 : 0.25) : 1) + " radius=" + win12Radius + " line=0 buttons=win11" })
+        "windows12": "colour=" + (cfg.win10AccentStart ? accentHex : win12Hex)
+                     + " alpha=" + (!cfg.win10Transparency ? 1 : cfg.win12Transparency >= 0 ? 1 - cfg.win12Transparency / 100
+                                    : cfg.win10AccentStart ? 0.15 : winDark ? 0.3 : 0.25) + " radius=" + win12Radius + " line=0 buttons=win11" })
+    // W11 Windows 12 colour sliders (-1 = the W8 look): light 0 soft tint .. 100 near white (80 = f7f7fb),
+    // dark 0 soft dark .. 100 near black (~50 = 202028); taskbar and menu (Metrics.bg) background.
+    readonly property string win12Hex: {
+        const v = winDark ? cfg.win12Dark : cfg.win12Light;
+        return v < 0 ? (winDark ? "202028" : "f7f7fb") : Kirigami.ColorUtils.linearInterpolation(winDark ? "#3a3a46" : "#dde1ec",
+            winDark ? "#050507" : "#fdfdff", v / 100).toString().slice(-6);
+    }
+    // W11 blur strength: kwinrc [Effect-blur] BlurStrength while any Windows 12 part is on (KWin's blur is global);
+    // the user's value is kept next to it in start12Saved ("unset" = no key) and put back when it goes off.
+    readonly property int win12Blur: cfg.win10Transparency && (menuKind === "windows12" || win12Taskbar
+        || (cfg.windowLook || cfg.menuStyle) === "windows12") ? cfg.win12Blur : -1
+    onWin12BlurChanged: syncBlurStrength()
+    function syncBlurStrength() {
+        if (!configReady) return;
+        const g = "--file kwinrc --group Effect-blur --key ", reconf = "; " + Tiles.QDBUS + " org.kde.KWin /KWin reconfigure";
+        run("sh -c " + Tiles.shQuote(win12Blur > 0
+            ? "[ -n \"$(kreadconfig6 " + g + "start12Saved)\" ] || kwriteconfig6 " + g + "start12Saved \"$(kreadconfig6 " + g
+              + "BlurStrength --default unset)\"; kwriteconfig6 " + g + "BlurStrength " + win12Blur + reconf
+            : "s=$(kreadconfig6 " + g + "start12Saved); [ -n \"$s\" ] || exit 0; if [ \"$s\" = unset ]; then kwriteconfig6 " + g
+              + "BlurStrength --delete; else kwriteconfig6 " + g + "BlurStrength \"$s\"; fi; kwriteconfig6 " + g + "start12Saved --delete" + reconf));
+    }
     // W3: corners in % of half the panel thickness (applet size + our theme's 2+2 margins; 46 until laid out).
     readonly property int barThickness: (Plasmoid.formFactor === PlasmaCore.Types.Vertical ? width : height) + 4
     readonly property int win12Radius: Math.max(2, Math.round((barThickness < 20 ? 46 : barThickness) / 2 * cfg.taskbarRound / 100))
@@ -764,6 +786,7 @@ ContainmentItem {
             }
             root.syncDesktopTheme();
             root.syncPanelPop();
+            root.syncBlurStrength();
             root.readBrightness();
         }
     }
@@ -1469,6 +1492,7 @@ ContainmentItem {
             disconnectSource(sourceName);
             root.syncDesktopTheme();
             root.syncPanelPop();
+            root.syncBlurStrength();
             root.readBrightness();   // then syncWindowDeco + syncWindowColors
         }
     }
