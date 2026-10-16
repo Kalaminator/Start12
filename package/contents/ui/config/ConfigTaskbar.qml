@@ -12,9 +12,9 @@ import org.kde.plasma.plasma5support as P5Support
 KCM.SimpleKCM {
     id: page
     property string cfg_menuStyle   // read only, to show the XP option
-    property bool cfg_xpTaskbarTheme
+    property string cfg_taskbarLook   // read only (T43, picked on the Style page)
     property alias cfg_xpFirefoxTitlebar: ffBox.checked
-    property alias cfg_windowTheme: windowBox.checked
+    property bool cfg_windowTheme   // read only (T43: the Style page "Windows:" combo)
     property alias cfg_windowOpacity: winAlpha.value
     property alias cfg_windowBlur: winBlur.checked
     property int cfg_windowRadius
@@ -35,6 +35,7 @@ KCM.SimpleKCM {
     property alias cfg_taskbarFloating: w12Float.checked
     property alias cfg_taskbarRound: w12Round.value
     property string cfg_taskbarLayout
+    property bool cfg_taskbarMagnetic
     property alias cfg_taskbarSearch: searchBox.checked
     property alias cfg_taskbarSearchWidth: searchWidth.value
 
@@ -54,22 +55,12 @@ KCM.SimpleKCM {
     }
 
     Kirigami.FormLayout {
-        // T37: the two main switches, the same for every menu style.
-        QQC2.CheckBox {
-            text: i18n("Apply the theme to the taskbar")
-            checked: page.cfg_menuStyle === "xp" ? page.cfg_xpTaskbarTheme : page.cfg_taskbarFollowsStyle
-            onToggled: {   // one switch for both keys: XP Plasma Style (xpTaskbarTheme) and the T35 presets
-                page.cfg_xpTaskbarTheme = checked;
-                page.cfg_taskbarFollowsStyle = checked;
-            }
-            QQC2.ToolTip.visible: hovered
-            QQC2.ToolTip.text: i18n("Taskbar colours and buttons that match the menu style. Your own Plasma Style comes back when this is off.")
-        }
-        QQC2.CheckBox {
-            id: windowBox   // T26a/b, T37: main.qml windowDecoration() picks the theme per menu style
-            text: i18n("Apply the theme to windows")
-            QQC2.ToolTip.visible: hovered
-            QQC2.ToolTip.text: i18n("Title bars and colours of every window. Your own ones come back when this is off.")
+        // T43: which taskbar and window look is used moved to the Style page ("Taskbar:" / "Windows:").
+        QQC2.Label {
+            Layout.fillWidth: true
+            wrapMode: Text.Wrap
+            text: i18n("The taskbar and window looks are picked on the Style page.")
+            enabled: false
         }
         QQC2.CheckBox {
             id: ffBox
@@ -80,7 +71,7 @@ KCM.SimpleKCM {
         }
         // T41: glass options for the windowTheme decoration (main.qml glassSuffix), every style.
         ColumnLayout {
-            enabled: windowBox.checked
+            enabled: page.cfg_windowTheme
             Kirigami.FormData.label: i18n("Window frames:")
             RowLayout {
                 QQC2.Slider { id: winAlpha; from: 30; to: 100; stepSize: 5 }
@@ -126,7 +117,7 @@ KCM.SimpleKCM {
         }
         // W4: Windows 12 taskbar group (floating bar, corners, colour, layout)
         ColumnLayout {
-            visible: page.cfg_menuStyle === "windows12"
+            visible: (page.cfg_taskbarLook || page.cfg_menuStyle) === "windows12"
             Kirigami.FormData.label: i18n("Windows 12 taskbar:")
             QQC2.CheckBox { id: w12Float; text: i18n("Floating bar") }
             RowLayout {
@@ -153,17 +144,8 @@ KCM.SimpleKCM {
                 text: i18n("Colour and opacity follow \"Override the taskbar colour\" below.")
                 enabled: false
             }
-            QQC2.ComboBox {
-                id: w12Layout
-                readonly property var values: ["single", "split-left", "split-right"]
-                model: [i18n("One bar"), i18n("Widgets left, tray right"), i18n("Start left, tray right")]
-                currentIndex: Math.max(0, values.indexOf(page.cfg_taskbarLayout))
-                onActivated: page.cfg_taskbarLayout = values[currentIndex]
-            }
-            QQC2.Label {
-                text: i18n("Islands are extra Plasma panels holding the tray, clock and a new weather widget; One bar puts everything back.")
-                enabled: false
-            }
+            QQC2.Label { text: i18n("Taskbar layout:") }
+            TaskbarLayoutBox { cfgPage: page }
         }
         Item { Kirigami.FormData.isSection: true }
         QQC2.CheckBox {

@@ -35,7 +35,7 @@ FocusScope {
         accentStart: style.modern && m.accentStart
     }
 
-    readonly property bool modern: cfg.menuStyle === "modern"
+    readonly property bool modern: root.menuKind === "modern"
     readonly property int sub: modern ? cfg.modernSubstyle : cfg.win7Substyle
     readonly property bool compact: sub === 2 || sub === 5
     readonly property bool grid: sub >= 3
@@ -45,7 +45,7 @@ FocusScope {
     // Places column; design mode drags its left edge (common/SplitHandle). implicitWidth keeps the
     // default, so the popup keeps its width and the left pane gives way.
     readonly property real rightDef: m.px(compact ? 136 : 156)
-    readonly property real rightW: root.splitFor(cfg.menuStyle, rightDef)
+    readonly property real rightW: root.splitFor(root.menuKind, rightDef)
     readonly property real rowH: m.px(compact ? 28 : 40)
     readonly property real iconSize: m.px(compact ? 16 : 32)
     readonly property real cellW: m.px(compact ? 64 : 80)
@@ -223,7 +223,7 @@ FocusScope {
     }
 
     SplitHandle {
-        name: style.cfg.menuStyle
+        name: root.menuKind
         value: style.rightW
         reversed: true
         minimum: m.px(100)

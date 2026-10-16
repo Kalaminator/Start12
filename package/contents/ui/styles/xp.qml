@@ -131,7 +131,7 @@ FocusScope {
     readonly property real placeH: m.px(cfg.smallPlaces ? 24 : modern ? 34 : 30)
     // Places column; design mode drags its left edge (common/SplitHandle), the left column gives way.
     // Luna: own split key ("xp-luna"), default about half the menu like XP.
-    readonly property string splitName: luna ? "xp-luna" : cfg.menuStyle
+    readonly property string splitName: luna ? "xp-luna" : root.menuKind
     readonly property real rightW: root.splitFor(splitName, luna ? Math.round(width * 0.47) : m.px(190 + (cfg.menuSize >= 2 ? 30 : 0)))
 
     implicitWidth: m.px(400 + (cfg.menuSize >= 2 ? 80 : 0))

@@ -123,7 +123,7 @@ KCM.SimpleKCM {
             wrapMode: Text.WordWrap
             font: Kirigami.Theme.smallFont
             opacity: 0.7
-            text: i18n("The taskbar follows these when \"Apply the theme to the taskbar\" is on, title bars when \"Apply the theme to windows\" is on (Taskbar page).")
+            text: i18n("The taskbar and title bars follow these when their look is not \"Plasma's own\" (Style page).")
         }
     }
 

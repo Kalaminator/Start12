@@ -23,8 +23,12 @@ ContainmentItem {
     // Styles that have a QML file. The others fall back to Windows 10 for now.
     readonly property var builtStyles: ["windows7", "modern", "windows10", "windows11", "windows12", "app", "pro", "launcher", "xp"]
     // Modern style = the Windows 7 file with a flat look.
-    readonly property string styleFile: cfg.menuStyle === "modern" ? "windows7"
-                                      : builtStyles.includes(cfg.menuStyle) ? cfg.menuStyle : "windows10"
+    // T43 mix and match: menuStyle = the Style card; menuLook/taskbarLook/windowLook ("" = same as the style)
+    // pick another look for the menu, the taskbar preset and the window decoration.
+    readonly property string menuKind: cfg.menuLook || cfg.menuStyle
+    readonly property string taskbarKind: cfg.taskbarLook || cfg.menuStyle
+    readonly property string styleFile: menuKind === "modern" ? "windows7"
+                                      : builtStyles.includes(menuKind) ? menuKind : "windows10"
 
     property string searchText: ""
 
@@ -225,13 +229,13 @@ ContainmentItem {
     readonly property string xpCustomHex: cfg.xpCustomColor.toString().slice(-6)
     readonly property string xpScheme: "start12-xp-" + cfg.xpSubstyle + (cfg.xpColor === "olive" || cfg.xpColor === "silver" ? "-" + cfg.xpColor
                                        : cfg.xpColor === "custom" ? "-custom-" + xpCustomHex : "")
-    readonly property string xpTheme: cfg.menuStyle !== "xp" || !cfg.xpTaskbarTheme ? "" : xpScheme
+    readonly property string xpTheme: taskbarKind !== "xp" || !cfg.xpTaskbarTheme ? "" : xpScheme
     onXpThemeChanged: syncDesktopTheme()
     // Window decorations (T26a, key windowTheme): Aurorae theme per menu style, and (T26b) the colour scheme of the
     // same name. From xptheme.py --deco / --scheme (install.sh; XP custom colour made here). T37: windows10/11
     // light or dark like the user's own scheme (userDark), windows7 light, modern/app/pro/launcher = Win11 look.
     function windowDecoration() {
-        const s = cfg.menuStyle;
+        const s = cfg.windowLook || cfg.menuStyle;
         // T39 Colours page: every non-XP style follows light/dark (winDark) and "accent on title bars" (-accent-hex).
         const acc = cfg.win10AccentTitles ? "-accent-" + accentHex : "";
         return s === "xp" ? xpScheme : s === "windows7" ? "start12-win7" + acc
@@ -391,8 +395,8 @@ ContainmentItem {
     // W3: corners in % of half the panel thickness (applet size + our theme's 2+2 margins; 46 until laid out).
     readonly property int barThickness: (Plasmoid.formFactor === PlasmaCore.Types.Vertical ? width : height) + 4
     readonly property int win12Radius: Math.max(2, Math.round((barThickness < 20 ? 46 : barThickness) / 2 * cfg.taskbarRound / 100))
-    readonly property bool win12Taskbar: cfg.taskbarFollowsStyle && cfg.menuStyle === "windows12"
-    readonly property string taskbarBase: cfg.taskbarFollowsStyle ? (taskbarPresets[cfg.menuStyle] || (cfg.menuStyle === "xp" ? "" : taskbarPresets.windows11))
+    readonly property bool win12Taskbar: cfg.taskbarFollowsStyle && taskbarKind === "windows12"
+    readonly property string taskbarBase: cfg.taskbarFollowsStyle ? (taskbarPresets[taskbarKind] || (taskbarKind === "xp" ? "" : taskbarPresets.windows11))
         : cfg.taskbarTheme !== "custom" ? ""
         : "colour=" + cfg.taskbarColor.toString().slice(-6) + " alpha=" + (cfg.taskbarAlpha / 100)
           + " radius=" + cfg.taskbarRadius + " line=" + (cfg.taskbarLine ? 1 : 0) + " buttons=" + Tiles.shQuote(cfg.taskbarButtons)
@@ -401,7 +405,7 @@ ContainmentItem {
              + " imagealpha=" + (cfg.taskbarImageAlpha / 100)
              + (cfg.taskbarImageTint ? " tint=" + cfg.accentColor.toString().slice(-6) : ""))
     readonly property string taskbarArgs: taskbarBase === "" ? "" : taskbarBase
-        + " accent=" + (cfg.menuStyle !== "xp" && cfg.win10AccentStart && cfg.taskbarFollowsStyle
+        + " accent=" + (taskbarKind !== "xp" && cfg.win10AccentStart && cfg.taskbarFollowsStyle
                         ? Qt.lighter("#" + accentHex, 1.6).toString().slice(-6) : cfg.accentColor.toString().slice(-6)) + " solid=" + (cfg.taskbarFocusedSolid ? 1 : 0)
     onTaskbarArgsChanged: syncDesktopTheme()
     readonly property bool firefoxSystemTitle: xpTheme !== "" && cfg.xpFirefoxTitlebar
@@ -1248,7 +1252,7 @@ ContainmentItem {
                 QQC2.Button {
                     text: i18n("Reset")
                     icon.name: "edit-reset"
-                    onClicked: root.cfg.splits = Tiles.splitReset(root.cfg.splits, root.cfg.menuStyle)
+                    onClicked: root.cfg.splits = Tiles.splitReset(root.cfg.splits, root.menuKind)
                 }
                 QQC2.Button {
                     text: i18n("Done")

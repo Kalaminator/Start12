@@ -23,7 +23,7 @@ FocusScope {
     // Right panel; design mode drags its left edge (common/SplitHandle). implicitWidth keeps the
     // default, so the popup keeps its width and the pinned grid gives way.
     readonly property real rightDef: m.px(cfg.menuSize >= 2 ? 240 : 200)
-    readonly property real rightW: root.splitFor(cfg.menuStyle, rightDef)
+    readonly property real rightW: root.splitFor(root.menuKind, rightDef)
 
     implicitWidth: m.px(3 * 96 + 16) + side * 2 + rightDef
     implicitHeight: m.heightFor([560, 640, 560, 720])
@@ -71,7 +71,7 @@ FocusScope {
     }
 
     SplitHandle {
-        name: style.cfg.menuStyle
+        name: root.menuKind
         value: style.rightW
         reversed: true
         minimum: m.px(140)

@@ -23,7 +23,7 @@ MouseArea {
 
     readonly property real side: vertical ? width : height
     // XP style in a horizontal panel: the green "start" pill replaces the normal button.
-    readonly property bool xp: cfg.menuStyle === "xp" && !vertical
+    readonly property bool xp: root.menuKind === "xp" && !vertical
     readonly property string iconSource: cfg.buttonIcon === "" ? "start-here-kde"
               : cfg.buttonIcon.startsWith("/") ? "file://" + cfg.buttonIcon : cfg.buttonIcon
     readonly property real buttonWidth: xp ? xpPill.implicitWidth : (cfg.buttonMode === 0 && sheet.status === Image.Ready
