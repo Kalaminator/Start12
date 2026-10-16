@@ -36,8 +36,8 @@ KCM.SimpleKCM {
 
     readonly property var built: ["windows7", "modern", "windows10", "windows11", "windows12", "app", "pro", "launcher", "xp"]
     readonly property var styles: [
-        ["windows7", i18n("Windows 7 style"), i18n("The classic Windows 7 menu.")],
-        ["modern", i18n("Modern style"), i18n("An updated Windows 7 style.")],
+        // "modern" is the Windows 7 card's Modern look (picked below), not a card of its own.
+        ["windows7", i18n("Windows 7 style"), i18n("The Windows 7 menu, classic or modern.")],
         ["windows10", i18n("Windows 10 style"), i18n("Windows 10 style with improvements.")],
         ["windows11", i18n("Windows 11 style"), i18n("Windows 11 style with improvements.")],
         ["windows12", i18n("Windows 12 style"), i18n("Concept-art menu: app list beside pinned cards and widgets.")],
@@ -66,11 +66,12 @@ KCM.SimpleKCM {
                     required property var modelData
                     readonly property bool ready: page.built.includes(modelData[0])
                     readonly property bool chosen: page.cfg_menuStyle === modelData[0]
+                                                   || (modelData[0] === "windows7" && page.cfg_menuStyle === "modern")
                     width: Kirigami.Units.gridUnit * 11
                     height: Kirigami.Units.gridUnit * 11
                     enabled: ready
                     highlighted: chosen
-                    onClicked: page.cfg_menuStyle = modelData[0]
+                    onClicked: if (!chosen) page.cfg_menuStyle = modelData[0]
 
                     contentItem: ColumnLayout {
                         StylePreview {
@@ -102,6 +103,13 @@ KCM.SimpleKCM {
         Kirigami.FormLayout {
             Layout.fillWidth: true
 
+            QQC2.ComboBox {
+                visible: page.cfg_menuStyle === "windows7" || page.cfg_menuStyle === "modern"
+                Kirigami.FormData.label: i18n("Look:")
+                model: [i18n("Classic"), i18n("Modern")]
+                currentIndex: page.cfg_menuStyle === "modern" ? 1 : 0
+                onActivated: index => page.cfg_menuStyle = index === 1 ? "modern" : "windows7"
+            }
             QQC2.ComboBox {
                 id: subBox
                 visible: page.cfg_menuStyle === "windows7"

@@ -2259,3 +2259,15 @@ msgstr ""
 #: package/contents/ui/config/ConfigTaskbar.qml
 msgid "Islands are extra Plasma panels holding the tray, clock and a new weather widget; One bar puts everything back."
 msgstr ""
+
+#: package/contents/ui/config/ConfigStyle.qml
+msgid "Look:"
+msgstr ""
+
+#: package/contents/ui/config/ConfigStyle.qml
+msgid "Classic"
+msgstr ""
+
+#: package/contents/ui/config/ConfigStyle.qml
+msgid "The Windows 7 menu, classic or modern."
+msgstr ""
