@@ -399,14 +399,18 @@ ContainmentItem {
                      + " alpha=" + (cfg.win10Transparency ? 0.8 : 1) + " radius=8 line=0 buttons=win11",
         "windows7": "colour=" + (cfg.win10AccentStart ? accentHex : "2a5a96")
                     + " alpha=" + (cfg.win10Transparency ? 0.6 : 1) + " radius=6 line=1 buttons=win7",
-        "windows12": "colour=" + (cfg.win10AccentStart ? accentHex : win12Hex)
+        "windows12": "colour=" + win12Hex
                      + " alpha=" + (!cfg.win10Transparency ? 1 : cfg.win12Transparency >= 0 ? 1 - cfg.win12Transparency / 100
                                     : cfg.win10AccentStart ? 0.15 : winDark ? 0.3 : 0.25) + " radius=" + win12Radius + " line=0 buttons=win11 gap=" + cfg.taskbarGap
                      + (win12GapMode && cfg.taskbarGap > 0 ? " ring=" + cfg.taskbarGap + " size=" + panelWidth + "x" + panelHeight : "") })
     // W11 Windows 12 colour sliders (-1 = the W8 look): light 0 soft tint .. 100 near white (80 = f7f7fb),
     // dark 0 soft dark .. 100 near black (~50 = 202028); taskbar and menu (Metrics.bg) background.
+    // With the accent colour on, the sliders mix the accent towards white (light) or black (dark) instead.
     readonly property string win12Hex: {
         const v = winDark ? cfg.win12Dark : cfg.win12Light;
+        if (cfg.win10AccentStart)
+            return v < 0 ? accentHex : Kirigami.ColorUtils.linearInterpolation("#" + accentHex,
+                winDark ? "#050507" : "#fdfdff", v / 100 * 0.9).toString().slice(-6);
         return v < 0 ? (winDark ? "202028" : "f7f7fb") : Kirigami.ColorUtils.linearInterpolation(winDark ? "#3a3a46" : "#dde1ec",
             winDark ? "#050507" : "#fdfdff", v / 100).toString().slice(-6);
     }
@@ -415,7 +419,8 @@ ContainmentItem {
     // them in win12Saved / win12SavedNoise ("unset" = no key) and put back when Windows 12 goes off.
     readonly property bool win12Glass: cfg.win10Transparency && (menuKind === "windows12" || win12Taskbar
         || (cfg.windowLook || cfg.menuStyle) === "windows12")
-    readonly property int win12Blur: win12Glass ? cfg.win12Blur : -1
+    // Default 3: KWin's own default smears the background so much that the glass looks opaque.
+    readonly property int win12Blur: win12Glass ? (cfg.win12Blur > 0 ? cfg.win12Blur : 3) : -1
     readonly property int win12Noise: win12Glass ? cfg.win12Noise : -1
     onWin12BlurChanged: syncBlurStrength()
     onWin12NoiseChanged: syncBlurStrength()

@@ -212,7 +212,7 @@ KCM.SimpleKCM {
                 QQC2.Label { text: i18n("Clear") }
                 QQC2.Label { text: i18n("Blur strength:") }
                 QQC2.Label { text: i18n("Soft") }
-                QQC2.Slider { from: 1; to: 15; stepSize: 1; value: page.cfg_win12Blur < 0 ? 8 : page.cfg_win12Blur; onMoved: page.cfg_win12Blur = value }
+                QQC2.Slider { from: 1; to: 15; stepSize: 1; value: page.cfg_win12Blur > 0 ? page.cfg_win12Blur : 3; onMoved: page.cfg_win12Blur = value }
                 QQC2.Label { text: i18n("Strong") }
                 QQC2.Label { text: i18n("Grain:") }
                 QQC2.Label { text: i18n("Smooth") }
