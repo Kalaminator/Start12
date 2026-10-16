@@ -560,13 +560,13 @@ FocusScope {
                         radius: width / 2
                         color: style.modern ? Qt.alpha("#ffffff", 0.25) : c.green
                         border.color: style.modern ? "transparent" : c.greenDark
-                        Kirigami.Icon {
+                        // XP's white play-style arrow, as text: no icon theme can swap it out.
+                        Text {
                             anchors.centerIn: parent
-                            width: m.px(12)
-                            height: width
-                            source: style.glyph(style.allPrograms ? "actions/16/go-previous-symbolic" : "actions/16/go-next-symbolic")
+                            anchors.horizontalCenterOffset: style.allPrograms ? -m.px(1) : m.px(1)
+                            text: style.allPrograms ? "\u25C0" : "\u25B6"
                             color: "#ffffff"
-                            isMask: true
+                            font.pixelSize: m.px(10)
                         }
                     }
                 }
