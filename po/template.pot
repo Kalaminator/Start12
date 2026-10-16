@@ -2083,6 +2083,15 @@ msgstr ""
 msgid "Get more:"
 msgstr ""
 
+msgid "Use XP icons with the XP style"
+msgstr ""
+
+msgid "XP icon theme:"
+msgstr ""
+
+msgid "No XP icon theme is installed. Get one with the button below (search for \"XP\")."
+msgstr ""
+
 msgid "Download icon themes…"
 msgstr ""
 

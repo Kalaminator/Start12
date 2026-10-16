@@ -226,6 +226,18 @@
       <label>With an XP theme, use the system title bar in Firefox (user.js)</label>
       <default>true</default>
     </entry>
+    <entry name="xpIcons" type="Bool">
+      <label>With the XP style, switch the icon theme to xpIconTheme (the user's one is saved in savedIconTheme)</label>
+      <default>true</default>
+    </entry>
+    <entry name="xpIconTheme" type="String">
+      <label>Icon theme used with the XP style; empty = the first installed theme with "xp" in its folder or Name</label>
+      <default></default>
+    </entry>
+    <entry name="savedIconTheme" type="String">
+      <label>Icon theme that was active before the XP icons; restored when they go off</label>
+      <default></default>
+    </entry>
     <entry name="xpTaskbarTheme" type="Bool">
       <label>With the XP style, switch the Plasma Style (panel) to start12-xp-classic / start12-xp-modern</label>
       <default>true</default>

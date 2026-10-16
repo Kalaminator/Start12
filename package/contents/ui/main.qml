@@ -405,6 +405,38 @@ ContainmentItem {
         root.run("sh " + Tiles.shQuote(decodeURIComponent(Qt.resolvedUrl("code/firefox-titlebar.sh").toString().replace("file://", "")))
                  + (firefoxSystemTitle ? " on" : " off"));
         themeReader.connectSource("kreadconfig6 --file plasmarc --group Theme --key name");
+        syncIcons();
+    }
+    // XP icons (Icons page): with the XP style the icon theme becomes xpIconTheme (empty = the first installed
+    // theme with "xp" in its folder or Name), the user's one is saved in savedIconTheme and put back after.
+    readonly property bool xpIcons: cfg.menuStyle === "xp" && cfg.xpIcons
+    onXpIconsChanged: syncIcons()
+    readonly property string xpIconTheme: cfg.xpIconTheme
+    onXpIconThemeChanged: syncIcons()
+    function syncIcons() {
+        if (!configReady) return;
+        iconReader.connectSource("sh -c " + Tiles.shQuote("printf '%s|' \"$(kreadconfig6 --file kdeglobals --group Icons --key Theme)\"; "
+            + "for d in \"$HOME\"/.local/share/icons/* /usr/share/icons/*; do grep -qs ^Directories= \"$d/index.theme\" || continue; "
+            + "case \"$(basename \"$d\") $(grep -m1 ^Name= \"$d/index.theme\")\" in *[xX][pP]*) basename \"$d\"; break;; esac; done"));
+    }
+    P5Support.DataSource {
+        id: iconReader
+        engine: "executable"
+        connectedSources: []
+        onNewData: (sourceName, data) => {
+            disconnectSource(sourceName);
+            const v = (data.stdout || "").trim().split("|");
+            const cur = v[0] || "breeze";
+            const want = root.xpIcons ? (root.cfg.xpIconTheme || v[1] || "") : "";
+            if (want !== "") {
+                if (cur === want) return;
+                if (root.cfg.savedIconTheme === "") root.cfg.savedIconTheme = cur;
+                root.run("/usr/lib/plasma-changeicons " + Tiles.shQuote(want));
+            } else if (root.cfg.savedIconTheme !== "") {
+                if (cur !== root.cfg.savedIconTheme) root.run("/usr/lib/plasma-changeicons " + Tiles.shQuote(root.cfg.savedIconTheme));
+                root.cfg.savedIconTheme = "";
+            }
+        }
     }
     P5Support.DataSource {
         id: themeReader
@@ -623,7 +655,7 @@ ContainmentItem {
     }
     // Keys that reset/backup/restore touch: everything in main.xml but bookkeeping and kicker's favorites.
     function userKeys() {
-        const keep = ["savedDesktopTheme", "savedDecoLibrary", "savedDecoTheme", "savedColorScheme", "savedBlur", "resetRequest", "openSettingsRequest", "designRequest", "favorites", "favoritesPortedToKAstats", "configMigrated"];
+        const keep = ["savedDesktopTheme", "savedDecoLibrary", "savedDecoTheme", "savedColorScheme", "savedBlur", "savedIconTheme", "resetRequest", "openSettingsRequest", "designRequest", "favorites", "favoritesPortedToKAstats", "configMigrated"];
         return root.cfg.keys().filter(k => !k.endsWith("Default") && !keep.includes(k));
     }
     // Restore: read the backup JSON, write back every known key, then put the Plasma Style in line

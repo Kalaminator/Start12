@@ -12,6 +12,10 @@ import org.kde.plasma.plasma5support as P5Support
 KCM.SimpleKCM {
     id: page
     property string wallpaper: ""
+    property alias cfg_xpIcons: xpBox.checked
+    property string cfg_xpIconTheme
+    // Default XP choice: the first theme with "xp" in its folder (main.qml also checks the Name= line).
+    readonly property var xpThemes: (iconBox.model || []).filter(n => n.toLowerCase().includes("xp"))
 
     // Themes with Directories= in index.theme (cursor-only themes have none).
     readonly property string themeList: "sh -c 'for d in /usr/share/icons/* \"$HOME\"/.local/share/icons/*; do grep -qs ^Directories= \"$d/index.theme\" && basename \"$d\"; done | sort -u'"
@@ -46,6 +50,23 @@ KCM.SimpleKCM {
             id: iconBox
             Kirigami.FormData.label: i18n("Icon theme:")
             onActivated: page.run("/usr/lib/plasma-changeicons " + Tiles.shQuote(currentText))
+        }
+        QQC2.CheckBox {
+            id: xpBox
+            text: i18n("Use XP icons with the XP style")
+        }
+        QQC2.ComboBox {
+            Kirigami.FormData.label: i18n("XP icon theme:")
+            enabled: xpBox.checked
+            model: iconBox.model
+            currentIndex: (model || []).indexOf(page.cfg_xpIconTheme || page.xpThemes[0] || "")
+            onActivated: page.cfg_xpIconTheme = currentText
+        }
+        QQC2.Label {
+            Layout.fillWidth: true
+            visible: page.cfg_xpIconTheme === "" && page.xpThemes.length === 0
+            wrapMode: Text.Wrap
+            text: i18n("No XP icon theme is installed. Get one with the button below (search for \"XP\").")
         }
         NewStuff.Button {
             Kirigami.FormData.label: i18n("Get more:")

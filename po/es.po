@@ -2127,6 +2127,15 @@ msgstr "Tema de iconos:"
 msgid "Get more:"
 msgstr "Obtener más:"
 
+msgid "Use XP icons with the XP style"
+msgstr "Usar iconos de XP con el estilo XP"
+
+msgid "XP icon theme:"
+msgstr "Tema de iconos de XP:"
+
+msgid "No XP icon theme is installed. Get one with the button below (search for \"XP\")."
+msgstr "No hay ningún tema de iconos de XP instalado. Consigue uno con el botón de abajo (busca \"XP\")."
+
 msgid "Download icon themes…"
 msgstr "Descargar temas de iconos…"
 

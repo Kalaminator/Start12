@@ -215,6 +215,22 @@ FocusScope {
             height: 1
             color: Qt.alpha("#ffffff", 0.45)
         }
+        // Luna: soft curved highlight over the top half of the header.
+        Item {
+            visible: style.luna
+            x: style.radius
+            width: parent.width - style.radius * 2
+            height: parent.height
+            clip: true
+            Rectangle {
+                x: -width * 0.2
+                y: -height * 0.62
+                width: parent.width * 1.4
+                height: parent.height * 1.2
+                radius: height / 2
+                color: Qt.alpha("#ffffff", 0.13)
+            }
+        }
 
         PC3.AbstractButton {
             id: userButton
@@ -241,8 +257,19 @@ FocusScope {
                     height: width
                     radius: style.modern ? width / 2 : m.px(3)
                     color: "#ffffff"
-                    border.color: style.modern ? Qt.alpha("#ffffff", 0.6) : Qt.lighter(c.headBottom, 1.3)
-                    border.width: m.px(style.modern ? 3 : 2)
+                    border.color: style.modern ? Qt.alpha("#ffffff", 0.6) : style.luna ? "#ffffff" : Qt.lighter(c.headBottom, 1.3)
+                    border.width: m.px(style.modern || style.luna ? 3 : 2)
+                    // Luna: drop shadow under the white frame.
+                    Rectangle {
+                        visible: style.luna
+                        z: -1
+                        x: m.px(2)
+                        y: m.px(2)
+                        width: parent.width
+                        height: parent.height
+                        radius: parent.radius
+                        color: Qt.alpha("#000000", 0.35)
+                    }
                     Kirigami.ShadowedImage {
                         id: face
                         anchors.fill: parent
@@ -270,7 +297,7 @@ FocusScope {
                         text: places.user.fullName || places.user.loginName
                         color: c.headText
                         font.family: m.headerFont
-                        font.pixelSize: Math.round(m.headerFontSize * (style.modern ? 1.35 : 1.25))
+                        font.pixelSize: Math.round(m.headerFontSize * (style.modern ? 1.35 : style.luna ? 1.5 : 1.25))
                         font.bold: true
                         style: Text.Raised
                         styleColor: Qt.alpha("#000000", style.modern ? 0.15 : style.luna ? 0.6 : 0.35)
@@ -294,8 +321,8 @@ FocusScope {
         anchors.top: header.bottom
         anchors.topMargin: style.modern ? m.px(6) : 0
         width: parent.width - x * 2
-        height: m.px(style.modern ? 3 : 2)
-        radius: height / 2
+        height: m.px(style.modern || style.luna ? 3 : 2)
+        radius: style.luna ? 0 : height / 2
         gradient: Gradient {
             orientation: Gradient.Horizontal
             GradientStop { position: 0; color: style.modern ? "transparent" : c.orange }
@@ -617,19 +644,27 @@ FocusScope {
                         contentItem: Row {
                             visible: !pb.sep
                             spacing: m.px(8)
-                            Kirigami.Icon {
+                            Item {
                                 anchors.verticalCenter: parent.verticalCenter
-                                width: m.px(pb.modelData.main ? 24 : 22)
+                                width: m.px(pb.modelData.main || style.luna ? 24 : 22)
                                 height: width
+                            Kirigami.Icon {
+                                // Luna: looked up at 32 and drawn at 24 (the theme's 22/24 place icons are monochrome).
+                                anchors.centerIn: parent
+                                width: style.luna ? m.px(32) : parent.width
+                                height: width
+                                scale: style.luna ? 0.75 : 1
                                 // The theme's place icons are white (dark theme): draw them black on the light
                                 // blue pane and white on the blue hover, so they always stand out.
-                                source: pb.info ? pb.info.icon : ""
-                                isMask: true
+                                // Luna: the theme's full-colour icon (no -symbolic), like XP's coloured places.
+                                source: pb.info ? (style.luna ? pb.info.icon.replace(/-symbolic$/, "") : pb.info.icon) : ""
+                                isMask: !style.luna
                                 color: pb.hot ? c.hoverText : "#000000"
+                            }
                             }
                             PC3.Label {
                                 anchors.verticalCenter: parent.verticalCenter
-                                width: pb.availableWidth - m.px(pb.modelData.main ? 32 : 30) // icon + spacing; not x (mirrored polish loop)
+                                width: pb.availableWidth - m.px(pb.modelData.main || style.luna ? 32 : 30) // icon + spacing; not x (mirrored polish loop)
                                 text: pb.info ? pb.info.text : ""
                                 elide: Text.ElideRight
                                 color: pb.hot ? c.hoverText : c.placeText
@@ -731,6 +766,16 @@ FocusScope {
                 onClicked: contextMenu.show(turnOff, null, -1, places.powerItems(style.cfg.powerItems))
             }
         }
+    }
+
+    // Luna: 1px darker outline round the whole menu, rounded at the top like the header.
+    Rectangle {
+        visible: style.luna
+        anchors.fill: parent
+        color: "transparent"
+        border.color: Qt.darker(c.edge, 1.4)
+        topLeftRadius: style.radius
+        topRightRadius: style.radius
     }
 
     DragGhost {
