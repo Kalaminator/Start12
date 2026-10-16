@@ -1,128 +1,120 @@
 # Win12
 
-A Start menu for **KDE Plasma 6** inspired by Stardock Start11: eight menu styles (Windows 10, 11, 7, XP,
-Modern, App, Pro, Launcher), a matching taskbar, matching window title bars and colours, and a settings
-window with everything in one place.
+![Win12](docs/images/hero.png)
 
-*Español más abajo.*
+Inspired by Stardock Start11.
 
-## Features
+Complete Windows-style theming for KDE Plasma 6. Change the style of the Start menu, taskbar, Start button and
+window decorations together, or mix and match each one. Every part also has a KDE Plasma default, so you can
+leave any of them as it was.
 
-- **8 menu styles**: Windows 10 (live-tile groups, folders, pages), Windows 11 (pinned grid, folders,
-  recommended), Windows 7 and Modern, Windows XP (Classic and Modern, Blue / Olive Green / Silver / custom
-  colour, green "start" button), App (tabs and coloured groups), Pro, Launcher.
-- Search with filter icons (apps, settings, documents, music, pictures, videos, files, web) and search history.
-- Pin apps, websites, files and folders; hide apps; rename pins; keyboard navigation.
-- **Taskbar**: a Plasma Style that follows the menu style (Windows 10/11/7/XP), colour, transparency,
-  texture, button style, search box, pin to taskbar, auto-hide toggle.
-- **Windows**: matching title bars (Aurorae) and colour schemes, accent colour on Start, taskbar and title bars
-  (Windows-like *Colours* page with the 48 Windows accent colours).
-- Design mode: drag the dividers between menu sections.
-- **Window glass**: window opacity, blur behind frames, corner radius and title bar height.
-- **Menu position** Left / Center / Right (Right mirrors the layout), optionally with a centred Start button and
-  taskbar icons like Windows 11.
-- Works on any Plasma 6 distro; install from the KDE Store and get updates through Discover.
-- Full-screen menu, backup / restore / reset of all settings.
-- 11 languages: English, Spanish, French, German, Italian, Brazilian Portuguese, Russian, Arabic,
-  Simplified Chinese, Japanese, Hindi (it follows your Plasma language).
+## Windows XP
 
-Full list of features: [docs/FEATURES.md](docs/FEATURES.md)
+![Windows XP](docs/images/xp.webp)
 
-Everything you change (taskbar style, title bars, colours) is undone when you switch it off: Win12 saves
-your own Plasma Style, window decoration and colour scheme first.
+- Three menu looks: Classic XP, Modern classic and Modern.
+- Colour schemes Blue, Olive Green and Silver, or your own custom colour.
+- Option to use XP-style icons.
+- Lighter tray strip on the taskbar, as in XP.
+- XP menu styles come with a matching XP taskbar theme.
+
+## Windows 7
+
+![Windows 7](docs/images/windows7.webp)
+
+Classic and Modern variants, with a matching taskbar and window decorations.
+
+## Windows 10
+
+![Windows 10](docs/images/windows10.webp)
+
+Live-tile groups, folders and pages, with a matching taskbar and window decorations.
+
+## Windows 11
+
+![Windows 11](docs/images/windows11.webp)
+
+Pinned grid, folders and recommended list, with an optional centred Start button and taskbar icons.
+
+## Windows 12
+
+![Windows 12](docs/images/windows12.webp)
+
+- A menu based on the Windows 12 concept art. The app list can sit on the left or the right, and the menu
+  position is Left, Center or Right.
+- Floating island taskbar that hides itself over full-screen windows.
+- Dock-style split islands, with an optional magnetic effect.
+- Transparency and blur, with sliders for How light, How dark, Transparency and Blur strength.
+- Bottom spacing and menu gap settings.
+- Pop-up animations.
+- Gradient option.
+- Your own images for the taskbar and the title bars.
+
+## Other styles
+
+![Other styles](docs/images/others.webp)
+
+App, Pro, Launcher and the KDE Plasma default.
+
+## More features
+
+- Tiles, including real KDE widgets inside tiles.
+- Firefox title bar handling that works with the XP style.
+- Icons page with downloads from the KDE Store.
+- Taskbar auto-hide option and menu position setting.
+- Right-click menus.
+- Search with filters and history, pinned apps, websites, files and folders, keyboard navigation.
+- Backup, restore and reset of all settings. Everything Win12 changes (taskbar style, title bars, colours) is
+  undone when you switch it off, because your own Plasma Style, window decoration and colour scheme are saved first.
+- Translations: English, Spanish, French, German, Italian, Brazilian Portuguese, Russian, Arabic, Simplified
+  Chinese, Japanese and Hindi. It follows your Plasma language.
+
+Full list: [docs/FEATURES.md](docs/FEATURES.md)
 
 ## Requirements
 
-- KDE Plasma 6 (tested on Plasma 6.7, Arch Linux, Wayland)
-- `python3` (generates the taskbar styles, title bars and colour schemes)
-- `qdbus6` (also found as `qdbus-qt6` or `/usr/lib/qt6/bin/qdbus`), `kreadconfig6`, `kwriteconfig6`, `kpackagetool6` (part of Plasma / KDE Frameworks)
-- Works on any Plasma 6 distro: Fedora KDE, openSUSE, Kubuntu 25.04+, Debian 13, KDE neon, Manjaro, EndeavourOS, CachyOS, Bazzite, SteamOS desktop...
-- Optional: `gettext` (rebuild translations), `nodejs` (developer tests)
+- KDE Plasma 6.x. Tested on Plasma 6.7, Arch Linux, Wayland.
+- `python3` (generates the taskbar styles, title bars and colour schemes).
+- `qdbus6` (also `qdbus-qt6`), `kreadconfig6`, `kwriteconfig6`, `kpackagetool6` (part of Plasma / KDE Frameworks).
 
 ## Install
 
-**From the KDE Store** (updates come through Discover): right-click your panel → *Add or Manage Widgets* →
-*Get New Widgets* → *Download New Plasma Widgets*, search **Win12** and install. On first start the widget
-generates its taskbar styles, title bars, colour schemes and the `win12-settings` command by itself.
-
-**From git:**
-
 ```sh
-git clone https://github.com/Kalaminator/Start12.git Win12
+git clone https://github.com/Kalaminator/Win12.git
 cd Win12
 ./install.sh            # add --restart to reload Plasma right away
 ```
 
-Then right-click your panel → *Add or Manage Widgets* → search **Win12** and drag it to the panel
-(or replace your current launcher with it). Open its settings with right-click → *Configure Win12*,
-or run `win12-settings`.
+Then right-click your panel, choose *Add or Manage Widgets*, search **Win12** and drag it to the panel. Open its
+settings with right-click, *Configure Win12*, or run `win12-settings`.
 
-Updating: store installs update in Discover (or *Get New Widgets* → *Updates*); git installs with `git pull && ./install.sh --restart`.
-Remove: `kpackagetool6 -t Plasma/Applet -r org.win12.menu`.
+If you used the old Start12 version, `install.sh` migrates your setup automatically and keeps a backup in
+`~/.config/win12-migration-backup-*`.
 
-## Images
+Update: `git pull && ./install.sh --restart`.
 
-The *image* Start button mode and the menu/tab textures use your own PNG files: pick a file in the settings,
-or put PNG files in `package/contents/images/StartButtons/`, `MenuTextures/` or `TabTextures/` before
-`./install.sh`. The default Start button is the KDE logo (`start-here-kde`); change it under Settings → Start Button.
+## Uninstall
+
+```sh
+kpackagetool6 -t Plasma/Applet -r org.win12.menu
+```
+
+## Icons and wallpapers
+
+No Microsoft icons or wallpapers are bundled. You can get community icon packs from the KDE Store through the
+Icons page in the settings.
 
 ## Project layout
 
-- `package/` — the Plasma widget (`org.win12.menu`): `contents/ui/main.qml`, one file per style in
-  `contents/ui/styles/`, shared parts in `contents/ui/common/`, settings pages in `contents/ui/config/`,
-  pure logic in `contents/ui/code/tiles.js`, theme generator `contents/ui/code/xptheme.py`.
-- `tests/test_tiles.js` — tests for the pure logic (`node tests/test_tiles.js`).
-- `po/` — translations (`package/Messages.sh` extracts strings).
-- `tools/make-release.sh` — builds `dist/org.win12.menu-<version>.plasmoid` for the KDE Store (`docs/STORE.md`).
-- `docs/` — design notes (`HANDOFF.md`), job list (`TODO.md`), Start11 feature research.
+- `package/`: the Plasma widget (`org.win12.menu`).
+- `tests/`: tests for the pure logic (`node tests/test_tiles.js`).
+- `po/`: translations.
+- `tools/make-release.sh`: builds the `.plasmoid` package.
+- `docs/`: design notes and job list.
 
 ## License
 
-[MIT](LICENSE): free to use, copy, modify, share and sell. Contributions welcome.
+[MIT](LICENSE). Contributions welcome.
 
 Win12 is an independent project, not affiliated with or endorsed by Stardock or Microsoft. Windows and
 Start11 are trademarks of their owners.
-
----
-
-# Win12 (español)
-
-Un menú Inicio para **KDE Plasma 6** inspirado en Stardock Start11: ocho estilos de menú (Windows 10, 11, 7, XP,
-Modern, App, Pro, Launcher), una barra de tareas a juego, barras de título y colores de ventana a juego, y una
-ventana de configuración con todo en un sitio.
-
-Lista completa de funciones: [docs/FEATURES.md](docs/FEATURES.md) (en la parte "Funciones (español)").
-
-Incluye cristal de ventana (opacidad, desenfoque, radio de esquinas), posición del menú Izquierda / Centro / Derecha
-con botón y barra centrados opcionales, funciona en cualquier distro con Plasma 6 y se actualiza con Discover.
-
-## Instalar
-
-**Desde la KDE Store** (se actualiza con Discover): clic derecho en el panel → *Añadir o gestionar widgets* →
-*Obtener nuevos widgets* → *Descargar nuevos widgets de Plasma*, busca **Win12** e instálalo.
-
-**Desde git:**
-
-```sh
-git clone https://github.com/Kalaminator/Start12.git Win12
-cd Win12
-./install.sh            # añade --restart para recargar Plasma
-```
-
-Después: clic derecho en el panel → *Añadir o gestionar widgets* → busca **Win12** y arrástralo al panel.
-La configuración se abre con clic derecho → *Configurar Win12*, o con `win12-settings`.
-
-Actualizar: Discover (tienda) o `git pull && ./install.sh --restart` (git).
-
-Necesitas Plasma 6, `python3` y las herramientas de KDE (`qdbus6`, `kreadconfig6`, `kpackagetool6`).
-
-Todo lo que cambia (estilo de la barra, bordes de ventana, colores) se deshace al apagarlo: Win12 guarda antes
-tu tema de Plasma, tus bordes y tus colores.
-
-Para el botón con imagen y las texturas puedes usar cualquier PNG tuyo desde la configuración. El botón de inicio usa el logo de KDE; lo puedes cambiar en Configuración → Botón de inicio.
-
-## Licencia
-
-[MIT](LICENSE): puedes usarlo, copiarlo, cambiarlo, compartirlo y venderlo libremente.
-
-Win12 es un proyecto independiente, sin relación con Stardock ni Microsoft.
