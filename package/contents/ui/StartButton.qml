@@ -234,9 +234,11 @@ MouseArea {
             onClicked: root.menuOpen = !button.wasExpanded
         }
         readonly property bool modern: button.cfg.xpSubstyle === "modern"
+        // Luna (Classic XP): saturated XP green (olive scheme: its muted green), glossier gradient.
+        readonly property bool luna: button.cfg.xpSubstyle === "luna"
         readonly property var schemeBase: ({ blue: "#2f6fd8", olive: "#7a924f", silver: "#9a9ab4" })
         readonly property color base: button.cfg.xpStartCustom ? button.cfg.xpStartColor
-            : button.cfg.xpStartGreen ? "#3c9a3c"
+            : button.cfg.xpStartGreen ? (luna ? (button.cfg.xpColor === "olive" ? "#4f7c3e" : "#1f9420") : "#3c9a3c")
             : button.cfg.xpColor === "custom" ? button.cfg.xpCustomColor
             : (schemeBase[button.cfg.xpColor] || schemeBase.blue)
         readonly property color tone: button.frame === 2 ? Qt.darker(base, 1.25)
@@ -286,7 +288,18 @@ MouseArea {
             bottomRightRadius: xpPill.rightR
             border.width: 1
             border.color: Qt.darker(xpPill.tone, xpPill.modern ? 1.25 : 1.5)
-            gradient: Gradient {
+            gradient: xpPill.luna ? lunaGrad : classicGrad
+            // Measured from XP: light top line, dark band under it, brighter towards the bottom, dark edge.
+            Gradient {
+                id: lunaGrad
+                GradientStop { position: 0; color: Qt.lighter(xpPill.tone, 1.7) }
+                GradientStop { position: 0.1; color: Qt.lighter(xpPill.tone, 1.2) }
+                GradientStop { position: 0.25; color: Qt.darker(xpPill.tone, 1.08) }
+                GradientStop { position: 0.85; color: Qt.lighter(xpPill.tone, 1.12) }
+                GradientStop { position: 1; color: Qt.darker(xpPill.tone, 1.35) }
+            }
+            Gradient {
+                id: classicGrad
                 GradientStop { position: 0; color: Qt.lighter(xpPill.tone, xpPill.modern ? 1.2 : 1.4) }
                 GradientStop { position: xpPill.modern ? 0.4 : 0.15; color: Qt.lighter(xpPill.tone, xpPill.modern ? 1.05 : 1.1) }
                 GradientStop { position: 0.6; color: xpPill.tone }
@@ -301,10 +314,32 @@ MouseArea {
             x: xpPill.reach + Math.round(xpPill.height * (xpPill.modern ? 0.3 : 0.2))
             spacing: Math.round(xpPill.height * 0.12)
             Kirigami.Icon {
+                visible: !xpPill.luna
                 anchors.verticalCenter: parent.verticalCenter
                 width: Math.round(xpPill.height * 0.6)
                 height: width
                 source: button.iconSource
+            }
+            // Luna: the four-colour flag, drawn (sheared 2x2 tiles), in place of the button icon.
+            Grid {
+                visible: xpPill.luna
+                anchors.verticalCenter: parent.verticalCenter
+                columns: 2
+                spacing: Math.max(1, Math.round(xpPill.height * 0.04))
+                readonly property real tile: Math.round(xpPill.height * 0.25)
+                transform: Matrix4x4 { matrix: Qt.matrix4x4(1, 0, 0, 0, -0.18, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1) }
+                Repeater {
+                    model: ["#f0582a", "#7cc11d", "#1e9cf0", "#ffc414"]
+                    Rectangle {
+                        required property string modelData
+                        width: parent.tile
+                        height: width
+                        radius: width * 0.2
+                        color: modelData
+                        border.width: 1
+                        border.color: Qt.alpha("#000000", 0.25)
+                    }
+                }
             }
             Text {
                 anchors.verticalCenter: parent.verticalCenter

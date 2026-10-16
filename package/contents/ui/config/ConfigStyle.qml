@@ -118,9 +118,11 @@ KCM.SimpleKCM {
             QQC2.ComboBox {
                 visible: page.cfg_menuStyle === "xp"
                 Kirigami.FormData.label: i18n("Substyle:")
-                model: [i18n("Classic Windows XP style"), i18n("Modern Windows XP style")]
-                currentIndex: page.cfg_xpSubstyle === "modern" ? 1 : 0
-                onActivated: index => page.cfg_xpSubstyle = index === 1 ? "modern" : "classic"
+                // Ids stay "classic"/"modern" for saved configs; "luna" = the real XP look.
+                readonly property var ids: ["luna", "classic", "modern"]
+                model: [i18n("Classic XP"), i18n("Modern classic"), i18n("Modern")]
+                currentIndex: Math.max(0, ids.indexOf(page.cfg_xpSubstyle))
+                onActivated: index => page.cfg_xpSubstyle = ids[index]
             }
             RowLayout {
                 visible: page.cfg_menuStyle === "xp"

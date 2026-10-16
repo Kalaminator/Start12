@@ -1325,12 +1325,12 @@ msgid "Compact Grid Modern style"
 msgstr "Estilo moderno compacto en cuadrícula"
 
 #: package/contents/ui/config/ConfigStyle.qml:121
-msgid "Classic Windows XP style"
-msgstr "Estilo clásico de Windows XP"
+msgid "Classic XP"
+msgstr "XP clásico"
 
 #: package/contents/ui/config/ConfigStyle.qml:121
-msgid "Modern Windows XP style"
-msgstr "Estilo moderno de Windows XP"
+msgid "Modern classic"
+msgstr "Clásico moderno"
 
 #: package/contents/ui/config/ConfigStyle.qml:127
 msgid "Colour scheme:"
@@ -2135,3 +2135,7 @@ msgstr "3x6 V."
 
 #~ msgid "Task Manager settings…"
 #~ msgstr "Ajustes del administrador de tareas…"
+
+#: package/contents/ui/config/ConfigStyle.qml:122
+msgid "Modern"
+msgstr "Moderno"

@@ -219,7 +219,7 @@
 
   <group name="XP">
     <entry name="xpSubstyle" type="String">
-      <label>Windows XP style: classic (Luna, as it was) | modern (same colours, rounded)</label>
+      <label>Windows XP style: luna (real XP, "Classic XP") | classic ("Modern classic") | modern (same colours, rounded)</label>
       <default>classic</default>
     </entry>
     <entry name="xpTaskbarTheme" type="Bool">

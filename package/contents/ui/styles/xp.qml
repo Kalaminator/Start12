@@ -13,7 +13,8 @@ import "../code/tiles.js" as Tiles
 
 // Windows XP style (Luna blue). Blue header with picture + name, white left column (pinned, most used,
 // "All Programs"), light blue places column, blue bottom bar with Log Off / Turn Off Computer.
-// Substyle key xpSubstyle: "classic" = XP as it was, "modern" = same palette, rounded and soft.
+// Substyle key xpSubstyle: "classic" = XP as it was, "modern" = same palette, rounded and soft,
+// "luna" (settings: Classic XP) = classic layout with the colours measured from real XP (`lunas`).
 // Typing anywhere searches (the left column turns into the search results).
 FocusScope {
     id: style
@@ -21,6 +22,7 @@ FocusScope {
 
     readonly property var cfg: Plasmoid.configuration
     readonly property bool modern: cfg.xpSubstyle === "modern"
+    readonly property bool luna: cfg.xpSubstyle === "luna"
     property bool allPrograms: cfg.openAllApps
     property int rev: 0             // bump to re-read the models
 
@@ -71,27 +73,53 @@ FocusScope {
     readonly property var scheme: cfg.xpColor === "custom" ? customScheme(cfg.xpCustomColor)
                                                            : (schemes[cfg.xpColor] || schemes.blue)
     readonly property int si: modern ? 1 : 0
+    // Luna: glossy 3-stop header/footer (headMid/barMid), a frame (edge) round the body, coloured right
+    // column lines (rightLine), grey pin subtitles. A custom colour uses the classic values.
+    readonly property var lunas: ({
+        blue: {
+            headTop: "#3185e6", headMid: "#0661d3", headBottom: "#2992f3", barTop: "#3d95f0", barMid: "#1a78e6",
+            barBottom: "#0560d4", right: "#d3e5fa", rightLine: "#a7c5ea", edge: "#2a6fd6", placeText: "#0a246a", line: "#dedede"
+        },
+        olive: {
+            headTop: "#e6edc8", headMid: "#a7b97f", headBottom: "#cddcab", barTop: "#e6edc8", barMid: "#d6deb1",
+            barBottom: "#b1bd85", barText: "#000000", right: "#f1f1e5", rightLine: "#d3b54e", edge: "#a7b97f",
+            placeText: "#000000", line: "#dedede"
+        },
+        silver: {
+            headTop: "#e2e2ea", headMid: "#a3a2bb", headBottom: "#bdbcd0", headText: "#ffffff", barTop: "#e4e3ea",
+            barMid: "#d2d3de", barBottom: "#abaabe", right: "#e8e7ee", rightLine: "#c4c3d5", edge: "#a9a9be", line: "#dedede"
+        }
+    })
+    readonly property var lunaScheme: luna && cfg.xpColor !== "custom" ? (lunas[cfg.xpColor] || lunas.blue) : ({})
+    function pick(k, def) {
+        return lunaScheme[k] !== undefined ? lunaScheme[k] : def !== undefined ? def : scheme[k][si];
+    }
+    readonly property real edgeW: luna ? m.px(2) : 0
     QtObject {
         id: c
-        readonly property color headTop: style.scheme.headTop[style.si]
-        readonly property color headBottom: style.scheme.headBottom[style.si]
-        readonly property color headText: style.scheme.headText[style.si]
-        readonly property color barTop: style.scheme.barTop[style.si]
-        readonly property color barBottom: style.scheme.barBottom[style.si]
-        readonly property color barText: style.scheme.barText[style.si]
+        readonly property color headTop: style.pick("headTop")
+        readonly property color headMid: style.pick("headMid", headTop)
+        readonly property color headBottom: style.pick("headBottom")
+        readonly property color headText: style.pick("headText")
+        readonly property color barTop: style.pick("barTop")
+        readonly property color barMid: style.pick("barMid", barTop)
+        readonly property color barBottom: style.pick("barBottom")
+        readonly property color barText: style.pick("barText")
         readonly property color orange: "#f39a32"
         readonly property color orangeLight: "#fcc77b"
         readonly property color green: "#3aa238"
         readonly property color greenDark: "#25801f"
         readonly property color red: "#d8412c"
         readonly property color left: "#ffffff"
-        readonly property color right: style.scheme.right[style.si]
-        readonly property color rightBorder: style.scheme.rightBorder[style.si]
+        readonly property color right: style.pick("right")
+        readonly property color rightBorder: style.pick("rightBorder")
         readonly property color text: "#000000"
-        readonly property color placeText: style.scheme.placeText[style.si]
-        readonly property color hover: style.scheme.hover[style.si]
-        readonly property color hoverText: style.scheme.hoverText[style.si]
-        readonly property color line: style.scheme.line[style.si]
+        readonly property color placeText: style.pick("placeText")
+        readonly property color hover: style.pick("hover")
+        readonly property color hoverText: style.pick("hoverText")
+        readonly property color line: style.pick("line")
+        readonly property color rightLine: style.pick("rightLine", line)
+        readonly property color edge: style.pick("edge", "transparent")
     }
 
     readonly property real pad: m.px(modern ? 12 : 0)
@@ -102,7 +130,9 @@ FocusScope {
     readonly property real sepH: m.px(modern ? 13 : 9)
     readonly property real placeH: m.px(cfg.smallPlaces ? 24 : modern ? 34 : 30)
     // Places column; design mode drags its left edge (common/SplitHandle), the left column gives way.
-    readonly property real rightW: root.splitFor(cfg.menuStyle, m.px(190 + (cfg.menuSize >= 2 ? 30 : 0)))
+    // Luna: own split key ("xp-luna"), default about half the menu like XP.
+    readonly property string splitName: luna ? "xp-luna" : cfg.menuStyle
+    readonly property real rightW: root.splitFor(splitName, luna ? Math.round(width * 0.47) : m.px(190 + (cfg.menuSize >= 2 ? 30 : 0)))
 
     implicitWidth: m.px(400 + (cfg.menuSize >= 2 ? 80 : 0))
     implicitHeight: m.heightFor([480, 560, 480, 640])
@@ -128,12 +158,13 @@ FocusScope {
     }
     // Thin separator line, XP fades it at both ends.
     component Sep: Rectangle {
+        property color tone: c.line
         height: 1
         gradient: Gradient {
             orientation: Gradient.Horizontal
             GradientStop { position: 0; color: "transparent" }
-            GradientStop { position: 0.15; color: c.line }
-            GradientStop { position: 0.85; color: c.line }
+            GradientStop { position: 0.15; color: tone }
+            GradientStop { position: 0.85; color: tone }
             GradientStop { position: 1; color: "transparent" }
         }
     }
@@ -173,6 +204,7 @@ FocusScope {
         bottomRightRadius: style.modern ? style.radius : 0
         gradient: Gradient {
             GradientStop { position: 0; color: c.headTop }
+            GradientStop { position: style.luna ? 0.12 : 0; color: c.headMid }
             GradientStop { position: 1; color: c.headBottom }
         }
         // XP: light top edge.
@@ -241,7 +273,7 @@ FocusScope {
                         font.pixelSize: Math.round(m.headerFontSize * (style.modern ? 1.35 : 1.25))
                         font.bold: true
                         style: Text.Raised
-                        styleColor: Qt.alpha("#000000", style.modern ? 0.15 : 0.35)
+                        styleColor: Qt.alpha("#000000", style.modern ? 0.15 : style.luna ? 0.6 : 0.35)
                     }
                     PC3.Label {
                         visible: style.modern
@@ -272,15 +304,24 @@ FocusScope {
         }
     }
 
+    // Luna: header colour frame down the body's sides.
+    Rectangle {
+        visible: style.luna
+        anchors.top: glow.bottom
+        anchors.bottom: bar.top
+        width: parent.width
+        color: c.edge
+    }
+
     // ---- Body: white left column, light blue right column ----
     Rectangle {
         id: body
-        x: style.pad
+        x: style.pad + style.edgeW
         anchors.top: glow.bottom
         anchors.topMargin: style.modern ? m.px(6) : 0
         anchors.bottom: bar.top
         anchors.bottomMargin: style.modern ? style.pad : 0
-        width: parent.width - style.pad * 2
+        width: parent.width - (style.pad + style.edgeW) * 2
         radius: style.modern ? style.radius : 0
         color: c.left
         border.color: style.modern ? Qt.alpha(c.rightBorder, 0.5) : "transparent"
@@ -379,16 +420,29 @@ FocusScope {
                                     anchors.verticalCenter: parent.verticalCenter
                                     source: app.custom ? (app.custom.icon || "folder") : app.role("decoration") ?? "dialog-question"
                                 }
-                                PC3.Label {
+                                Column {
                                     x: LayoutMirroring.enabled ? 0 : appIcon.width + m.px(8)
                                     anchors.verticalCenter: parent.verticalCenter
                                     width: parent.width - appIcon.width - m.px(8)
-                                    text: (app.e.kind === "pin" ? root.capOf(app.e.id) : "") || (app.custom ? app.custom.name : app.role("display") ?? app.e.id ?? "")
-                                    elide: Text.ElideRight
-                                    color: app.hot ? c.hoverText : c.text
-                                    font.family: m.font
-                                    font.pixelSize: m.itemFontSize
-                                    font.bold: app.e.kind === "pin"
+                                    PC3.Label {
+                                        width: parent.width
+                                        text: (app.e.kind === "pin" ? root.capOf(app.e.id) : "") || (app.custom ? app.custom.name : app.role("display") ?? app.e.id ?? "")
+                                        elide: Text.ElideRight
+                                        color: app.hot ? c.hoverText : c.text
+                                        font.family: m.font
+                                        font.pixelSize: m.itemFontSize
+                                        font.bold: app.e.kind === "pin"
+                                    }
+                                    // Luna: grey subtitle under pins ("Internet / Internet Explorer").
+                                    PC3.Label {
+                                        visible: style.luna && app.e.kind === "pin" && text !== ""
+                                        width: parent.width
+                                        text: app.custom ? "" : app.role("description") ?? ""
+                                        elide: Text.ElideRight
+                                        color: app.hot ? c.hoverText : "#7f7f7f"
+                                        font.family: m.font
+                                        font.pixelSize: Math.round(m.itemFontSize * 0.92)
+                                    }
                                 }
                             }
                             TapHandler {
@@ -493,7 +547,7 @@ FocusScope {
         }
 
         SplitHandle {
-            name: style.cfg.menuStyle
+            name: style.splitName
             value: style.rightW
             reversed: true
             minimum: m.px(120)
@@ -552,6 +606,7 @@ FocusScope {
                                 visible: pb.sep
                                 anchors.centerIn: parent
                                 width: parent.width
+                                tone: c.rightLine
                             }
                             HoverBox {
                                 anchors.fill: parent
@@ -650,6 +705,7 @@ FocusScope {
         radius: style.modern ? style.radius : 0
         gradient: Gradient {
             GradientStop { position: 0; color: c.barTop }
+            GradientStop { position: style.luna ? 0.2 : 0; color: c.barMid }
             GradientStop { position: 1; color: c.barBottom }
         }
         border.color: style.modern ? Qt.alpha(c.rightBorder, 0.5) : "transparent"

@@ -116,9 +116,22 @@ BLUE = {
 }
 # Other schemes: taskbar body colour; the rest is derived from it.
 BASES = {"olive": "#7f9656", "silver": "#c9c9d9"}
+# "luna" (settings: Classic XP): the classic buttons on the glossy bars measured from real XP screenshots.
+LUNA = {
+    "blue": ([(0, "#3c8ae8", 1), (0.06, "#188ced", 1), (0.15, "#0570e2", 1), (0.32, "#0b54dd", 1), (0.6, "#085be3", 1),
+              (0.88, "#0262ec", 1), (0.94, "#055ce3", 1), (1, "#064cc4", 1)], ("#5aa6ff", 1), "#245edb"),
+    "olive": ([(0, "#e1e8b9", 1), (0.1, "#b9c68e", 1), (0.22, "#acb984", 1), (0.55, "#acb984", 1), (0.8, "#c3ce96", 1),
+               (0.92, "#bcca90", 1), (1, "#a9b781", 1)], ("#f4f7de", 1), "#acb984"),
+    "silver": ([(0, "#ffffff", 1), (0.08, "#f3f3f7", 1), (0.25, "#e3e3eb", 1), (0.55, "#d6d6e0", 1), (0.8, "#e4e4ec", 1),
+                (0.92, "#cfcfdc", 1), (1, "#a9a9be", 1)], (W, 1), "#d6d6e0"),
+}
+
+def luna(sch):
+    panel, edge, B = LUNA[sch]
+    return dict(BLUE["classic"] if sch == "blue" else derive(B, "classic"), panel=panel, edge=edge, base=B)
 
 def derive(B, sub):
-    if sub == "classic":
+    if sub != "modern":   # classic, luna (custom colour: same as classic)
         return dict(
             panel=[(0, mix(B, W, .25), 1), (0.1, mix(B, W, .08), 1), (0.5, B, 1), (0.92, mix(B, K, .12), 1), (1, mix(B, K, .3), 1)],
             edge=(mix(B, W, .45), 1), c=4, base=B,
@@ -330,17 +343,20 @@ def write_deco(base, B, sub, label):
     lt = light(B)
     ink = "#1f2440" if lt else W
     Bi = mix(B, "#d4d8e4", .55)  # inactive: washed out
-    classic = sub == "classic"
-    S, ry, T, bs, c = (4, 7, 28, 21, 3) if classic else (5, 10, 30, 20, 5)
+    classic, luna = sub != "modern", sub == "luna"
+    # luna (Classic XP): taller glossy title, rounder top, bigger buttons, XP's red-orange close.
+    S, ry, T, bs, c = (4, 9, 30, 22, 3) if luna else (4, 7, 28, 21, 3) if classic else (5, 10, 30, 20, 5)
     T = OPT["title"] or T   # T41
     bs = min(bs, T - 2)
     def stops(b):
+        if luna:
+            return [(0, mix(b, W, .5)), (.08, mix(b, W, .2)), (.18, b), (.6, mix(b, K, .03)), (.88, mix(b, W, .16)), (1, mix(b, K, .25))]
         return ([(0, mix(b, W, .4)), (.12, mix(b, W, .08)), (.5, b), (.85, mix(b, W, .1)), (1, mix(b, K, .15))] if classic
                 else [(0, mix(b, W, .14)), (1, b)])
     svg(os.path.join(base, "decoration.svg"),
         [deco_frame("decoration", 10, T, S, ry, stops(B), mix(B, K, .05), mix(B, K, .45), mix(B, W, .5), "da"),
          deco_frame("decoration-inactive", T + 70, T, S, ry, stops(Bi), Bi, mix(Bi, K, .3), mix(Bi, W, .5), "di")], size=(130, 2 * T + 140))
-    red = [(0, "#e8906c", 1), (1, "#c13c13", 1)]
+    red = [(0, "#f2a68c", 1), (.45, "#e04343", 1), (1, "#b02a1c", 1)] if luna else [(0, "#e8906c", 1), (1, "#c13c13", 1)]
     for btn in BUTTONS:
         frames = []
         for i, st in enumerate(("active", "hover", "pressed", "deactivated", "inactive", "hover-inactive", "pressed-inactive", "deactivated-inactive")):
@@ -349,7 +365,8 @@ def write_deco(base, B, sub, label):
             tone = lambda h: mix(h, W, k) if k > 0 else mix(h, K, -k)
             gl = W if (btn == "close" or not lt) else ink
             if classic:
-                fill = [(o, tone(col), 1) for o, col, _ in red] if btn == "close" else [(0, tone(mix(b, W, .4)), 1), (1, tone(mix(b, W, .02)), 1)]
+                fill = ([(o, tone(col), 1) for o, col, _ in red] if btn == "close" else [(0, tone(mix(b, W, .55)), 1), (.45, tone(mix(b, W, .18)), 1), (1, tone(mix(b, K, .05)), 1)] if luna
+                        else [(0, tone(mix(b, W, .4)), 1), (1, tone(mix(b, W, .02)), 1)])
                 bd = (W, 1 if act else .6)
             else:  # modern: translucent, close turns red on hover/press
                 hot = btn == "close" and st.split("-")[0] in ("hover", "pressed")
@@ -496,7 +513,7 @@ def write_win_deco(base, kind, dark, accent=None):
 PIECES = "topleft|topright|top|left|right|bottomleft|bottomright|bottom|center"
 
 def deco_for_name(out, name):
-    m = re.fullmatch(r"start12-xp-(classic|modern)(?:-(olive|silver))?(?:-custom-([0-9a-fA-F]{6}))?", name)
+    m = re.fullmatch(r"start12-xp-(classic|modern|luna)(?:-(olive|silver))?(?:-custom-([0-9a-fA-F]{6}))?", name)
     if m:
         sub, sch, hexc = m.groups()
         return write_deco(out, "#" + hexc if hexc else DECO_BASES[sch or "blue"], sub, "%s %s" % (sub.title(), hexc or (sch or "blue").title()))
@@ -523,7 +540,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("outdir", nargs="?")
     ap.add_argument("--custom")
-    ap.add_argument("--sub", choices=("classic", "modern"), default="classic")
+    ap.add_argument("--sub", choices=("classic", "modern", "luna"), default="classic")
     ap.add_argument("--out")
     ap.add_argument("--taskbar", nargs="*", metavar="key=value")
     ap.add_argument("--deco", action="store_true", help="write Aurorae window decorations instead (T26a)")
@@ -548,7 +565,7 @@ if __name__ == "__main__":
             write_scheme(a.out, B, SCHEME_COLOURS["blue"][0], B, "XP %s %s" % (a.sub.title(), a.custom))
         else:
             os.makedirs(a.outdir, exist_ok=True)
-            for sub in ("classic", "modern"):
+            for sub in ("classic", "modern", "luna"):
                 for sch, (win, sel) in SCHEME_COLOURS.items():
                     write_scheme(os.path.join(a.outdir, "start12-xp-" + sub + ("" if sch == "blue" else "-" + sch) + ".colors"),
                                  DECO_BASES[sch], win, sel, "XP %s %s" % (sub.title(), sch.title()))
@@ -569,7 +586,7 @@ if __name__ == "__main__":
             rgb(a.custom)
             write_deco(a.out, "#" + a.custom.lstrip("#")[-6:], a.sub, "%s %s" % (a.sub.title(), a.custom))
         else:
-            for sub in ("classic", "modern"):
+            for sub in ("classic", "modern", "luna"):
                 for sch, B in DECO_BASES.items():
                     write_deco(os.path.join(a.outdir, "start12-xp-" + sub + ("" if sch == "blue" else "-" + sch)), B, sub,
                                "%s %s" % (sub.title(), sch.title()))
@@ -581,6 +598,8 @@ if __name__ == "__main__":
         rgb(a.custom)  # rejects anything that is not a hex colour
         write(a.out, derive("#" + a.custom.lstrip("#")[-6:], a.sub), "%s %s" % (a.sub.title(), a.custom))
     else:
+        for sch in LUNA:
+            write(os.path.join(a.outdir, "start12-xp-luna" + ("" if sch == "blue" else "-" + sch)), luna(sch), "Luna " + sch.title())
         for sub in ("classic", "modern"):
             write(os.path.join(a.outdir, "start12-xp-" + sub), BLUE[sub], sub.title())
             for sch, B in BASES.items():
