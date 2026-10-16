@@ -285,7 +285,7 @@ FocusScope {
                         visible: !face.visible
                         width: parent.width * 0.7
                         height: width
-                        source: "user-identity"
+                        source: style.glyph("places/24/user-identity-symbolic")
                         // No picture set: a blue person on the white frame (the theme icon may be white).
                         isMask: true
                         color: c.placeText
@@ -564,7 +564,7 @@ FocusScope {
                             anchors.centerIn: parent
                             width: m.px(12)
                             height: width
-                            source: style.allPrograms ? "go-previous" : "go-next"
+                            source: style.glyph(style.allPrograms ? "actions/16/go-previous-symbolic" : "actions/16/go-next-symbolic")
                             color: "#ffffff"
                             isMask: true
                         }
@@ -680,6 +680,11 @@ FocusScope {
     }
 
     // ---- Bottom bar: Log Off / Turn Off Computer ----
+    // White glyphs drawn as masks: take them from Breeze, not the icon theme. A full-colour theme (the XP icons)
+    // answers "-symbolic" names with its coloured icon, and a mask turns that into a solid white square.
+    // ponytail: Breeze ships with Plasma; if it is missing the glyph is just empty.
+    function glyph(path) { return "file:///usr/share/icons/breeze/" + path + ".svg"; }
+
     component BarButton: PC3.AbstractButton {
         id: bb
         property string iconName
@@ -754,14 +759,14 @@ FocusScope {
             BarButton {
                 id: logOff
                 text: i18n("Log Off")
-                iconName: "system-log-out-symbolic"
+                iconName: style.glyph("actions/16/system-log-out-symbolic")
                 chip: c.orange
                 onClicked: contextMenu.show(logOff, null, -1, places.powerItems(["lock-screen", "logout", "switch-user"]))
             }
             BarButton {
                 id: turnOff
                 text: i18n("Turn Off Computer")
-                iconName: "system-shutdown-symbolic"
+                iconName: style.glyph("actions/16/system-shutdown-symbolic")
                 chip: c.red
                 onClicked: contextMenu.show(turnOff, null, -1, places.powerItems(style.cfg.powerItems))
             }
