@@ -2489,3 +2489,15 @@ msgstr ""
 #: package/contents/ui/config/ConfigTaskbar.qml
 msgid "Fill the screen: maximized windows use the whole screen and the bar auto-hides as an island over them. Keep a gap: the bar always shows and maximized windows stop one bottom spacing above it (single bar only; split islands always fill the screen)."
 msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Grain:"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Smooth"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Grainy"
+msgstr ""

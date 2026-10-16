@@ -50,6 +50,7 @@ KCM.SimpleKCM {
     property int cfg_win12Dark
     property int cfg_win12Transparency
     property int cfg_win12Blur
+    property int cfg_win12Noise
     property int cfg_taskbarGap
     property int cfg_menuGap
     property bool cfg_taskbarMagnetic
@@ -213,6 +214,10 @@ KCM.SimpleKCM {
                 QQC2.Label { text: i18n("Soft") }
                 QQC2.Slider { from: 1; to: 15; stepSize: 1; value: page.cfg_win12Blur < 0 ? 8 : page.cfg_win12Blur; onMoved: page.cfg_win12Blur = value }
                 QQC2.Label { text: i18n("Strong") }
+                QQC2.Label { text: i18n("Grain:") }
+                QQC2.Label { text: i18n("Smooth") }
+                QQC2.Slider { from: 0; to: 14; stepSize: 1; value: page.cfg_win12Noise; onMoved: page.cfg_win12Noise = value }
+                QQC2.Label { text: i18n("Grainy") }
                 // W12 gaps (px): floating bar/islands to the screen edge, Start menu to the taskbar
                 QQC2.Label { text: i18n("Bottom spacing:") }
                 QQC2.Label { text: i18n("None") }

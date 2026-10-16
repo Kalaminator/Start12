@@ -410,19 +410,25 @@ ContainmentItem {
         return v < 0 ? (winDark ? "202028" : "f7f7fb") : Kirigami.ColorUtils.linearInterpolation(winDark ? "#3a3a46" : "#dde1ec",
             winDark ? "#050507" : "#fdfdff", v / 100).toString().slice(-6);
     }
-    // W11 blur strength: kwinrc [Effect-blur] BlurStrength while any Windows 12 part is on (KWin's blur is global);
-    // the user's value is kept next to it in win12Saved ("unset" = no key) and put back when it goes off.
-    readonly property int win12Blur: cfg.win10Transparency && (menuKind === "windows12" || win12Taskbar
-        || (cfg.windowLook || cfg.menuStyle) === "windows12") ? cfg.win12Blur : -1
+    // W11 blur strength + grain: kwinrc [Effect-blur] BlurStrength / NoiseStrength while any Windows 12 part is on
+    // (KWin's blur is global; its default noise makes the glass look grainy). The user's values are kept next to
+    // them in win12Saved / win12SavedNoise ("unset" = no key) and put back when Windows 12 goes off.
+    readonly property bool win12Glass: cfg.win10Transparency && (menuKind === "windows12" || win12Taskbar
+        || (cfg.windowLook || cfg.menuStyle) === "windows12")
+    readonly property int win12Blur: win12Glass ? cfg.win12Blur : -1
+    readonly property int win12Noise: win12Glass ? cfg.win12Noise : -1
     onWin12BlurChanged: syncBlurStrength()
+    onWin12NoiseChanged: syncBlurStrength()
     function syncBlurStrength() {
         if (!configReady) return;
-        const g = "--file kwinrc --group Effect-blur --key ", reconf = "; " + Tiles.QDBUS + " org.kde.KWin /KWin reconfigure";
-        run("sh -c " + Tiles.shQuote(win12Blur > 0
-            ? "[ -n \"$(kreadconfig6 " + g + "win12Saved)\" ] || kwriteconfig6 " + g + "win12Saved \"$(kreadconfig6 " + g
-              + "BlurStrength --default unset)\"; kwriteconfig6 " + g + "BlurStrength " + win12Blur + reconf
-            : "s=$(kreadconfig6 " + g + "win12Saved); [ -n \"$s\" ] || exit 0; if [ \"$s\" = unset ]; then kwriteconfig6 " + g
-              + "BlurStrength --delete; else kwriteconfig6 " + g + "BlurStrength \"$s\"; fi; kwriteconfig6 " + g + "win12Saved --delete" + reconf));
+        const g = "--file kwinrc --group Effect-blur --key ";
+        const one = (key, saved, v) => v >= 0
+            ? "[ -n \"$(kreadconfig6 " + g + saved + ")\" ] || kwriteconfig6 " + g + saved + " \"$(kreadconfig6 " + g
+              + key + " --default unset)\"; kwriteconfig6 " + g + key + " " + v + "; "
+            : "s=$(kreadconfig6 " + g + saved + "); if [ -n \"$s\" ]; then if [ \"$s\" = unset ]; then kwriteconfig6 " + g
+              + key + " --delete; else kwriteconfig6 " + g + key + " \"$s\"; fi; kwriteconfig6 " + g + saved + " --delete; fi; ";
+        run("sh -c " + Tiles.shQuote(one("BlurStrength", "win12Saved", win12Blur > 0 ? win12Blur : -1)
+            + one("NoiseStrength", "win12SavedNoise", win12Noise) + Tiles.QDBUS + " org.kde.KWin /KWin reconfigure"));
     }
     // W3: corners in % of half the panel thickness (applet size + our theme's 2+2 margins; 46 until laid out).
     readonly property int barThickness: (Plasmoid.formFactor === PlasmaCore.Types.Vertical ? width : height) + 4

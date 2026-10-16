@@ -2633,3 +2633,15 @@ msgstr "Dejar un hueco sobre la barra de tareas"
 #: package/contents/ui/config/ConfigTaskbar.qml
 msgid "Fill the screen: maximized windows use the whole screen and the bar auto-hides as an island over them. Keep a gap: the bar always shows and maximized windows stop one bottom spacing above it (single bar only; split islands always fill the screen)."
 msgstr "Ocupar la pantalla: las ventanas maximizadas usan toda la pantalla y la barra se oculta sola como una isla sobre ellas. Dejar un hueco: la barra se ve siempre y las ventanas maximizadas se detienen un espacio inferior por encima (solo con una barra; las islas separadas siempre ocupan la pantalla)."
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Grain:"
+msgstr "Grano:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Smooth"
+msgstr "Suave"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Grainy"
+msgstr "Granulado"
