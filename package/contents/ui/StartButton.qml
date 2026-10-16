@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
+import QtQuick.Shapes
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
@@ -241,17 +242,31 @@ MouseArea {
             : button.cfg.xpStartGreen ? (luna ? (button.cfg.xpColor === "olive" ? "#4f7c3e" : "#1f9420") : "#3c9a3c")
             : button.cfg.xpColor === "custom" ? button.cfg.xpCustomColor
             : (schemeBase[button.cfg.xpColor] || schemeBase.blue)
+        // Luna hover: XP's bright glow (lighter and more saturated).
         readonly property color tone: button.frame === 2 ? Qt.darker(base, 1.25)
-                                    : button.frame === 1 ? Qt.lighter(base, 1.12) : base
+            : button.frame === 1 ? (luna ? Qt.hsla(base.hslHue, Math.min(1, base.hslSaturation * 1.2),
+                                                   Math.min(0.85, base.hslLightness * 1.3), 1) : Qt.lighter(base, 1.12))
+            : base
         readonly property real r: modern ? height / 2 : height * 0.45
-        implicitWidth: xpRow.implicitWidth + Math.round(height * (modern ? 0.7 : 0.75))
+        // Luna: extra room for the long elliptical end(s).
+        readonly property real lunaPad: luna ? Math.round(height * (leftR > 0 ? 0.3 : 0.05)) : 0
+        implicitWidth: xpRow.implicitWidth + lunaPad + Math.round(height * (modern ? 0.7 : luna ? (rightR > 0 ? 0.9 : 0.4) : 0.75))
         // Classic: square on the menu's side (T42 menuPosition): Left = square left, Center = round both
         // sides, Right = square right. Modern stays round on both sides.
         readonly property real leftR: modern || button.cfg.menuPosition !== 0 ? r : 0
         readonly property real rightR: modern || button.cfg.menuPosition !== 2 ? r : 0
+        // Luna: a round end is a long flat half ellipse (as wide as 0.75 x the height), like XP's button.
+        function lunaPath(x0, y0, w, h) {
+            const ry = h / 2, rx = Math.min(h * 0.75, w / 2), l = leftR > 0, rt = rightR > 0;
+            return "M " + (l ? x0 + rx : x0) + " " + y0 + " H " + (rt ? x0 + w - rx : x0 + w)
+                 + (rt ? " A " + rx + " " + ry + " 0 0 1 " + (x0 + w - rx) + " " + (y0 + h) : " V " + (y0 + h))
+                 + " H " + (l ? x0 + rx : x0)
+                 + (l ? " A " + rx + " " + ry + " 0 0 1 " + (x0 + rx) + " " + y0 : "") + " Z";
+        }
 
         // Soft shadow on the right edge.
         Rectangle {
+            visible: !xpPill.luna
             anchors.fill: shape
             anchors.leftMargin: 2
             anchors.rightMargin: -2
@@ -288,16 +303,8 @@ MouseArea {
             bottomRightRadius: xpPill.rightR
             border.width: 1
             border.color: Qt.darker(xpPill.tone, xpPill.modern ? 1.25 : 1.5)
-            gradient: xpPill.luna ? lunaGrad : classicGrad
-            // Measured from XP: light top line, dark band under it, brighter towards the bottom, dark edge.
-            Gradient {
-                id: lunaGrad
-                GradientStop { position: 0; color: Qt.lighter(xpPill.tone, 1.7) }
-                GradientStop { position: 0.1; color: Qt.lighter(xpPill.tone, 1.2) }
-                GradientStop { position: 0.25; color: Qt.darker(xpPill.tone, 1.08) }
-                GradientStop { position: 0.85; color: Qt.lighter(xpPill.tone, 1.12) }
-                GradientStop { position: 1; color: Qt.darker(xpPill.tone, 1.35) }
-            }
+            visible: !xpPill.luna
+            gradient: classicGrad
             Gradient {
                 id: classicGrad
                 GradientStop { position: 0; color: Qt.lighter(xpPill.tone, xpPill.modern ? 1.2 : 1.4) }
@@ -306,12 +313,45 @@ MouseArea {
                 GradientStop { position: 1; color: Qt.darker(xpPill.tone, xpPill.modern ? 1.15 : 1.4) }
             }
         }
+        // Luna body: shadow, glossy fill + border, hover highlight inside the edge.
+        Shape {
+            id: lunaShape
+            visible: xpPill.luna
+            anchors.fill: shape
+            preferredRendererType: Shape.CurveRenderer
+            ShapePath {
+                strokeColor: "transparent"
+                fillColor: Qt.alpha("#000000", 0.35)
+                PathSvg { path: xpPill.lunaPath(2, 0, lunaShape.width, lunaShape.height) }
+            }
+            ShapePath {
+                strokeWidth: 1
+                strokeColor: Qt.darker(xpPill.tone, 1.5)
+                // Measured from XP: light top line, dark band under it, brighter towards the bottom, dark edge.
+                // Pressed: the top turns dark (pushed in, shadow from the top edge).
+                fillGradient: LinearGradient {
+                    y2: lunaShape.height
+                    GradientStop { position: 0; color: button.frame === 2 ? Qt.darker(xpPill.tone, 1.5) : Qt.lighter(xpPill.tone, 1.7) }
+                    GradientStop { position: 0.1; color: button.frame === 2 ? Qt.darker(xpPill.tone, 1.2) : Qt.lighter(xpPill.tone, 1.2) }
+                    GradientStop { position: 0.25; color: Qt.darker(xpPill.tone, 1.08) }
+                    GradientStop { position: 0.85; color: Qt.lighter(xpPill.tone, 1.12) }
+                    GradientStop { position: 1; color: Qt.darker(xpPill.tone, 1.35) }
+                }
+                PathSvg { path: xpPill.lunaPath(0.5, 0.5, lunaShape.width - 1, lunaShape.height - 1) }
+            }
+            ShapePath {
+                strokeWidth: 2
+                strokeColor: Qt.alpha("#ffffff", button.frame === 1 ? 0.4 : 0)
+                fillColor: "transparent"
+                PathSvg { path: xpPill.lunaPath(2, 2, lunaShape.width - 4, lunaShape.height - 4) }
+            }
+        }
         Row {
             id: xpRow
             // Pressed: the label sinks 1 px, like XP's pushed-in button.
             transform: Translate { y: button.frame === 2 ? 1 : 0 }
             anchors.verticalCenter: shape.verticalCenter
-            x: xpPill.reach + Math.round(xpPill.height * (xpPill.modern ? 0.3 : 0.2))
+            x: xpPill.reach + xpPill.lunaPad + Math.round(xpPill.height * (xpPill.modern ? 0.3 : 0.2))
             spacing: Math.round(xpPill.height * 0.12)
             Kirigami.Icon {
                 visible: !xpPill.luna
@@ -351,6 +391,69 @@ MouseArea {
                 style: Text.Raised
                 styleColor: "#80000000"
             }
+        }
+    }
+
+    // Classic XP tray strip: lighter, with a bevelled left edge, from the tray's left edge to the panel's end
+    // (over the clock, as on XP). The tray draws no background and Plasma Styles have no element for it, so it
+    // is drawn here and reparented into the panel's containment item: behind the applets, over the panel
+    // background (same trick as popupAnchor). Colours measured from real XP screenshots (silver estimated).
+    // ponytail: horizontal panels and the three XP schemes only; the tray is found by duck typing (plasmoid.pluginName).
+    Rectangle {
+        id: trayStrip
+        readonly property var schemes: ({
+            blue: ["#0ca0f9", "#009df3", "#1288dc", "#0096ee", "#0076d8", "#0054a2", "#1bbefb"],
+            olive: ["#fcf7da", "#ebe3b4", "#ebe3b4", "#ebe3b4", "#d7c288", "#978c4a", "#f5ecab"],
+            silver: ["#ffffff", "#f3f3f7", "#e6e6ee", "#dcdce6", "#c4c4d4", "#9a9ab0", "#ffffff"]
+        })
+        readonly property var c: schemes[button.cfg.xpColor] || null
+        readonly property bool wanted: button.xp && xpPill.luna && root.xpTheme !== "" && c !== null
+        property Item tray: null
+        visible: wanted && tray !== null
+        z: -1
+        gradient: Gradient {
+            GradientStop { position: 0; color: trayStrip.c ? trayStrip.c[0] : "transparent" }
+            GradientStop { position: 0.1; color: trayStrip.c ? trayStrip.c[1] : "transparent" }
+            GradientStop { position: 0.45; color: trayStrip.c ? trayStrip.c[2] : "transparent" }
+            GradientStop { position: 0.9; color: trayStrip.c ? trayStrip.c[3] : "transparent" }
+            GradientStop { position: 1; color: trayStrip.c ? trayStrip.c[4] : "transparent" }
+        }
+        Rectangle { width: 1; height: parent.height; color: trayStrip.c ? trayStrip.c[5] : "transparent" }
+        Rectangle { x: 1; width: 1; height: parent.height; color: trayStrip.c ? trayStrip.c[6] : "transparent" }
+        function place() {
+            if (!wanted) return;
+            const find = (it, d) => {
+                if (!it || d > 16) return null;
+                if (it.plasmoid && it.plasmoid.pluginName === "org.kde.plasma.systemtray") return it;
+                for (const ch of it.children) { const f = find(ch, d + 1); if (f) return f; }
+                return null;
+            };
+            const t = tray || find(button.Window.contentItem, 0);
+            let p = t ? t.parent : null;
+            while (p && !p.plasmoid) p = p.parent;     // the panel's containment item
+            if (!p) return;
+            tray = t;
+            if (parent !== p) parent = p;
+            const q = t.mapToItem(p, 0, 0);
+            x = Math.round(q.x);
+            y = 0;
+            width = p.width - x;
+            height = p.height;
+        }
+        onWantedChanged: Qt.callLater(place)
+        Timer { interval: 1500; running: trayStrip.wanted; onTriggered: trayStrip.place() }
+        Connections {
+            target: trayStrip.tray
+            function onWidthChanged() { Qt.callLater(trayStrip.place) }
+        }
+        Connections {
+            target: trayStrip.tray ? trayStrip.tray.parent : null
+            function onXChanged() { Qt.callLater(trayStrip.place) }
+            function onWidthChanged() { Qt.callLater(trayStrip.place) }
+        }
+        Connections {
+            target: trayStrip.parent
+            function onWidthChanged() { Qt.callLater(trayStrip.place) }
         }
     }
 }
