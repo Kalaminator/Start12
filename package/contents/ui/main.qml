@@ -592,7 +592,9 @@ ContainmentItem {
     // ponytail: Plasma's own tray items (volume, network...) do not signal; the 30 s timer still covers them.
     readonly property string trayWait: "W='busctl --user --timeout=600 wait /StatusNotifierWatcher org.kde.StatusNotifierWatcher StatusNotifierItem';"
         + " $W'Registered' >/dev/null 2>&1 & a=$!; $W'Unregistered' >/dev/null 2>&1 & b=$!; wait -n; kill $a $b 2>/dev/null; echo"
-    function armTrayWatch() { if (islandMagnetic) trayWatch.connectSource("bash -c " + Tiles.shQuote(trayWait)); }
+    // A fresh source name each time: the executable engine does not rerun a source just disconnected.
+    property int trayArm: 0
+    function armTrayWatch() { if (islandMagnetic) trayWatch.connectSource("bash -c " + Tiles.shQuote(trayWait) + " # " + (++trayArm)); }
     P5Support.DataSource {
         id: trayWatch
         engine: "executable"
@@ -601,7 +603,7 @@ ContainmentItem {
             disconnectSource(sourceName);
             if (!root.islandMagnetic) return;
             islandTimer.restart();
-            connectSource(sourceName);
+            root.armTrayWatch();
         }
     }
     function syncIslands() {
