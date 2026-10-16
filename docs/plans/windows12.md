@@ -185,6 +185,13 @@ slot, W2 waits or works code-only with PySide6/qmlscene checks) -> W6. W4 can be
 - Title bars: KWin blurs behind Aurorae via the T41 `mask-*` pieces (seen in T41 and now). `main.qml windowOpacity` = 80 when the window look is Windows 12, `windowOpacity` is 100 and "Transparency effects" is on, so the T41 glass deco `start12-win11-<light|dark>[-accent-hex]-g80b1rdt0` is made (no separate win12 deco needed); Transparency off or any other windowOpacity = the user's.
 - Taskbar page: auto-hide combo shows "Off (the floating bar still auto-hides)" + a hint for the floating Windows 12 bar (es.po).
 
+### W9 Magnetic islands (2026-10-16, real panel, seen on screen)
+- Plasma 6.8 `PanelView` uses `offset` only in `lengthMode = "custom"` (fit and centre ignore it; a centred panel's offset is reset to 0 at start). Custom length = clamp(content + floating padding, minimumLength, maximumLength), so custom + `minimumLength = 0` fits the content AND takes an offset. `panel.length` reads the content width (containment preferredWidth) in any mode.
+- `islands.js` (key `taskbarMagnetic`, @MAG@): every panel of the split goes custom + left aligned, offset = centred group start minus the 8 px floating padding, 8 px gap; one panel set per pass. Off = fit + left/centre/right (the old edges; offset/min stay but fit ignores them). The panel's min/max length and offset are saved in `start12Layout` (mn/mx/off) and put back by `single`.
+- Recompute: main.qml re-runs syncIslands 1 s after this panel's window width changes (tasks opened/closed) and every 30 s while magnetic (tray/weather islands cannot be watched from the widget). Limit: an auto-hidden panel does not update its content width while hidden, so the group re-centres ~1-2 s after it shows.
+- Fix: the style gate now comes from main.qml `islandWant` (@WANT@), so T43 `taskbarLook = windows12` with another menu works and a Windows 12 menu with another taskbar look gets `single`.
+- Seen: split-left and split-right magnetic (centred, 8 px gaps), split-left magnetic off (edges), opened app re-centres, back to single = fill/center, order 29;4;5;6;7;21;22, no extra panels. Glass check: the start12 Plasma Styles set `[AdaptiveTransparency] enabled=false`, so Plasma always uses translucent/ (panel opacity mode is not the cause; its read-back always says translucent with our themes).
+
 ## Task B: a lighter tray strip in the XP taskbar
 
 How the Plasma 6.8 tray draws: there is NO package dir (`/usr/share/plasma/plasmoids/org.kde.plasma.systemtray` does not

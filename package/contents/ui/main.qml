@@ -394,7 +394,7 @@ ContainmentItem {
         "windows7": "colour=" + (cfg.win10AccentStart ? accentHex : "2a5a96")
                     + " alpha=" + (cfg.win10Transparency ? 0.6 : 1) + " radius=6 line=1 buttons=win7",
         "windows12": "colour=" + (cfg.win10AccentStart ? accentHex : winDark ? "202028" : "f7f7fb")
-                     + " alpha=" + (cfg.win10Transparency ? (cfg.win10AccentStart ? 0.25 : winDark ? 0.4 : 0.35) : 1) + " radius=" + win12Radius + " line=0 buttons=win11" })
+                     + " alpha=" + (cfg.win10Transparency ? (cfg.win10AccentStart ? 0.15 : winDark ? 0.3 : 0.25) : 1) + " radius=" + win12Radius + " line=0 buttons=win11" })
     // W3: corners in % of half the panel thickness (applet size + our theme's 2+2 margins; 46 until laid out).
     readonly property int barThickness: (Plasmoid.formFactor === PlasmaCore.Types.Vertical ? width : height) + 4
     readonly property int win12Radius: Math.max(2, Math.round((barThickness < 20 ? 46 : barThickness) / 2 * cfg.taskbarRound / 100))
@@ -579,10 +579,19 @@ ContainmentItem {
     // W5: split taskbar islands, Windows 12 style only (code/islands.js reads the style from this widget's config).
     readonly property string islandWant: win12Taskbar ? cfg.taskbarLayout : "single"
     onIslandWantChanged: syncIslands()
+    // W9: magnetic islands are placed from their widths: re-run when this panel's width changes (tasks opened or
+    // closed) and every 30 s for the other islands (tray icons, weather), which this widget cannot watch.
+    readonly property bool islandMagnetic: islandWant !== "single" && cfg.taskbarMagnetic
+    onIslandMagneticChanged: syncIslands()
+    readonly property int panelWidth: Window.window ? Window.window.width : 0
+    onPanelWidthChanged: if (islandMagnetic) islandTimer.restart()
+    Timer { id: islandTimer; interval: 1000; onTriggered: syncIslands() }
+    Timer { interval: 30000; repeat: true; running: root.islandMagnetic; onTriggered: syncIslands() }
     function syncIslands() {
         if (!configReady) return;
         const file = decodeURIComponent(Qt.resolvedUrl("code/islands.js").toString().replace("file://", ""));
-        const dbus = Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript \"$(sed s/@ID@/" + Plasmoid.id + "/ " + Tiles.shQuote(file) + ")\"";
+        const dbus = Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript \"$(sed -e s/@ID@/" + Plasmoid.id + "/ -e s/@WANT@/" + islandWant
+            + "/ -e s/@MAG@/" + islandMagnetic + "/ " + Tiles.shQuote(file) + ")\"";
         const loop = "for i in $(seq 40); do [ \"$(" + dbus + ")\" = done ] && break; sleep 1; done";
         run("flock \"${XDG_RUNTIME_DIR:-/tmp}/start12-panel.lock\" sh -c " + Tiles.shQuote(loop));
     }
