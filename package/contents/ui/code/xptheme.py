@@ -9,7 +9,7 @@
 #                             [gradient=none|left-right|right-left|top-bottom|bottom-top strength=30] (W14)
 import argparse, base64, json, os, re, struct
 
-def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4), gid="g", center="", under=None, img="", horiz=False):
+def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4), gid="g", center="", under=None, img="", horiz=False, vpad=0):
     """9 pieces of a rounded box. stops: [(offset, color, opacity)] vertical gradient.
     border: (color, opacity) or None. hi: top highlight (color, opacity) or None.
     under: (color, opacity, height, full) bar on the bottom edge (T34 task indicator); full = also in the
@@ -17,6 +17,7 @@ def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4),
     W14: img = a second fill (e.g. 'fill="url(#img)" fill-opacity=".5"') painted over every body shape; horiz = the
     gradient runs x0 -> x0 + W instead of top -> bottom."""
     p = (prefix + "-") if prefix else ""
+    y0 += vpad  # W15 vpad: the top and bottom pieces get vpad px of transparent space (task buttons inside the gap ring)
     defs = '<linearGradient id="%s" gradientUnits="userSpaceOnUse" x1="%d" y1="%d" x2="%d" y2="%d">%s</linearGradient>' % (
         gid, *((x0, 0, x0 + W, 0) if horiz else (0, y0, 0, y0 + H)), "".join('<stop offset="%s" stop-color="%s" stop-opacity="%s"/>' % s for s in stops))
     b = 1 if border else 0
@@ -26,7 +27,12 @@ def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4),
     B = ('fill="%s" fill-opacity="%s"' % border) if border else ""
     x1, y1, x2, y2 = x0 + c, y0 + c, x0 + W - c, y0 + H - c
     out = []
+    ext = {"topleft": (x0, c, -1), "top": (x1, W - 2 * c, -1), "topright": (x2, c, -1),
+           "bottomleft": (x0, c, 1), "bottom": (x1, W - 2 * c, 1), "bottomright": (x2, c, 1)}
     def g(name, body):
+        if vpad and name in ext:
+            ex, ew, d = ext[name]
+            body = '<rect x="%s" y="%s" width="%s" height="%s" fill="none"/>' % (ex, y0 - vpad if d < 0 else y0 + H, ew, vpad) + body
         out.append('<g id="%s%s">%s</g>' % (p, name, body))
     def rect(x, y, w, h, f):
         return '<rect x="%s" y="%s" width="%s" height="%s" %s/>' % (x, y, w, h, f) if w > 0 and h > 0 else ""
@@ -68,7 +74,7 @@ def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4),
     g("right", FF(rect(x2, y1, c - b, H - 2 * c, F)) + (rect(x0 + W - b, y1, b, H - 2 * c, B) if border else ""))
     g("center", FF(rect(x1, y1, W - 2 * c, H - 2 * c, F)) + center)
     l, t, r, bm = margins
-    hy = y0 + H + 2
+    t, bm, hy = t + vpad, bm + vpad, y0 + H + vpad + 2
     for i, (side, w, h) in enumerate([("left", l, 1), ("top", 1, t), ("right", r, 1), ("bottom", 1, bm)]):
         out.append('<rect id="%shint-%s-margin" x="%d" y="%d" width="%g" height="%g" fill="none"/>' % (p, side, x0 + i * 10, hy, w, h))
     return defs, "".join(out)
@@ -222,7 +228,7 @@ def imgsize(data):
 
 def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", fallback="default",
             image="", mode="tile", imagealpha="1", tint="", buttons="win10", accent="", solid="0", gap="",
-            gradient="none", strength="30"):
+            gradient="none", strength="30", ring="0", size=""):
     """Plasma Style that only replaces panel-background (plain, opaque/ and translucent/ for blur), tasks
     and colors; everything else comes from FallbackTheme (the user's own style).
     T33 texture: image (PNG/JPEG) in the 9-slice center; mode tile (native size, hint-tile-center) | stretch |
@@ -262,8 +268,30 @@ def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", fallback=
             return [(0, B, op), (1, B, op)]
         c1, c2 = (B, g2) if gradient in ("left-right", "top-bottom") else (g2, B)
         return [(0, c1, op), ("%.4f" % e, c1, op), ("%.4f" % (1 - e), c2, op), (1, c2, op)]
+    n = int(ring or 0)
+    if n > 0:  # W15 gap mode: docked panel, the island inside a transparent ring of n px
+        RW, RH = (max(2 * n + 4, int(v or 0)) for v in (size.split("x") + ["", ""])[:2])
+        def ring_frame(prefix, x0, y0, st, gid, img=""):
+            """The whole island in the center piece at the exact panel size RW x RH: a docked bottom panel drops
+            its bottom/left/right edge pieces (enabledBorders), so a 9-slice ring cannot be drawn."""
+            p = prefix + "-" if prefix else ""
+            ix, iy, iw, ih = x0 + n, y0 + n, RW - 2 * n, RH - 2 * n
+            defs = '<linearGradient id="%s" gradientUnits="userSpaceOnUse" x1="%d" y1="%d" x2="%d" y2="%d">%s</linearGradient>' % (
+                gid, *((ix, 0, ix + iw, 0) if horiz else (0, iy, 0, iy + ih)), "".join('<stop offset="%s" stop-color="%s" stop-opacity="%s"/>' % x for x in st))
+            box = '<rect x="%d" y="%d" width="%d" height="%d" rx="%d" %%s/>' % (ix, iy, iw, ih, min(r, ih // 2))
+            body = '<g id="%scenter"><rect x="%d" y="%d" width="%d" height="%d" fill="none"/>%s%s</g>' % (
+                p, x0, y0, RW, RH, box % ('fill="url(#%s)"' % gid), box % img if img else "")
+            m = max(2, r - 10)
+            body += "".join('<rect id="%shint-%s-margin" x="%d" y="%d" width="%d" height="%d" fill="none"/>' % (p, sd, x0 + i * 40, y0 + RH + 2, w, h)
+                            for i, (sd, w, h) in enumerate([("left", n + m, 1), ("top", 1, n + 2), ("right", n + m, 1), ("bottom", 1, n + 2)]))
+            return defs, body
     for pre, op in (("", a), ("translucent/", a), ("opaque/", 1)):
         t = 'fill="url(#img)" fill-opacity="%.3f"' % (op * max(0.0, min(1.0, float(imagealpha)))) if pat else ""
+        if n > 0:
+            svg(os.path.join(base, pre + "widgets/panel-background.svg"),
+                [(pat, ""), ring_frame("", 10, 10, stops(op), "panel", t), ring_frame("mask", 10, RH + 50, [(0, K, 1), (1, K, 1)], "mask")],
+                size=(RW + 20, 2 * RH + 100))
+            continue
         svg(os.path.join(base, pre + "widgets/panel-background.svg"),
             [(pat, ""), frame("", 10, 10, fw, fh, r, None, stops(op), hi=hi, margins=(max(2, r - 10), 2, max(2, r - 10), 2), gid="panel", img=t, horiz=horiz),
              frame("mask", 10, 20 + fh, fw, fh, r, None, [(0, K, 1), (1, K, 1)], gid="mask")]
@@ -295,7 +323,7 @@ def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", fallback=
     }.get(buttons)
     if tasks:
         c, states = tasks
-        frames = [frame(pfx, 10, 10 + i * 60, 60, 40, c, bd, st, hi=h, margins=(6, 4, 6, 4), gid="t" + pfx, under=u)
+        frames = [frame(pfx, 10, 10 + i * (60 + 2 * n), 60, 40, c, bd, st, hi=h, margins=(6, 4, 6, 4), gid="t" + pfx, under=u, vpad=n)
                   for i, (pfx, (bd, st, h, u)) in enumerate(states.items())]
         svg(os.path.join(base, "widgets/tasks.svg"), frames,
             '<rect id="hint-stretch-borders" x="200" y="10" width="1" height="1" fill="none"/>')

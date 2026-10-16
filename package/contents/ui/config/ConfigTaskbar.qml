@@ -40,6 +40,10 @@ KCM.SimpleKCM {
     property alias cfg_taskbarHiding: tbHiding.currentIndex
     property alias cfg_taskbarFloating: w12Float.checked
     property alias cfg_taskbarPopAnim: w12Pop.currentIndex
+    property alias cfg_taskbarWindows: w12Windows.currentIndex
+    // W15: gap mode = docked, always-visible single bar (no auto-hide, no pop-up animation)
+    readonly property bool w12GapMode: (cfg_taskbarLook || cfg_menuStyle) === "windows12" && w12Float.checked
+        && w12Windows.currentIndex === 1 && cfg_taskbarLayout === "single"
     property alias cfg_taskbarRound: w12Round.value
     property string cfg_taskbarLayout
     property int cfg_win12Light
@@ -162,6 +166,7 @@ KCM.SimpleKCM {
             // W7: floating = auto-hidden over full-screen windows (Auto-hide Off); pop-up animation = KWin effect
             RowLayout {
                 enabled: w12Float.checked
+                visible: !page.w12GapMode
                 QQC2.Label { text: i18n("Taskbar pop-up animation:") }
                 QQC2.ComboBox { id: w12Pop; model: [i18n("Slide (Plasma)"), i18n("Fade"), i18n("Zoom"), i18n("Rise")] }
             }
@@ -213,6 +218,21 @@ KCM.SimpleKCM {
                 QQC2.Label { text: i18n("None") }
                 QQC2.Slider { enabled: w12Float.checked; from: 0; to: 24; stepSize: 1; value: page.cfg_taskbarGap; onMoved: page.cfg_taskbarGap = value }
                 QQC2.Label { text: i18n("%1 px", page.cfg_taskbarGap) }
+                // W15 fill (auto-hiding island) | keep a gap above an always-visible island
+                QQC2.Label { text: i18n("Windows:") }
+                QQC2.ComboBox {
+                    id: w12Windows
+                    enabled: w12Float.checked
+                    Layout.columnSpan: 3
+                    model: [i18n("Fill the screen"), i18n("Keep a gap above the taskbar")]
+                }
+                QQC2.Label {
+                    Layout.columnSpan: 4
+                    Layout.maximumWidth: Kirigami.Units.gridUnit * 24
+                    wrapMode: Text.Wrap
+                    enabled: false
+                    text: i18n("Fill the screen: maximized windows use the whole screen and the bar auto-hides as an island over them. Keep a gap: the bar always shows and maximized windows stop one bottom spacing above it (single bar only; split islands always fill the screen).")
+                }
                 QQC2.Label { text: i18n("Menu gap:") }
                 QQC2.Label { text: i18n("None") }
                 QQC2.Slider { from: 0; to: 24; stepSize: 1; value: page.cfg_menuGap; onMoved: page.cfg_menuGap = value }
@@ -315,7 +335,7 @@ KCM.SimpleKCM {
         // native panel visibility (panel.hiding); Off = docked. KDE Plasma look: the user's own panel, not touched (W12)
         QQC2.ComboBox {
             id: tbHiding
-            visible: !kdeLook
+            visible: !kdeLook && !page.w12GapMode
             readonly property bool kdeLook: (page.cfg_taskbarLook || page.cfg_menuStyle) === "plasma"
             Kirigami.FormData.label: i18n("Auto-hide:")
             model: [i18n("Off"), i18n("Hide when a window covers it"), i18n("Always auto-hide")]
@@ -324,6 +344,7 @@ KCM.SimpleKCM {
             displayText: currentIndex === 0 && w12Hides ? i18n("Off (the floating bar still auto-hides)") : currentText
         }
         QQC2.Label {
+            visible: !page.w12GapMode
             Kirigami.FormData.label: tbHiding.kdeLook ? i18n("Auto-hide:") : ""
             text: tbHiding.kdeLook ? i18n("The KDE Plasma look keeps your own panel settings (Edit Mode > Panel Settings).")
                 : tbHiding.w12Hides && tbHiding.currentIndex === 0

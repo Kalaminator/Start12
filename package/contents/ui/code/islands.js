@@ -16,6 +16,8 @@ const put = (o, k, v) => { o.currentConfigGroup = ['General']; o.writeConfig(k, 
 let gone = []; const live = q => q.widgets().filter(w => gone.indexOf(w.id) < 0);
 for (const p of panels()) { const me = p.widgets().find(w => w.id === ID); if (!me) continue;
  const want = WANT;   // main.qml islandWant: the taskbar look (T43 taskbarLook or the style) is Windows 12
+ // W15: wait until syncPanelLook has put the gap mode's thickness back (islands copy the panel height and layout)
+ if (want !== 'single' && get(p, 'General', 'win12Saved_height', '')) { out = 'again'; continue; }
  gone = get(p, 'General', 'win12Gone', '').split(';').map(Number);
  const raw = get(p, 'General', 'win12Layout', ''), s = raw ? JSON.parse(raw) : null;
   const isl = k => s && panels().find(q => q.id === s[k]);

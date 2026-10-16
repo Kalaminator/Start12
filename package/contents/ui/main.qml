@@ -401,7 +401,8 @@ ContainmentItem {
                     + " alpha=" + (cfg.win10Transparency ? 0.6 : 1) + " radius=6 line=1 buttons=win7",
         "windows12": "colour=" + (cfg.win10AccentStart ? accentHex : win12Hex)
                      + " alpha=" + (!cfg.win10Transparency ? 1 : cfg.win12Transparency >= 0 ? 1 - cfg.win12Transparency / 100
-                                    : cfg.win10AccentStart ? 0.15 : winDark ? 0.3 : 0.25) + " radius=" + win12Radius + " line=0 buttons=win11 gap=" + cfg.taskbarGap })
+                                    : cfg.win10AccentStart ? 0.15 : winDark ? 0.3 : 0.25) + " radius=" + win12Radius + " line=0 buttons=win11 gap=" + cfg.taskbarGap
+                     + (win12GapMode && cfg.taskbarGap > 0 ? " ring=" + cfg.taskbarGap + " size=" + panelWidth + "x" + panelHeight : "") })
     // W11 Windows 12 colour sliders (-1 = the W8 look): light 0 soft tint .. 100 near white (80 = f7f7fb),
     // dark 0 soft dark .. 100 near black (~50 = 202028); taskbar and menu (Metrics.bg) background.
     readonly property string win12Hex: {
@@ -507,7 +508,9 @@ ContainmentItem {
                              // W12: a floating panel re-reads the theme's floating margins (bottom spacing) only on a floating change, once the theme has loaded
                              + " && sleep 2 && " + Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript "
                              + Tiles.shQuote("for (const p of panels()) if (p.floating) { p.floating = false; p.floating = true; }")
-                             + " && find " + tdir + " -maxdepth 1 -name 'win12-taskbar-*' ! -name " + want + " -exec rm -rf {} +"));
+                             // W15: never the applied one either (two quick runs, e.g. a panel resize, deleted each other's theme)
+                             + " && find " + tdir + " -maxdepth 1 -name 'win12-taskbar-*' ! -name " + want
+                             + " ! -name \"$(kreadconfig6 --file plasmarc --group Theme --key name)\" -exec rm -rf {} +"));
                 } else if (root.xpTheme.includes("-custom-")) {
                     const dir = "$HOME/.local/share/plasma/desktoptheme/";
                     const gen = decodeURIComponent(Qt.resolvedUrl("code/xptheme.py").toString().replace("file://", ""));
@@ -593,14 +596,21 @@ ContainmentItem {
     // W12: every style but KDE Plasma ("plasma" = the user's own panel, never touched): docked unless Windows 12
     // floats; auto-hide Off = "none" (windows maximize up to the docked bar).
     readonly property bool kdeTaskbar: taskbarKind === "plasma"
+    // W15 "Windows: keep a gap": the floating single Windows 12 bar becomes a docked, always-visible panel that is
+    // 2 x taskbarGap thicker; the ring theme (xptheme ring=/size=, the exact panel size) draws the island inside a
+    // transparent ring, so maximized windows stop gap px above it. height {ring} = the saved thickness + ring.
+    // ponytail: single bar only; islands keep the fill mode (their magnetic offsets assume the 8 px floating padding).
+    readonly property bool win12GapMode: win12Taskbar && cfg.taskbarFloating && cfg.taskbarWindows === 1 && islandWant === "single"
+    readonly property int panelHeight: Window.window ? Window.window.height : 0
     readonly property string panelWant: JSON.stringify({
-        floating: kdeTaskbar ? null : win12Taskbar && cfg.taskbarFloating,
+        floating: kdeTaskbar ? null : win12Taskbar && cfg.taskbarFloating && !win12GapMode,
         // W7: the floating Windows 12 bar auto-hides unless the user picks a mode (Plasma keeps a non-normal
         // panel floating; in normal visibility it docks over maximized windows).
-        hiding: kdeTaskbar ? null : [win12Taskbar && cfg.taskbarFloating ? "autohide" : "none", "dodgewindows", "autohide"][cfg.taskbarHiding] })
+        hiding: kdeTaskbar ? null : win12GapMode ? "none" : [win12Taskbar && cfg.taskbarFloating ? "autohide" : "none", "dodgewindows", "autohide"][cfg.taskbarHiding],
+        height: win12GapMode ? { ring: 2 * cfg.taskbarGap } : null })
     onPanelWantChanged: { syncPanelLook(); syncIslands(); }
     // W7: KWin effect extras/win12-panelpop (installed by setup.sh) animates the auto-hidden bar: 0 off (Plasma's slide).
-    readonly property int panelPop: win12Taskbar ? cfg.taskbarPopAnim : 0
+    readonly property int panelPop: win12Taskbar && !win12GapMode ? cfg.taskbarPopAnim : 0
     onPanelPopChanged: syncPanelPop()
     function syncPanelPop() {
         if (!configReady) return;
@@ -654,7 +664,9 @@ ContainmentItem {
         const js = "const ID = " + Plasmoid.id + ", W = " + panelWant + ";"
             + "for (const p of panels()) { if (!p.widgets().some(w => w.id === ID)) continue; const h = p.hiding;"
             + " for (const k in W) { p.currentConfigGroup = ['General']; const key = 'win12Saved_' + k, s = String(p.readConfig(key, ''));"
-            + "  if (W[k] !== null) { if (!s) p.writeConfig(key, JSON.stringify(p[k])); if (p[k] !== W[k]) p[k] = W[k]; }"
+            + "  if (W[k] !== null) { if (!s) p.writeConfig(key, JSON.stringify(p[k]));"
+            // W15: {ring: n} = the user's saved value (or the current one, about to be saved) + n
+            + "   const v = W[k] && typeof W[k] === 'object' ? (s ? JSON.parse(s) : p[k]) + W[k].ring : W[k]; if (p[k] !== v) p[k] = v; }"
             + "  else if (s) { p[k] = JSON.parse(s); p.currentConfigGroup = ['General']; p.writeConfig(key, ''); } }"
             // W7: Plasma re-checks "a non-normal panel never de-floats" only when floating changes: nudge it.
             + " if (p.floating && p.hiding !== h) { p.floating = false; p.floating = true; } }"

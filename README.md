@@ -43,6 +43,7 @@ Pinned grid, folders and recommended list, with an optional centred Start button
 - A menu based on the Windows 12 concept art. The app list can sit on the left or the right, and the menu
   position is Left, Center or Right.
 - Floating island taskbar that hides itself over full-screen windows.
+- Choose: windows fill the screen under an auto-hiding island, or keep a gap above an always-visible island.
 - Dock-style split islands, with an optional magnetic effect.
 - Transparency and blur, with sliders for How light, How dark, Transparency and Blur strength.
 - Bottom spacing and menu gap settings.

@@ -365,6 +365,10 @@
       <label>W12 Windows 12 floating bar/islands: px between the bar and the screen edge (0 = touching)</label>
       <default>8</default>
     </entry>
+    <entry name="taskbarWindows" type="Int">
+      <label>W15 Windows 12 floating single bar: 0 = windows fill the screen (auto-hiding island), 1 = keep a gap above an always-visible island (docked panel, thicker by 2 x taskbarGap, ring theme)</label>
+      <default>0</default>
+    </entry>
     <entry name="menuGap" type="Int">
       <label>W12 Windows 12 menu: px between the taskbar and the Start menu popup</label>
       <default>8</default>
