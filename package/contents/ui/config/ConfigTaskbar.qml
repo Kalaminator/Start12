@@ -40,6 +40,8 @@ KCM.SimpleKCM {
     property int cfg_win12Dark
     property int cfg_win12Transparency
     property int cfg_win12Blur
+    property int cfg_taskbarGap
+    property int cfg_menuGap
     property bool cfg_taskbarMagnetic
     property alias cfg_taskbarSearch: searchBox.checked
     property alias cfg_taskbarSearchWidth: searchWidth.value
@@ -174,6 +176,15 @@ KCM.SimpleKCM {
                 QQC2.Label { text: i18n("Soft") }
                 QQC2.Slider { from: 1; to: 15; stepSize: 1; value: page.cfg_win12Blur < 0 ? 8 : page.cfg_win12Blur; onMoved: page.cfg_win12Blur = value }
                 QQC2.Label { text: i18n("Strong") }
+                // W12 gaps (px): floating bar/islands to the screen edge, Start menu to the taskbar
+                QQC2.Label { text: i18n("Bottom spacing:") }
+                QQC2.Label { text: i18n("None") }
+                QQC2.Slider { enabled: w12Float.checked; from: 0; to: 24; stepSize: 1; value: page.cfg_taskbarGap; onMoved: page.cfg_taskbarGap = value }
+                QQC2.Label { text: i18n("%1 px", page.cfg_taskbarGap) }
+                QQC2.Label { text: i18n("Menu gap:") }
+                QQC2.Label { text: i18n("None") }
+                QQC2.Slider { from: 0; to: 24; stepSize: 1; value: page.cfg_menuGap; onMoved: page.cfg_menuGap = value }
+                QQC2.Label { text: i18n("%1 px", page.cfg_menuGap) }
             }
             QQC2.Label {
                 Layout.maximumWidth: Kirigami.Units.gridUnit * 24
@@ -252,9 +263,11 @@ KCM.SimpleKCM {
             enabled: customBox.checked || page.cfg_taskbarFollowsStyle
             text: i18n("Paint the active button less transparent")
         }
-        // native panel visibility (panel.hiding); Off = the user's own setting is put back
+        // native panel visibility (panel.hiding); Off = docked. KDE Plasma look: the user's own panel, not touched (W12)
         QQC2.ComboBox {
             id: tbHiding
+            visible: !kdeLook
+            readonly property bool kdeLook: (page.cfg_taskbarLook || page.cfg_menuStyle) === "plasma"
             Kirigami.FormData.label: i18n("Auto-hide:")
             model: [i18n("Off"), i18n("Hide when a window covers it"), i18n("Always auto-hide")]
             // W7: the floating Windows 12 bar auto-hides even on Off (Plasma docks a floating bar under maximized windows)
@@ -262,7 +275,9 @@ KCM.SimpleKCM {
             displayText: currentIndex === 0 && w12Hides ? i18n("Off (the floating bar still auto-hides)") : currentText
         }
         QQC2.Label {
-            text: tbHiding.w12Hides && tbHiding.currentIndex === 0
+            Kirigami.FormData.label: tbHiding.kdeLook ? i18n("Auto-hide:") : ""
+            text: tbHiding.kdeLook ? i18n("The KDE Plasma look keeps your own panel settings (Edit Mode > Panel Settings).")
+                : tbHiding.w12Hides && tbHiding.currentIndex === 0
                 ? i18n("The floating Windows 12 bar always auto-hides, so it stays an island over maximized windows. Turn off \"Floating bar\" for a fixed one.")
                 : i18n("A hidden taskbar shows again when the mouse touches the screen edge.")
             enabled: false

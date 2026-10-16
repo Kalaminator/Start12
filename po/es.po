@@ -2534,3 +2534,20 @@ msgstr "Fuerte"
 #: package/contents/ui/config/ConfigTaskbar.qml
 msgid "Taskbar, Start menu and title bars; transparency changes only the background, icons and text stay solid. Blur strength sets KWin's blur for all windows while the Windows 12 look is on; your own value comes back when you leave it."
 msgstr "Barra de tareas, menú Inicio y barras de título; la transparencia cambia solo el fondo, los iconos y el texto siguen opacos. La intensidad del desenfoque cambia el desenfoque de KWin para todas las ventanas mientras el aspecto Windows 12 está activo; tu valor vuelve al salir de él."
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Bottom spacing:"
+msgstr "Espacio inferior:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+#, kde-format
+msgid "%1 px"
+msgstr "%1 px"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Menu gap:"
+msgstr "Espacio del menú:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "The KDE Plasma look keeps your own panel settings (Edit Mode > Panel Settings)."
+msgstr "El aspecto KDE Plasma mantiene tus propios ajustes del panel (Modo de edición > Ajustes del panel)."

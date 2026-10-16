@@ -395,7 +395,7 @@ ContainmentItem {
                     + " alpha=" + (cfg.win10Transparency ? 0.6 : 1) + " radius=6 line=1 buttons=win7",
         "windows12": "colour=" + (cfg.win10AccentStart ? accentHex : win12Hex)
                      + " alpha=" + (!cfg.win10Transparency ? 1 : cfg.win12Transparency >= 0 ? 1 - cfg.win12Transparency / 100
-                                    : cfg.win10AccentStart ? 0.15 : winDark ? 0.3 : 0.25) + " radius=" + win12Radius + " line=0 buttons=win11" })
+                                    : cfg.win10AccentStart ? 0.15 : winDark ? 0.3 : 0.25) + " radius=" + win12Radius + " line=0 buttons=win11 gap=" + cfg.taskbarGap })
     // W11 Windows 12 colour sliders (-1 = the W8 look): light 0 soft tint .. 100 near white (80 = f7f7fb),
     // dark 0 soft dark .. 100 near black (~50 = 202028); taskbar and menu (Metrics.bg) background.
     readonly property string win12Hex: {
@@ -497,6 +497,9 @@ ContainmentItem {
                     root.run("sh -c " + Tiles.shQuote("python3 " + Tiles.shQuote(tgen)
                              + " --taskbar " + root.taskbarArgs + " fallback=" + Tiles.shQuote(fallback) + " --out " + tdir + want
                              + " && plasma-apply-desktoptheme " + want
+                             // W12: a floating panel re-reads the theme's floating margins (bottom spacing) only on a floating change, once the theme has loaded
+                             + " && sleep 2 && " + Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript "
+                             + Tiles.shQuote("for (const p of panels()) if (p.floating) { p.floating = false; p.floating = true; }")
                              + " && find " + tdir + " -maxdepth 1 -name 'start12-taskbar-*' ! -name " + want + " -exec rm -rf {} +"));
                 } else if (root.xpTheme.includes("-custom-")) {
                     const dir = "$HOME/.local/share/plasma/desktoptheme/";
@@ -580,11 +583,14 @@ ContainmentItem {
     // never float: Plasma de-floats/re-floats with maximized windows and Show Desktop), auto-hide from
     // taskbarHiding. null = leave it. The user's value is saved once in the panel's start12Saved_<prop> key
     // (plasmashellrc is written lazily, so it cannot be the restore source) and put back when null again.
+    // W12: every style but KDE Plasma ("plasma" = the user's own panel, never touched): docked unless Windows 12
+    // floats; auto-hide Off = "none" (windows maximize up to the docked bar).
+    readonly property bool kdeTaskbar: taskbarKind === "plasma"
     readonly property string panelWant: JSON.stringify({
-        floating: win12Taskbar ? cfg.taskbarFloating : xpTheme !== "" || taskbarArgs !== "" ? false : null,
+        floating: kdeTaskbar ? null : win12Taskbar && cfg.taskbarFloating,
         // W7: the floating Windows 12 bar auto-hides unless the user picks a mode (Plasma keeps a non-normal
         // panel floating; in normal visibility it docks over maximized windows).
-        hiding: [null, "dodgewindows", "autohide"][cfg.taskbarHiding] || (win12Taskbar && cfg.taskbarFloating ? "autohide" : null) })
+        hiding: kdeTaskbar ? null : [win12Taskbar && cfg.taskbarFloating ? "autohide" : "none", "dodgewindows", "autohide"][cfg.taskbarHiding] })
     onPanelWantChanged: { syncPanelLook(); syncIslands(); }
     // W7: KWin effect extras/start12-panelpop (installed by setup.sh) animates the auto-hidden bar: 0 off (Plasma's slide).
     readonly property int panelPop: win12Taskbar ? cfg.taskbarPopAnim : 0
@@ -786,6 +792,7 @@ ContainmentItem {
             }
             root.syncDesktopTheme();
             root.syncPanelPop();
+            root.syncPanelLook();   // W12: the onReady run can die with a reloading applet (panel left as the last style)
             root.syncBlurStrength();
             root.readBrightness();
         }
@@ -1114,7 +1121,8 @@ ContainmentItem {
             case PlasmaCore.Types.RightEdge: return Qt.LeftEdge;
             default: return Qt.TopEdge;
         }
-        margin: (Plasmoid.containmentDisplayHints & PlasmaCore.Types.ContainmentPrefersFloatingApplets) ? Kirigami.Units.largeSpacing : 0
+        margin: root.menuKind === "windows12" ? root.cfg.menuGap   // W12 menu gap
+            : (Plasmoid.containmentDisplayHints & PlasmaCore.Types.ContainmentPrefersFloatingApplets) ? Kirigami.Units.largeSpacing : 0
         floating: Plasmoid.location === PlasmaCore.Types.Floating
         removeBorderStrategy: Plasmoid.location === PlasmaCore.Types.Floating
             ? PlasmaCore.AppletPopup.AtScreenEdges
@@ -1492,6 +1500,7 @@ ContainmentItem {
             disconnectSource(sourceName);
             root.syncDesktopTheme();
             root.syncPanelPop();
+            root.syncPanelLook();   // W12: the onReady run can die with a reloading applet (panel left as the last style)
             root.syncBlurStrength();
             root.readBrightness();   // then syncWindowDeco + syncWindowColors
         }

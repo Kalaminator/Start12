@@ -65,7 +65,7 @@ def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4),
     l, t, r, bm = margins
     hy = y0 + H + 2
     for i, (side, w, h) in enumerate([("left", l, 1), ("top", 1, t), ("right", r, 1), ("bottom", 1, bm)]):
-        out.append('<rect id="%shint-%s-margin" x="%d" y="%d" width="%d" height="%d" fill="none"/>' % (p, side, x0 + i * 10, hy, w, h))
+        out.append('<rect id="%shint-%s-margin" x="%d" y="%d" width="%g" height="%g" fill="none"/>' % (p, side, x0 + i * 10, hy, w, h))
     return defs, "".join(out)
 
 def svg(path, frames, extra="", size=(400, 0)):
@@ -216,7 +216,7 @@ def imgsize(data):
     raise ValueError("not a PNG or JPEG image")
 
 def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", fallback="default",
-            image="", mode="tile", imagealpha="1", tint="", buttons="win10", accent="", solid="0"):
+            image="", mode="tile", imagealpha="1", tint="", buttons="win10", accent="", solid="0", gap=""):
     """Plasma Style that only replaces panel-background (plain, opaque/ and translucent/ for blur), tasks
     and colors; everything else comes from FallbackTheme (the user's own style).
     T33 texture: image (PNG/JPEG) in the 9-slice center; mode tile (native size, hint-tile-center) | stretch |
@@ -248,8 +248,11 @@ def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", fallback=
         t = tex.replace("{op}", "%.3f" % (op * max(0.0, min(1.0, float(imagealpha)))))
         svg(os.path.join(base, pre + "widgets/panel-background.svg"),
             [frame("", 10, 10, fw, fh, r, None, [(0, B, op), (1, B, op)], hi=hi, margins=(max(2, r - 10), 2, max(2, r - 10), 2), gid="panel", center=t),
-             frame("mask", 10, 20 + fh, fw, fh, r, None, [(0, K, 1), (1, K, 1)], gid="mask")],
-            hints.replace('x="200"', 'x="%d"' % (fw + 40)), size=(fw + 60, 2 * fh + 40))
+             frame("mask", 10, 20 + fh, fw, fh, r, None, [(0, K, 1), (1, K, 1)], gid="mask")]
+            # W12 gap: Plasma reads a floating panel's margins from the "floating" prefix (else 8 px each side);
+            # a 0-high hint is "missing" to KSvg (it then uses the 4 px edge piece), .01 rounds to 0
+            + ([frame("floating", 10, 30 + 2 * fh, 60, 40, 4, None, [(0, K, 0), (1, K, 0)], margins=(8, 8, 8, int(gap) or .01), gid="float")] if gap else []),
+            hints.replace('x="200"', 'x="%d"' % (fw + 40)), size=(fw + 60, 2 * fh + 100))
     ink = "#000000" if light(B) else W
     acc = "#" + (accent.lstrip("#")[-6:] or "3d8ee6")
     fa = 2 if solid not in ("0", "", "false") else 1  # T34 Start11 "Paint focused item backgrounds less transparent"

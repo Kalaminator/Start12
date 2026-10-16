@@ -200,6 +200,13 @@ slot, W2 waits or works code-only with PySide6/qmlscene checks) -> W6. W4 can be
 - Seen: light 100 + 20 % see-through = near-white bar, dark 100 = near-black bar, BlurStrength=15 written, restored (key gone) on XP. Menu colour not opened on screen.
 - Tray watch (W10 open point) verified: busctl 2 before, 2 after nm-applet start and after quit; the magnetic group re-centred both times.
 
+### W12 Gaps + panel gating (2026-10-16, real panel, seen on screen)
+- Missing bottom gap: the panel was left docked (`floating=false hiding=none`, the XP values) after a plasmashell restart: the onReady `syncPanelLook` run died with the reloading applet (journal: "QProcess: Destroyed while process is still running"); a manual run fixed it. Now `syncPanelLook` also runs after setup.sh (and after a settings restore).
+- Plasma 6.8 `Panel.qml`: floating padding = `fixedMargins` of the Plasma Style's `widgets/panel-background` "floating" prefix, else 8 px each side. Key `taskbarGap` (0..24, default 8) -> windows12 preset `gap=` -> `xptheme.py taskbar()` adds a `floating-*` frame with hints (8, 8, 8, gap) in plain/translucent/opaque. Gotchas: a 0-high hint is "missing" to KSvg (falls back to the 4 px edge piece) -> `.01` (hints now `%g`); a live theme change is only picked up on a floating toggle, so syncDesktopTheme nudges floating panels 2 s after `plasma-apply-desktoptheme` (without the sleep the panel latched the previous theme). Seen: 0 (touching), 8, 16, 24, split-left 16.
+- `menuGap` (0..24, default 8): AppletPopup `margin` for the windows12 menu (also its distance from the screen side). Seen 0/8/24.
+- Panel gating: `kdeTaskbar` (taskbarKind "plasma") = floating/hiding null (user's own, combo hidden + note); every other style: floating only for Windows 12, auto-hide Off = "none" (docked), floating Windows 12 Off = autohide (W7).
+- NOT done ("Windows:" option, fill vs gap above the taskbar): measured MaximizeArea: a floating `none` panel reserves only its thickness (2560x1394, same as docked), so maximized windows touch it and Plasma de-floats it (Panel.qml touchingWindow). No Plasma/KWin option reserves the margin. Next step: docked panel (`floating=false hiding=none`) with thickness = bar + 2*gap and a generated panel-background whose frame/mask/hints are inset by gap (transparent ring, island drawn inside; strut covers the gap); needs a thickness save/restore in `syncPanelLook` (W3 said do not change thickness - ask the user) and islands.js offset re-check. KWin-script resizing of maximized windows rejected (un-maximizes them).
+
 ## Task B: a lighter tray strip in the XP taskbar
 
 How the Plasma 6.8 tray draws: there is NO package dir (`/usr/share/plasma/plasmoids/org.kde.plasma.systemtray` does not

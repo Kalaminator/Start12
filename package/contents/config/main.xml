@@ -343,6 +343,14 @@
       <label>W11 kwinrc [Effect-blur] BlurStrength (1-15) while a Windows 12 part is on; -1 = the user's own</label>
       <default>-1</default>
     </entry>
+    <entry name="taskbarGap" type="Int">
+      <label>W12 Windows 12 floating bar/islands: px between the bar and the screen edge (0 = touching)</label>
+      <default>8</default>
+    </entry>
+    <entry name="menuGap" type="Int">
+      <label>W12 Windows 12 menu: px between the taskbar and the Start menu popup</label>
+      <default>8</default>
+    </entry>
     <entry name="taskbarLayout" type="String">
       <label>Windows 12 taskbar layout: single | split-left | split-right (split is stored only until the island panels exist)</label>
       <default>single</default>
