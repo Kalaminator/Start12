@@ -2445,3 +2445,35 @@ msgid ""
 "The KDE Plasma look keeps your own panel settings (Edit Mode > Panel "
 "Settings)."
 msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Pick title bar picture…"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Title bar picture:"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Gradient:"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Left to right"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Right to left"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Top to bottom"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Bottom to top"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Gradient strength: %1%"
+msgstr ""

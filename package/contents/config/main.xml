@@ -281,6 +281,24 @@
       <label>T41: title bar height in px (0 = the style's own)</label>
       <default>0</default>
     </entry>
+    <entry name="windowImage" type="String">
+      <label>W14: title bar picture, PNG/JPEG path; empty = none</label>
+      <default></default>
+    </entry>
+    <entry name="windowImageMode" type="String">
+      <label>W14: title bar picture placement: stretch | tile</label>
+      <default>stretch</default>
+    </entry>
+    <entry name="windowImageAlpha" type="Int">
+      <label>W14: title bar picture opacity in percent (times the frame opacity)</label>
+      <default>100</default>
+      <min>0</min>
+      <max>100</max>
+    </entry>
+    <entry name="windowImageTint" type="Bool">
+      <label>W14: tint the title bar picture with the accent colour (multiply)</label>
+      <default>false</default>
+    </entry>
     <entry name="win10AccentStart" type="Bool">
       <label>Colours page (all styles but XP): show accent colour on Start and taskbar (menu = darkened accent, taskbar = accent)</label>
       <default>false</default>
@@ -426,6 +444,16 @@
     <entry name="taskbarImageTint" type="Bool">
       <label>Tint the texture with the accent colour, multiply (Start11 accent tint)</label>
       <default>false</default>
+    </entry>
+    <entry name="taskbarGradient" type="String">
+      <label>W14: generated taskbar gradient: none | left-right | right-left | top-bottom | bottom-top</label>
+      <default>none</default>
+    </entry>
+    <entry name="taskbarGradientStrength" type="Int">
+      <label>W14: gradient end = the bar colour this % toward white (dark bar) or black (light bar)</label>
+      <default>30</default>
+      <min>0</min>
+      <max>100</max>
     </entry>
     <entry name="taskbarPins" type="StringList">
       <label>Custom pins (custom|...) also pinned to the taskbar (Start11 taskbar pins of files, folders, websites)</label>

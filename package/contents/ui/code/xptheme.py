@@ -6,18 +6,23 @@
 # Any-style taskbar (T31):  python3 xptheme.py --taskbar colour=#101010 alpha=0.8 radius=8 line=0 buttons=win11 accent=3d8ee6 solid=0
 #                             fallback=default --out <dir>   (main.qml; only panel/tasks/colors, rest = fallback)
 #                             [image=<png/jpg> mode=tile|stretch|top|middle|bottom imagealpha=0.3 tint=3daee9] (T33)
+#                             [gradient=none|left-right|right-left|top-bottom|bottom-top strength=30] (W14)
 import argparse, base64, json, os, re, struct
 
-def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4), gid="g", center="", under=None):
+def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4), gid="g", center="", under=None, img="", horiz=False):
     """9 pieces of a rounded box. stops: [(offset, color, opacity)] vertical gradient.
     border: (color, opacity) or None. hi: top highlight (color, opacity) or None.
     under: (color, opacity, height, full) bar on the bottom edge (T34 task indicator); full = also in the
-    corners, else only the stretched middle piece with round ends (Win11 pill, inset by c)."""
+    corners, else only the stretched middle piece with round ends (Win11 pill, inset by c).
+    W14: img = a second fill (e.g. 'fill="url(#img)" fill-opacity=".5"') painted over every body shape; horiz = the
+    gradient runs x0 -> x0 + W instead of top -> bottom."""
     p = (prefix + "-") if prefix else ""
-    defs = '<linearGradient id="%s" gradientUnits="userSpaceOnUse" x1="0" y1="%d" x2="0" y2="%d">%s</linearGradient>' % (
-        gid, y0, y0 + H, "".join('<stop offset="%s" stop-color="%s" stop-opacity="%s"/>' % s for s in stops))
+    defs = '<linearGradient id="%s" gradientUnits="userSpaceOnUse" x1="%d" y1="%d" x2="%d" y2="%d">%s</linearGradient>' % (
+        gid, *((x0, 0, x0 + W, 0) if horiz else (0, y0, 0, y0 + H)), "".join('<stop offset="%s" stop-color="%s" stop-opacity="%s"/>' % s for s in stops))
     b = 1 if border else 0
     F = 'fill="url(#%s)"' % gid
+    def FF(s):  # the body shape, then the same shape again in the img fill
+        return s + (s.replace(F, img) if img else "")
     B = ('fill="%s" fill-opacity="%s"' % border) if border else ""
     x1, y1, x2, y2 = x0 + c, y0 + c, x0 + W - c, y0 + H - c
     out = []
@@ -42,7 +47,7 @@ def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4),
             sw = 0 if sx * sy < 0 else 1
             body += '<path d="M %s,%s A %s %s 0 0 %d %s,%s L %s,%s A %s %s 0 0 %d %s,%s Z" %s/>' % (
                 cx + sx * c, cy, c, c, sw, cx, cy + sy * c, cx, cy + sy * (c - b), c - b, c - b, 1 - sw, cx + sx * (c - b), cy, B)
-        body += corner(cx, cy, sx, sy, c - b, F)
+        body += FF(corner(cx, cy, sx, sy, c - b, F))
         if under and under[3] and sy > 0:
             body += rect(bx, by + c - under[2], c, under[2], 'fill="%s" fill-opacity="%s"' % under[:2])
         g(name, body)
@@ -50,7 +55,7 @@ def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4),
     piece_corner("topright", x2, y1, 1, -1, x2, y0)
     piece_corner("bottomleft", x1, y2, -1, 1, x0, y2)
     piece_corner("bottomright", x2, y2, 1, 1, x2, y2)
-    top = (rect(x1, y0, W - 2 * c, b, B) if border else "") + rect(x1, y0 + b, W - 2 * c, c - b, F)
+    top = (rect(x1, y0, W - 2 * c, b, B) if border else "") + FF(rect(x1, y0 + b, W - 2 * c, c - b, F))
     if hi:
         top += rect(x1, y0 + b, W - 2 * c, 1, 'fill="%s" fill-opacity="%s"' % hi)
     g("top", top)
@@ -58,10 +63,10 @@ def frame(prefix, x0, y0, W, H, c, border, stops, hi=None, margins=(4, 4, 4, 4),
     if under:
         bar = '<rect x="%s" y="%s" width="%s" height="%s" rx="%s" fill="%s" fill-opacity="%s"/>' % (
             x1, y0 + H - under[2], W - 2 * c, under[2], 0 if under[3] else under[2] / 2, under[0], under[1])
-    g("bottom", rect(x1, y2, W - 2 * c, c - b, F) + (rect(x1, y0 + H - b, W - 2 * c, b, B) if border else "") + bar)
-    g("left", (rect(x0, y1, b, H - 2 * c, B) if border else "") + rect(x0 + b, y1, c - b, H - 2 * c, F))
-    g("right", rect(x2, y1, c - b, H - 2 * c, F) + (rect(x0 + W - b, y1, b, H - 2 * c, B) if border else ""))
-    g("center", rect(x1, y1, W - 2 * c, H - 2 * c, F) + center)
+    g("bottom", FF(rect(x1, y2, W - 2 * c, c - b, F)) + (rect(x1, y0 + H - b, W - 2 * c, b, B) if border else "") + bar)
+    g("left", (rect(x0, y1, b, H - 2 * c, B) if border else "") + FF(rect(x0 + b, y1, c - b, H - 2 * c, F)))
+    g("right", FF(rect(x2, y1, c - b, H - 2 * c, F)) + (rect(x0 + W - b, y1, b, H - 2 * c, B) if border else ""))
+    g("center", FF(rect(x1, y1, W - 2 * c, H - 2 * c, F)) + center)
     l, t, r, bm = margins
     hy = y0 + H + 2
     for i, (side, w, h) in enumerate([("left", l, 1), ("top", 1, t), ("right", r, 1), ("bottom", 1, bm)]):
@@ -216,38 +221,51 @@ def imgsize(data):
     raise ValueError("not a PNG or JPEG image")
 
 def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", fallback="default",
-            image="", mode="tile", imagealpha="1", tint="", buttons="win10", accent="", solid="0", gap=""):
+            image="", mode="tile", imagealpha="1", tint="", buttons="win10", accent="", solid="0", gap="",
+            gradient="none", strength="30"):
     """Plasma Style that only replaces panel-background (plain, opaque/ and translucent/ for blur), tasks
     and colors; everything else comes from FallbackTheme (the user's own style).
     T33 texture: image (PNG/JPEG) in the 9-slice center; mode tile (native size, hint-tile-center) | stretch |
-    top/middle/bottom (scaled to cover a panel-shaped box, cropped at that edge); tint = colour multiplied over."""
+    top/middle/bottom (scaled to cover a panel-shaped box, cropped at that edge); tint = colour multiplied over.
+    W14: the texture is a userSpace <pattern> painted over every piece (rounded corners clip it, Qt >= 6.7);
+    gradient left-right|right-left|top-bottom|bottom-top = bar colour -> strength % toward white (dark bar) / black."""
     B = "#" + colour.lstrip("#")[-6:]
     rgb(B)
     a, r = max(0.0, min(1.0, float(alpha))), max(2, min(40, int(radius)))
     hi = (mix(B, W, .35), 1) if line not in ("0", "", "false") else None
     fw, fh, tex, hints = max(60, 2 * r + 20), max(40, 2 * r + 2), "", '<rect id="hint-stretch-borders" x="200" y="10" width="1" height="1" fill="none"/>'
+    pat = ""
     if image:
         with open(image, "rb") as f:
             data = f.read()
         iw, ih = imgsize(data)
         mime = "png" if data[:4] == b"\x89PNG" else "jpeg"
-        if mode == "tile":
+        if mode == "tile":  # center and borders tile at the image size (no hint-stretch-borders), seamless
             fw, fh = iw + 2 * r, ih + 2 * r
-            hints += '<rect id="hint-tile-center" x="200" y="20" width="1" height="1" fill="none"/>'
-        elif mode != "stretch":
-            # ponytail: the center piece is panel-shaped (48:1), Plasma stretches it; exact for a ~1920x40 panel
+            x, y, w, h = 10 + r, 10 + r, iw, ih
+            hints = '<rect id="hint-tile-center" x="200" y="20" width="1" height="1" fill="none"/>'
+        else:
+            # ponytail: the frame is panel-shaped (48:1), Plasma stretches it; exact for a ~1920x40 panel
             fw, fh = 960 + 2 * r, 20 + 2 * r
+            x, y, w, h = 10, 10, fw, fh
         par = {"stretch": "none", "top": "xMidYMin slice", "middle": "xMidYMid slice", "bottom": "xMidYMax slice"}.get(mode, "none")
-        x, y, w, h = 10 + r, 10 + r, fw - 2 * r, fh - 2 * r
-        tex = '<image x="%d" y="%d" width="%d" height="%d" preserveAspectRatio="%s" opacity="{op}" xlink:href="data:image/%s;base64,%s"/>' % (
-            x, y, w, h, par, mime, base64.b64encode(data).decode())
+        tex = '<image x="0" y="0" width="%d" height="%d" preserveAspectRatio="%s" xlink:href="data:image/%s;base64,%s"/>' % (
+            w, h, par, mime, base64.b64encode(data).decode())
         if tint:
-            tex += '<rect x="%d" y="%d" width="%d" height="%d" fill="#%s" comp-op="multiply"/>' % (
-                x, y, w, h, tint.lstrip("#")[-6:])
+            tex += '<rect x="0" y="0" width="%d" height="%d" fill="#%s" comp-op="multiply"/>' % (w, h, tint.lstrip("#")[-6:])
+        pat = '<pattern id="img" patternUnits="userSpaceOnUse" x="%d" y="%d" width="%d" height="%d">%s</pattern>' % (x, y, w, h, tex)
+    g2 = mix(B, K if light(B) else W, max(0, min(100, int(strength))) / 100)
+    horiz = gradient in ("left-right", "right-left")
+    e = r / fw if horiz else 0  # horizontal: the colour change happens in the stretched middle, caps stay flat
+    def stops(op):
+        if gradient not in ("left-right", "right-left", "top-bottom", "bottom-top"):
+            return [(0, B, op), (1, B, op)]
+        c1, c2 = (B, g2) if gradient in ("left-right", "top-bottom") else (g2, B)
+        return [(0, c1, op), ("%.4f" % e, c1, op), ("%.4f" % (1 - e), c2, op), (1, c2, op)]
     for pre, op in (("", a), ("translucent/", a), ("opaque/", 1)):
-        t = tex.replace("{op}", "%.3f" % (op * max(0.0, min(1.0, float(imagealpha)))))
+        t = 'fill="url(#img)" fill-opacity="%.3f"' % (op * max(0.0, min(1.0, float(imagealpha)))) if pat else ""
         svg(os.path.join(base, pre + "widgets/panel-background.svg"),
-            [frame("", 10, 10, fw, fh, r, None, [(0, B, op), (1, B, op)], hi=hi, margins=(max(2, r - 10), 2, max(2, r - 10), 2), gid="panel", center=t),
+            [(pat, ""), frame("", 10, 10, fw, fh, r, None, stops(op), hi=hi, margins=(max(2, r - 10), 2, max(2, r - 10), 2), gid="panel", img=t, horiz=horiz),
              frame("mask", 10, 20 + fh, fw, fh, r, None, [(0, K, 1), (1, K, 1)], gid="mask")]
             # W12 gap: Plasma reads a floating panel's margins from the "floating" prefix (else 8 px each side);
             # a 0-high hint is "missing" to KSvg (it then uses the 4 px edge piece), .01 rounds to 0
@@ -539,6 +557,35 @@ def glassify(path, alpha, blur):
         s = s.replace("\n</svg>", "\n" + mask + "\n</svg>")
     open(path, "w").write(s)
 
+def imagify(path, image, mode="stretch", alpha=1.0, tint=""):
+    """W14: picture over the title bar fill (decoration-[inactive-]topleft/top/topright shapes filled with the da/di
+    gradient), as a userSpace <pattern> so rounded corners clip it; alpha = glass alpha x image opacity.
+    stretch: covers the frame's title row (hint-stretch-borders, Aurorae stretches the top piece); tile: one copy
+    per top piece (Aurorae tiles borders without the hint)."""
+    s = open(path).read()
+    data = open(image, "rb").read()
+    imgsize(data)  # rejects anything that is not a PNG/JPEG
+    mime = "png" if data[:4] == b"\x89PNG" else "jpeg"
+    href = "data:image/%s;base64,%s" % (mime, base64.b64encode(data).decode())
+    defs = ""
+    for st, gid in (("", "da"), ("inactive-", "di")):
+        y1, y2 = map(float, re.search(r'id="%s"[^>]*y1="([0-9.]+)"[^>]*y2="([0-9.]+)"' % gid, s).groups())
+        box = lambda k: re.search(r'<g id="decoration-%s%s"><rect x="([0-9.]+)" y="[0-9.]+" width="([0-9.]+)"' % (st, k), s).groups()
+        tl, tr, top = box("topleft"), box("topright"), box("top")
+        x, w = (float(top[0]), float(top[1])) if mode == "tile" else (float(tl[0]), float(tr[0]) + float(tr[1]) - float(tl[0]))
+        defs += ('<pattern id="i%s" patternUnits="userSpaceOnUse" x="%g" y="%g" width="%g" height="%g"><image x="0" y="0" width="%g" '
+                 'height="%g" preserveAspectRatio="xMidYMid slice" xlink:href="%s"/>%s</pattern>') % (
+            gid, x, y1, w, y2 - y1, w, y2 - y1, href,
+            '<rect x="0" y="0" width="%g" height="%g" fill="#%s" comp-op="multiply"/>' % (w, y2 - y1, tint.lstrip("#")[-6:]) if tint else "")
+        f = 'fill="url(#%s)"' % gid
+        s = re.sub(r'<g id="decoration-%s(topleft|top|topright)">.*?</g>' % st, lambda m: re.sub(
+            r'<(rect|path) [^>]*%s/>' % re.escape(f), lambda e: e.group(0) + e.group(0).replace(
+                f, 'fill="url(#i%s)" fill-opacity="%.3g"' % (gid, alpha)), m.group(0)), s)
+    s = s.replace("</defs>", defs + "</defs>", 1)
+    if mode != "tile":
+        s = s.replace("\n</svg>", '\n<rect id="hint-stretch-borders" x="0" y="0" width="1" height="1" fill="none"/>\n</svg>')
+    open(path, "w").write(s)
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("outdir", nargs="?")
@@ -555,6 +602,10 @@ if __name__ == "__main__":
     ap.add_argument("--blur", type=int, default=1, help="T41: blur behind a translucent frame (1/0)")
     ap.add_argument("--radius", type=int, default=-1, help="T41: top corner radius in px (-1 = the style's)")
     ap.add_argument("--title", type=int, default=0, help="T41: title bar height in px (0 = the style's)")
+    ap.add_argument("--image", help="W14: with --deco --name: PNG/JPEG over the title bar")
+    ap.add_argument("--imagemode", choices=("stretch", "tile"), default="stretch")
+    ap.add_argument("--imagealpha", type=int, default=100, help="W14: image opacity in percent")
+    ap.add_argument("--tint", default="", help="W14: hex colour multiplied over the image")
     a = ap.parse_args()
     if a.scheme:
         if a.custom and a.win10:  # T38: Win10 light/dark scheme with the accent title bar
@@ -580,6 +631,9 @@ if __name__ == "__main__":
             deco_for_name(a.out, a.name)
             if a.opacity < 100:
                 glassify(os.path.join(a.out, "decoration.svg"), max(10, a.opacity) / 100, a.blur)
+            if a.image:
+                imagify(os.path.join(a.out, "decoration.svg"), a.image, a.imagemode,
+                        min(100, max(10, a.opacity)) / 100 * max(0, min(100, a.imagealpha)) / 100, a.tint)
         elif a.custom and a.win10:
             B = "#" + a.custom.lstrip("#")[-6:]
             rgb(B)

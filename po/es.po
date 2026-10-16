@@ -2589,3 +2589,35 @@ msgstr ""
 
 #~ msgid "One bar"
 #~ msgstr "Una barra"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Pick title bar picture…"
+msgstr "Elegir imagen de la barra de título…"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Title bar picture:"
+msgstr "Imagen de la barra de título:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Gradient:"
+msgstr "Degradado:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Left to right"
+msgstr "De izquierda a derecha"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Right to left"
+msgstr "De derecha a izquierda"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Top to bottom"
+msgstr "De arriba abajo"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Bottom to top"
+msgstr "De abajo arriba"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Gradient strength: %1%"
+msgstr "Intensidad del degradado: %1%"

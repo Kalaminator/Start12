@@ -19,6 +19,10 @@ KCM.SimpleKCM {
     property alias cfg_windowBlur: winBlur.checked
     property int cfg_windowRadius
     property int cfg_titleHeight
+    property string cfg_windowImage
+    property string cfg_windowImageMode
+    property alias cfg_windowImageAlpha: winImageAlpha.value
+    property alias cfg_windowImageTint: winImageTint.checked
     property bool cfg_taskbarFollowsStyle
     property string cfg_taskbarTheme
     property alias cfg_taskbarColor: tbColor.color
@@ -29,6 +33,8 @@ KCM.SimpleKCM {
     property string cfg_taskbarImageMode
     property alias cfg_taskbarImageAlpha: tbImageAlpha.value
     property alias cfg_taskbarImageTint: tbImageTint.checked
+    property string cfg_taskbarGradient
+    property alias cfg_taskbarGradientStrength: tbGradStrength.value
     property string cfg_taskbarButtons
     property alias cfg_taskbarFocusedSolid: tbSolid.checked
     property alias cfg_taskbarHiding: tbHiding.currentIndex
@@ -59,6 +65,12 @@ KCM.SimpleKCM {
         title: i18n("Pick taskbar texture…")
         nameFilters: [i18n("Images (*.png *.jpg *.jpeg)")]
         onAccepted: page.cfg_taskbarImage = decodeURIComponent(selectedFile.toString().replace("file://", ""))
+    }
+    Dialogs.FileDialog {
+        id: winImageFile
+        title: i18n("Pick title bar picture…")
+        nameFilters: [i18n("Images (*.png *.jpg *.jpeg)")]
+        onAccepted: page.cfg_windowImage = decodeURIComponent(selectedFile.toString().replace("file://", ""))
     }
 
     Kirigami.FormLayout {
@@ -120,6 +132,26 @@ KCM.SimpleKCM {
                     valueFromText: t => parseInt(t) || 30
                     onValueModified: page.cfg_titleHeight = value
                 }
+            }
+            // W14: picture over the title bar (xptheme.py --deco --image), same opacity/blur as the frame
+            RowLayout {
+                QQC2.Label { text: i18n("Title bar picture:") }
+                QQC2.Label { text: page.cfg_windowImage ? page.cfg_windowImage.split("/").pop() : i18n("None") }
+                QQC2.Button { text: i18n("Pick image…"); icon.name: "document-open"; onClicked: winImageFile.open() }
+                QQC2.Button { icon.name: "edit-clear"; visible: page.cfg_windowImage !== ""; onClicked: page.cfg_windowImage = "" }
+            }
+            RowLayout {
+                enabled: page.cfg_windowImage !== ""
+                QQC2.ComboBox {
+                    textRole: "text"
+                    valueRole: "value"
+                    model: [{ value: "stretch", text: i18n("Stretch") }, { value: "tile", text: i18n("Tile") }]
+                    Component.onCompleted: currentIndex = Math.max(0, indexOfValue(page.cfg_windowImageMode))
+                    onActivated: page.cfg_windowImageMode = currentValue
+                }
+                QQC2.Slider { id: winImageAlpha; from: 0; to: 100; stepSize: 1 }
+                QQC2.Label { text: i18n("%1% opaque", Math.round(winImageAlpha.value)) }
+                QQC2.CheckBox { id: winImageTint; text: i18n("Tint with the accent colour") }
             }
         }
         // W4: Windows 12 taskbar group (floating bar, corners, colour, layout)
@@ -220,9 +252,26 @@ KCM.SimpleKCM {
             }
             QQC2.CheckBox { id: tbLine; text: i18n("Light line on the taskbar edge") }
         }
-        // T33: texture drawn inside the generated panel background (xptheme.py image=...)
+        // W14: gradient in the generated panel background (every Windows-like look and the custom colour)
+        RowLayout {
+            enabled: page.cfg_taskbarFollowsStyle || customBox.checked
+            Kirigami.FormData.label: i18n("Gradient:")
+            QQC2.ComboBox {
+                textRole: "text"
+                valueRole: "value"
+                model: [{ value: "none", text: i18n("None") }, { value: "left-right", text: i18n("Left to right") },
+                        { value: "right-left", text: i18n("Right to left") }, { value: "top-bottom", text: i18n("Top to bottom") },
+                        { value: "bottom-top", text: i18n("Bottom to top") }]
+                Component.onCompleted: currentIndex = Math.max(0, indexOfValue(page.cfg_taskbarGradient))
+                onActivated: page.cfg_taskbarGradient = currentValue
+            }
+            QQC2.Slider { id: tbGradStrength; enabled: page.cfg_taskbarGradient !== "none"; from: 0; to: 100; stepSize: 5 }
+            QQC2.Label { text: i18n("Gradient strength: %1%", Math.round(tbGradStrength.value)) }
+        }
+        // T33: texture drawn inside the generated panel background (xptheme.py image=...); W14 also for the
+        // Windows-like looks (Windows 12 bar and islands included)
         ColumnLayout {
-            enabled: customBox.checked && !page.cfg_taskbarFollowsStyle
+            enabled: page.cfg_taskbarFollowsStyle || customBox.checked
             Kirigami.FormData.label: i18n("Texture:")
             RowLayout {
                 QQC2.Label { text: page.cfg_taskbarImage ? page.cfg_taskbarImage.split("/").pop() : i18n("None") }

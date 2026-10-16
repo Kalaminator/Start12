@@ -261,8 +261,13 @@ ContainmentItem {
     // W8: Windows 12 windows default to a glass title bar (35 %, blurred; 65 % still read as solid accent behind the blur) while "Transparency effects" is on.
     readonly property int windowOpacity: cfg.windowOpacity === 100 && (cfg.windowLook || cfg.menuStyle) === "windows12"
         && cfg.win10Transparency ? (cfg.win12Transparency < 0 ? 35 : 100 - cfg.win12Transparency) : cfg.windowOpacity
-    readonly property string glassSuffix: windowOpacity < 100 || cfg.windowRadius >= 0 || cfg.titleHeight > 0
-        ? "-g" + windowOpacity + "b" + (cfg.windowBlur ? 1 : 0) + "r" + (cfg.windowRadius < 0 ? "d" : cfg.windowRadius) + "t" + cfg.titleHeight : ""
+    // W14 title bar picture: xptheme.py --image..., the md5 makes a new deco per change
+    readonly property string windowImageArgs: cfg.windowImage === "" ? "" : " --image " + Tiles.shQuote(cfg.windowImage)
+        + " --imagemode " + (cfg.windowImageMode === "tile" ? "tile" : "stretch") + " --imagealpha " + cfg.windowImageAlpha
+        + (cfg.windowImageTint ? " --tint " + cfg.accentColor.toString().slice(-6) : "")
+    readonly property string glassSuffix: windowOpacity < 100 || cfg.windowRadius >= 0 || cfg.titleHeight > 0 || windowImageArgs !== ""
+        ? "-g" + windowOpacity + "b" + (cfg.windowBlur ? 1 : 0) + "r" + (cfg.windowRadius < 0 ? "d" : cfg.windowRadius) + "t" + cfg.titleHeight
+          + (windowImageArgs === "" ? "" : "i" + Qt.md5(windowImageArgs).slice(0, 8)) : ""
     readonly property string decoName: windowDeco === "" ? "" : windowDeco + glassSuffix
     readonly property bool wantBlur: windowDeco !== "" && windowOpacity < 100 && cfg.windowBlur
         || win12Taskbar && cfg.win10Transparency
@@ -343,7 +348,7 @@ ContainmentItem {
                 const make = root.customArgs(root.windowDeco) === "" && root.glassSuffix === "" ? "true"
                     : "python3 " + Tiles.shQuote(gen) + " --deco --name " + root.windowDeco + " --opacity " + root.windowOpacity
                       + " --blur " + (root.cfg.windowBlur ? 1 : 0) + " --radius " + root.cfg.windowRadius + " --title " + root.cfg.titleHeight
-                      + " --out " + dir + root.decoName;
+                      + root.windowImageArgs + " --out " + dir + root.decoName;
                 root.run("sh -c " + Tiles.shQuote(make + " && " + kw("library", "org.kde.kwin.aurorae") + " && " + kw("theme", want) + reconf
                          + " && find " + dir + " -maxdepth 1 " + root.customNames + " ! -name " + root.decoName + " -exec rm -rf {} +"));
             } else if (ours) {
@@ -426,11 +431,12 @@ ContainmentItem {
         : cfg.taskbarTheme !== "custom" ? ""
         : "colour=" + cfg.taskbarColor.toString().slice(-6) + " alpha=" + (cfg.taskbarAlpha / 100)
           + " radius=" + cfg.taskbarRadius + " line=" + (cfg.taskbarLine ? 1 : 0) + " buttons=" + Tiles.shQuote(cfg.taskbarButtons)
-          // T33 texture (path shell-quoted: it ends up in sh -c; the hash makes a new theme per change)
-          + (cfg.taskbarImage === "" ? "" : " image=" + Tiles.shQuote(cfg.taskbarImage) + " mode=" + cfg.taskbarImageMode
-             + " imagealpha=" + (cfg.taskbarImageAlpha / 100)
-             + (cfg.taskbarImageTint ? " tint=" + cfg.accentColor.toString().slice(-6) : ""))
     readonly property string taskbarArgs: taskbarBase === "" ? "" : taskbarBase
+        // T33 texture, W14 any generated look (path shell-quoted: it ends up in sh -c; the hash makes a new theme per change)
+        + (cfg.taskbarImage === "" ? "" : " image=" + Tiles.shQuote(cfg.taskbarImage) + " mode=" + cfg.taskbarImageMode
+           + " imagealpha=" + (cfg.taskbarImageAlpha / 100)
+           + (cfg.taskbarImageTint ? " tint=" + cfg.accentColor.toString().slice(-6) : ""))
+        + (cfg.taskbarGradient === "none" ? "" : " gradient=" + cfg.taskbarGradient + " strength=" + cfg.taskbarGradientStrength)
         + " accent=" + (taskbarKind !== "xp" && cfg.win10AccentStart && cfg.taskbarFollowsStyle
                         ? Qt.lighter("#" + accentHex, 1.6).toString().slice(-6) : cfg.accentColor.toString().slice(-6)) + " solid=" + (cfg.taskbarFocusedSolid ? 1 : 0)
     onTaskbarArgsChanged: syncDesktopTheme()
