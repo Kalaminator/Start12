@@ -433,7 +433,9 @@ ContainmentItem {
             : "s=$(kreadconfig6 " + g + saved + "); if [ -n \"$s\" ]; then if [ \"$s\" = unset ]; then kwriteconfig6 " + g
               + key + " --delete; else kwriteconfig6 " + g + key + " \"$s\"; fi; kwriteconfig6 " + g + saved + " --delete; fi; ";
         run("sh -c " + Tiles.shQuote(one("BlurStrength", "win12Saved", win12Blur > 0 ? win12Blur : -1)
-            + one("NoiseStrength", "win12SavedNoise", win12Noise) + Tiles.QDBUS + " org.kde.KWin /KWin reconfigure"));
+            + one("NoiseStrength", "win12SavedNoise", win12Noise) + Tiles.QDBUS + " org.kde.KWin /KWin reconfigure; "
+            // /KWin reconfigure does not reload a running effect's settings: reload the blur itself too.
+            + Tiles.QDBUS + " org.kde.KWin /Effects org.kde.kwin.Effects.reconfigureEffect blur"));
     }
     // W3: corners in % of half the panel thickness (applet size + our theme's 2+2 margins; 46 until laid out).
     readonly property int barThickness: (Plasmoid.formFactor === PlasmaCore.Types.Vertical ? width : height) + 4
