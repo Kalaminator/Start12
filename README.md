@@ -73,7 +73,7 @@ Full list: [docs/FEATURES.md](docs/FEATURES.md)
 
 ## Requirements
 
-- KDE Plasma 6.x. Tested on Plasma 6.7, Arch Linux, Wayland.
+- KDE Plasma 6.x. Tested on Plasma 6.8, Arch Linux, Wayland.
 - `python3` (generates the taskbar styles, title bars and colour schemes).
 - `qdbus6` (also `qdbus-qt6`), `kreadconfig6`, `kwriteconfig6`, `kpackagetool6` (part of Plasma / KDE Frameworks).
 
