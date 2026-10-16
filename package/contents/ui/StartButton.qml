@@ -24,9 +24,12 @@ MouseArea {
     readonly property real side: vertical ? width : height
     // XP style in a horizontal panel: the green "start" pill replaces the normal button.
     readonly property bool xp: root.menuKind === "xp" && !vertical
-    readonly property string iconSource: cfg.buttonIcon === "" ? "start-here-kde"
+    // KDE Plasma style: Kickoff's plain start-here-kde icon button, whatever the Start button page says.
+    readonly property bool plasma: root.menuKind === "plasma"
+    readonly property int mode: plasma ? 2 : cfg.buttonMode
+    readonly property string iconSource: cfg.buttonIcon === "" || plasma ? "start-here-kde"
               : cfg.buttonIcon.startsWith("/") ? "file://" + cfg.buttonIcon : cfg.buttonIcon
-    readonly property real buttonWidth: xp ? xpPill.implicitWidth : (cfg.buttonMode === 0 && sheet.status === Image.Ready
+    readonly property real buttonWidth: xp ? xpPill.implicitWidth : (mode === 0 && sheet.status === Image.Ready
         ? Math.round(side * sheet.sourceSize.width / (sheet.sourceSize.height / 3)) : side)
     // Start11 "Show search on taskbar" (T30): a field right of the button, horizontal panels only.
     readonly property bool showSearch: cfg.taskbarSearch && !vertical
@@ -153,7 +156,7 @@ MouseArea {
     Item {
         anchors.fill: face
         clip: true
-        visible: !button.xp && button.cfg.buttonMode === 0
+        visible: !button.xp && button.mode === 0
         Image {
             id: sheet
             source: button.imageSource
@@ -169,7 +172,7 @@ MouseArea {
     // Mode 1: four squares, top left one in the accent colour.
     Item {
         id: squares
-        visible: !button.xp && button.cfg.buttonMode === 1
+        visible: !button.xp && button.mode === 1
         anchors.centerIn: face
         readonly property real size: Math.round(button.side * 0.42)
         width: size
@@ -192,7 +195,7 @@ MouseArea {
     }
     Rectangle {
         anchors.fill: face
-        visible: !button.xp && button.cfg.buttonMode !== 0
+        visible: !button.xp && button.mode !== 0
         radius: 4
         color: Kirigami.Theme.textColor
         opacity: button.onFace || root.menuOpen ? 0.1 : 0
@@ -200,7 +203,7 @@ MouseArea {
 
     // Mode 2: any icon. Pressing squeezes it a little, like the Windows 11 Start button.
     Kirigami.Icon {
-        visible: !button.xp && button.cfg.buttonMode === 2
+        visible: !button.xp && button.mode === 2
         anchors.fill: face
         anchors.margins: Math.round(button.side * (1 - button.cfg.buttonIconScale / 100) / 2)
         source: button.iconSource

@@ -49,7 +49,7 @@ KCM.SimpleKCM {
     // applet in the config dialog; guarded in case it is missing.
     readonly property bool vertical: typeof plasmoid !== "undefined" && !!plasmoid && (plasmoid.location === 5 || plasmoid.location === 6)
 
-    readonly property var built: ["windows7", "modern", "windows10", "windows11", "windows12", "app", "pro", "launcher", "xp"]
+    readonly property var built: ["windows7", "modern", "windows10", "windows11", "windows12", "app", "pro", "launcher", "xp", "plasma"]
     readonly property var styles: [
         // "modern" is the Windows 7 card's Modern look (picked below), not a card of its own.
         ["windows7", i18n("Windows 7 style"), i18n("The Windows 7 menu, classic or modern.")],
@@ -59,7 +59,8 @@ KCM.SimpleKCM {
         ["app", i18n("Windows App style"), i18n("Shortcuts at the top, groups and tabs, all apps always open.")],
         ["pro", i18n("Windows Pro style"), i18n("Two-tone: pinned apps, and a places panel on the right.")],
         ["launcher", i18n("Windows Launcher style"), i18n("Big account picture, search, and a large pinned grid.")],
-        ["xp", i18n("Windows XP style"), i18n("The blue Luna menu, classic or modernised.")]
+        ["xp", i18n("Windows XP style"), i18n("The blue Luna menu, classic or modernised.")],
+        ["plasma", i18n("KDE Plasma"), i18n("Plasma's own launcher look, taskbar and title bars.")]
     ]
 
     ColumnLayout {
@@ -123,13 +124,13 @@ KCM.SimpleKCM {
         Kirigami.FormLayout {
             Layout.fillWidth: true
 
-            // T43: [value, label]; "" = same as the style, "none" = leave Plasma's own look.
+            // T43: [value, label]; "" = same as the style, "none" = KDE Plasma (default), Plasma's own look.
             QQC2.ComboBox {
                 Kirigami.FormData.label: i18n("Start menu:")
                 readonly property var items: [["", i18n("Same as the style")], ["windows7", i18n("Windows 7 style")],
                     ["modern", i18n("Modern style")], ["windows10", i18n("Windows 10 style")], ["windows11", i18n("Windows 11 style")],
                     ["windows12", i18n("Windows 12 style")], ["app", i18n("Windows App style")], ["pro", i18n("Windows Pro style")],
-                    ["launcher", i18n("Windows Launcher style")], ["xp", i18n("Windows XP style")]]
+                    ["launcher", i18n("Windows Launcher style")], ["xp", i18n("Windows XP style")], ["plasma", i18n("KDE Plasma (default)")]]
                 model: items.map(i => i[1])
                 currentIndex: Math.max(0, items.findIndex(i => i[0] === page.cfg_menuLook))
                 onActivated: index => page.cfg_menuLook = items[index][0]
@@ -137,7 +138,7 @@ KCM.SimpleKCM {
             QQC2.ComboBox {
                 Kirigami.FormData.label: i18n("Taskbar:")
                 // main.qml taskbarPresets + the XP Plasma Style; the other styles use the Windows 11 preset.
-                readonly property var items: [["", i18n("Same as the style")], ["none", i18n("Plasma's own")],
+                readonly property var items: [["", i18n("Same as the style")], ["none", i18n("KDE Plasma (default)")],
                     ["xp", i18n("Windows XP style")], ["windows7", i18n("Windows 7 style")], ["windows10", i18n("Windows 10 style")],
                     ["windows11", i18n("Windows 11 style")], ["windows12", i18n("Windows 12 style")]]
                 model: items.map(i => i[1])
@@ -151,7 +152,7 @@ KCM.SimpleKCM {
             QQC2.ComboBox {
                 Kirigami.FormData.label: i18n("Windows:")
                 // main.qml windowDecoration(): the other styles use the Windows 11 title bars.
-                readonly property var items: [["", i18n("Same as the style")], ["none", i18n("Plasma's own")],
+                readonly property var items: [["", i18n("Same as the style")], ["none", i18n("KDE Plasma (default)")],
                     ["xp", i18n("Windows XP style")], ["windows7", i18n("Windows 7 style")], ["windows10", i18n("Windows 10 style")],
                     ["windows11", i18n("Windows 11 style")]]
                 model: items.map(i => i[1])
@@ -163,7 +164,7 @@ KCM.SimpleKCM {
                 }
             }
             QQC2.Label {
-                text: i18n("Plasma's own: your Plasma Style or title bars come back.")
+                text: i18n("KDE Plasma (default): your own Plasma Style and title bars come back.")
                 enabled: false
             }
             TaskbarLayoutBox {

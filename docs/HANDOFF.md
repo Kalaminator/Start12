@@ -107,6 +107,11 @@ presets, win12Taskbar, accent); windowDecoration() reads `windowLook || menuStyl
 XP substyle/colour options show when any part is XP. `config/TaskbarLayoutBox.qml` = layout combo + `taskbarMagnetic`
 switch (key only, default true; positioning of magnetic islands is a later task), on the Taskbar page W12 group and
 under the cards when the taskbar kind is windows12.
+T44 KDE Plasma card (`menuStyle` "plasma", not seen on screen): `styles/plasma.qml` Kickoff-like menu (Plasma colours,
+no MenuBackground; header avatar/name/search, sidebar Favorites/All Applications/categories = rootModel rows 2+,
+footer Applications/Places tabs + power buttons); taskbarKind/windowLook "plasma" = no generated theme/deco (saved
+ones restored); StartButton forces icon mode + start-here-kde. Combos: "Plasma's own" renamed "KDE Plasma (default)"
+(still the "none" switches-off item); Start menu combo gained "plasma".
 
 ## Next (in order)
 T01-T25 all built (2026-10-14). Load check of all 8 styles: no QML errors. Seen on screen by me: XP (all colours, start button),

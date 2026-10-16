@@ -7,7 +7,7 @@
 
   <group name="Style">
     <entry name="menuStyle" type="String">
-      <label>The Style card: windows7 | modern | windows10 | windows11 | windows12 | app | pro | launcher | xp (menu, taskbar and windows unless menuLook/taskbarLook/windowLook say otherwise)</label>
+      <label>The Style card: windows7 | modern | windows10 | windows11 | windows12 | app | pro | launcher | xp | plasma (menu, taskbar and windows unless menuLook/taskbarLook/windowLook say otherwise)</label>
       <default>windows10</default>
     </entry>
     <entry name="menuSize" type="Int">
