@@ -2223,3 +2223,39 @@ msgstr ""
 #: package/contents/ui/config/ConfigTaskbar.qml:195
 msgid "Auto-hide:"
 msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Windows 12 taskbar:"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Floating bar"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Round"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Bar colour:"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Colour and opacity follow \"Override the taskbar colour\" below."
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "One bar"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Widgets left, tray right"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Start left, tray right"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Islands are extra Plasma panels; use Edit panel to move widgets. The split layouts are not built yet."
+msgstr ""

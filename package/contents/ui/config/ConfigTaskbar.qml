@@ -32,6 +32,9 @@ KCM.SimpleKCM {
     property string cfg_taskbarButtons
     property alias cfg_taskbarFocusedSolid: tbSolid.checked
     property alias cfg_taskbarHiding: tbHiding.currentIndex
+    property alias cfg_taskbarFloating: w12Float.checked
+    property alias cfg_taskbarRound: w12Round.value
+    property string cfg_taskbarLayout
     property alias cfg_taskbarSearch: searchBox.checked
     property alias cfg_taskbarSearchWidth: searchWidth.value
 
@@ -119,6 +122,47 @@ KCM.SimpleKCM {
                     valueFromText: t => parseInt(t) || 30
                     onValueModified: page.cfg_titleHeight = value
                 }
+            }
+        }
+        // W4: Windows 12 taskbar group (floating bar, corners, colour, layout)
+        ColumnLayout {
+            visible: page.cfg_menuStyle === "windows12"
+            Kirigami.FormData.label: i18n("Windows 12 taskbar:")
+            QQC2.CheckBox { id: w12Float; text: i18n("Floating bar") }
+            RowLayout {
+                QQC2.Label { text: i18n("Square") }
+                QQC2.Slider { id: w12Round; from: 0; to: 100; stepSize: 1 }
+                QQC2.Label { text: i18n("Round") }
+            }
+            RowLayout {
+                enabled: customBox.checked && !page.cfg_taskbarFollowsStyle
+                QQC2.Label { text: i18n("Bar colour:") }
+                KQuickControls.ColorButton {
+                    showAlphaChannel: false
+                    color: page.cfg_taskbarColor
+                    onColorChanged: if (color != page.cfg_taskbarColor) page.cfg_taskbarColor = color
+                }
+                QQC2.Slider {
+                    from: 0; to: 100; stepSize: 1
+                    value: page.cfg_taskbarAlpha
+                    onMoved: page.cfg_taskbarAlpha = value
+                }
+                QQC2.Label { text: i18n("%1% opaque", page.cfg_taskbarAlpha) }
+            }
+            QQC2.Label {
+                text: i18n("Colour and opacity follow \"Override the taskbar colour\" below.")
+                enabled: false
+            }
+            QQC2.ComboBox {
+                id: w12Layout
+                readonly property var values: ["single", "split-left", "split-right"]
+                model: [i18n("One bar"), i18n("Widgets left, tray right"), i18n("Start left, tray right")]
+                currentIndex: Math.max(0, values.indexOf(page.cfg_taskbarLayout))
+                onActivated: page.cfg_taskbarLayout = values[currentIndex]
+            }
+            QQC2.Label {
+                text: i18n("Islands are extra Plasma panels; use Edit panel to move widgets. The split layouts are not built yet.")
+                enabled: false
             }
         }
         Item { Kirigami.FormData.isSection: true }
