@@ -31,6 +31,7 @@ KCM.SimpleKCM {
     property alias cfg_taskbarImageTint: tbImageTint.checked
     property string cfg_taskbarButtons
     property alias cfg_taskbarFocusedSolid: tbSolid.checked
+    property alias cfg_taskbarHiding: tbHiding.currentIndex
     property alias cfg_taskbarSearch: searchBox.checked
     property alias cfg_taskbarSearchWidth: searchWidth.value
 
@@ -187,6 +188,16 @@ KCM.SimpleKCM {
             id: tbSolid
             enabled: customBox.checked || page.cfg_taskbarFollowsStyle
             text: i18n("Paint the active button less transparent")
+        }
+        // native panel visibility (panel.hiding); Off = the user's own setting is put back
+        QQC2.ComboBox {
+            id: tbHiding
+            Kirigami.FormData.label: i18n("Auto-hide:")
+            model: [i18n("Off"), i18n("Hide when a window covers it"), i18n("Always auto-hide")]
+        }
+        QQC2.Label {
+            text: i18n("A hidden taskbar shows again when the mouse touches the screen edge.")
+            enabled: false
         }
 
         Item { Kirigami.FormData.isSection: true }

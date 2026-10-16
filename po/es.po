@@ -2277,3 +2277,19 @@ msgstr "3x6 V."
 
 #~ msgid "Task Manager settings…"
 #~ msgstr "Ajustes del administrador de tareas…"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:195
+msgid "Hide when a window covers it"
+msgstr "Ocultar cuando una ventana la cubra"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:195
+msgid "Always auto-hide"
+msgstr "Ocultar siempre automáticamente"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:195
+msgid "A hidden taskbar shows again when the mouse touches the screen edge."
+msgstr "Una barra de tareas oculta vuelve a aparecer cuando el ratón toca el borde de la pantalla."
+
+#: package/contents/ui/config/ConfigTaskbar.qml:195
+msgid "Auto-hide:"
+msgstr "Ocultar automáticamente:"

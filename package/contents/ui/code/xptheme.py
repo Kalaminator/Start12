@@ -223,9 +223,9 @@ def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", fallback=
     top/middle/bottom (scaled to cover a panel-shaped box, cropped at that edge); tint = colour multiplied over."""
     B = "#" + colour.lstrip("#")[-6:]
     rgb(B)
-    a, r = max(0.0, min(1.0, float(alpha))), max(2, min(24, int(radius)))
+    a, r = max(0.0, min(1.0, float(alpha))), max(2, min(40, int(radius)))
     hi = (mix(B, W, .35), 1) if line not in ("0", "", "false") else None
-    fw, fh, tex, hints = 60, 40, "", '<rect id="hint-stretch-borders" x="200" y="10" width="1" height="1" fill="none"/>'
+    fw, fh, tex, hints = max(60, 2 * r + 20), max(40, 2 * r + 2), "", '<rect id="hint-stretch-borders" x="200" y="10" width="1" height="1" fill="none"/>'
     if image:
         with open(image, "rb") as f:
             data = f.read()
@@ -247,7 +247,7 @@ def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", fallback=
     for pre, op in (("", a), ("translucent/", a), ("opaque/", 1)):
         t = tex.replace("{op}", "%.3f" % (op * max(0.0, min(1.0, float(imagealpha)))))
         svg(os.path.join(base, pre + "widgets/panel-background.svg"),
-            [frame("", 10, 10, fw, fh, r, None, [(0, B, op), (1, B, op)], hi=hi, margins=(2, 2, 2, 2), gid="panel", center=t),
+            [frame("", 10, 10, fw, fh, r, None, [(0, B, op), (1, B, op)], hi=hi, margins=(max(2, r - 10), 2, max(2, r - 10), 2), gid="panel", center=t),
              frame("mask", 10, 20 + fh, fw, fh, r, None, [(0, K, 1), (1, K, 1)], gid="mask")],
             hints.replace('x="200"', 'x="%d"' % (fw + 40)), size=(fw + 60, 2 * fh + 40))
     ink = "#000000" if light(B) else W

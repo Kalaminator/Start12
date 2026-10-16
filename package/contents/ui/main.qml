@@ -257,6 +257,7 @@ ContainmentItem {
         ? "-g" + cfg.windowOpacity + "b" + (cfg.windowBlur ? 1 : 0) + "r" + (cfg.windowRadius < 0 ? "d" : cfg.windowRadius) + "t" + cfg.titleHeight : ""
     readonly property string decoName: windowDeco === "" ? "" : windowDeco + glassSuffix
     readonly property bool wantBlur: windowDeco !== "" && cfg.windowOpacity < 100 && cfg.windowBlur
+        || win12Taskbar && cfg.win10Transparency
     onGlassSuffixChanged: syncWindowDeco()
     onWantBlurChanged: syncWindowDeco()
     onWindowDecoChanged: readBrightness()
@@ -384,7 +385,13 @@ ContainmentItem {
         "windows11": "colour=" + (cfg.win10AccentStart ? accentHex : winDark ? "202020" : "f3f3f3")
                      + " alpha=" + (cfg.win10Transparency ? 0.8 : 1) + " radius=8 line=0 buttons=win11",
         "windows7": "colour=" + (cfg.win10AccentStart ? accentHex : "2a5a96")
-                    + " alpha=" + (cfg.win10Transparency ? 0.6 : 1) + " radius=6 line=1 buttons=win7" })
+                    + " alpha=" + (cfg.win10Transparency ? 0.6 : 1) + " radius=6 line=1 buttons=win7",
+        "windows12": "colour=" + (cfg.win10AccentStart ? accentHex : winDark ? "202028" : "f7f7fb")
+                     + " alpha=" + (cfg.win10Transparency ? (winDark ? 0.6 : 0.55) : 1) + " radius=" + win12Radius + " line=0 buttons=win11" })
+    // W3: corners in % of half the panel thickness (applet size + our theme's 2+2 margins; 46 until laid out).
+    readonly property int barThickness: (Plasmoid.formFactor === PlasmaCore.Types.Vertical ? width : height) + 4
+    readonly property int win12Radius: Math.max(2, Math.round((barThickness < 20 ? 46 : barThickness) / 2 * cfg.taskbarRound / 100))
+    readonly property bool win12Taskbar: cfg.taskbarFollowsStyle && cfg.menuStyle === "windows12"
     readonly property string taskbarBase: cfg.taskbarFollowsStyle ? (taskbarPresets[cfg.menuStyle] || (cfg.menuStyle === "xp" ? "" : taskbarPresets.windows11))
         : cfg.taskbarTheme !== "custom" ? ""
         : "colour=" + cfg.taskbarColor.toString().slice(-6) + " alpha=" + (cfg.taskbarAlpha / 100)
@@ -540,6 +547,24 @@ ContainmentItem {
         ? Plasmoid.location === PlasmaCore.Types.RightEdge : cfg.menuPosition === 2
     readonly property bool centerPanel: panelMode !== 0
     onPanelModeChanged: syncCenterPanel()
+    // W3: native panel settings while our taskbar look is on: floating only for Windows 12 (the other styles
+    // never float: Plasma de-floats/re-floats with maximized windows and Show Desktop), auto-hide from
+    // taskbarHiding. null = leave it. The user's value is saved once in the panel's start12Saved_<prop> key
+    // (plasmashellrc is written lazily, so it cannot be the restore source) and put back when null again.
+    readonly property string panelWant: JSON.stringify({
+        floating: win12Taskbar ? cfg.taskbarFloating : xpTheme !== "" || taskbarArgs !== "" ? false : null,
+        hiding: [null, "dodgewindows", "autohide"][cfg.taskbarHiding] || null })
+    onPanelWantChanged: syncPanelLook()
+    function syncPanelLook() {
+        if (!configReady) return;
+        const js = "const ID = " + Plasmoid.id + ", W = " + panelWant + ";"
+            + "for (const p of panels()) { if (!p.widgets().some(w => w.id === ID)) continue;"
+            + " for (const k in W) { p.currentConfigGroup = ['General']; const key = 'start12Saved_' + k, s = String(p.readConfig(key, ''));"
+            + "  if (W[k] !== null) { if (!s) p.writeConfig(key, JSON.stringify(p[k])); if (p[k] !== W[k]) p[k] = W[k]; }"
+            + "  else if (s) { p[k] = JSON.parse(s); p.currentConfigGroup = ['General']; p.writeConfig(key, ''); } } }"
+            + "print('done');";
+        run("flock \"${XDG_RUNTIME_DIR:-/tmp}/start12-panel.lock\" " + Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript " + Tiles.shQuote(js));
+    }
     function syncCenterPanel() {
         if (!configReady) return;   // never act on default settings before migrateConfig is done
         const js = "const ID = " + Plasmoid.id + ", M = 'start12Centre'; let out = 'done';"
@@ -1362,6 +1387,7 @@ ContainmentItem {
         readyDone = true;
         appletSync.start();
         syncCenterPanel();
+        syncPanelLook();
         // T44: code/setup.sh makes the generated themes first (KDE Store installs skip install.sh), then the syncs apply them.
         setupRunner.connectSource("sh " + Tiles.shQuote(decodeURIComponent(Qt.resolvedUrl("code/setup.sh").toString().replace("file://", ""))));
     }

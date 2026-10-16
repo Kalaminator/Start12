@@ -2207,3 +2207,19 @@ msgstr ""
 #: package/contents/ui/win10/Tile.qml:321
 msgid "3x6 V."
 msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml:195
+msgid "Hide when a window covers it"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml:195
+msgid "Always auto-hide"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml:195
+msgid "A hidden taskbar shows again when the mouse touches the screen edge."
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml:195
+msgid "Auto-hide:"
+msgstr ""

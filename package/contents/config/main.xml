@@ -315,6 +315,20 @@
       <label>Generated taskbar Plasma Style for any menu style: off | custom (Start11 "Override taskbar colour"); XP taskbar wins</label>
       <default>off</default>
     </entry>
+    <entry name="taskbarHiding" type="Int">
+      <label>Taskbar auto-hide (panel.hiding): 0 off (the user's own value), 1 hide when a window covers it (dodgewindows), 2 always (autohide)</label>
+      <default>0</default>
+    </entry>
+    <entry name="taskbarFloating" type="Bool">
+      <label>Windows 12 taskbar floats (the other taskbar styles never float)</label>
+      <default>true</default>
+    </entry>
+    <entry name="taskbarRound" type="Int">
+      <label>Windows 12 taskbar corners in percent of half the thickness (0 square, 100 pill)</label>
+      <default>30</default>
+      <min>0</min>
+      <max>100</max>
+    </entry>
     <entry name="taskbarFollowsStyle" type="Bool">
       <label>Taskbar preset follows the menu style (Win10 dark square, Win11 light translucent, Win7 blue glass); replaces the custom keys</label>
       <default>true</default>
@@ -333,7 +347,7 @@
       <label>Taskbar corner radius in px (Start11 rounded corners; 2 = square)</label>
       <default>2</default>
       <min>2</min>
-      <max>24</max>
+      <max>40</max>
     </entry>
     <entry name="taskbarLine" type="Bool">
       <label>Light line on the taskbar edge (off = Start11 HideTaskbarLineEntirely)</label>
