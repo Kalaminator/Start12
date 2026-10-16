@@ -173,10 +173,9 @@ FocusScope {
                 model: visible ? root.rootModel.modelForRow(Number(style.section)) : null
                 delegate: SideRow {
                     required property int index
-                    required property string display
-                    required property var decoration
-                    text: display
-                    iconSource: decoration
+                    required property var model
+                    text: model.display
+                    iconSource: model.decoration
                     onClicked: { catList.model.trigger(index, "", null); root.close(); }
                 }
             }
@@ -222,6 +221,7 @@ FocusScope {
         anchors.margins: m.px(6)
         PC3.TabBar {
             id: tabs
+            Layout.preferredWidth: m.px(260)
             currentIndex: style.tab === "places" ? 1 : 0
             PC3.TabButton { text: i18n("Applications"); icon.name: "applications-all-symbolic"; onClicked: style.tab = "apps" }
             PC3.TabButton { text: i18n("Places"); icon.name: "compass"; onClicked: style.tab = "places" }
