@@ -422,8 +422,11 @@ ContainmentItem {
     // Default 3: KWin's own default smears the background so much that the glass looks opaque.
     readonly property int win12Blur: win12Glass ? (cfg.win12Blur > 0 ? cfg.win12Blur : 3) : -1
     readonly property int win12Noise: win12Glass ? cfg.win12Noise : -1
-    onWin12BlurChanged: syncBlurStrength()
-    onWin12NoiseChanged: syncBlurStrength()
+    // A style switch flips these through several values at once: wait for the final state, then one run under
+    // the panel lock, so an older "restore" run cannot reload KWin after the newer one.
+    onWin12BlurChanged: blurTimer.restart()
+    onWin12NoiseChanged: blurTimer.restart()
+    Timer { id: blurTimer; interval: 600; onTriggered: root.syncBlurStrength() }
     function syncBlurStrength() {
         if (!configReady) return;
         const g = "--file kwinrc --group Effect-blur --key ";
@@ -432,7 +435,7 @@ ContainmentItem {
               + key + " --default unset)\"; kwriteconfig6 " + g + key + " " + v + "; "
             : "s=$(kreadconfig6 " + g + saved + "); if [ -n \"$s\" ]; then if [ \"$s\" = unset ]; then kwriteconfig6 " + g
               + key + " --delete; else kwriteconfig6 " + g + key + " \"$s\"; fi; kwriteconfig6 " + g + saved + " --delete; fi; ";
-        run("sh -c " + Tiles.shQuote(one("BlurStrength", "win12Saved", win12Blur > 0 ? win12Blur : -1)
+        run("flock \"${XDG_RUNTIME_DIR:-/tmp}/win12-blur.lock\" sh -c " + Tiles.shQuote(one("BlurStrength", "win12Saved", win12Blur > 0 ? win12Blur : -1)
             + one("NoiseStrength", "win12SavedNoise", win12Noise) + Tiles.QDBUS + " org.kde.KWin /KWin reconfigure; "
             // /KWin reconfigure does not reload a running effect's settings: reload the blur itself too.
             + Tiles.QDBUS + " org.kde.KWin /Effects org.kde.kwin.Effects.reconfigureEffect blur"));
