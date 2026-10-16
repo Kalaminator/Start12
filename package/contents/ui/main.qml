@@ -553,8 +553,22 @@ ContainmentItem {
     // (plasmashellrc is written lazily, so it cannot be the restore source) and put back when null again.
     readonly property string panelWant: JSON.stringify({
         floating: win12Taskbar ? cfg.taskbarFloating : xpTheme !== "" || taskbarArgs !== "" ? false : null,
-        hiding: [null, "dodgewindows", "autohide"][cfg.taskbarHiding] || null })
+        // W7: the floating Windows 12 bar auto-hides unless the user picks a mode (Plasma keeps a non-normal
+        // panel floating; in normal visibility it docks over maximized windows).
+        hiding: [null, "dodgewindows", "autohide"][cfg.taskbarHiding] || (win12Taskbar && cfg.taskbarFloating ? "autohide" : null) })
     onPanelWantChanged: { syncPanelLook(); syncIslands(); }
+    // W7: KWin effect extras/start12-panelpop (installed by setup.sh) animates the auto-hidden bar: 0 off (Plasma's slide).
+    readonly property int panelPop: win12Taskbar ? cfg.taskbarPopAnim : 0
+    onPanelPopChanged: syncPanelPop()
+    function syncPanelPop() {
+        if (!configReady) return;
+        const fx = f => Tiles.QDBUS + " org.kde.KWin /Effects org.kde.kwin.Effects." + f + " start12panelpop";
+        const plug = "kwriteconfig6 --file kwinrc --group Plugins --key start12panelpopEnabled ";
+        run("sh -c " + Tiles.shQuote(panelPop > 0
+            ? "kwriteconfig6 --file kwinrc --group Effect-start12panelpop --key Animation " + panelPop + " && " + plug + "true && "
+              + fx("unloadEffect") + "; " + fx("loadEffect")
+            : plug + "--delete; " + fx("unloadEffect")));
+    }
     // W5: split taskbar islands, Windows 12 style only (code/islands.js reads the style from this widget's config).
     readonly property string islandWant: win12Taskbar ? cfg.taskbarLayout : "single"
     onIslandWantChanged: syncIslands()
@@ -568,10 +582,12 @@ ContainmentItem {
     function syncPanelLook() {
         if (!configReady) return;
         const js = "const ID = " + Plasmoid.id + ", W = " + panelWant + ";"
-            + "for (const p of panels()) { if (!p.widgets().some(w => w.id === ID)) continue;"
+            + "for (const p of panels()) { if (!p.widgets().some(w => w.id === ID)) continue; const h = p.hiding;"
             + " for (const k in W) { p.currentConfigGroup = ['General']; const key = 'start12Saved_' + k, s = String(p.readConfig(key, ''));"
             + "  if (W[k] !== null) { if (!s) p.writeConfig(key, JSON.stringify(p[k])); if (p[k] !== W[k]) p[k] = W[k]; }"
-            + "  else if (s) { p[k] = JSON.parse(s); p.currentConfigGroup = ['General']; p.writeConfig(key, ''); } } }"
+            + "  else if (s) { p[k] = JSON.parse(s); p.currentConfigGroup = ['General']; p.writeConfig(key, ''); } }"
+            // W7: Plasma re-checks "a non-normal panel never de-floats" only when floating changes: nudge it.
+            + " if (p.floating && p.hiding !== h) { p.floating = false; p.floating = true; } }"
             + "print('done');";
         run("flock \"${XDG_RUNTIME_DIR:-/tmp}/start12-panel.lock\" " + Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript " + Tiles.shQuote(js));
     }
@@ -712,6 +728,7 @@ ContainmentItem {
                     root.cfg[k] = s[k];
             }
             root.syncDesktopTheme();
+            root.syncPanelPop();
             root.readBrightness();
         }
     }
@@ -1415,6 +1432,7 @@ ContainmentItem {
         onNewData: sourceName => {
             disconnectSource(sourceName);
             root.syncDesktopTheme();
+            root.syncPanelPop();
             root.readBrightness();   // then syncWindowDeco + syncWindowColors
         }
     }

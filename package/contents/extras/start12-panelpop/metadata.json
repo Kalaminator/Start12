@@ -1,0 +1,13 @@
+{
+    "KPackageStructure": "KWin/Effect",
+    "KPlugin": {
+        "Category": "Appearance",
+        "Description": "Start12: animate auto-hidden panels when they pop up (fade, zoom, rise)",
+        "EnabledByDefault": false,
+        "Id": "start12panelpop",
+        "License": "GPL",
+        "Name": "Start12 panel pop-up"
+    },
+    "X-KDE-Ordering": 60,
+    "X-Plasma-API": "javascript"
+}

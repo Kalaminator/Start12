@@ -323,6 +323,10 @@
       <label>Windows 12 taskbar floats (the other taskbar styles never float)</label>
       <default>true</default>
     </entry>
+    <entry name="taskbarPopAnim" type="Int">
+      <label>Windows 12 auto-hidden taskbar pop-up animation (KWin effect start12panelpop): 0 Plasma slide only, 1 fade, 2 zoom, 3 rise</label>
+      <default>2</default>
+    </entry>
     <entry name="taskbarLayout" type="String">
       <label>Windows 12 taskbar layout: single | split-left | split-right (split is stored only until the island panels exist)</label>
       <default>single</default>

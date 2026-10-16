@@ -10,7 +10,7 @@ STAMP="$D/start12/setup-version"
 VER=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["KPlugin"]["Version"])' ../../../metadata.json)
 if [ "$1" != "--force" ] && [ "$(cat "$STAMP" 2>/dev/null)" = "$VER" ] \
     && [ -d "$D/plasma/desktoptheme/start12-xp-classic" ] && [ -d "$D/aurorae/themes/start12-xp-classic" ] \
-    && [ -f "$D/color-schemes/start12-xp-classic.colors" ] && [ -x "$B/start12-settings" ]; then
+    && [ -f "$D/color-schemes/start12-xp-classic.colors" ] && [ -x "$B/start12-settings" ] && [ -d "$D/kwin/effects/start12panelpop" ]; then
     exit 0
 fi
 set -e
@@ -19,5 +19,7 @@ python3 xptheme.py --deco "$D/aurorae/themes"
 python3 xptheme.py --scheme "$D/color-schemes"
 install -Dm755 ../../extras/start12-settings "$B/start12-settings"
 install -Dm644 ../../extras/start12-settings.desktop "$D/applications/start12-settings.desktop"
+kpackagetool6 -t KWin/Effect -u ../../extras/start12-panelpop >/dev/null 2>&1 \
+    || kpackagetool6 -t KWin/Effect -i ../../extras/start12-panelpop >/dev/null
 mkdir -p "$D/start12"
 echo "$VER" > "$STAMP"

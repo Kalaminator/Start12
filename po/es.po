@@ -2303,6 +2303,26 @@ msgid "Floating bar"
 msgstr "Barra flotante"
 
 #: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Taskbar pop-up animation:"
+msgstr "Animación al aparecer la barra:"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Slide (Plasma)"
+msgstr "Deslizar (Plasma)"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Fade"
+msgstr "Fundido"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Zoom"
+msgstr "Zoom"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
+msgid "Rise"
+msgstr "Subir"
+
+#: package/contents/ui/config/ConfigTaskbar.qml
 msgid "Round"
 msgstr "Redonda"
 

@@ -40,6 +40,6 @@ for (const p of panels()) { const me = p.widgets().find(w => w.id === ID); if (!
  const w = s.moved.map(id => p.widgets().find(w => w.id === id)).find(w => w); if (w) { R.addWidget(w); out = 'again'; continue; }
  const own = live(R).filter(w => s.moved.indexOf(w.id) < 0).sort((a, b) => a.index - b.index).map(w => w.id); if (fix(R, own.concat(s.moved))) { out = 'again'; continue; }
  // islands look like the panel; floating/hiding from the keys (syncPanelLook may not have reached the panel yet).
- const W = { floating: get(me, 'XP', 'taskbarFloating', true) !== 'false', hiding: [p.hiding, 'dodgewindows', 'autohide'][Number(get(me, 'XP', 'taskbarHiding', 0))] || p.hiding, height: p.height };
+ const W = { floating: get(me, 'XP', 'taskbarFloating', true) !== 'false', hiding: [get(me, 'XP', 'taskbarFloating', true) !== 'false' ? 'autohide' : p.hiding, 'dodgewindows', 'autohide'][Number(get(me, 'XP', 'taskbarHiding', 0))] || p.hiding, height: p.height };
  for (const q of [isl('L'), R]) if (q) for (const k in W) if (q[k] !== W[k]) q[k] = W[k]; }
 print(out);

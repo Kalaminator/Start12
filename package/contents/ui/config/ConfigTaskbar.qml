@@ -33,6 +33,7 @@ KCM.SimpleKCM {
     property alias cfg_taskbarFocusedSolid: tbSolid.checked
     property alias cfg_taskbarHiding: tbHiding.currentIndex
     property alias cfg_taskbarFloating: w12Float.checked
+    property alias cfg_taskbarPopAnim: w12Pop.currentIndex
     property alias cfg_taskbarRound: w12Round.value
     property string cfg_taskbarLayout
     property alias cfg_taskbarSearch: searchBox.checked
@@ -129,6 +130,12 @@ KCM.SimpleKCM {
             visible: page.cfg_menuStyle === "windows12"
             Kirigami.FormData.label: i18n("Windows 12 taskbar:")
             QQC2.CheckBox { id: w12Float; text: i18n("Floating bar") }
+            // W7: floating = auto-hidden over full-screen windows (Auto-hide Off); pop-up animation = KWin effect
+            RowLayout {
+                enabled: w12Float.checked
+                QQC2.Label { text: i18n("Taskbar pop-up animation:") }
+                QQC2.ComboBox { id: w12Pop; model: [i18n("Slide (Plasma)"), i18n("Fade"), i18n("Zoom"), i18n("Rise")] }
+            }
             RowLayout {
                 QQC2.Label { text: i18n("Square") }
                 QQC2.Slider { id: w12Round; from: 0; to: 100; stepSize: 1 }

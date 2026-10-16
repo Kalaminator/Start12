@@ -173,6 +173,12 @@ leaves no untranslated msgstr.
 Order: W0 and W1 in parallel (W0 nested, W1 is the [restart] slot) -> W3 -> W4 -> W2 and W5 (W5 holds the [restart]
 slot, W2 waits or works code-only with PySide6/qmlscene checks) -> W6. W4 can be written while W3 runs (no restart).
 
+### W7 Always-floating island + pop-up animation (2026-10-16, real panel)
+- Plasma 6.8 `Panel.qml`: a floating panel with any non-normal visibility (`autohide`, `dodgewindows`, `windowsgobelow`) never de-floats (floatingnessTarget = 1); normal visibility docks when a window touches it. Picked `autohide`: windows maximize to the full screen, the bar shows as the island (8 px margins measured) only when the edge is touched. Windows 12 + `taskbarFloating` now means `autohide` when `taskbarHiding` = 0 (main.qml `panelWant`, islands.js); the user's own value is saved/restored by `syncPanelLook` as before; other styles unchanged.
+- Gotcha: that rule is only re-evaluated when `floating` (or a touch/opacity trigger) changes, so a live hiding change keeps the old dock/float state; `syncPanelLook` toggles `floating` off/on when it changed `hiding`. At plasmashell start it is right on its own.
+- Animation: plasmashell asks KWin's built-in `slidingpopups` slide for every panel; that stays. A small KWin JS effect `extras/start12-panelpop` (installed by setup.sh with kpackagetool6, id `start12panelpop`) adds to it on `EffectWindow.windowHiddenChanged` of docks: 1 fade, 2 zoom (default), 3 rise. `animate({keepAlive: true})` keeps the hidden panel painted, so the hide animates too (seen at 3 s test duration). Key `taskbarPopAnim` (0 = Plasma slide only), combo on the Taskbar page Windows 12 group; main.qml `syncPanelPop()` writes kwinrc `[Effect-start12panelpop] Animation` + `Plugins/start12panelpopEnabled` and (re)loads the effect; leaving the style deletes the key and unloads it.
+- Not seen: the live XP -> Windows 12 switch with the new nudge (restart path seen); the effect also animates any other dock (Windows 12 only); the "Auto-hide: Off" label now means auto-hide for the floating Windows 12 bar.
+
 ## Task B: a lighter tray strip in the XP taskbar
 
 How the Plasma 6.8 tray draws: there is NO package dir (`/usr/share/plasma/plasmoids/org.kde.plasma.systemtray` does not
