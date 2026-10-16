@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
+import QtQuick.Effects
 import QtQuick.Shapes
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
@@ -249,19 +250,34 @@ MouseArea {
             : base
         readonly property real r: modern ? height / 2 : height * 0.45
         // Luna: extra room for the long elliptical end(s).
-        readonly property real lunaPad: luna ? Math.round(height * (leftR > 0 ? 0.3 : 0.05)) : 0
-        implicitWidth: xpRow.implicitWidth + lunaPad + Math.round(height * (modern ? 0.7 : luna ? (rightR > 0 ? 0.9 : 0.4) : 0.75))
+        readonly property real lunaPad: luna ? Math.round(height * (leftR > 0 ? 0.3 : 0.2)) : 0
+        implicitWidth: xpRow.implicitWidth + lunaPad + Math.round(height * (modern ? 0.7 : luna ? (rightR > 0 ? 1 : 0.8) : 0.75))
         // Classic: square on the menu's side (T42 menuPosition): Left = square left, Center = round both
         // sides, Right = square right. Modern stays round on both sides.
         readonly property real leftR: modern || button.cfg.menuPosition !== 0 ? r : 0
         readonly property real rightR: modern || button.cfg.menuPosition !== 2 ? r : 0
-        // Luna: a round end is a long flat half ellipse (as wide as 0.75 x the height), like XP's button.
+        // Luna: a round end is a flat half ellipse (0.22 x the height wide), like XP's button (measured).
         function lunaPath(x0, y0, w, h) {
-            const ry = h / 2, rx = Math.min(h * 0.75, w / 2), l = leftR > 0, rt = rightR > 0;
+            const ry = h / 2, rx = Math.min(h * 0.22, w / 2), l = leftR > 0, rt = rightR > 0;
             return "M " + (l ? x0 + rx : x0) + " " + y0 + " H " + (rt ? x0 + w - rx : x0 + w)
                  + (rt ? " A " + rx + " " + ry + " 0 0 1 " + (x0 + w - rx) + " " + (y0 + h) : " V " + (y0 + h))
                  + " H " + (l ? x0 + rx : x0)
                  + (l ? " A " + rx + " " + ry + " 0 0 1 " + (x0 + rx) + " " + y0 : "") + " Z";
+        }
+        // Luna gloss: XP green at lightness k and saturation s, relative to the tone (measured at #1f9420).
+        function shade(k, s) {
+            return Qt.hsla(tone.hslHue, Math.min(1, tone.hslSaturation * s), Math.min(0.95, tone.hslLightness * k), 1);
+        }
+        // Luna flag pane (u, v in 0..1 over the flag) as a polygon, waved and tilted like XP's flag.
+        function flagPath(u0, v0, u1, v1, w, h) {
+            const pt = (u, v) => ((u + (0.5 - v) * 0.2) * w).toFixed(2) + " "
+                + ((0.1 + v * 0.8 + 0.06 * u - 0.07 * Math.sin(2 * Math.PI * u) * (1 - 0.4 * v)) * h).toFixed(2);
+            let d = "M " + pt(u0, v0);
+            for (let i = 1; i <= 6; i++) d += " L " + pt(u0 + (u1 - u0) * i / 6, v0);
+            for (let i = 1; i <= 6; i++) d += " L " + pt(u1, v0 + (v1 - v0) * i / 6);
+            for (let i = 1; i <= 6; i++) d += " L " + pt(u1 - (u1 - u0) * i / 6, v1);
+            for (let i = 1; i < 6; i++) d += " L " + pt(u0, v1 - (v1 - v0) * i / 6);
+            return d + " Z";
         }
 
         // Soft shadow on the right edge.
@@ -313,7 +329,7 @@ MouseArea {
                 GradientStop { position: 1; color: Qt.darker(xpPill.tone, xpPill.modern ? 1.15 : 1.4) }
             }
         }
-        // Luna body: shadow, glossy fill + border, hover highlight inside the edge.
+        // Luna body: soft shadow, glossy fill with a faint darker edge, darker towards the round end(s), hover line.
         Shape {
             id: lunaShape
             visible: xpPill.luna
@@ -321,29 +337,50 @@ MouseArea {
             preferredRendererType: Shape.CurveRenderer
             ShapePath {
                 strokeColor: "transparent"
-                fillColor: Qt.alpha("#000000", 0.35)
-                PathSvg { path: xpPill.lunaPath(2, 0, lunaShape.width, lunaShape.height) }
+                fillColor: Qt.alpha("#000000", 0.15)
+                PathSvg { path: xpPill.lunaPath(2.5, 0, lunaShape.width - 0.5, lunaShape.height) }
+            }
+            ShapePath {
+                strokeColor: "transparent"
+                fillColor: Qt.alpha("#000000", 0.2)
+                PathSvg { path: xpPill.lunaPath(1, 0, lunaShape.width, lunaShape.height) }
             }
             ShapePath {
                 strokeWidth: 1
-                strokeColor: Qt.darker(xpPill.tone, 1.5)
-                // Measured from XP: light top line, dark band under it, brighter towards the bottom, dark edge.
+                strokeColor: Qt.alpha(Qt.darker(xpPill.tone, 1.3), 0.6)
+                // Measured from XP: pale top highlight, darker band, bright green below, darker bottom line.
                 // Pressed: the top turns dark (pushed in, shadow from the top edge).
                 fillGradient: LinearGradient {
                     y2: lunaShape.height
-                    GradientStop { position: 0; color: button.frame === 2 ? Qt.darker(xpPill.tone, 1.5) : Qt.lighter(xpPill.tone, 1.7) }
-                    GradientStop { position: 0.1; color: button.frame === 2 ? Qt.darker(xpPill.tone, 1.2) : Qt.lighter(xpPill.tone, 1.2) }
-                    GradientStop { position: 0.25; color: Qt.darker(xpPill.tone, 1.08) }
-                    GradientStop { position: 0.85; color: Qt.lighter(xpPill.tone, 1.12) }
-                    GradientStop { position: 1; color: Qt.darker(xpPill.tone, 1.35) }
+                    GradientStop { position: 0; color: button.frame === 2 ? xpPill.shade(0.6, 1.2) : xpPill.shade(1.8, 0.55) }
+                    GradientStop { position: 0.07; color: button.frame === 2 ? xpPill.shade(0.75, 1.3) : xpPill.shade(1.6, 0.63) }
+                    GradientStop { position: 0.14; color: xpPill.shade(1.25, 0.8) }
+                    GradientStop { position: 0.22; color: xpPill.shade(0.94, 1.4) }
+                    GradientStop { position: 0.36; color: xpPill.shade(0.83, 1.5) }
+                    GradientStop { position: 0.62; color: xpPill.shade(1, 1.55) }
+                    GradientStop { position: 0.76; color: xpPill.shade(1.04, 1.55) }
+                    GradientStop { position: 0.9; color: xpPill.shade(0.88, 1.55) }
+                    GradientStop { position: 0.95; color: xpPill.shade(0.78, 1.55) }
+                    GradientStop { position: 1; color: xpPill.shade(0.8, 1) }
                 }
-                PathSvg { path: xpPill.lunaPath(0.5, 0.5, lunaShape.width - 1, lunaShape.height - 1) }
+                PathSvg { path: xpPill.lunaPath(0.5, 0.5, lunaShape.width - 1.5, lunaShape.height - 1) }
+            }
+            ShapePath {
+                strokeColor: "transparent"
+                fillGradient: LinearGradient {
+                    x2: lunaShape.width
+                    GradientStop { position: 0; color: Qt.alpha("#000000", xpPill.leftR > 0 ? 0.4 : 0) }
+                    GradientStop { position: 0.18; color: "transparent" }
+                    GradientStop { position: 0.8; color: "transparent" }
+                    GradientStop { position: 1; color: Qt.alpha("#000000", xpPill.rightR > 0 ? 0.4 : 0) }
+                }
+                PathSvg { path: xpPill.lunaPath(0.5, 0.5, lunaShape.width - 1.5, lunaShape.height - 1) }
             }
             ShapePath {
                 strokeWidth: 2
                 strokeColor: Qt.alpha("#ffffff", button.frame === 1 ? 0.4 : 0)
                 fillColor: "transparent"
-                PathSvg { path: xpPill.lunaPath(2, 2, lunaShape.width - 4, lunaShape.height - 4) }
+                PathSvg { path: xpPill.lunaPath(2, 2, lunaShape.width - 5, lunaShape.height - 4) }
             }
         }
         Row {
@@ -352,7 +389,7 @@ MouseArea {
             transform: Translate { y: button.frame === 2 ? 1 : 0 }
             anchors.verticalCenter: shape.verticalCenter
             x: xpPill.reach + xpPill.lunaPad + Math.round(xpPill.height * (xpPill.modern ? 0.3 : 0.2))
-            spacing: Math.round(xpPill.height * 0.12)
+            spacing: Math.round(xpPill.height * (xpPill.luna ? 0.18 : 0.12))
             Kirigami.Icon {
                 visible: !xpPill.luna
                 anchors.verticalCenter: parent.verticalCenter
@@ -360,26 +397,40 @@ MouseArea {
                 height: width
                 source: button.iconSource
             }
-            // Luna: the four-colour flag, drawn (sheared 2x2 tiles), in place of the button icon.
-            Grid {
+            // Luna: XP's waving four-colour flag, drawn, in place of the button icon: dark backing (gaps and
+            // shadow), then the panes with a light top.
+            Shape {
+                id: flag
                 visible: xpPill.luna
                 anchors.verticalCenter: parent.verticalCenter
-                columns: 2
-                spacing: Math.max(1, Math.round(xpPill.height * 0.04))
-                readonly property real tile: Math.round(xpPill.height * 0.25)
-                transform: Matrix4x4 { matrix: Qt.matrix4x4(1, 0, 0, 0, -0.18, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1) }
-                Repeater {
-                    model: ["#f0582a", "#7cc11d", "#1e9cf0", "#ffc414"]
-                    Rectangle {
-                        required property string modelData
-                        width: parent.tile
-                        height: width
-                        radius: width * 0.2
-                        color: modelData
-                        border.width: 1
-                        border.color: Qt.alpha("#000000", 0.25)
-                    }
+                width: Math.round(xpPill.height * 0.68)
+                height: Math.round(xpPill.height * 0.66)
+                preferredRendererType: Shape.CurveRenderer
+                ShapePath {
+                    strokeColor: "transparent"
+                    fillColor: Qt.alpha("#000000", 0.45)
+                    PathSvg { path: xpPill.flagPath(-0.02, -0.02, 1.05, 1.06, flag.width, flag.height) }
                 }
+                component Pane: ShapePath {
+                    property real u0
+                    property real v0
+                    property color light
+                    property color dark
+                    strokeColor: "transparent"
+                    fillGradient: LinearGradient {
+                        x1: (u0 + 0.1) * flag.width
+                        y1: v0 * flag.height
+                        x2: (u0 + 0.35) * flag.width
+                        y2: (v0 + 0.5) * flag.height
+                        GradientStop { position: 0; color: light }
+                        GradientStop { position: 1; color: dark }
+                    }
+                    PathSvg { path: xpPill.flagPath(u0, v0, u0 + 0.47, v0 + 0.47, flag.width, flag.height) }
+                }
+                Pane { u0: 0; v0: 0; light: "#ffa060"; dark: "#e8481c" }
+                Pane { u0: 0.53; v0: 0; light: "#c0ec5c"; dark: "#5aa80c" }
+                Pane { u0: 0; v0: 0.53; light: "#78c4ff"; dark: "#1c70e0" }
+                Pane { u0: 0.53; v0: 0.53; light: "#fff070"; dark: "#f4a400" }
             }
             Text {
                 anchors.verticalCenter: parent.verticalCenter
@@ -387,9 +438,19 @@ MouseArea {
                 color: "#ffffff"
                 font.bold: true
                 font.italic: true
-                font.pixelSize: Math.round(xpPill.height * 0.5)
-                style: Text.Raised
+                font.pixelSize: Math.round(xpPill.height * (xpPill.luna ? 0.66 : 0.5))
+                style: xpPill.luna ? Text.Normal : Text.Raised
                 styleColor: "#80000000"
+                // Luna: XP's soft dark drop shadow.
+                layer.enabled: xpPill.luna
+                layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowColor: "#000000"
+                    shadowOpacity: 0.75
+                    shadowBlur: 0.25
+                    shadowHorizontalOffset: 1.5
+                    shadowVerticalOffset: 1.5
+                }
             }
         }
     }
