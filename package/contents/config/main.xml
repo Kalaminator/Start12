@@ -323,6 +323,10 @@
       <label>Windows 12 taskbar floats (the other taskbar styles never float)</label>
       <default>true</default>
     </entry>
+    <entry name="taskbarLayout" type="String">
+      <label>Windows 12 taskbar layout: single | split-left | split-right (split is stored only until the island panels exist)</label>
+      <default>single</default>
+    </entry>
     <entry name="taskbarRound" type="Int">
       <label>Windows 12 taskbar corners in percent of half the thickness (0 square, 100 pill)</label>
       <default>30</default>
