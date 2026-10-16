@@ -1,0 +1,13 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Category": "Windows and Tasks",
+        "Description": "Win12 helper: shows its auto-hidden panel together with the other Windows 12 islands",
+        "Icon": "start-here-kde",
+        "Id": "org.win12.reveal",
+        "License": "MIT",
+        "Name": "Win12 island reveal",
+        "Version": "0.1"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

@@ -1,0 +1,12 @@
+{
+    "KPackageStructure": "KWin/Script",
+    "KPlugin": {
+        "Description": "Win12: show all the auto-hidden Windows 12 taskbar islands together when the pointer touches the bottom edge",
+        "EnabledByDefault": false,
+        "Id": "win12islandreveal",
+        "License": "GPL",
+        "Name": "Win12 island reveal"
+    },
+    "X-Plasma-API": "javascript",
+    "X-Plasma-MainScript": "code/main.js"
+}

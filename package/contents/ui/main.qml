@@ -644,6 +644,20 @@ ContainmentItem {
     // closed) and every 30 s for the other islands (tray icons, weather), which this widget cannot watch.
     readonly property bool islandMagnetic: islandWant !== "single" && cfg.taskbarMagnetic
     onIslandMagneticChanged: { syncIslands(); armTrayWatch(); }
+    // W16: the space between magnetic islands = the bottom gap (islands.js @GAP@).
+    readonly property int islandGap: islandWant !== "single" ? cfg.taskbarGap : -1
+    onIslandGapChanged: syncIslands()
+    // W16: auto-hidden split islands show and hide together: KWin script extras/win12-islandreveal (installed by
+    // setup.sh) watches the pointer and sets the org.win12.reveal helpers islands.js puts in every split panel.
+    readonly property bool islandReveal: islandWant !== "single" && JSON.parse(panelWant).hiding !== "none"
+    onIslandRevealChanged: syncIslandReveal()
+    function syncIslandReveal() {
+        if (!configReady) return;
+        const sc = f => Tiles.QDBUS + " org.kde.KWin /Scripting org.kde.kwin.Scripting." + f;
+        const plug = "kwriteconfig6 --file kwinrc --group Plugins --key win12islandrevealEnabled ";
+        run("sh -c " + Tiles.shQuote(islandReveal ? plug + "true && " + sc("start")
+            : plug + "--delete; " + sc("unloadScript win12islandreveal")));
+    }
     readonly property int panelWidth: Window.window ? Window.window.width : 0
     onPanelWidthChanged: if (islandMagnetic) islandTimer.restart()
     Timer { id: islandTimer; interval: 1000; onTriggered: syncIslands() }
@@ -671,8 +685,10 @@ ContainmentItem {
         if (!configReady) return;
         const file = decodeURIComponent(Qt.resolvedUrl("code/islands.js").toString().replace("file://", ""));
         const dbus = Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript \"$(sed -e s/@ID@/" + Plasmoid.id + "/ -e s/@WANT@/" + islandWant
-            + "/ -e s/@MAG@/" + islandMagnetic + "/ " + Tiles.shQuote(file) + ")\"";
-        const loop = "for i in $(seq 40); do [ \"$(" + dbus + ")\" = done ] && break; sleep 1; done";
+            + "/ -e s/@MAG@/" + islandMagnetic + "/ -e s/@GAP@/" + cfg.taskbarGap + "/ " + Tiles.shQuote(file) + ")\"";
+        // W16: "restart" = the tray was moved live (islands.js): one plasmashell restart brings all its icons back.
+        const loop = "for i in $(seq 40); do r=\"$(" + dbus + ")\"; [ \"$r\" = restart ] && systemctl --user --no-block restart plasma-plasmashell;"
+            + " [ \"$r\" = done ] || [ \"$r\" = restart ] && break; sleep 1; done";
         run("flock \"${XDG_RUNTIME_DIR:-/tmp}/win12-panel.lock\" sh -c " + Tiles.shQuote(loop));
     }
     function syncPanelLook() {
@@ -827,6 +843,7 @@ ContainmentItem {
             }
             root.syncDesktopTheme();
             root.syncPanelPop();
+            root.syncIslandReveal();
             root.syncPanelLook();   // W12: the onReady run can die with a reloading applet (panel left as the last style)
             root.syncBlurStrength();
             root.readBrightness();
@@ -1535,6 +1552,7 @@ ContainmentItem {
             disconnectSource(sourceName);
             root.syncDesktopTheme();
             root.syncPanelPop();
+            root.syncIslandReveal();
             root.syncPanelLook();   // W12: the onReady run can die with a reloading applet (panel left as the last style)
             root.syncBlurStrength();
             root.readBrightness();   // then syncWindowDeco + syncWindowColors

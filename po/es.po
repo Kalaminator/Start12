@@ -1989,10 +1989,13 @@ msgstr "Dividida: Inicio y apps a la izquierda, bandeja a la derecha"
 #: package/contents/ui/config/TaskbarLayoutBox.qml:18
 msgid ""
 "Split layouts put the tray, clock and weather into separate floating panels "
-"(islands)."
+"(islands). Touching the bottom edge shows all of them. Plasma restarts once "
+"after the tray moves, so all its icons show."
 msgstr ""
-"Las disposiciones divididas ponen la bandeja, el reloj y el tiempo en "
-"paneles flotantes aparte (islas)."
+"Los diseños divididos ponen la bandeja, el reloj y el tiempo en paneles "
+"flotantes separados (islas). Al tocar el borde inferior se muestran todas. "
+"Plasma se reinicia una vez tras mover la bandeja para que se vean todos sus "
+"iconos."
 
 #: package/contents/ui/config/TaskbarLayoutBox.qml:23
 msgid "Magnetic islands"

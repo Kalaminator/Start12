@@ -7,14 +7,19 @@
 // single (or any other style): widgets moved back, islands removed, order/length/alignment/offset put back.
 // W9 magnetic (@MAG@ = taskbarMagnetic): all the panels of the split 'custom' length (= fits its content, the only mode
 // where Plasma 6.8 uses offset), left aligned, offsets so the group sits centred with GAP px between the islands.
-const ID = @ID@, WANT = '@WANT@', MAG = @MAG@, GAP = 8; let out = 'done';
+// W16: GAP = taskbarGap (@GAP@), the same space as under the islands; each split panel carries an org.win12.reveal helper
+// (0 px) that the win12islandreveal KWin script uses to show all the islands together.
+const ID = @ID@, WANT = '@WANT@', MAG = @MAG@, GAP = @GAP@, HELPER = 'org.win12.reveal'; let out = 'done';
 const get = (o, g, k, d) => { o.currentConfigGroup = [g]; return String(o.readConfig(k, d)); };
 // one move or index set per pass: several in one script land out of order or leave the item unplaced.
 const fix = (q, order) => { const ws = live(q), cur = ws.slice().sort((a, b) => a.index - b.index).map(w => w.id), i = order.findIndex((id, k) => cur[k] !== id);
  if (i >= 0) ws.find(w => w.id === order[i]).index = i; return i >= 0; };
 const put = (o, k, v) => { o.currentConfigGroup = ['General']; o.writeConfig(k, v); };
+// W16: a live-moved system tray shows only some icons (Plasma nests its config on a move) until plasmashell restarts:
+// mark the move, the last pass prints 'restart' once and main.qml restarts plasmashell.
+let host = null; const tray = (q, w) => { if (/systemtray/.test(w.type)) put(host, 'win12TrayMoved', 'true'); q.addWidget(w); };
 let gone = []; const live = q => q.widgets().filter(w => gone.indexOf(w.id) < 0);
-for (const p of panels()) { const me = p.widgets().find(w => w.id === ID); if (!me) continue;
+for (const p of panels()) { const me = p.widgets().find(w => w.id === ID); if (!me) continue; host = p;
  const want = WANT;   // main.qml islandWant: the taskbar look (T43 taskbarLook or the style) is Windows 12
  // W15: wait until syncPanelLook has put the gap mode's thickness back (islands copy the panel height and layout)
  if (want !== 'single' && get(p, 'General', 'win12Saved_height', '')) { out = 'again'; continue; }
@@ -23,8 +28,10 @@ for (const p of panels()) { const me = p.widgets().find(w => w.id === ID); if (!
   const isl = k => s && panels().find(q => q.id === s[k]);
  const mode = s && s.mode !== want ? 'single' : want;
  if (mode === 'single') { if (!s) continue; out = 'again';
+  const hs = [p, isl('L'), isl('R')].filter(q => q).map(q => q.widgets(HELPER)).reduce((a, b) => a.concat(b), []);
+  if (hs.length) { hs.forEach(w => w.remove()); continue; }
   const back = s.moved.map(id => ['L', 'R'].map(isl).filter(q => q).map(q => q.widgets().find(w => w.id === id)).find(w => w)).filter(w => w);
-  if (back.length) { p.addWidget(back[0]); continue; }
+  if (back.length) { tray(p, back[0]); continue; }
   const L = isl('L'), R = isl('R'); if (L || R) { if (L) L.remove(); if (R) R.remove(); continue; }
   const ids = live(p).map(w => w.id); if (fix(p, s.order.filter(i => ids.indexOf(i) >= 0).concat(ids.filter(i => s.order.indexOf(i) < 0)))) continue;
   // a switch between the two splits keeps the first saved values (read-backs right after a restore can be stale)
@@ -41,11 +48,16 @@ for (const p of panels()) { const me = p.widgets().find(w => w.id === ID); if (!
  if (out === 'again') continue;
  const R = isl('R'), lost = live(R).find(w => w.index < 0);   // a move into a just-made empty panel can leave it unplaced: move it out and in again
  if (lost) { p.addWidget(lost); out = 'again'; continue; }
- const w = s.moved.map(id => p.widgets().find(w => w.id === id)).find(w => w); if (w) { R.addWidget(w); out = 'again'; continue; }
+ const w = s.moved.map(id => p.widgets().find(w => w.id === id)).find(w => w); if (w) { tray(R, w); out = 'again'; continue; }
  const own = live(R).filter(w => s.moved.indexOf(w.id) < 0).sort((a, b) => a.index - b.index).map(w => w.id); if (fix(R, own.concat(s.moved))) { out = 'again'; continue; }
  // islands look like the panel; floating/hiding from the keys (syncPanelLook may not have reached the panel yet).
  const W = { floating: get(me, 'XP', 'taskbarFloating', true) !== 'false', hiding: [get(me, 'XP', 'taskbarFloating', true) !== 'false' ? 'autohide' : p.hiding, 'dodgewindows', 'autohide'][Number(get(me, 'XP', 'taskbarHiding', 0))] || p.hiding, height: p.height };
- for (const q of [isl('L'), R]) if (q) for (const k in W) if (q[k] !== W[k]) q[k] = W[k];
+ for (const q of [isl('L'), p, R]) if (q && !q.widgets(HELPER).length) { q.addWidget(HELPER); out = 'again'; break; }
+ if (out === 'again') continue;
+ // W16: Plasma re-checks "a non-normal panel never de-floats" only when floating changes (W7): nudge after a change,
+ // else an island made with hiding none next to a maximized window keeps floatingness 0 and touches the screen edge.
+ for (const q of [isl('L'), R]) if (q) { let ch = false; for (const k in W) if (q[k] !== W[k]) { q[k] = W[k]; ch = true; }
+  if (ch && q.floating) { q.floating = false; q.floating = true; } }
  // one panel set per pass; length = content width read back, a floating window adds 8 px padding each side
  // (Plasma's default floating margin, the islands' theme has no floating prefix).
  const row = mode === 'split-left' ? [isl('L'), p, R] : [p, R], sw = screenGeometry(p.screen).width;
@@ -55,4 +67,5 @@ for (const p of panels()) { const me = p.widgets().find(w => w.id === ID); if (!
   x += q.length + GAP;
   if (q.lengthMode !== lm || q.alignment !== al || MAG && (q.minimumLength > 0 || q.offset !== o)) {
    q.lengthMode = lm; q.alignment = al; if (MAG) { q.minimumLength = 0; q.offset = o; } out = 'again'; break; } } }
+if (out === 'done' && host && get(host, 'General', 'win12TrayMoved', '') === 'true') { put(host, 'win12TrayMoved', ''); out = 'restart'; }
 print(out);
