@@ -32,6 +32,11 @@ KCM.SimpleKCM {
     property var cfg_hiddenApps: []
     property string cfg_filteredFolders
     property string cfg_resetRequest
+    property string cfg_menuStyle
+    property alias cfg_win12ListSide: listSide.currentIndex
+    property alias cfg_win12Greeting: greeting.currentIndex
+    property alias cfg_win12Chips: chips.checked
+    property alias cfg_win12Clock: clock.checked
 
     P5Support.DataSource {
         id: executable
@@ -107,6 +112,22 @@ KCM.SimpleKCM {
         QQC2.CheckBox { id: autoExpand; enabled: !hideList.checked; text: i18n("Auto expand folders on hover (Windows 7, XP)") }
         QQC2.CheckBox { id: desktopInTree; enabled: !hideList.checked; text: i18n("Show the Desktop folder in All Programs (Windows 7, XP)") }
         QQC2.CheckBox { id: allAppsAsMenu; enabled: !hideList.checked && folders.checked; text: i18n("Show categories as a cascading menu (Windows 7, XP)") }
+
+        Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Windows 12 style"); visible: page.cfg_menuStyle === "windows12" }
+        QQC2.ComboBox {
+            id: listSide
+            visible: page.cfg_menuStyle === "windows12"
+            Kirigami.FormData.label: i18n("Apps list side:")
+            model: [i18n("Automatic (menu on the left: left, else right)"), i18n("Left"), i18n("Right")]
+        }
+        QQC2.ComboBox {
+            id: greeting
+            visible: page.cfg_menuStyle === "windows12"
+            Kirigami.FormData.label: i18n("Greeting with picture:")
+            model: [i18n("Automatic (when the list is on the left)"), i18n("On"), i18n("Off")]
+        }
+        QQC2.CheckBox { id: chips; visible: page.cfg_menuStyle === "windows12"; text: i18n("Show Documents, Pictures and Music above the cards") }
+        QQC2.CheckBox { id: clock; visible: page.cfg_menuStyle === "windows12"; text: i18n("Show the clock and date above the cards") }
 
         Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Hidden apps") }
 

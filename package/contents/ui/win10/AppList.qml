@@ -34,6 +34,8 @@ Item {
     readonly property var filtered: (showFilteredFolders ? root.filteredFolders : [])
         .concat(treeExtras && cfg.desktopInTree ? [{ name: i18n("Desktop"), path: "~/Desktop", include: "", exclude: "" }] : [])
     property var menuApps: []
+    property bool mostUsed: cfg.showMostUsed     // Windows 12 always shows it
+    property bool chipHeaders: false             // letters in round chips (Windows 12)
 
     function roleData(model, row, name) {
         return model.data(model.index(row, 0), model.KItemModels.KRoleNames.role(name));
@@ -62,7 +64,7 @@ Item {
             const fresh = appEntries(all, 0).filter(e => roleData(e.model, e.row, "isNewlyInstalled")).slice(0, 3);
             if (fresh.length) out.push({ kind: "title", name: i18n("Recently added") }, ...fresh);
         }
-        if (cfg.showMostUsed) {
+        if (list.mostUsed) {
             const used = appEntries(root.frequentAppsModel, 0).slice(0, 6);
             if (used.length) out.push({ kind: "title", name: i18n("Most used") }, ...used);
         }
@@ -252,10 +254,19 @@ Item {
                     source: row.e.kind === "app" ? list.roleData(row.e.model, row.e.row, "decoration")
                           : row.e.kind === "folder" ? "folder" : row.e.icon || ""
                 }
+                Rectangle {
+                    id: chip
+                    visible: list.chipHeaders && row.e.kind === "header"
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: Math.min(parent.height, list.metrics.px(30))
+                    height: width
+                    radius: width / 2
+                    color: Qt.alpha(list.metrics.text, 0.1)
+                }
                 PC3.Label {
                     id: rowLabel
                     anchors.left: rowIcon.right
-                    anchors.leftMargin: rowIcon.visible ? Math.round(12 * list.metrics.s) : 0
+                    anchors.leftMargin: rowIcon.visible ? Math.round(12 * list.metrics.s) : chip.visible ? (chip.width - contentWidth) / 2 : 0
                     anchors.right: parent.right
                     anchors.rightMargin: chevron.visible ? chevron.width + chevron.anchors.rightMargin : 0
                     anchors.verticalCenter: parent.verticalCenter

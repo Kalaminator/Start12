@@ -206,6 +206,25 @@
     </entry>
   </group>
 
+  <group name="Win12">
+    <entry name="win12ListSide" type="Int">
+      <label>Windows 12 app list side: 0 automatic (menu Left = list left, Centre/Right = list right), 1 left, 2 right</label>
+      <default>0</default>
+    </entry>
+    <entry name="win12Greeting" type="Int">
+      <label>Windows 12 greeting with the user picture: 0 automatic (on when the list is on the left), 1 on, 2 off</label>
+      <default>0</default>
+    </entry>
+    <entry name="win12Chips" type="Bool">
+      <label>Windows 12 folder chips (Documents, Pictures, Music) above the cards</label>
+      <default>true</default>
+    </entry>
+    <entry name="win12Clock" type="Bool">
+      <label>Windows 12 clock and date above the cards</label>
+      <default>true</default>
+    </entry>
+  </group>
+
   <group name="Windows7">
     <entry name="win7Substyle" type="Int">
       <label>Win7StyleSub: 0 plain, 1 with icons, 2 compact, 3 grid, 4 grid with icons, 5 compact grid</label>

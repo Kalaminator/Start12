@@ -61,6 +61,18 @@ Rectangle {
         Lines { y: 42; count: 3 }
         Lines { x: parent.width / 2; y: 42; count: 3 }
     }
+    // Windows 12: app list column | pinned card + recent card, footer bar
+    Item {
+        anchors.fill: parent
+        anchors.margins: 6
+        visible: pv.styleId === "windows12"
+        Rectangle { width: parent.width * 0.32; height: 6; radius: 3; color: pv.dim }
+        Lines { y: 11; count: 7 }
+        Rectangle { x: parent.width * 0.36; width: parent.width * 0.64; height: 34; radius: 3; color: Qt.alpha("white", 0.08)
+            Squares { anchors.centerIn: parent; cols: 5; count: 10; side: 8; spacing: 3 } }
+        Rectangle { x: parent.width * 0.36; y: 38; width: parent.width * 0.64; height: parent.height - 48; radius: 3; color: Qt.alpha("white", 0.08) }
+        Rectangle { y: parent.height - 6; width: parent.width; height: 6; radius: 2; color: pv.dim }
+    }
     // App: top bar, groups on the left, all apps list on the right
     Item {
         anchors.fill: parent

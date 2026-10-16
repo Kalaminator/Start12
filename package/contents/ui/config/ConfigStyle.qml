@@ -34,12 +34,13 @@ KCM.SimpleKCM {
     // applet in the config dialog; guarded in case it is missing.
     readonly property bool vertical: typeof plasmoid !== "undefined" && !!plasmoid && (plasmoid.location === 5 || plasmoid.location === 6)
 
-    readonly property var built: ["windows7", "modern", "windows10", "windows11", "app", "pro", "launcher", "xp"]
+    readonly property var built: ["windows7", "modern", "windows10", "windows11", "windows12", "app", "pro", "launcher", "xp"]
     readonly property var styles: [
         ["windows7", i18n("Windows 7 style"), i18n("The classic Windows 7 menu.")],
         ["modern", i18n("Modern style"), i18n("An updated Windows 7 style.")],
         ["windows10", i18n("Windows 10 style"), i18n("Windows 10 style with improvements.")],
         ["windows11", i18n("Windows 11 style"), i18n("Windows 11 style with improvements.")],
+        ["windows12", i18n("Windows 12 style"), i18n("Concept-art menu: app list beside pinned cards and widgets.")],
         ["app", i18n("Windows App style"), i18n("Shortcuts at the top, groups and tabs, all apps always open.")],
         ["pro", i18n("Windows Pro style"), i18n("Two-tone: pinned apps, and a places panel on the right.")],
         ["launcher", i18n("Windows Launcher style"), i18n("Big account picture, search, and a large pinned grid.")],

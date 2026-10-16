@@ -99,6 +99,10 @@ Tab/arrows walk list -> cards -> footer, no QML errors in journalctl. Reuse chec
 font), Layout (pinnedCols/Rows, menuSize), Left side (railItems -> footer buttons), Colours, Icons pages all act.
 Risk: popup width = list + cards; cap with `menuSize` like windows11 (Small = 2 pinned cols). Widgets inside the
 Pinned grid are W2, not here (plain pins only).
+Status (2026-10-16): done, seen on the real panel: Left light (20.png), Centre dark (18.png), Right mirrored with list
+forced left, Right auto + search (SearchView in the list column, own field hidden); no QML errors. Chips/clock row only
+in the list-left layout; AppList `mostUsed` prop (always on here). Skipped: `letterRail`, email line (KUser has none),
+taskbarPreset (falls back to windows11, W3). Not checked live: keyboard Tab/arrows, Esc, All apps pill, More view, design-mode split.
 
 ### W2 Live widgets in the Pinned card (M) [restart]
 Files: `common/PinnedGrid.qml` (render `widget|<kind>|<n>` ids as 2x2 cells with a Loader on `widgets/<Kind>.qml`,

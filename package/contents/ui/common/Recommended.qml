@@ -16,8 +16,9 @@ Item {
     property int maxItems: Plasmoid.configuration.recommendedRows * 2
     // When true, show only the rows that fit in this item's height.
     property bool fitToHeight: false
+    property int columns: 2
     readonly property real rowHeight: metrics.px(52)
-    readonly property int shown: fitToHeight ? Math.min(maxItems, Math.max(0, Math.floor(height / rowHeight)) * 2) : maxItems
+    readonly property int shown: fitToHeight ? Math.min(maxItems, Math.max(0, Math.floor(height / rowHeight)) * columns) : maxItems
 
     readonly property alias count: repeater.count
 
@@ -57,8 +58,8 @@ Item {
             delegate: PC3.AbstractButton {
                 id: item
                 required property int index
-                readonly property int row: rec.rows[index]
-                width: flow.width / 2
+                readonly property int row: rec.rows[index] ?? -1
+                width: flow.width / rec.columns
                 height: rec.rowHeight
                 hoverEnabled: true
                 onClicked: {
