@@ -19,7 +19,9 @@ python3 xptheme.py --deco "$D/aurorae/themes"
 python3 xptheme.py --scheme "$D/color-schemes"
 install -Dm755 ../../extras/start12-settings "$B/start12-settings"
 install -Dm644 ../../extras/start12-settings.desktop "$D/applications/start12-settings.desktop"
-kpackagetool6 -t KWin/Effect -u ../../extras/start12-panelpop >/dev/null 2>&1 \
-    || kpackagetool6 -t KWin/Effect -i ../../extras/start12-panelpop >/dev/null
+# The effect ships as metadata.json.in: a metadata.json inside the plasmoid makes Plasma scan it as an applet.
+FX=$(mktemp -d) && cp -r ../../extras/start12-panelpop/. "$FX" && mv "$FX/metadata.json.in" "$FX/metadata.json"
+kpackagetool6 -t KWin/Effect -u "$FX" >/dev/null 2>&1 || kpackagetool6 -t KWin/Effect -i "$FX" >/dev/null
+rm -rf "$FX"
 mkdir -p "$D/start12"
 echo "$VER" > "$STAMP"
