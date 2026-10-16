@@ -179,6 +179,12 @@ slot, W2 waits or works code-only with PySide6/qmlscene checks) -> W6. W4 can be
 - Animation: plasmashell asks KWin's built-in `slidingpopups` slide for every panel; that stays. A small KWin JS effect `extras/start12-panelpop` (installed by setup.sh with kpackagetool6, id `start12panelpop`) adds to it on `EffectWindow.windowHiddenChanged` of docks: 1 fade, 2 zoom (default), 3 rise. `animate({keepAlive: true})` keeps the hidden panel painted, so the hide animates too (seen at 3 s test duration). Key `taskbarPopAnim` (0 = Plasma slide only), combo on the Taskbar page Windows 12 group; main.qml `syncPanelPop()` writes kwinrc `[Effect-start12panelpop] Animation` + `Plugins/start12panelpopEnabled` and (re)loads the effect; leaving the style deletes the key and unloads it.
 - Not seen: the live XP -> Windows 12 switch with the new nudge (restart path seen); the effect also animates any other dock (Windows 12 only); the "Auto-hide: Off" label now means auto-hide for the floating Windows 12 bar.
 
+### W8 Glass by default (2026-10-16, real panel, seen on screen)
+- Taskbar: Windows 12 preset alpha 0.4 with the accent taskbar (was 0.55/0.6 = looked solid red); "Override the taskbar colour" still sets any opacity.
+- Start menu: `Metrics.bgAlpha` x0.75 for the windows12 menu (88 % -> 66 %); the popup already gets KWin blur (MenuBackground hides only the frame SVG, the dialog blur region stays). Seen: blurred, nothing sharp shows through.
+- Title bars: KWin blurs behind Aurorae via the T41 `mask-*` pieces (seen in T41 and now). `main.qml windowOpacity` = 80 when the window look is Windows 12, `windowOpacity` is 100 and "Transparency effects" is on, so the T41 glass deco `start12-win11-<light|dark>[-accent-hex]-g80b1rdt0` is made (no separate win12 deco needed); Transparency off or any other windowOpacity = the user's.
+- Taskbar page: auto-hide combo shows "Off (the floating bar still auto-hides)" + a hint for the floating Windows 12 bar (es.po).
+
 ## Task B: a lighter tray strip in the XP taskbar
 
 How the Plasma 6.8 tray draws: there is NO package dir (`/usr/share/plasma/plasmoids/org.kde.plasma.systemtray` does not
