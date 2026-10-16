@@ -6,6 +6,7 @@ import QtQuick.Shapes
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
+import org.kde.plasma.extras as PlasmaExtras
 import "common"
 
 // The start button in the panel. Start11 button images hold 3 frames stacked
@@ -37,8 +38,29 @@ MouseArea {
     hoverEnabled: true
     readonly property bool onFace: containsMouse && (vertical || mouseX < buttonWidth)
     property bool wasExpanded
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
     onPressed: wasExpanded = root.menuOpen
-    onClicked: mouse => { if (vertical || mouse.x < buttonWidth) root.menuOpen = !wasExpanded; }
+    onClicked: mouse => {
+        if (mouse.button === Qt.RightButton) buttonMenu.openRelative();
+        else if (vertical || mouse.x < buttonWidth) root.menuOpen = !wasExpanded;
+    }
+
+    // Right-click menu: Start12 hosts widgets (ContainmentItem), so Plasma no longer shows the applet's
+    // contextualActions on its own; show them here, plus "Configure…".
+    PlasmaExtras.Menu {
+        id: buttonMenu
+        visualParent: button
+        placement: PlasmaExtras.Menu.TopPosedLeftAlignedPopup
+    }
+    Instantiator {
+        model: Array.from(Plasmoid.contextualActions).concat([Plasmoid.internalAction("configure")])
+        delegate: PlasmaExtras.MenuItem {
+            required property var modelData
+            action: modelData
+        }
+        onObjectAdded: (index, object) => buttonMenu.addMenuItem(object)
+        onObjectRemoved: (index, object) => buttonMenu.removeMenuItem(object)
+    }
 
     // The button's own area; the search field sits to its right.
     Item {
@@ -232,8 +254,12 @@ MouseArea {
         MouseArea {
             width: xpPill.reach
             height: parent.height
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
             onPressed: button.wasExpanded = root.menuOpen
-            onClicked: root.menuOpen = !button.wasExpanded
+            onClicked: mouse => {
+                if (mouse.button === Qt.RightButton) buttonMenu.openRelative();
+                else root.menuOpen = !button.wasExpanded;
+            }
         }
         readonly property bool modern: button.cfg.xpSubstyle === "modern"
         // Luna (Classic XP): saturated XP green (olive scheme: its muted green), glossier gradient.
