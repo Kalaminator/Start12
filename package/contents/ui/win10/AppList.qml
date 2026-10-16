@@ -262,11 +262,22 @@ Item {
                     height: width
                     radius: width / 2
                     color: Qt.alpha(list.metrics.text, 0.1)
+                    // The letter sits in the chip itself (centred), not in rowLabel.
+                    PC3.Label {
+                        anchors.fill: parent
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        text: row.e.name
+                        color: list.metrics.text
+                        font.family: list.metrics.font
+                        font.pixelSize: list.metrics.itemFontSize
+                    }
                 }
                 PC3.Label {
                     id: rowLabel
                     anchors.left: rowIcon.right
-                    anchors.leftMargin: rowIcon.visible ? Math.round(12 * list.metrics.s) : chip.visible ? (chip.width - contentWidth) / 2 : 0
+                    anchors.leftMargin: rowIcon.visible ? Math.round(12 * list.metrics.s) : 0
+                    visible: !chip.visible
                     anchors.right: parent.right
                     anchors.rightMargin: chevron.visible ? chevron.width + chevron.anchors.rightMargin : 0
                     anchors.verticalCenter: parent.verticalCenter

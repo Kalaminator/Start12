@@ -2470,3 +2470,15 @@ msgstr ""
 
 #~ msgid "One bar"
 #~ msgstr "Una barra"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:231
+msgid "Off (the floating bar still auto-hides)"
+msgstr "Desactivado (la barra flotante se oculta igualmente)"
+
+#: package/contents/ui/config/ConfigTaskbar.qml:235
+msgid ""
+"The floating Windows 12 bar always auto-hides, so it stays an island over "
+"maximized windows. Turn off \"Floating bar\" for a fixed one."
+msgstr ""
+"La barra flotante de Windows 12 siempre se oculta sola, así queda como una "
+"isla sobre las ventanas maximizadas. Desactiva «Barra flotante» para una fija."

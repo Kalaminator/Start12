@@ -227,9 +227,14 @@ KCM.SimpleKCM {
             id: tbHiding
             Kirigami.FormData.label: i18n("Auto-hide:")
             model: [i18n("Off"), i18n("Hide when a window covers it"), i18n("Always auto-hide")]
+            // W7: the floating Windows 12 bar auto-hides even on Off (Plasma docks a floating bar under maximized windows)
+            readonly property bool w12Hides: (page.cfg_taskbarLook || page.cfg_menuStyle) === "windows12" && w12Float.checked
+            displayText: currentIndex === 0 && w12Hides ? i18n("Off (the floating bar still auto-hides)") : currentText
         }
         QQC2.Label {
-            text: i18n("A hidden taskbar shows again when the mouse touches the screen edge.")
+            text: tbHiding.w12Hides && tbHiding.currentIndex === 0
+                ? i18n("The floating Windows 12 bar always auto-hides, so it stays an island over maximized windows. Turn off \"Floating bar\" for a fixed one.")
+                : i18n("A hidden taskbar shows again when the mouse touches the screen edge.")
             enabled: false
         }
 

@@ -48,7 +48,8 @@ QtObject {
                                 : cfg.tileColorMode === 2 ? cfg.tileColor : text
     readonly property real tileAlpha: cfg.tileColorMode === 0 ? cfg.tileOpacity / 100
                                     : Math.max(0.05, cfg.tileOpacity / 100 * 4)
-    readonly property real bgAlpha: cfg.solidMenu || (win10 && !cfg.win10Transparency) ? 1 : cfg.menuOpacity / 100
+    readonly property real bgAlpha: cfg.solidMenu || (win10 && !cfg.win10Transparency) ? 1
+        : cfg.menuOpacity / 100 * (root.menuKind === "windows12" ? 0.75 : 1)   // W8: Windows 12 glass (88 % -> 66 %)
 
     readonly property string font: cfg.fontFamily !== "" ? cfg.fontFamily : Kirigami.Theme.defaultFont.family
     readonly property real fontSize: px(cfg.fontSize)

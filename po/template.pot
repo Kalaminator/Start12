@@ -2318,3 +2318,13 @@ msgstr ""
 #: package/contents/ui/win10/Tile.qml:321
 msgid "3x6 V."
 msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml:231
+msgid "Off (the floating bar still auto-hides)"
+msgstr ""
+
+#: package/contents/ui/config/ConfigTaskbar.qml:235
+msgid ""
+"The floating Windows 12 bar always auto-hides, so it stays an island over "
+"maximized windows. Turn off \"Floating bar\" for a fixed one."
+msgstr ""

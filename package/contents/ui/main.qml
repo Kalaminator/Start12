@@ -257,10 +257,13 @@ ContainmentItem {
     readonly property string windowDeco: cfg.windowTheme ? windowDecoration() : ""
     // T41 window glass (Taskbar page): opacity/blur/radius/title height = a deco made at apply time,
     // <windowDeco>-g<opacity>b<blur>r<radius|d>t<title>; the colour scheme keeps the windowDeco name.
-    readonly property string glassSuffix: cfg.windowOpacity < 100 || cfg.windowRadius >= 0 || cfg.titleHeight > 0
-        ? "-g" + cfg.windowOpacity + "b" + (cfg.windowBlur ? 1 : 0) + "r" + (cfg.windowRadius < 0 ? "d" : cfg.windowRadius) + "t" + cfg.titleHeight : ""
+    // W8: Windows 12 windows default to a glass title bar (80 %, blurred) while "Transparency effects" is on.
+    readonly property int windowOpacity: cfg.windowOpacity === 100 && (cfg.windowLook || cfg.menuStyle) === "windows12"
+        && cfg.win10Transparency ? 80 : cfg.windowOpacity
+    readonly property string glassSuffix: windowOpacity < 100 || cfg.windowRadius >= 0 || cfg.titleHeight > 0
+        ? "-g" + windowOpacity + "b" + (cfg.windowBlur ? 1 : 0) + "r" + (cfg.windowRadius < 0 ? "d" : cfg.windowRadius) + "t" + cfg.titleHeight : ""
     readonly property string decoName: windowDeco === "" ? "" : windowDeco + glassSuffix
-    readonly property bool wantBlur: windowDeco !== "" && cfg.windowOpacity < 100 && cfg.windowBlur
+    readonly property bool wantBlur: windowDeco !== "" && windowOpacity < 100 && cfg.windowBlur
         || win12Taskbar && cfg.win10Transparency
     onGlassSuffixChanged: syncWindowDeco()
     onWantBlurChanged: syncWindowDeco()
@@ -337,7 +340,7 @@ ContainmentItem {
                 }
                 const gen = decodeURIComponent(Qt.resolvedUrl("code/xptheme.py").toString().replace("file://", ""));
                 const make = root.customArgs(root.windowDeco) === "" && root.glassSuffix === "" ? "true"
-                    : "python3 " + Tiles.shQuote(gen) + " --deco --name " + root.windowDeco + " --opacity " + root.cfg.windowOpacity
+                    : "python3 " + Tiles.shQuote(gen) + " --deco --name " + root.windowDeco + " --opacity " + root.windowOpacity
                       + " --blur " + (root.cfg.windowBlur ? 1 : 0) + " --radius " + root.cfg.windowRadius + " --title " + root.cfg.titleHeight
                       + " --out " + dir + root.decoName;
                 root.run("sh -c " + Tiles.shQuote(make + " && " + kw("library", "org.kde.kwin.aurorae") + " && " + kw("theme", want) + reconf
@@ -391,7 +394,7 @@ ContainmentItem {
         "windows7": "colour=" + (cfg.win10AccentStart ? accentHex : "2a5a96")
                     + " alpha=" + (cfg.win10Transparency ? 0.6 : 1) + " radius=6 line=1 buttons=win7",
         "windows12": "colour=" + (cfg.win10AccentStart ? accentHex : winDark ? "202028" : "f7f7fb")
-                     + " alpha=" + (cfg.win10Transparency ? (winDark ? 0.6 : 0.55) : 1) + " radius=" + win12Radius + " line=0 buttons=win11" })
+                     + " alpha=" + (cfg.win10Transparency ? (cfg.win10AccentStart ? 0.4 : winDark ? 0.6 : 0.55) : 1) + " radius=" + win12Radius + " line=0 buttons=win11" })
     // W3: corners in % of half the panel thickness (applet size + our theme's 2+2 margins; 46 until laid out).
     readonly property int barThickness: (Plasmoid.formFactor === PlasmaCore.Types.Vertical ? width : height) + 4
     readonly property int win12Radius: Math.max(2, Math.round((barThickness < 20 ? 46 : barThickness) / 2 * cfg.taskbarRound / 100))
