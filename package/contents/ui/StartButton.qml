@@ -41,12 +41,16 @@ MouseArea {
     acceptedButtons: Qt.LeftButton | Qt.RightButton
     onPressed: wasExpanded = root.menuOpen
     onClicked: mouse => {
-        if (mouse.button === Qt.RightButton) buttonMenu.openRelative();
+        if (mouse.button === Qt.RightButton) openMenu(button, mouse.x, mouse.y);
         else if (vertical || mouse.x < buttonWidth) root.menuOpen = !wasExpanded;
     }
 
     // Right-click menu: Start12 hosts widgets (ContainmentItem), so Plasma no longer shows the applet's
     // contextualActions on its own; show them here, plus "Configure…".
+    function openMenu(item, x, y) {
+        buttonMenu.visualParent = item;
+        buttonMenu.open(x, y);
+    }
     PlasmaExtras.Menu {
         id: buttonMenu
         visualParent: button
@@ -257,7 +261,7 @@ MouseArea {
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onPressed: button.wasExpanded = root.menuOpen
             onClicked: mouse => {
-                if (mouse.button === Qt.RightButton) buttonMenu.openRelative();
+                if (mouse.button === Qt.RightButton) openMenu(button, mouse.x, mouse.y);
                 else root.menuOpen = !button.wasExpanded;
             }
         }

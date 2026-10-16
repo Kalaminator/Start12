@@ -1218,6 +1218,12 @@ ContainmentItem {
             anchors.topMargin: (atTop ? 0 : gapY) + (root.designMode ? designBar.height : 0)   // sits on the panel side; design bar above
             anchors.bottomMargin: atTop ? gapY : 0
 
+            // Right-click on empty menu space: the Start button's menu (Settings, Configure…). Items with
+            // their own right-click menu grab the press first.
+            TapHandler {
+                acceptedButtons: Qt.RightButton
+                onTapped: eventPoint => startButton.openMenu(styleLoader, eventPoint.position.x, eventPoint.position.y)
+            }
             Loader {
                 id: styleLoader
                 anchors.fill: parent
