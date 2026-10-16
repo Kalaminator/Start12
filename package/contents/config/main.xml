@@ -222,6 +222,10 @@
       <label>Windows XP style: luna (real XP, "Classic XP") | classic ("Modern classic") | modern (same colours, rounded)</label>
       <default>classic</default>
     </entry>
+    <entry name="xpFirefoxTitlebar" type="Bool">
+      <label>With an XP theme, use the system title bar in Firefox (user.js)</label>
+      <default>true</default>
+    </entry>
     <entry name="xpTaskbarTheme" type="Bool">
       <label>With the XP style, switch the Plasma Style (panel) to start12-xp-classic / start12-xp-modern</label>
       <default>true</default>

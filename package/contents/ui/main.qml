@@ -397,8 +397,13 @@ ContainmentItem {
         + " accent=" + (cfg.menuStyle !== "xp" && cfg.win10AccentStart && cfg.taskbarFollowsStyle
                         ? Qt.lighter("#" + accentHex, 1.6).toString().slice(-6) : cfg.accentColor.toString().slice(-6)) + " solid=" + (cfg.taskbarFocusedSolid ? 1 : 0)
     onTaskbarArgsChanged: syncDesktopTheme()
+    readonly property bool firefoxSystemTitle: xpTheme !== "" && cfg.xpFirefoxTitlebar
+    onFirefoxSystemTitleChanged: syncDesktopTheme()
     function syncDesktopTheme() {
         if (!configReady) return;   // never act on default settings before migrateConfig is done
+        // Firefox draws its own title bar: with an XP theme it gets the system one (user.js, takes effect on its next start).
+        root.run("sh " + Tiles.shQuote(decodeURIComponent(Qt.resolvedUrl("code/firefox-titlebar.sh").toString().replace("file://", "")))
+                 + (firefoxSystemTitle ? " on" : " off"));
         themeReader.connectSource("kreadconfig6 --file plasmarc --group Theme --key name");
     }
     P5Support.DataSource {
