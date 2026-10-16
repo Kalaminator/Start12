@@ -48,7 +48,7 @@ MouseArea {
         else if (vertical || mouse.x < buttonWidth) root.menuOpen = !wasExpanded;
     }
 
-    // Right-click menu: Start12 hosts widgets (ContainmentItem), so Plasma no longer shows the applet's
+    // Right-click menu: Win12 hosts widgets (ContainmentItem), so Plasma no longer shows the applet's
     // contextualActions on its own; show them here, plus "Configure…".
     function openMenu(item, x, y) {
         buttonMenu.visualParent = item;
@@ -131,7 +131,7 @@ MouseArea {
     }
 
     // Plasma draws an "expanded" mark (widgets/tabbar active-tab) under the button while the menu is open;
-    // XP's button has none (it peeked out at the pill's round corner as a yellow line). Start12 is a containment,
+    // XP's button has none (it peeked out at the pill's round corner as a yellow line). Win12 is a containment,
     // which libplasma always reports as expanded, so the mark is also hidden while the menu is closed.
     readonly property Item expandedMark: {
         for (let p = parent; p; p = p.parent)

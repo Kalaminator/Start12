@@ -9,7 +9,7 @@ import org.kde.kitemmodels as KItemModels
 import org.kde.plasma.private.shell as Shell
 
 // "Add widget > KDE widgets…": searchable list of installed Plasma widgets (the shell's own
-// WidgetExplorer model); picking one creates it as a child applet of Start12 (root.addApplet).
+// WidgetExplorer model); picking one creates it as a child applet of Win12 (root.addApplet).
 // ponytail: private plasma-workspace module, always there with plasmashell; no metadata.json fallback.
 Window {
     id: picker

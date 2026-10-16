@@ -1,7 +1,7 @@
 // W5: Windows 12 split taskbar (key taskbarLayout), run by main.qml syncIslands() through plasmashell evaluateScript,
 // again and again until it prints "done" (one step per pass). @ID@ = this widget's id.
 // The panel holding this widget keeps the user's lengthMode/alignment, widget order and the ids moved to the right
-// island in its start12Layout key; island panels are marked start12Island (L/R) and their ids are in that key too.
+// island in its win12Layout key; island panels are marked win12Island (L/R) and their ids are in that key too.
 // split-left: L island = a fresh weather, the panel = centred Start + tasks, R island = the widgets after the last
 // Task Manager (tray, clock, show desktop). split-right: the panel left, R island = weather + those widgets.
 // single (or any other style): widgets moved back, islands removed, order/length/alignment/offset put back.
@@ -16,8 +16,8 @@ const put = (o, k, v) => { o.currentConfigGroup = ['General']; o.writeConfig(k, 
 let gone = []; const live = q => q.widgets().filter(w => gone.indexOf(w.id) < 0);
 for (const p of panels()) { const me = p.widgets().find(w => w.id === ID); if (!me) continue;
  const want = WANT;   // main.qml islandWant: the taskbar look (T43 taskbarLook or the style) is Windows 12
- gone = get(p, 'General', 'start12Gone', '').split(';').map(Number);
- const raw = get(p, 'General', 'start12Layout', ''), s = raw ? JSON.parse(raw) : null;
+ gone = get(p, 'General', 'win12Gone', '').split(';').map(Number);
+ const raw = get(p, 'General', 'win12Layout', ''), s = raw ? JSON.parse(raw) : null;
   const isl = k => s && panels().find(q => q.id === s[k]);
  const mode = s && s.mode !== want ? 'single' : want;
  if (mode === 'single') { if (!s) continue; out = 'again';
@@ -26,16 +26,16 @@ for (const p of panels()) { const me = p.widgets().find(w => w.id === ID); if (!
   const L = isl('L'), R = isl('R'); if (L || R) { if (L) L.remove(); if (R) R.remove(); continue; }
   const ids = live(p).map(w => w.id); if (fix(p, s.order.filter(i => ids.indexOf(i) >= 0).concat(ids.filter(i => s.order.indexOf(i) < 0)))) continue;
   // a switch between the two splits keeps the first saved values (read-backs right after a restore can be stale)
-  if (want !== 'single') { s.mode = want; delete s.L; delete s.R; put(p, 'start12Layout', JSON.stringify(s)); continue; }
+  if (want !== 'single') { s.mode = want; delete s.L; delete s.R; put(p, 'win12Layout', JSON.stringify(s)); continue; }
   p.lengthMode = s.lm; p.alignment = s.al; if (s.mx) { p.maximumLength = s.mx; p.minimumLength = s.mn; p.offset = s.off; }
-  put(p, 'start12Layout', ''); continue; }
+  put(p, 'win12Layout', ''); continue; }
  if (!s) { const ws = live(p).sort((a, b) => a.index - b.index), t = ws.map(w => /icontasks|taskmanager/.test(w.type)).lastIndexOf(true);
-  put(p, 'start12Layout', JSON.stringify({ mode: want, lm: p.lengthMode, al: p.alignment, mn: p.minimumLength, mx: p.maximumLength, off: p.offset, order: ws.map(w => w.id),
+  put(p, 'win12Layout', JSON.stringify({ mode: want, lm: p.lengthMode, al: p.alignment, mn: p.minimumLength, mx: p.maximumLength, off: p.offset, order: ws.map(w => w.id),
    moved: ws.slice(t + 1).filter(w => !/marginsseparator|panelspacer/.test(w.type)).map(w => w.id) })); out = 'again'; continue; }
  for (const k of mode === 'split-left' ? ['L', 'R'] : ['R']) if (!isl(k)) { const q = new Panel();
-  q.location = p.location; q.height = p.height; q.lengthMode = 'fit'; q.alignment = k === 'L' ? 'left' : 'right'; put(q, 'start12Island', k);
+  q.location = p.location; q.height = p.height; q.lengthMode = 'fit'; q.alignment = k === 'L' ? 'left' : 'right'; put(q, 'win12Island', k);
   if (k === 'L' || mode === 'split-right') q.addWidget('org.kde.plasma.weather');
-  s[k] = q.id; put(p, 'start12Layout', JSON.stringify(s)); out = 'again'; break; }
+  s[k] = q.id; put(p, 'win12Layout', JSON.stringify(s)); out = 'again'; break; }
  if (out === 'again') continue;
  const R = isl('R'), lost = live(R).find(w => w.index < 0);   // a move into a just-made empty panel can leave it unplaced: move it out and in again
  if (lost) { p.addWidget(lost); out = 'again'; continue; }

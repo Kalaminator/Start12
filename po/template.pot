@@ -409,7 +409,7 @@ msgstr ""
 
 #: package/contents/ui/common/Places.qml:47
 #: package/contents/ui/config/ConfigRail.qml:45
-msgid "Start12 Settings"
+msgid "Win12 Settings"
 msgstr ""
 
 #: package/contents/ui/common/Places.qml:48
@@ -1609,7 +1609,7 @@ msgid "%1% of original size"
 msgstr ""
 
 #: package/contents/ui/config/ConfigStyle.qml:286
-msgid "Reset all Start12 settings…"
+msgid "Reset all Win12 settings…"
 msgstr ""
 
 #: package/contents/ui/config/ConfigStyle.qml:291
@@ -1631,20 +1631,20 @@ msgid ""
 msgstr ""
 
 #: package/contents/ui/config/ConfigStyle.qml:314
-msgid "Backup Start12 settings"
+msgid "Backup Win12 settings"
 msgstr ""
 
 #: package/contents/ui/config/ConfigStyle.qml:318
 #: package/contents/ui/config/ConfigStyle.qml:324
-msgid "Start12 backup (*.json)"
+msgid "Win12 backup (*.json)"
 msgstr ""
 
 #: package/contents/ui/config/ConfigStyle.qml:323
-msgid "Restore Start12 settings"
+msgid "Restore Win12 settings"
 msgstr ""
 
 #: package/contents/ui/config/ConfigStyle.qml:330
-msgid "Reset all Start12 settings?"
+msgid "Reset all Win12 settings?"
 msgstr ""
 
 #: package/contents/ui/config/ConfigStyle.qml:331
@@ -2248,7 +2248,7 @@ msgid "Refresh icons"
 msgstr ""
 
 #: package/contents/ui/win10/TileArea.qml:51
-msgid "Configure Start12…"
+msgid "Configure Win12…"
 msgstr ""
 
 #: package/contents/ui/win10/TileArea.qml:142

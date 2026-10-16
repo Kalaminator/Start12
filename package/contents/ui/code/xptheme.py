@@ -1,4 +1,4 @@
-# Generates the Start12 XP Plasma Styles (taskbar: panel-background + tasks 9-slice SVGs, colors, metadata).
+# Generates the Win12 XP Plasma Styles (taskbar: panel-background + tasks 9-slice SVGs, colors, metadata).
 # All schemes x substyles:  python3 xptheme.py <outdir>       (install.sh -> ~/.local/share/plasma/desktoptheme)
 # One custom colour:        python3 xptheme.py --custom '#3a6ea5' --sub classic --out <dir>   (main.qml)
 # Window decorations (T26a): python3 xptheme.py --deco <outdir>  |  --deco --custom <hex> --sub s --out <dir>
@@ -203,8 +203,8 @@ def write(base, t, label):
     with open(os.path.join(base, "plasmarc"), "w") as f:
         f.write("[Settings]\nFallbackTheme=default\n\n[AdaptiveTransparency]\nenabled=false\n")
     with open(os.path.join(base, "metadata.json"), "w") as f:
-        json.dump({"KPlugin": {"Authors": [{"Name": "Start12"}], "Description": "Windows XP taskbar for the Start12 XP menu",
-                               "Id": name, "License": "LGPL", "Name": "Start12 XP " + label, "Version": "1.0"},
+        json.dump({"KPlugin": {"Authors": [{"Name": "Win12"}], "Description": "Windows XP taskbar for the Win12 XP menu",
+                               "Id": name, "License": "LGPL", "Name": "Win12 XP " + label, "Version": "1.0"},
                    "X-Plasma-API": "5.0"}, f, indent=4)
 
 def imgsize(data):
@@ -306,8 +306,8 @@ def taskbar(base, colour="#101010", alpha="0.8", radius="0", line="0", fallback=
         f.write("[Settings]\nFallbackTheme=%s\n\n[AdaptiveTransparency]\nenabled=false\n" % fallback)
     name = os.path.basename(os.path.normpath(base))
     with open(os.path.join(base, "metadata.json"), "w") as f:
-        json.dump({"KPlugin": {"Authors": [{"Name": "Start12"}], "Description": "Start12 taskbar on top of " + fallback,
-                               "Id": name, "License": "LGPL", "Name": "Start12 Taskbar " + B, "Version": "1.0"},
+        json.dump({"KPlugin": {"Authors": [{"Name": "Win12"}], "Description": "Win12 taskbar on top of " + fallback,
+                               "Id": name, "License": "LGPL", "Name": "Win12 Taskbar " + B, "Version": "1.0"},
                    "X-Plasma-API": "5.0", "X-Plasma-FallbackTheme": fallback}, f, indent=4)
 
 # T26a window decorations: Aurorae SVG themes (~/.local/share/aurorae/themes/<name>), same names as the Plasma Styles.
@@ -410,8 +410,8 @@ def write_deco(base, B, sub, label):
                 % (rgbs(ink), rgbs(mix(ink, Bi, .35)), "false" if lt else "true", rgbs(mix(B, K, .6)), rgbs(mix(Bi, K, .3)),
                    S, S, S, max(0, T - 22) // 2, max(0, T - 22) // 2, S + 2, S + 2, min(22, T), bs, bs))
     with open(os.path.join(base, "metadata.desktop"), "w") as f:
-        f.write("[Desktop Entry]\nName=Start12 XP %s\nComment=Windows XP window decoration for the Start12 XP menu\n"
-                "X-KDE-PluginInfo-Author=Start12\nX-KDE-PluginInfo-Name=%s\nX-KDE-PluginInfo-Version=1.0\n"
+        f.write("[Desktop Entry]\nName=Win12 XP %s\nComment=Windows XP window decoration for the Win12 XP menu\n"
+                "X-KDE-PluginInfo-Author=Win12\nX-KDE-PluginInfo-Name=%s\nX-KDE-PluginInfo-Version=1.0\n"
                 "X-KDE-PluginInfo-License=LGPL\n" % (label, name))
 
 # T26b window colours: a Plasma colour scheme (~/.local/share/color-schemes/<name>.colors) per XP scheme, same names.
@@ -436,15 +436,15 @@ def write_scheme(path, B, win, sel, label, view=W):
     name = os.path.splitext(os.path.basename(path))[0]
     with open(path, "w") as f:
         f.write("".join("[Colors:%s]\n%s\n\n" % kv for kv in g.items()))
-        f.write("[General]\nColorScheme=%s\nName=Start12 %s\n\n[KDE]\ncontrast=4\n\n" % (name, label))
+        f.write("[General]\nColorScheme=%s\nName=Win12 %s\n\n[KDE]\ncontrast=4\n\n" % (name, label))
         f.write("[WM]\nactiveBackground=%s\nactiveBlend=%s\nactiveForeground=%s\ninactiveBackground=%s\ninactiveBlend=%s\n"
                 "inactiveForeground=%s\n" % (c(B), c(B), c(tfg), c(Bi), c(Bi), c(mix(tfg, Bi, .3))))
 
 # T37 the other menu styles: Windows 10 (flat, square, wide buttons), Windows 11 (rounded top, small rounded buttons;
 # modern/app/pro/launcher use it too), Windows 7 (Aero glass blue, red close). 10/11 come light and dark (main.qml
 # picks by the user's own scheme brightness). Names = Aurorae theme dir = colour scheme file.
-WIN_DECOS = {"start12-win10-light": ("win10", False), "start12-win10-dark": ("win10", True),
-             "start12-win11-light": ("win11", False), "start12-win11-dark": ("win11", True), "start12-win7": ("win7", False)}
+WIN_DECOS = {"win12-win10-light": ("win10", False), "win12-win10-dark": ("win10", True),
+             "win12-win11-light": ("win11", False), "win12-win11-dark": ("win11", True), "win12-win7": ("win7", False)}
 WIN_SCHEMES = {"win10": dict(B=W, win="#f0f0f0", sel="#0078d7"), "win10-dark": dict(B="#202020", win="#202020", sel="#0078d7", view="#191919"),
                "win11": dict(B="#f3f3f3", win="#f3f3f3", sel="#005fb8"), "win11-dark": dict(B="#202020", win="#202020", sel="#60cdff", view="#2b2b2b"),
                "win7": dict(B="#6f97c8", win="#f0f0f0", sel="#3399ff")}
@@ -526,19 +526,19 @@ def write_win_deco(base, kind, dark, accent=None):
                    border, border, border, border + 6, border, T, bw, cw, bh, 0 if kind != "win11" else 2,
                    (T - bh) // 2 if kind == "win11" else 0))
     with open(os.path.join(base, "metadata.desktop"), "w") as f:
-        f.write("[Desktop Entry]\nName=Start12 %s\nComment=Window decoration for the Start12 menu styles\n"
-                "X-KDE-PluginInfo-Author=Start12\nX-KDE-PluginInfo-Name=%s\nX-KDE-PluginInfo-Version=1.0\n"
+        f.write("[Desktop Entry]\nName=Win12 %s\nComment=Window decoration for the Win12 menu styles\n"
+                "X-KDE-PluginInfo-Author=Win12\nX-KDE-PluginInfo-Name=%s\nX-KDE-PluginInfo-Version=1.0\n"
                 "X-KDE-PluginInfo-License=LGPL\n" % (name[8:].replace("-", " ").title(), name))
 
 # T41 window glass: any shipped/accent/custom deco by name, with OPT radius/title, then translucency + blur mask.
 PIECES = "topleft|topright|top|left|right|bottomleft|bottomright|bottom|center"
 
 def deco_for_name(out, name):
-    m = re.fullmatch(r"start12-xp-(classic|modern|luna)(?:-(olive|silver))?(?:-custom-([0-9a-fA-F]{6}))?", name)
+    m = re.fullmatch(r"win12-xp-(classic|modern|luna)(?:-(olive|silver))?(?:-custom-([0-9a-fA-F]{6}))?", name)
     if m:
         sub, sch, hexc = m.groups()
         return write_deco(out, "#" + hexc if hexc else DECO_BASES[sch or "blue"], sub, "%s %s" % (sub.title(), hexc or (sch or "blue").title()))
-    m = re.fullmatch(r"start12-(win10|win11|win7)(?:-(light|dark))?(?:-accent-([0-9a-fA-F]{6}))?", name)
+    m = re.fullmatch(r"win12-(win10|win11|win7)(?:-(light|dark))?(?:-accent-([0-9a-fA-F]{6}))?", name)
     if not m:
         raise SystemExit("unknown deco name: " + name)
     kind, mode, hexc = m.groups()
@@ -597,7 +597,7 @@ if __name__ == "__main__":
     ap.add_argument("--scheme", action="store_true", help="write Plasma colour schemes instead (T26b)")
     ap.add_argument("--win10", choices=("light", "dark"), help="with --deco/--scheme --custom: Win10/11/7 accent title bar (T38)")
     ap.add_argument("--kind", choices=("win10", "win11", "win7"), default="win10", help="with --win10: which look (T39)")
-    ap.add_argument("--name", help="with --deco: make this deco (any start12-* name) into --out, with the T41 options")
+    ap.add_argument("--name", help="with --deco: make this deco (any win12-* name) into --out, with the T41 options")
     ap.add_argument("--opacity", type=int, default=100, help="T41: frame opacity in percent")
     ap.add_argument("--blur", type=int, default=1, help="T41: blur behind a translucent frame (1/0)")
     ap.add_argument("--radius", type=int, default=-1, help="T41: top corner radius in px (-1 = the style's)")
@@ -621,7 +621,7 @@ if __name__ == "__main__":
             os.makedirs(a.outdir, exist_ok=True)
             for sub in ("classic", "modern", "luna"):
                 for sch, (win, sel) in SCHEME_COLOURS.items():
-                    write_scheme(os.path.join(a.outdir, "start12-xp-" + sub + ("" if sch == "blue" else "-" + sch) + ".colors"),
+                    write_scheme(os.path.join(a.outdir, "win12-xp-" + sub + ("" if sch == "blue" else "-" + sch) + ".colors"),
                                  DECO_BASES[sch], win, sel, "XP %s %s" % (sub.title(), sch.title()))
             for name, (kind, dark) in WIN_DECOS.items():
                 write_scheme(os.path.join(a.outdir, name + ".colors"), label=name[8:].replace("-", " ").title(), **WIN_SCHEMES[kind + ("-dark" if dark else "")])
@@ -645,7 +645,7 @@ if __name__ == "__main__":
         else:
             for sub in ("classic", "modern", "luna"):
                 for sch, B in DECO_BASES.items():
-                    write_deco(os.path.join(a.outdir, "start12-xp-" + sub + ("" if sch == "blue" else "-" + sch)), B, sub,
+                    write_deco(os.path.join(a.outdir, "win12-xp-" + sub + ("" if sch == "blue" else "-" + sch)), B, sub,
                                "%s %s" % (sub.title(), sch.title()))
             for name, (kind, dark) in WIN_DECOS.items():
                 write_win_deco(os.path.join(a.outdir, name), kind, dark)
@@ -656,8 +656,8 @@ if __name__ == "__main__":
         write(a.out, derive("#" + a.custom.lstrip("#")[-6:], a.sub), "%s %s" % (a.sub.title(), a.custom))
     else:
         for sch in LUNA:
-            write(os.path.join(a.outdir, "start12-xp-luna" + ("" if sch == "blue" else "-" + sch)), luna(sch), "Luna " + sch.title())
+            write(os.path.join(a.outdir, "win12-xp-luna" + ("" if sch == "blue" else "-" + sch)), luna(sch), "Luna " + sch.title())
         for sub in ("classic", "modern"):
-            write(os.path.join(a.outdir, "start12-xp-" + sub), BLUE[sub], sub.title())
+            write(os.path.join(a.outdir, "win12-xp-" + sub), BLUE[sub], sub.title())
             for sch, B in BASES.items():
-                write(os.path.join(a.outdir, "start12-xp-%s-%s" % (sub, sch)), derive(B, sub), "%s %s" % (sub.title(), sch.title()))
+                write(os.path.join(a.outdir, "win12-xp-%s-%s" % (sub, sch)), derive(B, sub), "%s %s" % (sub.title(), sch.title()))

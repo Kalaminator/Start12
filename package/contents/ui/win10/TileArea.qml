@@ -48,7 +48,7 @@ Item {
               run: () => Plasmoid.configuration.tilesLocked = !Plasmoid.configuration.tilesLocked },
             { text: i18n("Refresh icons"), icon: "view-refresh", run: () => root.rootModel.refresh() },
             { type: "separator" },
-            { text: i18n("Configure Start12…"), icon: "configure", run: () => { root.close(); root.openSettings(); } }
+            { text: i18n("Configure Win12…"), icon: "configure", run: () => { root.close(); root.openSettings(); } }
         ], point.position.x, point.position.y)
     }
 
@@ -112,7 +112,7 @@ Item {
             anchors.top: flow.bottom
             width: flow.width
             height: Math.max(area.metrics.unit * 2, flick.height - flow.height)
-            keys: ["start12-tile", "start12-group"]
+            keys: ["win12-tile", "win12-group"]
             onDropped: drop => {
                 if (drop.source.kind === "group") {
                     root.saveGroups(Tiles.moveGroup(root.groups, drop.source.groupIndex, root.groups.length));

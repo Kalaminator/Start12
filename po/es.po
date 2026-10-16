@@ -6,11 +6,11 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Start12\n"
+"Project-Id-Version: Win12\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-10-16 15:08+0200\n"
 "PO-Revision-Date: 2026-10-14 12:00+0000\n"
-"Last-Translator: Start12\n"
+"Last-Translator: Win12\n"
 "Language-Team: Spanish\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
@@ -409,8 +409,8 @@ msgstr "Ejecutar…"
 
 #: package/contents/ui/common/Places.qml:47
 #: package/contents/ui/config/ConfigRail.qml:45
-msgid "Start12 Settings"
-msgstr "Configuración de Start12"
+msgid "Win12 Settings"
+msgstr "Configuración de Win12"
 
 #: package/contents/ui/common/Places.qml:48
 #: package/contents/ui/config/ConfigRail.qml:46
@@ -1648,8 +1648,8 @@ msgid "%1% of original size"
 msgstr "%1% del tamaño original"
 
 #: package/contents/ui/config/ConfigStyle.qml:286
-msgid "Reset all Start12 settings…"
-msgstr "Restablecer toda la configuración de Start12…"
+msgid "Reset all Win12 settings…"
+msgstr "Restablecer toda la configuración de Win12…"
 
 #: package/contents/ui/config/ConfigStyle.qml:291
 msgid "Backup"
@@ -1673,21 +1673,21 @@ msgstr ""
 "restaurar."
 
 #: package/contents/ui/config/ConfigStyle.qml:314
-msgid "Backup Start12 settings"
-msgstr "Copia de seguridad de Start12"
+msgid "Backup Win12 settings"
+msgstr "Copia de seguridad de Win12"
 
 #: package/contents/ui/config/ConfigStyle.qml:318
 #: package/contents/ui/config/ConfigStyle.qml:324
-msgid "Start12 backup (*.json)"
-msgstr "Copia de seguridad de Start12 (*.json)"
+msgid "Win12 backup (*.json)"
+msgstr "Copia de seguridad de Win12 (*.json)"
 
 #: package/contents/ui/config/ConfigStyle.qml:323
-msgid "Restore Start12 settings"
-msgstr "Restaurar configuración de Start12"
+msgid "Restore Win12 settings"
+msgstr "Restaurar configuración de Win12"
 
 #: package/contents/ui/config/ConfigStyle.qml:330
-msgid "Reset all Start12 settings?"
-msgstr "¿Restablecer toda la configuración de Start12?"
+msgid "Reset all Win12 settings?"
+msgstr "¿Restablecer toda la configuración de Win12?"
 
 #: package/contents/ui/config/ConfigStyle.qml:331
 msgid ""
@@ -2317,8 +2317,8 @@ msgid "Refresh icons"
 msgstr "Actualizar iconos"
 
 #: package/contents/ui/win10/TileArea.qml:51
-msgid "Configure Start12…"
-msgstr "Configurar Start12…"
+msgid "Configure Win12…"
+msgstr "Configurar Win12…"
 
 #: package/contents/ui/win10/TileArea.qml:142
 msgid "Drag apps here, or right-click an app and choose \"Pin to Start\"."

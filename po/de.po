@@ -389,8 +389,8 @@ msgstr "Ausführen…"
 
 #: package/contents/ui/common/Places.qml:47
 #: package/contents/ui/config/ConfigRail.qml:45
-msgid "Start12 Settings"
-msgstr "Start12-Einstellungen"
+msgid "Win12 Settings"
+msgstr "Win12-Einstellungen"
 
 #: package/contents/ui/common/Places.qml:48
 #: package/contents/ui/config/ConfigRail.qml:46
@@ -1413,8 +1413,8 @@ msgid "%1% of original size"
 msgstr "%1% der Originalgröße"
 
 #: package/contents/ui/config/ConfigStyle.qml:196
-msgid "Reset all Start12 settings…"
-msgstr "Alle Start12-Einstellungen zurücksetzen…"
+msgid "Reset all Win12 settings…"
+msgstr "Alle Win12-Einstellungen zurücksetzen…"
 
 #: package/contents/ui/config/ConfigStyle.qml:201
 msgid "Backup"
@@ -1438,21 +1438,21 @@ msgstr ""
 "sichern oder wiederherzustellen."
 
 #: package/contents/ui/config/ConfigStyle.qml:224
-msgid "Backup Start12 settings"
-msgstr "Start12-Einstellungen sichern"
+msgid "Backup Win12 settings"
+msgstr "Win12-Einstellungen sichern"
 
 #: package/contents/ui/config/ConfigStyle.qml:228
 #: package/contents/ui/config/ConfigStyle.qml:234
-msgid "Start12 backup (*.json)"
-msgstr "Start12-Sicherung (*.json)"
+msgid "Win12 backup (*.json)"
+msgstr "Win12-Sicherung (*.json)"
 
 #: package/contents/ui/config/ConfigStyle.qml:233
-msgid "Restore Start12 settings"
-msgstr "Start12-Einstellungen wiederherstellen"
+msgid "Restore Win12 settings"
+msgstr "Win12-Einstellungen wiederherstellen"
 
 #: package/contents/ui/config/ConfigStyle.qml:240
-msgid "Reset all Start12 settings?"
-msgstr "Alle Start12-Einstellungen zurücksetzen?"
+msgid "Reset all Win12 settings?"
+msgstr "Alle Win12-Einstellungen zurücksetzen?"
 
 #: package/contents/ui/config/ConfigStyle.qml:241
 msgid ""
@@ -1805,8 +1805,8 @@ msgid "Refresh icons"
 msgstr "Symbole aktualisieren"
 
 #: package/contents/ui/win10/TileArea.qml:48
-msgid "Configure Start12…"
-msgstr "Start12 konfigurieren…"
+msgid "Configure Win12…"
+msgstr "Win12 konfigurieren…"
 
 #: package/contents/ui/win10/TileArea.qml:139
 msgid "Drag apps here, or right-click an app and choose \"Pin to Start\"."

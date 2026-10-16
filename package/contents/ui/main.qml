@@ -178,7 +178,7 @@ ContainmentItem {
         showFavoritesPlaceholder: true
         highlightNewlyInstalledApps: true
         Component.onCompleted: {
-            favoritesModel.initForClient("org.start12.menu.favorites.instance-" + Plasmoid.id);
+            favoritesModel.initForClient("org.start12.menu.favorites.instance-" /* ponytail: KAStats client id, kept so stored favourites survive the rename */ + Plasmoid.id);
             root.cfg.favoritesPortedToKAstats = true;
         }
     }
@@ -226,9 +226,9 @@ ContainmentItem {
     // code/xptheme.py: install.sh writes blue/olive/silver; a custom colour is generated here under a
     // new name per colour, so Plasma's svg cache never shows a stale one). Leaving XP restores the theme
     // saved in savedDesktopTheme. Reads the current theme first so nothing is applied when already right.
-    // ponytail: two Start12 widgets with different styles would fight over the theme; one menu is the norm.
+    // ponytail: two Win12 widgets with different styles would fight over the theme; one menu is the norm.
     readonly property string xpCustomHex: cfg.xpCustomColor.toString().slice(-6)
-    readonly property string xpScheme: "start12-xp-" + cfg.xpSubstyle + (cfg.xpColor === "olive" || cfg.xpColor === "silver" ? "-" + cfg.xpColor
+    readonly property string xpScheme: "win12-xp-" + cfg.xpSubstyle + (cfg.xpColor === "olive" || cfg.xpColor === "silver" ? "-" + cfg.xpColor
                                        : cfg.xpColor === "custom" ? "-custom-" + xpCustomHex : "")
     readonly property string xpTheme: taskbarKind !== "xp" || !cfg.xpTaskbarTheme ? "" : xpScheme
     onXpThemeChanged: syncDesktopTheme()
@@ -239,8 +239,8 @@ ContainmentItem {
         const s = cfg.windowLook || cfg.menuStyle;
         // T39 Colours page: every non-XP style follows light/dark (winDark) and "accent on title bars" (-accent-hex).
         const acc = cfg.win10AccentTitles ? "-accent-" + accentHex : "";
-        return s === "xp" ? xpScheme : s === "windows7" ? "start12-win7" + acc
-            : "start12-" + (s === "windows10" ? "win10-" : "win11-") + (winDark ? "dark" : "light") + acc;
+        return s === "xp" ? xpScheme : s === "windows7" ? "win12-win7" + acc
+            : "win12-" + (s === "windows10" ? "win10-" : "win11-") + (winDark ? "dark" : "light") + acc;
     }
     // T38/T39 Colours page: light/dark from colorMode (0 Plasma = userDark, 1 dark, 2 light, 3 custom menu colour),
     // accent = the menu's accent (Plasma or custom).
@@ -254,7 +254,7 @@ ContainmentItem {
         return name.includes("-custom-") ? "--custom " + xpCustomHex + " --sub " + cfg.xpSubstyle
             : name.includes("-accent-") ? "--custom " + accentHex + " --win10 " + (winDark ? "dark" : "light") + " --kind " + name.split("-")[1] : "";
     }
-    readonly property string customNames: "\\( -name 'start12-xp-*-custom-*' -o -name 'start12-win*-accent-*' -o -name 'start12-*-g[0-9]*b[01]r*t[0-9]*' \\)"
+    readonly property string customNames: "\\( -name 'win12-xp-*-custom-*' -o -name 'win12-win*-accent-*' -o -name 'win12-*-g[0-9]*b[01]r*t[0-9]*' \\)"
     readonly property string windowDeco: cfg.windowTheme && (cfg.windowLook || cfg.menuStyle) !== "plasma" ? windowDecoration() : ""
     // T41 window glass (Taskbar page): opacity/blur/radius/title height = a deco made at apply time,
     // <windowDeco>-g<opacity>b<blur>r<radius|d>t<title>; the colour scheme keeps the windowDeco name.
@@ -279,7 +279,7 @@ ContainmentItem {
     function readBrightness() {
         if (!configReady) return;   // never act on default settings before migrateConfig is done
         brightReader.connectSource("S=" + Tiles.shQuote(cfg.savedColorScheme) + "; f=kdeglobals; "
-            + "case \"$(kreadconfig6 --file kdeglobals --group General --key ColorScheme)\" in start12-*) "
+            + "case \"$(kreadconfig6 --file kdeglobals --group General --key ColorScheme)\" in win12-*|start12-*) "
             + "f=$(ls \"$HOME/.local/share/color-schemes/$S.colors\" \"/usr/share/color-schemes/$S.colors\" 2>/dev/null | head -1);; esac; "
             + "kreadconfig6 --file \"${f:-kdeglobals}\" --group Colors:Window --key BackgroundNormal; "
             + "kreadconfig6 --file kdeglobals --group General --key AccentColor; "
@@ -295,7 +295,7 @@ ContainmentItem {
             const v = (lines[0] || "").trim().split(",").map(Number);
             root.userDark = v.length === 3 && 0.299 * v[0] + 0.587 * v[1] + 0.114 * v[2] < 128;
             // The user's own accent (Plasma accent colour, else their scheme's selection): Kirigami's highlight
-            // follows whatever scheme/style Start12 applied, so it can't be used for "Automatic".
+            // follows whatever scheme/style Win12 applied, so it can't be used for "Automatic".
             const a = ((lines[1] || "").trim() || (lines[2] || "").trim()).split(",").map(Number);
             root.userAccent = a.length >= 3 && a.every(n => n >= 0 && n <= 255) ? Qt.rgba(a[0] / 255, a[1] / 255, a[2] / 255, 1) : "";
             root.syncWindowDeco();
@@ -331,7 +331,7 @@ ContainmentItem {
                 root.run("sh -c " + Tiles.shQuote(old === "unset" ? plug + "--delete" : plug + Tiles.shQuote(old)
                          + (old === "false" ? fx("unloadEffect") : "")));
             }
-            const ours = cur.startsWith("__aurorae__svg__start12-");
+            const ours = /^__aurorae__svg__(win|start)12-/.test(cur);
             const kw = (key, v) => v === "" ? "kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key " + key + " --delete"
                 : "kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key " + key + " " + Tiles.shQuote(v);
             const reconf = " && " + Tiles.QDBUS + " org.kde.KWin /KWin reconfigure";
@@ -368,7 +368,7 @@ ContainmentItem {
         onNewData: (sourceName, data) => {
             disconnectSource(sourceName);
             const cur = (data.stdout || "").trim();
-            const ours = cur.startsWith("start12-");
+            const ours = /^(win|start)12-/.test(cur);
             const want = root.windowDeco;
             if (want !== "") {
                 if (cur === want)
@@ -386,7 +386,7 @@ ContainmentItem {
             }
         }
     }
-    // Generated taskbar for any style (T31, xptheme.py --taskbar): start12-taskbar-<hash of args + fallback>,
+    // Generated taskbar for any style (T31, xptheme.py --taskbar): win12-taskbar-<hash of args + fallback>,
     // FallbackTheme = the user's saved style, so only panel/tasks/colors change. XP taskbar wins.
     // T35: taskbarFollowsStyle picks a preset per menu style instead of the custom keys (T37: others = windows11, xp = none).
     // T34: button style (buttons=plasma|win10|win11|win7), accent for the Win10/11 active bar, solid = focused
@@ -410,7 +410,7 @@ ContainmentItem {
             winDark ? "#050507" : "#fdfdff", v / 100).toString().slice(-6);
     }
     // W11 blur strength: kwinrc [Effect-blur] BlurStrength while any Windows 12 part is on (KWin's blur is global);
-    // the user's value is kept next to it in start12Saved ("unset" = no key) and put back when it goes off.
+    // the user's value is kept next to it in win12Saved ("unset" = no key) and put back when it goes off.
     readonly property int win12Blur: cfg.win10Transparency && (menuKind === "windows12" || win12Taskbar
         || (cfg.windowLook || cfg.menuStyle) === "windows12") ? cfg.win12Blur : -1
     onWin12BlurChanged: syncBlurStrength()
@@ -418,10 +418,10 @@ ContainmentItem {
         if (!configReady) return;
         const g = "--file kwinrc --group Effect-blur --key ", reconf = "; " + Tiles.QDBUS + " org.kde.KWin /KWin reconfigure";
         run("sh -c " + Tiles.shQuote(win12Blur > 0
-            ? "[ -n \"$(kreadconfig6 " + g + "start12Saved)\" ] || kwriteconfig6 " + g + "start12Saved \"$(kreadconfig6 " + g
+            ? "[ -n \"$(kreadconfig6 " + g + "win12Saved)\" ] || kwriteconfig6 " + g + "win12Saved \"$(kreadconfig6 " + g
               + "BlurStrength --default unset)\"; kwriteconfig6 " + g + "BlurStrength " + win12Blur + reconf
-            : "s=$(kreadconfig6 " + g + "start12Saved); [ -n \"$s\" ] || exit 0; if [ \"$s\" = unset ]; then kwriteconfig6 " + g
-              + "BlurStrength --delete; else kwriteconfig6 " + g + "BlurStrength \"$s\"; fi; kwriteconfig6 " + g + "start12Saved --delete" + reconf));
+            : "s=$(kreadconfig6 " + g + "win12Saved); [ -n \"$s\" ] || exit 0; if [ \"$s\" = unset ]; then kwriteconfig6 " + g
+              + "BlurStrength --delete; else kwriteconfig6 " + g + "BlurStrength \"$s\"; fi; kwriteconfig6 " + g + "win12Saved --delete" + reconf));
     }
     // W3: corners in % of half the panel thickness (applet size + our theme's 2+2 margins; 46 until laid out).
     readonly property int barThickness: (Plasmoid.formFactor === PlasmaCore.Types.Vertical ? width : height) + 4
@@ -488,10 +488,10 @@ ContainmentItem {
         onNewData: (sourceName, data) => {
             disconnectSource(sourceName);
             const cur = (data.stdout || "").trim() || "default";
-            const ours = cur.startsWith("start12-xp-") || cur.startsWith("start12-taskbar-");
+            const ours = /^(win|start)12-(xp|taskbar)-/.test(cur);
             const fallback = ours ? (root.cfg.savedDesktopTheme || "default") : cur;
             const want = root.xpTheme !== "" ? root.xpTheme : root.taskbarArgs === "" ? ""
-                : "start12-taskbar-" + Qt.md5(root.taskbarArgs + " " + fallback).slice(0, 10);
+                : "win12-taskbar-" + Qt.md5(root.taskbarArgs + " " + fallback).slice(0, 10);
             if (want !== "") {
                 if (cur === want)
                     return;
@@ -507,14 +507,14 @@ ContainmentItem {
                              // W12: a floating panel re-reads the theme's floating margins (bottom spacing) only on a floating change, once the theme has loaded
                              + " && sleep 2 && " + Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript "
                              + Tiles.shQuote("for (const p of panels()) if (p.floating) { p.floating = false; p.floating = true; }")
-                             + " && find " + tdir + " -maxdepth 1 -name 'start12-taskbar-*' ! -name " + want + " -exec rm -rf {} +"));
+                             + " && find " + tdir + " -maxdepth 1 -name 'win12-taskbar-*' ! -name " + want + " -exec rm -rf {} +"));
                 } else if (root.xpTheme.includes("-custom-")) {
                     const dir = "$HOME/.local/share/plasma/desktoptheme/";
                     const gen = decodeURIComponent(Qt.resolvedUrl("code/xptheme.py").toString().replace("file://", ""));
                     root.run("sh -c " + Tiles.shQuote("python3 " + Tiles.shQuote(gen) + " --custom "
                              + root.xpCustomHex + " --sub " + root.cfg.xpSubstyle + " --out " + dir + root.xpTheme
                              + " && plasma-apply-desktoptheme " + root.xpTheme
-                             + " && find " + dir + " -maxdepth 1 -name 'start12-xp-*-custom-*' ! -name " + root.xpTheme + " -exec rm -rf {} +"));
+                             + " && find " + dir + " -maxdepth 1 -name 'win12-xp-*-custom-*' ! -name " + root.xpTheme + " -exec rm -rf {} +"));
                 } else {
                     root.run("plasma-apply-desktoptheme " + root.xpTheme);
                 }
@@ -536,7 +536,7 @@ ContainmentItem {
             openUrl(c.target);
         }
     }
-    // T32: custom pins on the taskbar. Writes start12-pin-<md5>.desktop (Tiles.pinDesktop) and adds/removes its
+    // T32: custom pins on the taskbar. Writes win12-pin-<md5>.desktop (Tiles.pinDesktop) and adds/removes its
     // url in the launchers of the Task Manager(s) in this widget's panel (evaluateScript, like "autohide").
     // ponytail: pinned state is our own list (cfg.taskbarPins); a launcher removed by hand on the panel or a
     // renamed pin (new id) leaves a stale entry, harmless. Read the launchers back if that ever matters.
@@ -548,7 +548,7 @@ ContainmentItem {
     }
     function setTaskbarPin(id, on) {
         const dir = decodeURIComponent(StandardPaths.writableLocation(StandardPaths.GenericDataLocation).toString().replace(/^file:\/\//, "")) + "/applications";
-        const name = "start12-pin-" + Qt.md5(id).slice(0, 8) + ".desktop";
+        const name = "win12-pin-" + Qt.md5(id).slice(0, 8) + ".desktop";
         const path = dir + "/" + name;
         const script = "for (const p of panels()) { if (p.widgetIds.indexOf(" + Plasmoid.id + ") < 0) continue; "
             + "for (const w of p.widgets()) { if (!/icontasks|taskmanager/.test(w.type)) continue; w.currentConfigGroup = ['General']; "
@@ -566,18 +566,18 @@ ContainmentItem {
     }
 
     // T42: Menu position + key centerTaskbar = the panel follows the menu (any panel edge, along the panel):
-    // Center: two expanding panel spacers marked start12Centre, one right before the Start button and one after
-    // the last Task Manager (tasks stop filling the panel: key "fill", old value kept in start12Fill), so Start
+    // Center: two expanding panel spacers marked win12Centre, one right before the Start button and one after
+    // the last Task Manager (tasks stop filling the panel: key "fill", old value kept in win12Fill), so Start
     // and the tasks sit centred; the rest stays at the far end.
     // Right: the whole widget order reversed (show desktop, clock, tray first, Start at the far end) with one
     // spacer before the Task Manager so the tasks sit next to Start. The user's order is kept in the panel's
-    // start12PanelOrder key and put back when it ends. Off: spacers removed, fill and order put back.
+    // win12PanelOrder key and put back when it ends. Off: spacers removed, fill and order put back.
     // One script does it all and is idempotent: it reads the mode from this widget's config, compares the
     // wanted order with the panel's and only touches what differs, printing "done" when nothing was left to do.
     // The shell loop runs it again until "done" (checks the result of the pass before); flock keeps two syncs
     // from interleaving. So the panelMode change at every plasmashell start (config load) is a no-op.
     // Widget.index set = live reorder (AppletOrder writes alone do not). A removed widget stays in p.widgets()
-    // for undo (its config already reads empty), so removed ids are listed in the panel's start12Gone key
+    // for undo (its config already reads empty), so removed ids are listed in the panel's win12Gone key
     // and ignored (ids are never reused; the list drops ids no longer in the panel).
     readonly property int panelMode: !cfg.centerTaskbar ? 0 : cfg.menuPosition === 1 ? 1 : cfg.menuPosition === 2 ? 2 : 0
     // Menu contents mirrored: Right position on horizontal panels; on vertical panels the Start column
@@ -588,7 +588,7 @@ ContainmentItem {
     onPanelModeChanged: syncCenterPanel()
     // W3: native panel settings while our taskbar look is on: floating only for Windows 12 (the other styles
     // never float: Plasma de-floats/re-floats with maximized windows and Show Desktop), auto-hide from
-    // taskbarHiding. null = leave it. The user's value is saved once in the panel's start12Saved_<prop> key
+    // taskbarHiding. null = leave it. The user's value is saved once in the panel's win12Saved_<prop> key
     // (plasmashellrc is written lazily, so it cannot be the restore source) and put back when null again.
     // W12: every style but KDE Plasma ("plasma" = the user's own panel, never touched): docked unless Windows 12
     // floats; auto-hide Off = "none" (windows maximize up to the docked bar).
@@ -599,15 +599,15 @@ ContainmentItem {
         // panel floating; in normal visibility it docks over maximized windows).
         hiding: kdeTaskbar ? null : [win12Taskbar && cfg.taskbarFloating ? "autohide" : "none", "dodgewindows", "autohide"][cfg.taskbarHiding] })
     onPanelWantChanged: { syncPanelLook(); syncIslands(); }
-    // W7: KWin effect extras/start12-panelpop (installed by setup.sh) animates the auto-hidden bar: 0 off (Plasma's slide).
+    // W7: KWin effect extras/win12-panelpop (installed by setup.sh) animates the auto-hidden bar: 0 off (Plasma's slide).
     readonly property int panelPop: win12Taskbar ? cfg.taskbarPopAnim : 0
     onPanelPopChanged: syncPanelPop()
     function syncPanelPop() {
         if (!configReady) return;
-        const fx = f => Tiles.QDBUS + " org.kde.KWin /Effects org.kde.kwin.Effects." + f + " start12panelpop";
-        const plug = "kwriteconfig6 --file kwinrc --group Plugins --key start12panelpopEnabled ";
+        const fx = f => Tiles.QDBUS + " org.kde.KWin /Effects org.kde.kwin.Effects." + f + " win12panelpop";
+        const plug = "kwriteconfig6 --file kwinrc --group Plugins --key win12panelpopEnabled ";
         run("sh -c " + Tiles.shQuote(panelPop > 0
-            ? "kwriteconfig6 --file kwinrc --group Effect-start12panelpop --key Animation " + panelPop + " && " + plug + "true && "
+            ? "kwriteconfig6 --file kwinrc --group Effect-win12panelpop --key Animation " + panelPop + " && " + plug + "true && "
               + fx("unloadEffect") + "; " + fx("loadEffect")
             : plug + "--delete; " + fx("unloadEffect")));
     }
@@ -647,39 +647,39 @@ ContainmentItem {
         const dbus = Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript \"$(sed -e s/@ID@/" + Plasmoid.id + "/ -e s/@WANT@/" + islandWant
             + "/ -e s/@MAG@/" + islandMagnetic + "/ " + Tiles.shQuote(file) + ")\"";
         const loop = "for i in $(seq 40); do [ \"$(" + dbus + ")\" = done ] && break; sleep 1; done";
-        run("flock \"${XDG_RUNTIME_DIR:-/tmp}/start12-panel.lock\" sh -c " + Tiles.shQuote(loop));
+        run("flock \"${XDG_RUNTIME_DIR:-/tmp}/win12-panel.lock\" sh -c " + Tiles.shQuote(loop));
     }
     function syncPanelLook() {
         if (!configReady) return;
         const js = "const ID = " + Plasmoid.id + ", W = " + panelWant + ";"
             + "for (const p of panels()) { if (!p.widgets().some(w => w.id === ID)) continue; const h = p.hiding;"
-            + " for (const k in W) { p.currentConfigGroup = ['General']; const key = 'start12Saved_' + k, s = String(p.readConfig(key, ''));"
+            + " for (const k in W) { p.currentConfigGroup = ['General']; const key = 'win12Saved_' + k, s = String(p.readConfig(key, ''));"
             + "  if (W[k] !== null) { if (!s) p.writeConfig(key, JSON.stringify(p[k])); if (p[k] !== W[k]) p[k] = W[k]; }"
             + "  else if (s) { p[k] = JSON.parse(s); p.currentConfigGroup = ['General']; p.writeConfig(key, ''); } }"
             // W7: Plasma re-checks "a non-normal panel never de-floats" only when floating changes: nudge it.
             + " if (p.floating && p.hiding !== h) { p.floating = false; p.floating = true; } }"
             + "print('done');";
-        run("flock \"${XDG_RUNTIME_DIR:-/tmp}/start12-panel.lock\" " + Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript " + Tiles.shQuote(js));
+        run("flock \"${XDG_RUNTIME_DIR:-/tmp}/win12-panel.lock\" " + Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript " + Tiles.shQuote(js));
     }
     function syncCenterPanel() {
         if (!configReady) return;   // never act on default settings before migrateConfig is done
-        const js = "const ID = " + Plasmoid.id + ", M = 'start12Centre'; let out = 'done';"
+        const js = "const ID = " + Plasmoid.id + ", M = 'win12Centre'; let out = 'done';"
             + "const get = (w, g, k, d) => { w.currentConfigGroup = [g]; return String(w.readConfig(k, d)); };"
             + "for (const p of panels()) { const me = p.widgets().find(w => w.id === ID); if (!me) continue;"
             + " const pos = Number(get(me, 'Style', 'menuPosition', 0)), on = get(me, 'Style', 'centerTaskbar', false) === 'true';"
             + " const mode = !on ? 0 : pos === 1 ? 1 : pos === 2 ? 2 : 0, n = [0, 2, 1][mode];"
-            + " p.currentConfigGroup = ['General']; const goneWas = String(p.readConfig('start12Gone', ''));"
+            + " p.currentConfigGroup = ['General']; const goneWas = String(p.readConfig('win12Gone', ''));"
             + " const gone = goneWas.split(';').map(Number).filter(i => p.widgetIds.indexOf(i) >= 0), live = () => p.widgets().filter(w => gone.indexOf(w.id) < 0);"
             + " const mark = w => w.type === 'org.kde.plasma.panelspacer' ? get(w, 'General', M, '') : '';"
             + " const mine = live().filter(w => mark(w) !== '');"
             + " while (mine.length > n) { const s = mine.pop(); gone.push(s.id); s.remove(); out = 'again'; }"
-            + " p.currentConfigGroup = ['General']; if (gone.join(';') !== goneWas) p.writeConfig('start12Gone', gone.join(';'));"
+            + " p.currentConfigGroup = ['General']; if (gone.join(';') !== goneWas) p.writeConfig('win12Gone', gone.join(';'));"
             + " while (mine.length < n) { const s = p.addWidget('org.kde.plasma.panelspacer'); s.currentConfigGroup = ['General']; s.writeConfig(M, '1'); s.writeConfig('expanding', true); s.reloadConfig(); mine.push(s); }"
             + " const others = live().filter(w => mark(w) === '').sort((a, b) => a.index - b.index), ids = others.map(w => w.id);"
             + " const tasks = others.filter(w => /icontasks|taskmanager/.test(w.type)).map(w => w.id), isTask = id => tasks.indexOf(id) >= 0;"
-            + " p.currentConfigGroup = ['General']; const saved = String(p.readConfig('start12PanelOrder', '')).split(';').map(Number).filter(i => ids.indexOf(i) >= 0);"
+            + " p.currentConfigGroup = ['General']; const saved = String(p.readConfig('win12PanelOrder', '')).split(';').map(Number).filter(i => ids.indexOf(i) >= 0);"
             + " const base = saved.length ? saved.concat(ids.filter(i => saved.indexOf(i) < 0)) : ids;"
-            + " if (mode === 2 && !saved.length) p.writeConfig('start12PanelOrder', base.join(';'));"
+            + " if (mode === 2 && !saved.length) p.writeConfig('win12PanelOrder', base.join(';'));"
             + " const want = mode === 2 ? base.slice().reverse() : base.slice();"
             + " if (mode === 1) { want.splice(want.indexOf(ID), 0, mine[0].id); let e = want.indexOf(ID); want.forEach((id, i) => { if (isTask(id)) e = Math.max(e, i); }); want.splice(e + 1, 0, mine[1].id); }"
             + " if (mode === 2) { const t = want.findIndex(isTask); want.splice(t < 0 ? want.indexOf(ID) : t, 0, mine[0].id); }"
@@ -688,17 +688,17 @@ ContainmentItem {
             // one move per pass (several index sets in one script land out of order), the next pass checks it (a just-added spacer reads index -1).
             + " const i = want.findIndex((id, k) => byId(id).index < 0 || cur[k] !== id);"
             // the saved order goes only once it is back (each pass rebuilds the wanted order from it).
-            + " if (i < 0 && mode !== 2 && saved.length) { p.currentConfigGroup = ['General']; p.writeConfig('start12PanelOrder', ''); }"
+            + " if (i < 0 && mode !== 2 && saved.length) { p.currentConfigGroup = ['General']; p.writeConfig('win12PanelOrder', ''); }"
             + " if (i >= 0) { byId(want[i]).index = i;"
             // the spacers' optimalSize binding misses the move: flip "expanding" so it recomputes.
             + "  for (const s of mine) { s.currentConfigGroup = ['General']; s.writeConfig('expanding', false); s.reloadConfig(); s.writeConfig('expanding', true); s.reloadConfig(); } out = 'again'; }"
-            + " for (const id of tasks) { const w = byId(id), f = get(w, 'General', 'start12Fill', '');"
-            + "  if (mode && !f) { w.writeConfig('start12Fill', get(w, 'General', 'fill', true)); w.writeConfig('fill', false); w.reloadConfig(); out = 'again'; }"
-            + "  if (!mode && f) { w.writeConfig('fill', f !== 'false'); w.writeConfig('start12Fill', ''); w.reloadConfig(); out = 'again'; } } }"
+            + " for (const id of tasks) { const w = byId(id), f = get(w, 'General', 'win12Fill', '');"
+            + "  if (mode && !f) { w.writeConfig('win12Fill', get(w, 'General', 'fill', true)); w.writeConfig('fill', false); w.reloadConfig(); out = 'again'; }"
+            + "  if (!mode && f) { w.writeConfig('fill', f !== 'false'); w.writeConfig('win12Fill', ''); w.reloadConfig(); out = 'again'; } } }"
             + "print(out);";
         const dbus = Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript " + Tiles.shQuote(js);
         const loop = "for i in $(seq 25); do [ \"$(" + dbus + ")\" = done ] && break; sleep 0.3; done";
-        run("flock \"${XDG_RUNTIME_DIR:-/tmp}/start12-panel.lock\" sh -c " + Tiles.shQuote(loop));
+        run("flock \"${XDG_RUNTIME_DIR:-/tmp}/win12-panel.lock\" sh -c " + Tiles.shQuote(loop));
     }
 
     // Find a power/session action by its id ("shutdown", "reboot", ...).
@@ -725,12 +725,12 @@ ContainmentItem {
         root.menuOpen = false;
     }
 
-    // The Start12 settings window (Plasma's configure dialog with our pages).
+    // The Win12 settings window (Plasma's configure dialog with our pages).
     function openSettings() {
         Plasmoid.internalAction("configure").trigger();
     }
 
-    // The "Start12 Settings" app asks for the window through this config key.
+    // The "Win12 Settings" app asks for the window through this config key.
     Connections {
         target: root.cfg
         function onOpenSettingsRequestChanged() {
@@ -756,7 +756,7 @@ ContainmentItem {
                     // Colours become "#rrggbb"; string lists become plain arrays.
                     data[k] = v !== null && typeof v === "object" ? (v.length !== undefined ? Array.from(v) : v.toString()) : v;
                 }
-                root.run(Tiles.writeFileCmd(JSON.stringify({ start12Backup: 1, settings: data }), file));
+                root.run(Tiles.writeFileCmd(JSON.stringify({ win12Backup: 1, settings: data }), file));
                 root.cfg.resetRequest = "";
                 return;
             }
@@ -790,7 +790,7 @@ ContainmentItem {
             let s = null;
             try { s = JSON.parse(data.stdout).settings; } catch (e) {}
             if (!s) {
-                console.warn("start12: not a Start12 backup:", sourceName, data.stderr);
+                console.warn("win12: not a Win12 backup:", sourceName, data.stderr);
                 return;
             }
             for (const k of root.userKeys()) {
@@ -1087,7 +1087,7 @@ ContainmentItem {
 
     Plasmoid.icon: "start-here-kde"
     // A containment (needed to host real widgets) is always "expanded" in libplasma and never gets a
-    // compact representation or popup, so Start12 does what the system tray does: the button is a child of
+    // compact representation or popup, so Win12 does what the system tray does: the button is a child of
     // root and the menu lives in our own AppletPopup (docs/research/real-widgets-spike.md, Follow-up).
     // menuOpen replaces PlasmoidItem.expanded. On the desktop (or in a test window) the menu shows inline.
     property bool menuOpen: false

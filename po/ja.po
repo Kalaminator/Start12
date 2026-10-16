@@ -389,8 +389,8 @@ msgstr "ファイル名を指定して実行…"
 
 #: package/contents/ui/common/Places.qml:47
 #: package/contents/ui/config/ConfigRail.qml:45
-msgid "Start12 Settings"
-msgstr "Start12 の設定"
+msgid "Win12 Settings"
+msgstr "Win12 の設定"
 
 #: package/contents/ui/common/Places.qml:48
 #: package/contents/ui/config/ConfigRail.qml:46
@@ -1406,8 +1406,8 @@ msgid "%1% of original size"
 msgstr "元のサイズの %1%"
 
 #: package/contents/ui/config/ConfigStyle.qml:196
-msgid "Reset all Start12 settings…"
-msgstr "Start12 のすべての設定をリセット…"
+msgid "Reset all Win12 settings…"
+msgstr "Win12 のすべての設定をリセット…"
 
 #: package/contents/ui/config/ConfigStyle.qml:201
 msgid "Backup"
@@ -1430,21 +1430,21 @@ msgstr ""
 "選択した後、[OK] または [適用] を押して保存または復元してください。"
 
 #: package/contents/ui/config/ConfigStyle.qml:224
-msgid "Backup Start12 settings"
-msgstr "Start12 の設定をバックアップ"
+msgid "Backup Win12 settings"
+msgstr "Win12 の設定をバックアップ"
 
 #: package/contents/ui/config/ConfigStyle.qml:228
 #: package/contents/ui/config/ConfigStyle.qml:234
-msgid "Start12 backup (*.json)"
-msgstr "Start12 バックアップ (*.json)"
+msgid "Win12 backup (*.json)"
+msgstr "Win12 バックアップ (*.json)"
 
 #: package/contents/ui/config/ConfigStyle.qml:233
-msgid "Restore Start12 settings"
-msgstr "Start12 の設定を復元"
+msgid "Restore Win12 settings"
+msgstr "Win12 の設定を復元"
 
 #: package/contents/ui/config/ConfigStyle.qml:240
-msgid "Reset all Start12 settings?"
-msgstr "Start12 のすべての設定をリセットしますか?"
+msgid "Reset all Win12 settings?"
+msgstr "Win12 のすべての設定をリセットしますか?"
 
 #: package/contents/ui/config/ConfigStyle.qml:241
 msgid ""
@@ -1795,8 +1795,8 @@ msgid "Refresh icons"
 msgstr "アイコンを更新"
 
 #: package/contents/ui/win10/TileArea.qml:48
-msgid "Configure Start12…"
-msgstr "Start12 を構成…"
+msgid "Configure Win12…"
+msgstr "Win12 を構成…"
 
 #: package/contents/ui/win10/TileArea.qml:139
 msgid "Drag apps here, or right-click an app and choose \"Pin to Start\"."

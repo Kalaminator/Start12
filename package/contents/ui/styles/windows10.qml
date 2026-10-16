@@ -110,7 +110,7 @@ FocusScope {
         height: kind === "group" ? m.px(30) : m.unit * 2
         z: 100
         visible: Drag.active
-        Drag.keys: [kind === "group" ? "start12-group" : "start12-tile"]
+        Drag.keys: [kind === "group" ? "win12-group" : "win12-tile"]
         Drag.hotSpot.x: width / 2
         Drag.hotSpot.y: height / 2
         Rectangle {

@@ -283,7 +283,7 @@ KCM.SimpleKCM {
 
         Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Reset") }
         QQC2.Button {
-            text: i18n("Reset all Start12 settings…")
+            text: i18n("Reset all Win12 settings…")
             icon.name: "edit-reset"
             onClicked: allDialog.open()
         }
@@ -311,23 +311,23 @@ KCM.SimpleKCM {
     // T13: main.qml writes/reads the file (resetRequest "backup|<time>|<file>" / "restore|<time>|<file>").
     Dialogs.FileDialog {
         id: backupFile
-        title: i18n("Backup Start12 settings")
+        title: i18n("Backup Win12 settings")
         fileMode: Dialogs.FileDialog.SaveFile
         defaultSuffix: "json"
-        selectedFile: StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/start12-backup.json"
-        nameFilters: [i18n("Start12 backup (*.json)")]
+        selectedFile: StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/win12-backup.json"
+        nameFilters: [i18n("Win12 backup (*.json)")]
         onAccepted: page.cfg_resetRequest = "backup|" + Date.now() + "|" + decodeURIComponent(selectedFile.toString().replace("file://", ""))
     }
     Dialogs.FileDialog {
         id: restoreFile
-        title: i18n("Restore Start12 settings")
-        nameFilters: [i18n("Start12 backup (*.json)")]
+        title: i18n("Restore Win12 settings")
+        nameFilters: [i18n("Win12 backup (*.json)")]
         onAccepted: page.cfg_resetRequest = "restore|" + Date.now() + "|" + decodeURIComponent(selectedFile.toString().replace("file://", ""))
     }
 
     Kirigami.PromptDialog {
         id: allDialog
-        title: i18n("Reset all Start12 settings?")
+        title: i18n("Reset all Win12 settings?")
         subtitle: i18n("Every setting, tile and pinned icon goes back to the fresh-install default. If the XP taskbar theme is active, your previous Plasma Style is put back. Press OK in the settings window afterwards to finish; it then closes, so no old values are written back.")
         standardButtons: Kirigami.Dialog.Ok | Kirigami.Dialog.Cancel
         onAccepted: page.cfg_resetRequest = "all|" + Date.now()

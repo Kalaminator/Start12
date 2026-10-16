@@ -390,8 +390,8 @@ msgstr "تشغيل…"
 
 #: package/contents/ui/common/Places.qml:47
 #: package/contents/ui/config/ConfigRail.qml:45
-msgid "Start12 Settings"
-msgstr "إعدادات Start12"
+msgid "Win12 Settings"
+msgstr "إعدادات Win12"
 
 #: package/contents/ui/common/Places.qml:48
 #: package/contents/ui/config/ConfigRail.qml:46
@@ -1412,8 +1412,8 @@ msgid "%1% of original size"
 msgstr "%1% من الحجم الأصلي"
 
 #: package/contents/ui/config/ConfigStyle.qml:196
-msgid "Reset all Start12 settings…"
-msgstr "إعادة تعيين كل إعدادات Start12…"
+msgid "Reset all Win12 settings…"
+msgstr "إعادة تعيين كل إعدادات Win12…"
 
 #: package/contents/ui/config/ConfigStyle.qml:201
 msgid "Backup"
@@ -1436,21 +1436,21 @@ msgstr ""
 "اضغط موافق/تطبيق للحفظ أو الاستعادة."
 
 #: package/contents/ui/config/ConfigStyle.qml:224
-msgid "Backup Start12 settings"
-msgstr "نسخ إعدادات Start12 احتياطيًا"
+msgid "Backup Win12 settings"
+msgstr "نسخ إعدادات Win12 احتياطيًا"
 
 #: package/contents/ui/config/ConfigStyle.qml:228
 #: package/contents/ui/config/ConfigStyle.qml:234
-msgid "Start12 backup (*.json)"
-msgstr "نسخة Start12 الاحتياطية (*.json)"
+msgid "Win12 backup (*.json)"
+msgstr "نسخة Win12 الاحتياطية (*.json)"
 
 #: package/contents/ui/config/ConfigStyle.qml:233
-msgid "Restore Start12 settings"
-msgstr "استعادة إعدادات Start12"
+msgid "Restore Win12 settings"
+msgstr "استعادة إعدادات Win12"
 
 #: package/contents/ui/config/ConfigStyle.qml:240
-msgid "Reset all Start12 settings?"
-msgstr "إعادة تعيين كل إعدادات Start12؟"
+msgid "Reset all Win12 settings?"
+msgstr "إعادة تعيين كل إعدادات Win12؟"
 
 #: package/contents/ui/config/ConfigStyle.qml:241
 msgid ""
@@ -1799,8 +1799,8 @@ msgid "Refresh icons"
 msgstr "تحديث الأيقونات"
 
 #: package/contents/ui/win10/TileArea.qml:48
-msgid "Configure Start12…"
-msgstr "تهيئة Start12…"
+msgid "Configure Win12…"
+msgstr "تهيئة Win12…"
 
 #: package/contents/ui/win10/TileArea.qml:139
 msgid "Drag apps here, or right-click an app and choose \"Pin to Start\"."

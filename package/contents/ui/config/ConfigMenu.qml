@@ -47,13 +47,13 @@ KCM.SimpleKCM {
 
     Kirigami.FormLayout {
         // T40: opens the menu in design mode (main.qml watches designRequest), written straight to the
-        // widget's config like contents/extras/start12-settings so it needs no Apply.
+        // widget's config like contents/extras/win12-settings so it needs no Apply.
         QQC2.Button {
             Kirigami.FormData.label: i18n("Section dividers:")
             text: i18n("Edit menu layout…")
             icon.name: "transform-move-horizontal"
             onClicked: executable.connectSource("" + Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript '"
-                + "panels().concat(desktops()).forEach(function (c) { c.widgets(\"org.start12.menu\").forEach(function (w) {"
+                + "panels().concat(desktops()).forEach(function (c) { c.widgets(\"org.win12.menu\").forEach(function (w) {"
                 + " w.currentConfigGroup = [\"General\"]; w.writeConfig(\"designRequest\", \"" + Date.now() + "\"); w.reloadConfig(); }); });'")
         }
         Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Tiles") }

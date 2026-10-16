@@ -42,7 +42,7 @@ KCM.SimpleKCM {
         "terminal": [i18n("Terminal"), "utilities-terminal"],
         "monitor": [i18n("System Monitor"), "utilities-system-monitor"],
         "run": [i18n("Run…"), "system-run"],
-        "start12": [i18n("Start12 Settings"), "configure"],
+        "win12": [i18n("Win12 Settings"), "configure"],
         "power": [i18n("Power"), "system-shutdown"]
     })
     readonly property var powerChoices: [

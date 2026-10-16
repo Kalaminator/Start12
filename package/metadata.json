@@ -9,9 +9,9 @@
         "Category": "Application Launchers",
         "Description": "Start11-style start menu for KDE Plasma",
         "Icon": "start-here-kde",
-        "Id": "org.start12.menu",
+        "Id": "org.win12.menu",
         "License": "MIT",
-        "Name": "Start12",
+        "Name": "Win12",
         "Version": "0.1"
     },
     "KPackageStructure": "Plasma/Applet",

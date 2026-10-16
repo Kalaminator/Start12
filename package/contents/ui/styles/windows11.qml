@@ -330,7 +330,7 @@ FocusScope {
         height: width
         z: 100
         visible: Drag.active
-        Drag.keys: ["start12-tile"]
+        Drag.keys: ["win12-tile"]
         Drag.hotSpot.x: width / 2
         Drag.hotSpot.y: height / 2
         Kirigami.Icon {

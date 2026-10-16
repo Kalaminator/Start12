@@ -205,7 +205,7 @@ Item {
             width: flick.width
             height: Math.max(flick.height, flow.implicitHeight)
             enabled: canvas.user >= 0
-            keys: ["start12-tile"]
+            keys: ["win12-tile"]
             onDropped: d => canvas.place(d.source.favoriteId, canvas.groups.length, "")
         }
 
@@ -320,7 +320,7 @@ Item {
                     DropArea {
                         anchors.fill: parent
                         enabled: group.takesDrops
-                        keys: ["start12-tile"]
+                        keys: ["win12-tile"]
                         onDropped: d => canvas.place(d.source.favoriteId, group.modelData.g, "")
                     }
 
@@ -473,7 +473,7 @@ Item {
                                 DropArea {
                                     anchors.fill: parent
                                     enabled: group.takesDrops
-                                    keys: ["start12-tile"]
+                                    keys: ["win12-tile"]
                                     onDropped: d => canvas.place(d.source.favoriteId, group.modelData.g, canvas.appId(group.src, cell.row))
                                 }
                                 // Click, right-click, and drag (user groups only) like PinnedGrid.

@@ -54,7 +54,7 @@ Column {
         DropArea {
             id: titleDrop
             anchors.fill: parent
-            keys: ["start12-tile", "start12-group"]
+            keys: ["win12-tile", "win12-group"]
             onDropped: drop => {
                 if (drop.source.kind === "group") {
                     root.saveGroups(Tiles.moveGroup(root.groups, drop.source.groupIndex, grp.groupIndex));
@@ -187,7 +187,7 @@ Column {
         DropArea {
             id: bodyDrop
             anchors.fill: parent
-            keys: ["start12-tile", "start12-group"]
+            keys: ["win12-tile", "win12-group"]
             onDropped: drop => {
                 if (drop.source.kind === "group") {
                     root.saveGroups(Tiles.moveGroup(root.groups, drop.source.groupIndex, grp.groupIndex + 1));

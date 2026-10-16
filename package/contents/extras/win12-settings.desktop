@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Win12 Settings
+Comment=Change the Win12 menu style, icons, colours and transparency
+Icon=preferences-desktop-theme-global
+Exec=win12-settings
+Categories=Settings;DesktopSettings;

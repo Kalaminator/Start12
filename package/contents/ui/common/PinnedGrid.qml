@@ -59,7 +59,7 @@ Item {
     // Empty grid space: drop to add at the end.
     DropArea {
         anchors.fill: parent
-        keys: ["start12-tile"]
+        keys: ["win12-tile"]
         onDropped: drop => root.movePinned(drop.source.favoriteId, grid.cfg.pinnedGrid.length)
     }
 
@@ -212,7 +212,7 @@ Item {
             id: drop
             anchors.fill: parent
             enabled: !cell.inFolder
-            keys: ["start12-tile"]
+            keys: ["win12-tile"]
             onDropped: d => {
                 if (cell.dropBefore) root.movePinned(d.source.favoriteId, cell.index);
                 else root.folderPins(d.source.favoriteId, cell.modelData);

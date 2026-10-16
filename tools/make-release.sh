@@ -1,11 +1,11 @@
 #!/bin/sh
-# Build dist/org.start12.menu-<version>.plasmoid (zip of package/) for the KDE Store.
+# Build dist/org.win12.menu-<version>.plasmoid (zip of package/) for the KDE Store.
 # Version = package/metadata.json KPlugin.Version (bump it by hand first). Only git-tracked files go in,
 # so the Stardock assets listed in .gitignore are never shipped.
 set -e
 cd "$(dirname "$0")/.."
 VER=$(python3 -c 'import json; print(json.load(open("package/metadata.json"))["KPlugin"]["Version"])')
-OUT="$PWD/dist/org.start12.menu-$VER.plasmoid"
+OUT="$PWD/dist/org.win12.menu-$VER.plasmoid"
 mkdir -p dist
 rm -f "$OUT"
 cd package

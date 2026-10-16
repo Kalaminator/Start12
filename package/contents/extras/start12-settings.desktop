@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Start12 Settings
-Comment=Change the Start12 menu style, icons, colours and transparency
-Icon=preferences-desktop-theme-global
-Exec=start12-settings
-Categories=Settings;DesktopSettings;

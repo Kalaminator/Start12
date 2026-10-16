@@ -1,7 +1,7 @@
 "use strict";
-// Start12 W7: animates panels (docks) when an auto-hidden panel shows or hides. KWin's own slide
+// Win12 W7: animates panels (docks) when an auto-hidden panel shows or hides. KWin's own slide
 // (slidingpopups, Plasma asks for it on every panel) still runs; this adds to it.
-// kwinrc [Effect-start12panelpop] Animation: 1 fade, 2 zoom ("pop"), 3 rise (fade in from below).
+// kwinrc [Effect-win12panelpop] Animation: 1 fade, 2 zoom ("pop"), 3 rise (fade in from below).
 var mode = 1;
 function loadConfig() { mode = effect.readConfig("Animation", 1); }
 

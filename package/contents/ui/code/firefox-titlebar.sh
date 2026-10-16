@@ -6,9 +6,9 @@
 for p in "$HOME"/.mozilla/firefox/*/prefs.js "${XDG_CONFIG_HOME:-$HOME/.config}"/mozilla/firefox/*/prefs.js; do
     [ -f "$p" ] || continue
     u="$(dirname "$p")/user.js"
-    [ -f "$u" ] && sed -i '/^\/\/ start12 begin$/,/^\/\/ start12 end$/d' "$u"
+    [ -f "$u" ] && sed -i '/^\/\/ win12 begin$/,/^\/\/ win12 end$/d' "$u"
     if [ "$1" = on ]; then
-        printf '// start12 begin\nuser_pref("browser.tabs.inTitlebar", 0);\n// start12 end\n' >> "$u"
+        printf '// win12 begin\nuser_pref("browser.tabs.inTitlebar", 0);\n// win12 end\n' >> "$u"
     else
         # user.js values get copied into prefs.js, so drop our 0 there too (back to Firefox's default).
         # ponytail: a Firefox still running writes the 0 back on exit; the next "off" sync clears it again.

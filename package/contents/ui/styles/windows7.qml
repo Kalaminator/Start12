@@ -352,7 +352,7 @@ FocusScope {
                             id: drop
                             anchors.fill: parent
                             enabled: app.e.pinned === true
-                            keys: ["start12-tile"]
+                            keys: ["win12-tile"]
                             onDropped: d => root.movePinned(d.source.favoriteId, app.e.index)
                         }
 

@@ -258,7 +258,7 @@
       <default></default>
     </entry>
     <entry name="xpTaskbarTheme" type="Bool">
-      <label>With the XP style, switch the Plasma Style (panel) to start12-xp-classic / start12-xp-modern</label>
+      <label>With the XP style, switch the Plasma Style (panel) to win12-xp-classic / win12-xp-modern</label>
       <default>true</default>
     </entry>
     <entry name="windowTheme" type="Bool">
@@ -304,7 +304,7 @@
       <default>false</default>
     </entry>
     <entry name="win10AccentTitles" type="Bool">
-      <label>Colours page (all styles but XP): show accent colour on title bars and window borders (generated start12-win10|win11-*-accent-hex, start12-win7-accent-hex decoration/scheme)</label>
+      <label>Colours page (all styles but XP): show accent colour on title bars and window borders (generated win12-win10|win11-*-accent-hex, win12-win7-accent-hex decoration/scheme)</label>
       <default>false</default>
     </entry>
     <entry name="win10Transparency" type="Bool">
@@ -342,7 +342,7 @@
       <default>true</default>
     </entry>
     <entry name="taskbarPopAnim" type="Int">
-      <label>Windows 12 auto-hidden taskbar pop-up animation (KWin effect start12panelpop): 0 Plasma slide only, 1 fade, 2 zoom, 3 rise</label>
+      <label>Windows 12 auto-hidden taskbar pop-up animation (KWin effect win12panelpop): 0 Plasma slide only, 1 fade, 2 zoom, 3 rise</label>
       <default>2</default>
     </entry>
     <entry name="win12Light" type="Int">
@@ -682,7 +682,7 @@
       <default></default>
     </entry>
     <entry name="openSettingsRequest" type="String">
-      <label>Changed by the start12-settings command to open the settings window</label>
+      <label>Changed by the win12-settings command to open the settings window</label>
       <default></default>
     </entry>
     <entry name="designRequest" type="String">

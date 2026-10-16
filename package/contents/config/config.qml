@@ -1,6 +1,6 @@
 import org.kde.plasma.configuration
 
-// The Start12 settings window, laid out like Start11Config.
+// The Win12 settings window, laid out like Start11Config.
 ConfigModel {
     ConfigCategory {
         name: i18n("Style")

@@ -332,7 +332,7 @@ PC3.AbstractButton {
     DropArea {
         id: drop
         anchors.fill: parent
-        keys: ["start12-tile"]
+        keys: ["win12-tile"]
         readonly property bool intoFolder: !!drag.source && !Tiles.isFolder(drag.source.favoriteId) && !tile.isWidget
             && !Tiles.isWidget(drag.source.favoriteId)
             && (tile.folderId !== "" || drag.x > tile.width / 4)

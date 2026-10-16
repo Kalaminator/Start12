@@ -389,8 +389,8 @@ msgstr "Executar…"
 
 #: package/contents/ui/common/Places.qml:47
 #: package/contents/ui/config/ConfigRail.qml:45
-msgid "Start12 Settings"
-msgstr "Configurações do Start12"
+msgid "Win12 Settings"
+msgstr "Configurações do Win12"
 
 #: package/contents/ui/common/Places.qml:48
 #: package/contents/ui/config/ConfigRail.qml:46
@@ -1411,8 +1411,8 @@ msgid "%1% of original size"
 msgstr "%1% do tamanho original"
 
 #: package/contents/ui/config/ConfigStyle.qml:196
-msgid "Reset all Start12 settings…"
-msgstr "Redefinir todas as configurações do Start12…"
+msgid "Reset all Win12 settings…"
+msgstr "Redefinir todas as configurações do Win12…"
 
 #: package/contents/ui/config/ConfigStyle.qml:201
 msgid "Backup"
@@ -1435,21 +1435,21 @@ msgstr ""
 "escolher o arquivo, pressione OK/Aplicar para salvar ou restaurar."
 
 #: package/contents/ui/config/ConfigStyle.qml:224
-msgid "Backup Start12 settings"
-msgstr "Fazer backup das configurações do Start12"
+msgid "Backup Win12 settings"
+msgstr "Fazer backup das configurações do Win12"
 
 #: package/contents/ui/config/ConfigStyle.qml:228
 #: package/contents/ui/config/ConfigStyle.qml:234
-msgid "Start12 backup (*.json)"
-msgstr "Backup do Start12 (*.json)"
+msgid "Win12 backup (*.json)"
+msgstr "Backup do Win12 (*.json)"
 
 #: package/contents/ui/config/ConfigStyle.qml:233
-msgid "Restore Start12 settings"
-msgstr "Restaurar configurações do Start12"
+msgid "Restore Win12 settings"
+msgstr "Restaurar configurações do Win12"
 
 #: package/contents/ui/config/ConfigStyle.qml:240
-msgid "Reset all Start12 settings?"
-msgstr "Redefinir todas as configurações do Start12?"
+msgid "Reset all Win12 settings?"
+msgstr "Redefinir todas as configurações do Win12?"
 
 #: package/contents/ui/config/ConfigStyle.qml:241
 msgid ""
@@ -1801,8 +1801,8 @@ msgid "Refresh icons"
 msgstr "Atualizar ícones"
 
 #: package/contents/ui/win10/TileArea.qml:48
-msgid "Configure Start12…"
-msgstr "Configurar o Start12…"
+msgid "Configure Win12…"
+msgstr "Configurar o Win12…"
 
 #: package/contents/ui/win10/TileArea.qml:139
 msgid "Drag apps here, or right-click an app and choose \"Pin to Start\"."
