@@ -161,7 +161,7 @@ KCM.SimpleKCM {
                 onActivated: page.cfg_taskbarLayout = values[currentIndex]
             }
             QQC2.Label {
-                text: i18n("Islands are extra Plasma panels; use Edit panel to move widgets. The split layouts are not built yet.")
+                text: i18n("Islands are extra Plasma panels holding the tray, clock and a new weather widget; One bar puts everything back.")
                 enabled: false
             }
         }

@@ -554,7 +554,17 @@ ContainmentItem {
     readonly property string panelWant: JSON.stringify({
         floating: win12Taskbar ? cfg.taskbarFloating : xpTheme !== "" || taskbarArgs !== "" ? false : null,
         hiding: [null, "dodgewindows", "autohide"][cfg.taskbarHiding] || null })
-    onPanelWantChanged: syncPanelLook()
+    onPanelWantChanged: { syncPanelLook(); syncIslands(); }
+    // W5: split taskbar islands, Windows 12 style only (code/islands.js reads the style from this widget's config).
+    readonly property string islandWant: win12Taskbar ? cfg.taskbarLayout : "single"
+    onIslandWantChanged: syncIslands()
+    function syncIslands() {
+        if (!configReady) return;
+        const file = decodeURIComponent(Qt.resolvedUrl("code/islands.js").toString().replace("file://", ""));
+        const dbus = Tiles.QDBUS + " org.kde.plasmashell /PlasmaShell evaluateScript \"$(sed s/@ID@/" + Plasmoid.id + "/ " + Tiles.shQuote(file) + ")\"";
+        const loop = "for i in $(seq 40); do [ \"$(" + dbus + ")\" = done ] && break; sleep 1; done";
+        run("flock \"${XDG_RUNTIME_DIR:-/tmp}/start12-panel.lock\" sh -c " + Tiles.shQuote(loop));
+    }
     function syncPanelLook() {
         if (!configReady) return;
         const js = "const ID = " + Plasmoid.id + ", W = " + panelWant + ";"
@@ -1388,6 +1398,7 @@ ContainmentItem {
         appletSync.start();
         syncCenterPanel();
         syncPanelLook();
+        syncIslands();
         // T44: code/setup.sh makes the generated themes first (KDE Store installs skip install.sh), then the syncs apply them.
         setupRunner.connectSource("sh " + Tiles.shQuote(decodeURIComponent(Qt.resolvedUrl("code/setup.sh").toString().replace("file://", ""))));
     }

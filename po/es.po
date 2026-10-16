@@ -2327,5 +2327,5 @@ msgid "Start left, tray right"
 msgstr "Inicio a la izquierda, bandeja a la derecha"
 
 #: package/contents/ui/config/ConfigTaskbar.qml
-msgid "Islands are extra Plasma panels; use Edit panel to move widgets. The split layouts are not built yet."
-msgstr "Las islas son paneles de Plasma adicionales; usa Editar panel para mover widgets. Los diseños divididos aún no están disponibles."
+msgid "Islands are extra Plasma panels holding the tray, clock and a new weather widget; One bar puts everything back."
+msgstr "Las islas son paneles de Plasma adicionales con la bandeja, el reloj y un widget del tiempo nuevo; Una barra lo devuelve todo a su sitio."
