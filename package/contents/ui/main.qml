@@ -582,11 +582,28 @@ ContainmentItem {
     // W9: magnetic islands are placed from their widths: re-run when this panel's width changes (tasks opened or
     // closed) and every 30 s for the other islands (tray icons, weather), which this widget cannot watch.
     readonly property bool islandMagnetic: islandWant !== "single" && cfg.taskbarMagnetic
-    onIslandMagneticChanged: syncIslands()
+    onIslandMagneticChanged: { syncIslands(); armTrayWatch(); }
     readonly property int panelWidth: Window.window ? Window.window.width : 0
     onPanelWidthChanged: if (islandMagnetic) islandTimer.restart()
     Timer { id: islandTimer; interval: 1000; onTriggered: syncIslands() }
     Timer { interval: 30000; repeat: true; running: root.islandMagnetic; onTriggered: syncIslands() }
+    // Tray icons come and go through the StatusNotifierWatcher: wait for its (Un)Registered signal and re-place
+    // the islands 1 s later (the tray island has resized by then). Re-armed after each signal or 10 min timeout.
+    // ponytail: Plasma's own tray items (volume, network...) do not signal; the 30 s timer still covers them.
+    readonly property string trayWait: "W='busctl --user --timeout=600 wait /StatusNotifierWatcher org.kde.StatusNotifierWatcher StatusNotifierItem';"
+        + " $W'Registered' >/dev/null 2>&1 & a=$!; $W'Unregistered' >/dev/null 2>&1 & b=$!; wait -n; kill $a $b 2>/dev/null; echo"
+    function armTrayWatch() { if (islandMagnetic) trayWatch.connectSource("bash -c " + Tiles.shQuote(trayWait)); }
+    P5Support.DataSource {
+        id: trayWatch
+        engine: "executable"
+        connectedSources: []
+        onNewData: (sourceName, data) => {
+            disconnectSource(sourceName);
+            if (!root.islandMagnetic) return;
+            islandTimer.restart();
+            connectSource(sourceName);
+        }
+    }
     function syncIslands() {
         if (!configReady) return;
         const file = decodeURIComponent(Qt.resolvedUrl("code/islands.js").toString().replace("file://", ""));
@@ -1404,6 +1421,7 @@ ContainmentItem {
 
     Component.onCompleted: {
         Plasmoid.activationTogglesExpanded = true;
+        armTrayWatch();
         for (let i = 0; i < Containment.applets.length; i++) hostApplet(Containment.applets[i]);
         rootModel.refresh();
         systemModel = systemModelComponent.createObject(root, { favoritesModel: rootModel.systemFavoritesModel });
