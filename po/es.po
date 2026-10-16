@@ -2118,6 +2118,45 @@ msgid "3x6 V."
 msgstr "3x6 V."
 
 #, fuzzy
+msgid "Icons"
+msgstr "Iconos"
+
+msgid "Icon theme:"
+msgstr "Tema de iconos:"
+
+msgid "Get more:"
+msgstr "Obtener más:"
+
+msgid "Download icon themes…"
+msgstr "Descargar temas de iconos…"
+
+msgid "Wallpapers:"
+msgstr "Fondos de pantalla:"
+
+msgid "Download wallpapers…"
+msgstr "Descargar fondos de pantalla…"
+
+msgid "Your own wallpaper:"
+msgstr "Tu propio fondo:"
+
+msgid "Choose image…"
+msgstr "Elegir imagen…"
+
+msgid "Set as wallpaper"
+msgstr "Establecer como fondo"
+
+msgid "Pick a wallpaper…"
+msgstr "Elegir un fondo…"
+
+msgid "Images (*.png *.jpg *.jpeg *.webp)"
+msgstr "Imágenes (*.png *.jpg *.jpeg *.webp)"
+
+msgid "Use the system title bar in Firefox with XP themes"
+msgstr "Usar la barra de título del sistema en Firefox con los temas XP"
+
+msgid "Firefox draws its own title bar, so the XP one does not show. Restart Firefox for this to take effect."
+msgstr "Firefox dibuja su propia barra de título, así que no se ve la de XP. Reinicia Firefox para que surta efecto."
+
 #~ msgid "Tile colour"
 #~ msgstr "Color de los mosaicos:"
 

@@ -13,6 +13,7 @@ KCM.SimpleKCM {
     id: page
     property string cfg_menuStyle   // read only, to show the XP option
     property bool cfg_xpTaskbarTheme
+    property alias cfg_xpFirefoxTitlebar: ffBox.checked
     property alias cfg_windowTheme: windowBox.checked
     property alias cfg_windowOpacity: winAlpha.value
     property alias cfg_windowBlur: winBlur.checked
@@ -65,6 +66,13 @@ KCM.SimpleKCM {
             text: i18n("Apply the theme to windows")
             QQC2.ToolTip.visible: hovered
             QQC2.ToolTip.text: i18n("Title bars and colours of every window. Your own ones come back when this is off.")
+        }
+        QQC2.CheckBox {
+            id: ffBox
+            visible: page.cfg_menuStyle === "xp"
+            text: i18n("Use the system title bar in Firefox with XP themes")
+            QQC2.ToolTip.visible: hovered
+            QQC2.ToolTip.text: i18n("Firefox draws its own title bar, so the XP one does not show. Restart Firefox for this to take effect.")
         }
         // T41: glass options for the windowTheme decoration (main.qml glassSuffix), every style.
         ColumnLayout {

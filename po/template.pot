@@ -2073,3 +2073,43 @@ msgstr ""
 #: package/contents/ui/win10/Tile.qml:321
 msgid "3x6 V."
 msgstr ""
+
+msgid "Icons"
+msgstr ""
+
+msgid "Icon theme:"
+msgstr ""
+
+msgid "Get more:"
+msgstr ""
+
+msgid "Download icon themes…"
+msgstr ""
+
+msgid "Wallpapers:"
+msgstr ""
+
+msgid "Download wallpapers…"
+msgstr ""
+
+msgid "Your own wallpaper:"
+msgstr ""
+
+msgid "Choose image…"
+msgstr ""
+
+msgid "Set as wallpaper"
+msgstr ""
+
+msgid "Pick a wallpaper…"
+msgstr ""
+
+msgid "Images (*.png *.jpg *.jpeg *.webp)"
+msgstr ""
+
+msgid "Use the system title bar in Firefox with XP themes"
+msgstr ""
+
+msgid "Firefox draws its own title bar, so the XP one does not show. Restart Firefox for this to take effect."
+msgstr ""
+
